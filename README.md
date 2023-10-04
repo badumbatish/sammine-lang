@@ -21,3 +21,9 @@ Run
 cd build && ctest && cd ..
 ```
 to go to build folder and test and return to root.
+
+Run
+```bash
+rm -rf build
+```
+to erase the build folder (similar to make clean).
