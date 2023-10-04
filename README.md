@@ -16,6 +16,12 @@ cmake --build build
 ```
 at the root tree to build the build files.
 
+Run 
+```bash
+cd build && ./main && cd ..
+```
+to run the **main** executable
+
 Run
 ```bash
 cd build && ctest && cd ..
