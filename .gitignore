@@ -41,3 +41,4 @@ build/
 
 # C-lion
 .idea/
+.DS_Store
