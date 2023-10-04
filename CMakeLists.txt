@@ -8,7 +8,7 @@ project(sammine_lang)
 
 include(src/CMakeLists.txt)
 include(integration_tests/CMakeLists.txt)
-include_directories(${CMAKE_SOURCE_DIR}/include/project/) # For including headers-path
+include_directories(${CMAKE_SOURCE_DIR}/include/) # For including headers-path
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
