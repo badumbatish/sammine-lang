@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.24)
 
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # https://cmake.org/cmake/help/latest/policy/CMP0135.html
 # Set CMP0135 to NEW for fetchContent
 cmake_policy(SET CMP0135 NEW)
+SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/project/")
 
 project(sammine_lang)
 
@@ -10,8 +15,6 @@ include(src/CMakeLists.txt)
 include(integration_tests/CMakeLists.txt)
 include_directories(${CMAKE_SOURCE_DIR}/include/) # For including headers-path
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 

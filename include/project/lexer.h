@@ -5,12 +5,12 @@
 #pragma once
 
 class lexer {
-
+public:
     static std::string IdentifierStr; // Filled in if tok_identifier
     static double NumVal;             // Filled in if tok_number
 
-
-    static int get_tok();
+public:
+    static int gettok();
 
 };
 

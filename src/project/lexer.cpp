@@ -2,9 +2,9 @@
 // Created by Jasmine Tang on 10/3/23.
 //
 
-#include "project/lexer.h"
+#include "lexer.h"
 
-int lexer::get_tok() {
+int lexer::gettok() {
     static int LastChar = ' ';
 
     // Skip any whitespace.
@@ -41,7 +41,7 @@ int lexer::get_tok() {
         while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
 
         if (LastChar != EOF)
-            return get_tok();
+            return gettok();
     }
 
     // Check for end of file.  Don't eat the EOF.
