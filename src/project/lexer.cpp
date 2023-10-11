@@ -12,9 +12,9 @@ int lexer::gettok() {
         LastChar = getchar();
 
     if (isalpha(LastChar)) { // identifier: [a-zA-Z][a-zA-Z0-9]*
-        IdentifierStr = LastChar;
+        lexer::IdentifierStr = LastChar;
         while (isalnum((LastChar = getchar())))
-            IdentifierStr += LastChar;
+            lexer::IdentifierStr += LastChar;
 
         if (IdentifierStr == "def")
             return Token::tok_def;
@@ -30,7 +30,7 @@ int lexer::gettok() {
             LastChar = getchar();
         } while (isdigit(LastChar) || LastChar == '.');
 
-        NumVal = strtod(NumStr.c_str(), 0);
+        lexer::NumVal = strtod(NumStr.c_str(), 0);
         return Token::tok_number;
     }
 

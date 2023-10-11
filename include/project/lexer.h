@@ -6,8 +6,8 @@
 
 class lexer {
 public:
-    static std::string IdentifierStr; // Filled in if tok_identifier
-    static double NumVal;             // Filled in if tok_number
+    static inline std::string IdentifierStr {}; // Filled in if tok_identifier
+    static inline double NumVal {};             // Filled in if tok_number
 
 public:
     static int gettok();

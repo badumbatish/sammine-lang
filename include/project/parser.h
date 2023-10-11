@@ -9,11 +9,11 @@
 #include <map>
 class parser {
 public:
-    static int CurTok;
+    static inline int CurTok {};
 
     static int getNextToken();
 
-    static inline std::map<char, int> BinopPrecedence =  {
+    static inline std::map<char, int> BinopPrecedence = {
             {'<', 10},
             {'+', 20},
             {'-', 20},
@@ -22,8 +22,11 @@ public:
 
 
     static std::unique_ptr<ExprAST> LogError(const char *Str);
-    static std::unique_ptr<ExprAST> LogErrorP(const char *Str);
+
+    static std::unique_ptr<PrototypeAST> LogErrorP(const char *Str);
+
     static std::unique_ptr<ExprAST> ParseExpression();
+
     static std::unique_ptr<ExprAST> ParseNumberExpr();
 
     static std::unique_ptr<ExprAST> ParseParenExpr();
@@ -32,9 +35,24 @@ public:
 
     static std::unique_ptr<ExprAST> ParsePrimary();
 
+    static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS);
+
+    static std::unique_ptr<FunctionAST> ParseDefinition();
+
+    static std::unique_ptr<PrototypeAST> ParseExtern();
+
+    static std::unique_ptr<FunctionAST> ParseTopLevelExpr();
+    static std::unique_ptr<PrototypeAST> ParsePrototype();
+
+    static void MainLoop();
+
+    static void HandleDefinition();
+
     static int GetTokPrecedence();
+
+    static void HandleExtern();
+
+    static void HandleTopLevelExpression();
+
+
 };
-
-
-
-
