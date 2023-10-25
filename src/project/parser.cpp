@@ -225,3 +225,9 @@ void parser::MainLoop() {
         }
     }
 }
+
+
+llvm::Value* parser::LogErrorV(const char *Str) {
+    LogError(Str);
+    return nullptr;
+}

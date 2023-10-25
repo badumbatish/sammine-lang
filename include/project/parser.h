@@ -54,5 +54,5 @@ public:
 
     static void HandleTopLevelExpression();
 
-
+    llvm::Value* LogErrorV(const char *Str);
 };

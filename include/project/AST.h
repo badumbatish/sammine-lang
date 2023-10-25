@@ -7,8 +7,16 @@
 
 #include <string>
 #include <utility>
+#include <map>
+
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
+#include "llvm/IR/IRBuilder.h"
+
+//static std::unique_ptr<llvm::LLVMContext> TheContext;
+//static std::unique_ptr<llvm::IRBuilder<>> Builder(TheContext);
+static std::unique_ptr<llvm::Module> TheModule;
+static std::map<std::string, llvm::Value*> NamedValues;
 
 
 class ExprAST {
@@ -22,6 +30,7 @@ class NumberExprAST : public ExprAST {
 
 public:
     explicit NumberExprAST(double Val) : Val(Val) {}
+    llvm::Value *codegen() override;
 };
 
 class VariableExprAST : public ExprAST {
@@ -29,6 +38,7 @@ class VariableExprAST : public ExprAST {
 
 public:
     explicit VariableExprAST(std::string Name) : Name(std::move(Name)) {}
+    llvm::Value *codegen() override;
 };
 
 
@@ -39,6 +49,9 @@ class BinaryExprAST : public ExprAST {
 public:
     BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS)
     : Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+
+    llvm::Value *codegen() override;
+
 };
 
 class CallExprAST : public ExprAST {
@@ -49,6 +62,9 @@ public:
     CallExprAST(std::string Callee,
                 std::vector<std::unique_ptr<ExprAST>> Args)
                 : Callee(std::move(Callee)), Args(std::move(Args)) {}
+
+
+    llvm::Value *codegen() override;
 };
 
 
@@ -59,6 +75,8 @@ class PrototypeAST {
 public:
     PrototypeAST(std::string Name, std::vector<std::string> Args)
     : Name(std::move(Name)), Args(std::move(Args)) {}
+
+    llvm::Function *codegen();
 };
 
 class FunctionAST {
@@ -68,6 +86,8 @@ class FunctionAST {
 public:
     FunctionAST(std::unique_ptr<PrototypeAST> Proto,
                 std::unique_ptr<ExprAST> Body)
-                : Proto(std::move(Proto)), Body(std::move(Body)) {}
+            : Proto(std::move(Proto)), Body(std::move(Body)) {}
+
+    llvm::Function *codegen();
 };
 #endif //SAMMINE_LANG_AST_H
