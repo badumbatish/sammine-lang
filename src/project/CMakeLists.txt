@@ -11,7 +11,7 @@ target_include_directories(parser PRIVATE ${INCLUDE_PROJECT_DIR})
 add_executable(main "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/AST.cpp"
 )
-target_link_libraries(main PRIVATE lexer parser)
+target_link_libraries(main PUBLIC ${llvm_libs} PRIVATE lexer parser)
 target_include_directories(main PRIVATE ${INCLUDE_PROJECT_DIR})
 
 

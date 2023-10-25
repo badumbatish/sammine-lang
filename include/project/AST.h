@@ -7,11 +7,14 @@
 
 #include <string>
 #include <utility>
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Value.h"
 
 
 class ExprAST {
 public:
     virtual ~ExprAST() = default;
+    virtual  llvm::Value *codegen() = 0;
 };
 
 class NumberExprAST : public ExprAST {
