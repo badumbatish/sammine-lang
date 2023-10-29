@@ -45,7 +45,7 @@ public:
     static std::unique_ptr<PrototypeAST> ParsePrototype();
 
     static void MainLoop();
-
+    static void InitializeModule();
     static void HandleDefinition();
 
     static int GetTokPrecedence();
@@ -54,5 +54,5 @@ public:
 
     static void HandleTopLevelExpression();
 
-    llvm::Value* LogErrorV(const char *Str);
+    static llvm::Value* LogErrorV(const char *Str);
 };

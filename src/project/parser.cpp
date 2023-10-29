@@ -3,7 +3,7 @@
 //
 
 #include "parser.h"
-
+#include "iostream"
 
 std::unique_ptr<ExprAST> parser::LogError(const char *Str) {
     fprintf(stderr, "Error: %s\n", Str);
@@ -139,6 +139,14 @@ std::unique_ptr<FunctionAST> parser::ParseDefinition() {
     return nullptr;
 }
 
+void parser::InitializeModule() {
+    // Open a new context and module.
+    TheContext = std::make_unique<llvm::LLVMContext>();
+    TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
+
+    // Create a new builder for the module.
+    Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
+}
 
 
 /// external ::= 'extern' prototype
@@ -150,32 +158,48 @@ std::unique_ptr<PrototypeAST> parser::ParseExtern() {
 std::unique_ptr<FunctionAST> parser::ParseTopLevelExpr() {
     if (auto E = ParseExpression()) {
         // Make an anonymous proto.
-        auto Proto = std::make_unique<PrototypeAST>("", std::vector<std::string>());
+        auto Proto = std::make_unique<PrototypeAST>("__anon_expr", std::vector<std::string>());
         return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
     }
     return nullptr;
 }
 void parser::HandleDefinition() {
-    if (ParseDefinition()) {
-        fprintf(stderr, "Parsed a function definition.\n");
+    if (auto FnAST = ParseDefinition()) {
+        if (auto *FnIR = FnAST->codegen()) {
+            fprintf(stderr, "Read function definition:");
+            FnIR->print(llvm::errs());
+            fprintf(stderr, "\n");
+        }
     } else {
         // Skip token for error recovery.
         getNextToken();
     }
 }
  void parser::HandleExtern() {
-    if (ParseExtern()) {
-        fprintf(stderr, "Parsed an extern\n");
-    } else {
-        // Skip token for error recovery.
-        getNextToken();
-    }
-}
+     if (auto ProtoAST = ParseExtern()) {
+         if (auto *FnIR = ProtoAST->codegen()) {
+             fprintf(stderr, "Read extern: ");
+             FnIR->print(llvm::errs());
+             fprintf(stderr, "\n");
+         }
+     } else {
+         // Skip token for error recovery.
+         getNextToken();
+     }
+ }
+
 
 void parser::HandleTopLevelExpression() {
     // Evaluate a top-level expression into an anonymous function.
-    if (ParseTopLevelExpr()) {
-        fprintf(stderr, "Parsed a top-level expr\n");
+    if (auto FnAST = ParseTopLevelExpr()) {
+        if (auto *FnIR = FnAST->codegen()) {
+            fprintf(stderr, "Read top-level expression:");
+            FnIR->print(llvm::errs());
+            fprintf(stderr, "\n");
+
+            // Remove the anonymous expression.
+            FnIR->eraseFromParent();
+        }
     } else {
         // Skip token for error recovery.
         getNextToken();
@@ -220,6 +244,7 @@ void parser::MainLoop() {
                 HandleExtern();
                 break;
             default:
+
                 HandleTopLevelExpression();
                 break;
         }
