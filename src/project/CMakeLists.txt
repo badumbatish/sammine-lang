@@ -2,7 +2,7 @@
 
 add_library(lexer SHARED  ${CMAKE_CURRENT_LIST_DIR}/lexer.cpp)
 target_include_directories(lexer PRIVATE ${INCLUDE_PROJECT_DIR})
-
+target_link_libraries(lexer PRIVATE taocpp::pegtl)
 add_library(parser SHARED ${CMAKE_CURRENT_LIST_DIR}/parser.cpp )
 
 target_link_libraries(parser PRIVATE lexer)

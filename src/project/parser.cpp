@@ -1,104 +1,68 @@
-//
-// Created by Jasmine Tang on 10/3/23.
-//
-
 #include "parser.h"
 #include "iostream"
-
-std::unique_ptr<ExprAST> parser::LogError(const char *Str) {
-    fprintf(stderr, "Error: %s\n", Str);
-
-    return nullptr;
+std::unique_ptr<PrototypeAST> Parser::ParseExtern() {
+    lxr.consume_current_token();
+    return ParsePrototype();
 }
-
-std::unique_ptr<PrototypeAST> parser::LogErrorP(const char *Str) {
-    LogError(Str);
-    return nullptr;
-}
-
-int parser::getNextToken() {
-    return CurTok = lexer::gettok();
-}
-
-std::unique_ptr<ExprAST> parser::ParseNumberExpr() {
-    auto Result = std::make_unique<NumberExprAST>(lexer::NumVal);
-
-    parser::getNextToken();
-    return std::move(Result);
-}
-
-std::unique_ptr<ExprAST> parser::ParseParenExpr() {
-    parser::getNextToken();
-
-    auto V = parser::ParseExpression();
-
-    if (!V) return nullptr;
-
-    if (parser::CurTok != ')') return parser::LogError("expected ')'");
-    parser::getNextToken();
-
-    return V;
-}
-
-std::unique_ptr<ExprAST> parser::ParseIdentifierExpr() {
-    std::string IdName = lexer::IdentifierStr;
-
-    getNextToken();
-
-    if (CurTok != '(')
-        return std::make_unique<VariableExprAST>(IdName);
-
-    getNextToken();
-
-    std::vector<std::unique_ptr<ExprAST>> Args;
-
-    if (parser::CurTok != ')') {
-        while (true) {
-            if (auto Arg = ParseExpression()) {
-                Args.push_back(std::move(Arg));
-            } else {
-                return nullptr;
-            }
-
-            if (CurTok == ')')
-                break;
-
-            if (CurTok != ',') {
-                return LogError("Expected ')' or ',' in argument list");
-            }
-
-            parser::getNextToken();
-        }
-    }
-    parser::getNextToken();
-
-    return std::make_unique<CallExprAST>(IdName, std::move(Args));
-}
-
-std::unique_ptr<ExprAST> parser::ParsePrimary() {
-    switch (parser::CurTok) {
-        default:
-            return LogError("Unknown token when expecting an expression");
-        case tok_identifier:
-            return ParseIdentifierExpr();
-        case tok_number:
-            return ParseNumberExpr();
-        case '(':
-            return ParseParenExpr();
-    }
-}
-
-int parser::GetTokPrecedence() {
-    if (!isascii(CurTok))
-        return -1;
-
-    // Make sure it's a declared binop.
-    int TokPrec = BinopPrecedence[CurTok];
+int Parser::GetTokPrecedence(Token tok) {
+    int TokPrec = binopPrecedence[tok.second];
     if (TokPrec <= 0) return -1;
     return TokPrec;
 }
 
-std::unique_ptr<ExprAST> parser::ParseExpression() {
+std::unique_ptr<PrototypeAST> Parser::ParsePrototype() {
+    // we expect to get a token of identifier type when we call in
+    auto [iden_token, iden_val] = lxr.peek_current_token();
+    if (iden_token != TokenType::tok_identifier) {
+        std::cout << "Expected function name in prototype" << std::endl;
+        return nullptr;
+    }
+    lxr.consume_current_token();
+
+    auto [opar_token, opar_val] = lxr.peek_current_token();
+    if (opar_token != TokenType::tok_opar) {
+        std::cout << "Expected open parenthesis in prototype" << std::endl;
+        return nullptr;
+    }
+    lxr.consume_current_token();
+
+    std::vector<std::string> ArgNames;
+
+    while (lxr.peek_current_token().first == TokenType::tok_identifier) {
+        ArgNames.push_back(lxr.peek_current_token().second);
+        lxr.consume_current_token();
+    }
+
+    auto [epar_token, epar_val] = lxr.peek_current_token();
+    if (epar_token != TokenType::tok_epar) {
+        std::cout << "Expected close parenthesis in prototype" << std::endl;
+        return nullptr;
+    }
+    lxr.consume_current_token();
+
+    return std::make_unique<PrototypeAST>(iden_val, ArgNames);
+}
+
+std::unique_ptr<ExprAST> Parser::ParseNumberExpr() {
+    auto [num_token, num_val] = lxr.peek_current_token();
+    auto result =  std::make_unique<NumberExprAST>(std::stod(num_val));
+    lxr.consume_current_token();
+    return result;
+}
+
+std::unique_ptr<FunctionAST> Parser::ParseDefinition() {
+    lxr.consume_current_token();
+    auto Proto = ParsePrototype();
+
+    if (!Proto) return nullptr;
+
+    if (auto E = ParseExpression())
+        return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
+
+    return nullptr;
+}
+
+std::unique_ptr<ExprAST> Parser::ParseExpression() {
     auto LHS = ParsePrimary();
 
     if (!LHS) return nullptr;
@@ -106,145 +70,157 @@ std::unique_ptr<ExprAST> parser::ParseExpression() {
     return ParseBinOpRHS(0, std::move(LHS));
 }
 
-std::unique_ptr<ExprAST> parser::ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS) {
+std::unique_ptr<ExprAST> Parser::ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS) {
     while (true) {
-        int TokPrec = GetTokPrecedence();
+        int TokPrec = GetTokPrecedence(lxr.peek_current_token());
 
-        // If this is a binop that binds at least as tightly as the current binop,
-        // consume it, otherwise we are done.
-        if (TokPrec < ExprPrec)
-            return LHS;
-        // Okay, we know this is a binop.
-        int BinOp = CurTok;
-        getNextToken();  // eat binop
+        if (TokPrec < ExprPrec) return LHS;
 
-        // Parse the primary expression after the binary operator.
+        Token binOpToken = lxr.peek_current_token();
+        lxr.consume_current_token();
+
         auto RHS = ParsePrimary();
-        if (!RHS)
-            return nullptr;
+        if (!RHS) return nullptr;
 
-        int NextPrec = GetTokPrecedence();
+        int NextPrec = GetTokPrecedence(lxr.peek_current_token());
         if (TokPrec < NextPrec) {
+            RHS = ParseBinOpRHS(TokPrec + 1, std::move(RHS));
+            if (!RHS) return nullptr;
         }
+
+        LHS = std::make_unique<BinaryExprAST>(binOpToken.second, std::move(LHS), std::move(RHS));
     }
 }
 
-std::unique_ptr<FunctionAST> parser::ParseDefinition() {
-    getNextToken();  // eat def.
-    auto Proto = ParsePrototype();
-    if (!Proto) return nullptr;
+std::unique_ptr<ExprAST> Parser::ParsePrimary() {
+    auto tok = lxr.peek_current_token();
 
-    if (auto E = ParseExpression())
-        return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
-    return nullptr;
+    switch (tok.first) {
+        default:
+            std::cout << "Unknown token when parsing primary" << std::endl;
+            return nullptr;
+        case TokenType::tok_identifier:
+            return ParseIdentifierExpr();
+        case TokenType::tok_number:
+            return ParseNumberExpr();
+        case TokenType::tok_opar:
+            return ParseParenExpr();
+    }
 }
 
-void parser::InitializeModule() {
-    // Open a new context and module.
-    TheContext = std::make_unique<llvm::LLVMContext>();
-    TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
+std::unique_ptr<ExprAST> Parser::ParseParenExpr() {
+    auto [opar_token, opar_val] = lxr.peek_current_token();
+    if (opar_token != TokenType::tok_opar) {
+        std::cout << "Expected open parenthesis in ParseParen" << std::endl;
+        return nullptr;
+    }
+    lxr.consume_current_token();
 
-    // Create a new builder for the module.
-    Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
+    auto V = ParseExpression();
+    if (!V) return nullptr;
+
+    auto [epar_token, epar_val] = lxr.peek_current_token();
+    if (epar_token != TokenType::tok_epar) {
+        std::cout << "Expected close parenthesis in ParseParen" << std::endl;
+        return nullptr;
+    }
+    lxr.consume_current_token();
+
+    return V;
 }
 
+std::unique_ptr<ExprAST> Parser::ParseIdentifierExpr() {
+    auto [iden_token, iden_val] = lxr.peek_current_token();
+    if (iden_token != TokenType::tok_identifier) {
+        std::cout << "Expected identifier in ParseIdentifierExpr" << std::endl;
+        return nullptr;
+    }
+    lxr.consume_current_token();
 
-/// external ::= 'extern' prototype
-std::unique_ptr<PrototypeAST> parser::ParseExtern() {
-    getNextToken();  // eat extern.
-    return ParsePrototype();
+    auto [opar_token, opar_val] = lxr.peek_current_token();
+    if (opar_token != TokenType::tok_opar) {
+        return std::make_unique<VariableExprAST>(iden_val);
+    }
+    lxr.consume_current_token();
+
+    auto [tok, val] = lxr.peek_current_token();
+    std::vector<std::unique_ptr<ExprAST>> Args;
+
+    if (tok != TokenType::tok_epar) {
+        while (true) {
+            if (auto Arg = ParseExpression())
+                Args.push_back(std::move(Arg));
+            else return nullptr;
+
+            auto [tok, val] = lxr.peek_current_token();
+
+            if (tok == TokenType::tok_epar) break;
+
+            if (tok != TokenType::tok_comma) {
+                std::cout << "Expected close parenthesis or comma in argument list" << std::endl;
+                return nullptr;
+            }
+
+            lxr.consume_current_token();
+
+        }
+    }
+
+    lxr.consume_current_token();
+
+    return std::make_unique<CallExprAST>(iden_val, std::move(Args));
 }
-
-std::unique_ptr<FunctionAST> parser::ParseTopLevelExpr() {
+std::unique_ptr<FunctionAST> Parser::ParseTopLevelExpr() {
     if (auto E = ParseExpression()) {
-        // Make an anonymous proto.
-        auto Proto = std::make_unique<PrototypeAST>("__anon_expr", std::vector<std::string>());
+        auto Proto =  std::make_unique<PrototypeAST>("", std::vector<std::string>());
         return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
     }
     return nullptr;
 }
-void parser::HandleDefinition() {
-    if (auto FnAST = ParseDefinition()) {
-        if (auto *FnIR = FnAST->codegen()) {
-            fprintf(stderr, "Read function definition:");
-            FnIR->print(llvm::errs());
-            fprintf(stderr, "\n");
-        }
+
+void Parser::HandleDefinition() {
+    if (ParseDefinition()) {
+        fprintf(stderr, "Parsed a function definition.\n");
     } else {
         // Skip token for error recovery.
-        getNextToken();
+        lxr.consume_current_token();
     }
 }
- void parser::HandleExtern() {
-     if (auto ProtoAST = ParseExtern()) {
-         if (auto *FnIR = ProtoAST->codegen()) {
-             fprintf(stderr, "Read extern: ");
-             FnIR->print(llvm::errs());
-             fprintf(stderr, "\n");
-         }
-     } else {
-         // Skip token for error recovery.
-         getNextToken();
-     }
- }
 
+void Parser::HandleExtern() {
+    if (ParseExtern()) {
+        fprintf(stderr, "Parsed an extern\n");
+    } else {
+        // Skip token for error recovery.
+        lxr.consume_current_token();
+    }
+}
 
-void parser::HandleTopLevelExpression() {
+void Parser::HandleTopLevelExpression() {
     // Evaluate a top-level expression into an anonymous function.
-    if (auto FnAST = ParseTopLevelExpr()) {
-        if (auto *FnIR = FnAST->codegen()) {
-            fprintf(stderr, "Read top-level expression:");
-            FnIR->print(llvm::errs());
-            fprintf(stderr, "\n");
-
-            // Remove the anonymous expression.
-            FnIR->eraseFromParent();
-        }
+    if (ParseTopLevelExpr()) {
+        fprintf(stderr, "Parsed a top-level expr\n");
     } else {
         // Skip token for error recovery.
-        getNextToken();
+        lxr.consume_current_token();
     }
 }
-std::unique_ptr<PrototypeAST> parser::ParsePrototype() {
-    if (CurTok != tok_identifier)
-        return LogErrorP("Expected function name in prototype");
-
-    std::string FnName = lexer::IdentifierStr;
-    getNextToken();
-
-    if (parser::CurTok != '(')
-        return LogErrorP("Expected '(' in prototype");
-
-    // Read the list of argument names.
-    std::vector<std::string> ArgNames;
-    while (getNextToken() == tok_identifier)
-        ArgNames.push_back(lexer::IdentifierStr);
-    if (CurTok != ')')
-        return LogErrorP("Expected ')' in prototype");
-
-    // success.
-    getNextToken();  // eat ')'.
-
-    return std::make_unique<PrototypeAST>(FnName, std::move(ArgNames));
-}
-
-void parser::MainLoop() {
+void Parser::parse() {
     while (true) {
-        fprintf(stderr, "ready> ");
-        switch (CurTok) {
-            case tok_eof:
-                return;
-            case ';': // ignore top-level semicolons.
-                getNextToken();
-                break;
+        Token tok = this->lxr.peek_current_token();
+        switch (tok.first) {
             case tok_def:
                 HandleDefinition();
                 break;
             case tok_extern:
                 HandleExtern();
                 break;
+            case tok_semicolon:
+                this->lxr.consume_current_token();
+                break;
+            case tok_eof:
+                return;
             default:
-
                 HandleTopLevelExpression();
                 break;
         }
@@ -252,7 +228,3 @@ void parser::MainLoop() {
 }
 
 
-llvm::Value* parser::LogErrorV(const char *Str) {
-    LogError(Str);
-    return nullptr;
-}

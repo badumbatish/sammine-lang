@@ -14,7 +14,7 @@ SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/project/")
 project(sammine_lang)
 
 find_package(LLVM REQUIRED CONFIG)
-
+find_package(pegtl)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 

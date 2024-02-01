@@ -1,21 +1,16 @@
+// Copyright (c) 2014-2022 Dr. Colin Hirsch and Daniel Frey
+// Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
+
 #include <iostream>
-#include "lexer.h"
-#include "parser.h"
+#include <parser.h>
+#include <string>
+#include "Lexer.h"
+
+
+
 int main() {
+    Parser p(Lexer("toy.txt"));
+    p.parse();
+    return 0; // Exit successfully
 
-    // Prime the first token.
-    fprintf(stderr, "ready> ");
-    parser::getNextToken();
-
-    // Make the module, which holds all the code.
-    parser::InitializeModule();
-
-    // Run the main "interpreter loop" now.
-
-    parser::MainLoop();
-
-    // Print out all of the generated code.
-    TheModule->print(llvm::errs(), nullptr);
-
-    return 0;
 }

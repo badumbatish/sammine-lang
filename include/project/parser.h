@@ -1,58 +1,36 @@
-//
-// Created by Jasmine Tang on 10/3/23.
-//
-
-#pragma once
-
-#include "AST.h"
-#include "lexer.h"
+#include <AST.h>
+#include <Lexer.h>
 #include <map>
-class parser {
+#include <utility>
+
+static std::map<std::string, int> binopPrecedence = { {"<", 10},
+                                        {"+", 20},
+                                        {"-", 20},
+                                        {"*", 40}};
+
+class Parser {
+private:
+    Lexer lxr;
 public:
-    static inline int CurTok {};
+    explicit Parser (Lexer _lxr) : lxr(std::move(_lxr)) {};
+    int GetTokPrecedence(Token tok);
+    std::unique_ptr<ExprAST> ParseNumberExpr();
+    std::unique_ptr<ExprAST> ParseParenExpr();
+    std::unique_ptr<ExprAST> ParseIdentifierExpr();
+    std::unique_ptr<ExprAST> ParsePrimary();
+    std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS);
+    std::unique_ptr<ExprAST> ParseExpression();
+    std::unique_ptr<PrototypeAST> ParsePrototype();
+    std::unique_ptr<FunctionAST> ParseDefinition();
+    std::unique_ptr<FunctionAST> ParseTopLevelExpr();
+    std::unique_ptr<PrototypeAST> ParseExtern();
 
-    static int getNextToken();
 
-    static inline std::map<char, int> BinopPrecedence = {
-            {'<', 10},
-            {'+', 20},
-            {'-', 20},
-            {'*', 40}
-    };
+    void HandleDefinition();
+    void HandleExtern();
+    void HandleTopLevelExpression();
 
 
-    static std::unique_ptr<ExprAST> LogError(const char *Str);
-
-    static std::unique_ptr<PrototypeAST> LogErrorP(const char *Str);
-
-    static std::unique_ptr<ExprAST> ParseExpression();
-
-    static std::unique_ptr<ExprAST> ParseNumberExpr();
-
-    static std::unique_ptr<ExprAST> ParseParenExpr();
-
-    static std::unique_ptr<ExprAST> ParseIdentifierExpr();
-
-    static std::unique_ptr<ExprAST> ParsePrimary();
-
-    static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS);
-
-    static std::unique_ptr<FunctionAST> ParseDefinition();
-
-    static std::unique_ptr<PrototypeAST> ParseExtern();
-
-    static std::unique_ptr<FunctionAST> ParseTopLevelExpr();
-    static std::unique_ptr<PrototypeAST> ParsePrototype();
-
-    static void MainLoop();
-    static void InitializeModule();
-    static void HandleDefinition();
-
-    static int GetTokPrecedence();
-
-    static void HandleExtern();
-
-    static void HandleTopLevelExpression();
-
-    static llvm::Value* LogErrorV(const char *Str);
+    void parse();
 };
+
