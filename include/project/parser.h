@@ -1,5 +1,8 @@
+#pragma once
+
 #include <AST.h>
 #include <Lexer.h>
+#include "codegenVisitor.h"
 #include <map>
 #include <utility>
 
@@ -11,8 +14,9 @@ static std::map<std::string, int> binopPrecedence = { {"<", 10},
 class Parser {
 private:
     Lexer lxr;
+    CodeGenVisitor cgVisitor;
 public:
-    explicit Parser (Lexer _lxr) : lxr(std::move(_lxr)) {};
+    explicit Parser (Lexer _lxr) : lxr(std::move(_lxr)), cgVisitor() {};
     int GetTokPrecedence(Token tok);
     std::unique_ptr<ExprAST> ParseNumberExpr();
     std::unique_ptr<ExprAST> ParseParenExpr();
