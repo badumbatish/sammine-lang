@@ -6,6 +6,7 @@
 #include <string>
 #include <grammar.h>
 #include <tao/pegtl.hpp>
+#include <fstream>
 
 namespace pegtl = TAO_PEGTL_NAMESPACE;
 
@@ -16,8 +17,15 @@ public:
     size_t tok_pos = 0;
 public:
     explicit Lexer(const std::string& file_name) {
-        pegtl::file_input<> fi(file_name);
-        pegtl::parse<sammine_lang::grammar, sammine_lang::action>(fi, tok_vector);
+        std::ifstream fl(file_name);
+        if (fl.good()) {
+            pegtl::file_input<> fi(file_name);
+            pegtl::parse<sammine_lang::grammar, sammine_lang::action>(fi, tok_vector);
+        } else {
+            pegtl::string_input<> fi(file_name, "singular line");
+            pegtl::parse<sammine_lang::grammar, sammine_lang::action>(fi, tok_vector);
+        }
+
     }
 
     Token peek_current_token() {

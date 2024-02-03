@@ -27,7 +27,6 @@ public:
         TheContext = std::make_unique<LLVMContext>();
         TheModule = std::make_unique<Module>("i jit on my code hehe", *TheContext);
         Builder = std::make_unique<IRBuilder<>>(*TheContext);
-        std::cout << "CodeGenVisitor created" << std::endl;
         NamedValues = {};
     }
 

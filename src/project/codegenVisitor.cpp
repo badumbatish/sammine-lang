@@ -55,6 +55,7 @@ Value *CodeGenVisitor::Visit(const BinaryExprAST *AST) {
                                          "booltmp");
     }
     else return nullptr;
+
 }
 
 Function *CodeGenVisitor::Visit(const PrototypeAST *AST) const {
