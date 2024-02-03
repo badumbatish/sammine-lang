@@ -29,10 +29,13 @@ enum TokenType {
 using Token = std::pair<TokenType, std::string>;
 
 namespace sammine_lang {
+    struct integral : pegtl::plus<pegtl::digit> {};
+    struct decimal : pegtl::seq<TAO_PEGTL_STRING( "."), pegtl::opt<integral>> {};
+
     struct tok_eof : pegtl::eof {};
     struct tok_def : TAO_PEGTL_STRING( "def" ) {};
     struct tok_extern : TAO_PEGTL_STRING( "extern" ) {};
-    struct tok_number : pegtl::plus<pegtl::digit> {};
+    struct tok_number : pegtl::seq<integral, pegtl::opt<decimal>> {};
     struct tok_identifier : pegtl::identifier{};
     struct tok_whitespace : pegtl::space{};
     struct tok_semicolon : TAO_PEGTL_STRING( ";" ) {};
