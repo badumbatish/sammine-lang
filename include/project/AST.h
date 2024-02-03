@@ -14,12 +14,13 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+class AstVisitor;
 
 using namespace llvm;
 class ExprAST {
 public:
     virtual ~ExprAST() {}
-    virtual Value * Accept(std::shared_ptr<AstVisitor> visitor) const = 0;
+    virtual Value * Accept(AstVisitor* v) const = 0;
 };
 
 class NumberExprAST : public ExprAST {
@@ -27,7 +28,8 @@ class NumberExprAST : public ExprAST {
 
 public:
     explicit NumberExprAST(double Val) : Val(Val) {}
-    Value * Accept(std::shared_ptr<AstVisitor> visitor) const override;
+    double getVal() const { return Val; }
+    Value * Accept(AstVisitor* v) const override;
 };
 
 class VariableExprAST : public ExprAST {
@@ -35,51 +37,47 @@ class VariableExprAST : public ExprAST {
 
 public:
     explicit VariableExprAST(const std::string &Name) : Name(Name) {}
-    Value * Accept(std::shared_ptr<AstVisitor> visitor) const override;
+    std::string getName() const { return Name; }
+    Value * Accept(AstVisitor* v) const override;
 
 };
 
 class BinaryExprAST : public ExprAST {
+public:
     std::string Op;
     std::unique_ptr<ExprAST> LHS, RHS;
-
-public:
     BinaryExprAST(std::string op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS) : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
-    Value * Accept(std::shared_ptr<AstVisitor> visitor) const override;
-
+    Value * Accept(AstVisitor* v) const override;
 };
 
 
 class CallExprAST : public ExprAST {
+public:
     std::string Callee;
     std::vector<std::unique_ptr<ExprAST>> Args;
-
-public:
     CallExprAST(const std::string &Callee, std::vector<std::unique_ptr<ExprAST>> Args) : Callee(Callee), Args(std::move(Args)) {}
-    Value * Accept(std::shared_ptr<AstVisitor> visitor) const override;
+    Value * Accept(AstVisitor* v) const override;
 };
 
-class PrototypeAST : public ExprAST {
+class PrototypeAST {
+public:
     std::string Name;
     std::vector<std::string> Args;
-
-public:
     PrototypeAST(const std::string &Name, std::vector<std::string> Args)
             : Name(Name), Args(std::move(Args)) {}
 
     [[nodiscard]] const std::string &getName() const { return Name; }
-    Value * Accept(std::shared_ptr<AstVisitor> visitor) const override;
+    Function * Accept(AstVisitor* v) const;
 
 };
 
 /// FunctionAST - This class represents a function definition itself.
-class FunctionAST : public ExprAST {
+class FunctionAST  {
+public:
     std::unique_ptr<PrototypeAST> Proto;
     std::unique_ptr<ExprAST> Body;
-
-public:
     FunctionAST(std::unique_ptr<PrototypeAST> Proto,
                 std::unique_ptr<ExprAST> Body)
             : Proto(std::move(Proto)), Body(std::move(Body)) {}
-    Value * Accept(std::shared_ptr<AstVisitor> visitor) const override;
+    Function * Accept(AstVisitor* v) const ;
 };

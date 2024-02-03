@@ -28,17 +28,29 @@ class FunctionAST;
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
-
+#include <map>
 using namespace llvm;
 
 class AstVisitor {
+
+
 public:
-    virtual Value* VisitNumberExprAST(const NumberExprAST *AST) const = 0;
-    virtual Value*  VisitCallExprAST(const CallExprAST *AST) const = 0;
-    virtual Value*  VisitVariableExprAST(const VariableExprAST *AST) const = 0;
-    virtual Value*  VisitBinaryExprAST(const BinaryExprAST *AST) const = 0;
-    virtual Value*  VisitPrototypeAST(const PrototypeAST *AST) const = 0;
-    virtual Value*  VisitFunctionAST(const FunctionAST *AST) const = 0;
+    std::unique_ptr<LLVMContext> TheContext;
+    std::unique_ptr<IRBuilder<>> Builder;
+    std::unique_ptr<Module> TheModule;
+    std::map<std::string, Value *> NamedValues;
+    AstVisitor() = default;
+    virtual ~AstVisitor() = default;
+    virtual Value* Visit(const ExprAST *AST) const = 0;
+    virtual Value* Visit(const NumberExprAST *AST) const = 0;
+    virtual Value*  Visit(const CallExprAST *AST) const = 0;
+    virtual Value*  Visit(const VariableExprAST *AST) = 0;
+    virtual Value*  Visit(const BinaryExprAST *AST) = 0;
+    virtual Function*  Visit(const PrototypeAST *AST) const = 0;
+    virtual Function*  Visit(const FunctionAST *AST) = 0;
 
 };
+
+
+
 #endif //SAMMINE_LANG_ASTVISITOR_H

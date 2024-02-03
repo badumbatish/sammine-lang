@@ -18,30 +18,26 @@
 #include "grammar.h"
 #include "AstVisitor.h"
 #include <memory>
+#include <iostream>
 #include <map>
 using namespace llvm;
-class CodeGenVisitor {
+class CodeGenVisitor : AstVisitor {
 public:
-    std::unique_ptr<LLVMContext> TheContext;
-    std::unique_ptr<IRBuilder<>> Builder;
-    std::unique_ptr<Module> TheModule;
-    std::map<std::string, Value *> NamedValues;
-
     CodeGenVisitor() {
         TheContext = std::make_unique<LLVMContext>();
         TheModule = std::make_unique<Module>("i jit on my code hehe", *TheContext);
-
         Builder = std::make_unique<IRBuilder<>>(*TheContext);
-
+        std::cout << "CodeGenVisitor created" << std::endl;
         NamedValues = {};
     }
 
-    Value* VisitNumberExprAST(NumberExprAST *AST) const {};
-    Value* VisitCallExprAST(CallExprAST *AST) const {};
-    Value* VisitVariableExprAST(VariableExprAST *AST) const {};
-    Value* VisitBinaryExprAST(BinaryExprAST *AST) const {};
-    Value* VisitPrototypeAST(PrototypeAST *AST) const {};
-    Value* VisitFunctionAST(FunctionAST *AST) const {};
+    Value* Visit(const ExprAST *AST) const override;
+    Value* Visit(const NumberExprAST *AST) const override;
+    Value* Visit(const CallExprAST *AST) const override;
+    Value* Visit(const VariableExprAST *AST) override;
+    Value* Visit(const BinaryExprAST *AST) override;
+    Function* Visit(const PrototypeAST *AST) const override;
+    Function* Visit(const FunctionAST *AST) override;
 
 };
 #endif //SAMMINE_LANG_CODEGENVISITOR_H
