@@ -1,0 +1,8 @@
+//
+// Created by jjsm on 2/7/24.
+//
+
+#ifndef SAMMINE_LANG_LLVMRESOURCE_H
+#define SAMMINE_LANG_LLVMRESOURCE_H
+
+#endif //SAMMINE_LANG_LLVMRESOURCE_H
