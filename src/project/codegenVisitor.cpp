@@ -3,14 +3,16 @@
 //
 
 #include "codegenVisitor.h"
+#include "LLVMResource.h"
+
 #include <iostream>
 Value *CodeGenVisitor::Visit(const NumberExprAST *AST) const {
-    return ConstantFP::get(*TheContext, APFloat(AST->getVal()));
+    return ConstantFP::get(*llvmResoucePtr->TheContext, APFloat(AST->getVal()));
 }
 
-Value *CodeGenVisitor::Visit(const CallExprAST *AST) const {
+Value * CodeGenVisitor::Visit(const CallExprAST *AST) {
         // Look up the name in the global module table.
-        Function *CalleeF = TheModule->getFunction(AST->Callee);
+        Function *CalleeF = getFunction(AST->Callee);
         if (!CalleeF) {
             std::cout << "Unknown function referenced" << std::endl;
             return nullptr;
@@ -28,11 +30,11 @@ Value *CodeGenVisitor::Visit(const CallExprAST *AST) const {
                 return nullptr;
         }
 
-        return Builder->CreateCall(CalleeF, ArgsV, "calltmp");
+        return llvmResoucePtr->Builder->CreateCall(CalleeF, ArgsV, "calltmp");
 }
 
 Value *CodeGenVisitor::Visit(const VariableExprAST *AST) {
-    return NamedValues[AST->getName()];
+    return llvmResoucePtr->NamedValues[AST->getName()];
 }
 
 Value *CodeGenVisitor::Visit(const BinaryExprAST *AST) {
@@ -43,15 +45,15 @@ Value *CodeGenVisitor::Visit(const BinaryExprAST *AST) {
 
     auto op = AST->Op;
     if (op == "+")
-            return Builder->CreateFAdd(L, R, "addtmp");
+            return llvmResoucePtr->Builder->CreateFAdd(L, R, "addtmp");
     else if (op == "-")
-            return Builder->CreateFSub(L, R, "subtmp");
+            return llvmResoucePtr->Builder->CreateFSub(L, R, "subtmp");
     else if (op == "*")
-            return Builder->CreateFMul(L, R, "multmp");
+            return llvmResoucePtr->Builder->CreateFMul(L, R, "multmp");
     else if (op == "<") {
-        L = Builder->CreateFCmpULT(L, R, "cmptmp");
+        L = llvmResoucePtr->Builder->CreateFCmpULT(L, R, "cmptmp");
         // Convert bool 0/1 to double 0.0 or 1.0
-        return Builder->CreateUIToFP(L, Type::getDoubleTy(*TheContext),
+        return llvmResoucePtr->Builder->CreateUIToFP(L, Type::getDoubleTy(*(llvmResoucePtr->TheContext)),
                                          "booltmp");
     }
     else return nullptr;
@@ -60,12 +62,12 @@ Value *CodeGenVisitor::Visit(const BinaryExprAST *AST) {
 
 Function *CodeGenVisitor::Visit(const PrototypeAST *AST) const {
     // Make the function type:  double(double,double) etc.
-    std::vector<Type *> Doubles(AST->Args.size(), Type::getDoubleTy(*TheContext));
+    std::vector<Type *> Doubles(AST->Args.size(), Type::getDoubleTy(*(llvmResoucePtr->TheContext)));
     FunctionType *FT =
-            FunctionType::get(Type::getDoubleTy(*TheContext), Doubles, false);
+            FunctionType::get(Type::getDoubleTy(*(llvmResoucePtr->TheContext)), Doubles, false);
 
     Function *F =
-            Function::Create(FT, Function::ExternalLinkage, AST->Name, TheModule.get());
+            Function::Create(FT, Function::ExternalLinkage, AST->Name, llvmResoucePtr->TheModule.get());
 
     // Set names for all arguments.
     unsigned Idx = 0;
@@ -76,7 +78,7 @@ Function *CodeGenVisitor::Visit(const PrototypeAST *AST) const {
 }
 
 Function *CodeGenVisitor::Visit(const FunctionAST *AST) {
-    Function *TheFunction = TheModule->getFunction(AST->Proto->getName());
+    Function *TheFunction = getFunction(AST->Proto->getName());
 
     if (!TheFunction)
         TheFunction = AST->Proto->Accept((AstVisitor*) this);
@@ -85,21 +87,22 @@ Function *CodeGenVisitor::Visit(const FunctionAST *AST) {
         return nullptr;
 
     // Create a new basic block to start insertion into.
-    BasicBlock *BB = BasicBlock::Create(*TheContext, "entry", TheFunction);
-    Builder->SetInsertPoint(BB);
+    BasicBlock *BB = BasicBlock::Create(*(llvmResoucePtr->TheContext), "entry", TheFunction);
+    llvmResoucePtr->Builder->SetInsertPoint(BB);
 
     // Record the function arguments in the NamedValues map.
-    NamedValues.clear();
+    llvmResoucePtr->NamedValues.clear();
     for (auto &Arg : TheFunction->args())
-        NamedValues[std::string(Arg.getName())] = &Arg;
+        llvmResoucePtr->NamedValues[std::string(Arg.getName())] = &Arg;
 
     if (Value *RetVal = AST->Body->Accept((AstVisitor*) this)) {
         // Finish off the function.
-        Builder->CreateRet(RetVal);
+        llvmResoucePtr->Builder->CreateRet(RetVal);
 
         // Validate the generated code, checking for consistency.
         verifyFunction(*TheFunction);
 
+        llvmResoucePtr->TheFPM->run(*TheFunction, *llvmResoucePtr->TheFAM);
         return TheFunction;
     }
 
@@ -112,3 +115,17 @@ Value *CodeGenVisitor::Visit(const ExprAST *AST) const {
     return nullptr;
 }
 
+Function *CodeGenVisitor::getFunction(std::string Name) {
+    // First, see if the function has already been added to the current module.
+    if (auto *F = llvmResoucePtr->TheModule->getFunction(Name))
+        return F;
+
+    // If not, check whether we can codegen the declaration from some existing
+    // prototype.
+    auto FI = llvmResoucePtr->FunctionProtos.find(Name);
+    if (FI != llvmResoucePtr->FunctionProtos.end())
+        return FI->second->Accept((AstVisitor*) this);
+
+    // If no existing prototype exists, return null.
+    return nullptr;
+}

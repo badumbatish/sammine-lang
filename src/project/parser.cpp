@@ -172,7 +172,8 @@ std::unique_ptr<ExprAST> Parser::ParseIdentifierExpr() {
 }
 std::unique_ptr<FunctionAST> Parser::ParseTopLevelExpr() {
     if (auto E = ParseExpression()) {
-        auto Proto =  std::make_unique<PrototypeAST>("", std::vector<std::string>());
+        // The function should be named __anon_expr instead of ultimate_transfem
+        auto Proto =  std::make_unique<PrototypeAST>("ultimate_transfem", std::vector<std::string>());
         return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
     }
     return nullptr;
@@ -184,6 +185,11 @@ void Parser::HandleDefinition() {
             fprintf(stderr, "Read function definition:");
             FnIR->print(errs());
             fprintf(stderr, "\n");
+            llvmResource->ExitOnErr(llvmResource->TheJIT->addModule(
+                    ThreadSafeModule(std::move(llvmResource->TheModule),
+                                     std::move(llvmResource->TheContext))
+                    ));
+            llvmResource->InitializeModuleAndManagers();
         }
     } else {
         // Skip token for error recovery.
@@ -197,6 +203,7 @@ void Parser::HandleExtern() {
             fprintf(stderr, "Read extern: ");
             FnIR->print(errs());
             fprintf(stderr, "\n");
+            llvmResource->FunctionProtos[ProtoAST->getName()] = std::move(ProtoAST);
         }
     } else {
         // Skip token for error recovery.
@@ -208,12 +215,21 @@ void Parser::HandleTopLevelExpression() {
     // Evaluate a top-level expression into an anonymous function.
     if (auto FnAST = ParseTopLevelExpr()) {
         if (auto *FnIR = FnAST->Accept((AstVisitor *)(cgVisitor.get()))) {
-            fprintf(stderr, "Read top-level expression:");
-            FnIR->print(errs());
-            fprintf(stderr, "\n");
+            auto RT = llvmResource->TheJIT->getMainJITDylib().createResourceTracker();
+            auto TSM = ThreadSafeModule(std::move(llvmResource->TheModule),
+                                     std::move(llvmResource->TheContext));
+            llvmResource->ExitOnErr(llvmResource->TheJIT->addModule(std::move(TSM), RT));
+            llvmResource->InitializeModuleAndManagers();
 
-            // Remove the anonymous expression.
-            FnIR->eraseFromParent();
+            // Search the JIT for the __anon_expr symbol.
+            auto ExprSymbol = llvmResource->ExitOnErr(llvmResource->TheJIT->lookup("ultimate_transfem"));
+            double (*FP)() = ExprSymbol.getAddress().toPtr<double (*)()>();
+
+            fprintf(stderr, "Evaluated to %f\n", FP());
+
+
+            // Remove the anonymous expression from JIT
+            llvmResource->ExitOnErr(RT->remove());
         }
     } else {
         // Skip token for error recovery.

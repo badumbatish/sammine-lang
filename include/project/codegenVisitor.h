@@ -20,23 +20,25 @@
 #include <memory>
 #include <iostream>
 #include <map>
+#include "LLVMResource.h"
 using namespace llvm;
 class CodeGenVisitor : AstVisitor {
+private:
+    std::shared_ptr<LLVMResource> llvmResoucePtr;
 public:
-    CodeGenVisitor() {
-        TheContext = std::make_unique<LLVMContext>();
-        TheModule = std::make_unique<Module>("i jit on my code hehe", *TheContext);
-        Builder = std::make_unique<IRBuilder<>>(*TheContext);
-        NamedValues = {};
+    CodeGenVisitor() = default;
+
+    explicit CodeGenVisitor(std::shared_ptr<LLVMResource> resource) {
+        llvmResoucePtr = resource;
     }
 
     Value* Visit(const ExprAST *AST) const override;
     Value* Visit(const NumberExprAST *AST) const override;
-    Value* Visit(const CallExprAST *AST) const override;
+    Value * Visit(const CallExprAST *AST) override;
     Value* Visit(const VariableExprAST *AST) override;
     Value* Visit(const BinaryExprAST *AST) override;
     Function* Visit(const PrototypeAST *AST) const override;
     Function* Visit(const FunctionAST *AST) override;
-
+    Function *getFunction(std::string Name);
 };
 #endif //SAMMINE_LANG_CODEGENVISITOR_H

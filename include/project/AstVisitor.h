@@ -35,15 +35,11 @@ class AstVisitor {
 
 
 public:
-    std::unique_ptr<LLVMContext> TheContext;
-    std::unique_ptr<IRBuilder<>> Builder;
-    std::unique_ptr<Module> TheModule;
-    std::map<std::string, Value *> NamedValues;
     AstVisitor() = default;
     virtual ~AstVisitor() = default;
     virtual Value* Visit(const ExprAST *AST) const = 0;
     virtual Value* Visit(const NumberExprAST *AST) const = 0;
-    virtual Value*  Visit(const CallExprAST *AST) const = 0;
+    virtual Value*  Visit(const CallExprAST *AST) = 0;
     virtual Value*  Visit(const VariableExprAST *AST) = 0;
     virtual Value*  Visit(const BinaryExprAST *AST) = 0;
     virtual Function*  Visit(const PrototypeAST *AST) const = 0;
