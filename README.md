@@ -1,6 +1,10 @@
 <h1>sammine-lang</h1>
 
 The section is written with codes in triple quotes to utilize Clion run-in-markdown capabilities.
+<h2>Dependencies</h2>
+- LLVM : for compiler dev, please build from source in case of missing files.
+- https://github.com/taocpp/PEGTL : for lexing, please hand-install
+- https://github.com/gabime/spdlog : for logging, in include/spdlog
 
 <h2>Dev</h2>
 
