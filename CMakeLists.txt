@@ -11,7 +11,7 @@ SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/project/")
 SET(INCLUDE_LOGGING_DIR "${CMAKE_SOURCE_DIR}/include")
 
 # Set logging on
-add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_ON)
+add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE SPDLOG_TRACE_ON)
 
 project(sammine_lang)
 

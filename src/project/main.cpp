@@ -10,8 +10,8 @@
 
 
 int main(int argc, char* argv[]) {
+    spdlog::set_pattern("[%^%l%$] [In: %s:%#] [Function %!] %v");
     SPDLOG_INFO("In function main()");
-
     SPDLOG_INFO("Checking if argument length is 1");
     if (argc == 1) {
         SPDLOG_ERROR("Argument length is 1. No arguments provided");
