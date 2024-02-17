@@ -26,7 +26,7 @@ enum TokenType {
     tok_binop,
     tok_if,
     tok_else,
-    tok_then
+    tok_then,
     tok_invalid,
 };
 
