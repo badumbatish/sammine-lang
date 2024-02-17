@@ -240,6 +240,7 @@ void Parser::HandleTopLevelExpression() {
 void Parser::parse() {
     SPDLOG_INFO("Parser's parse() invoked.");
     while (true) {
+        SPDLOG_INFO("Parser's parse()'s while-loop (re)run.");
         Token tok = this->lxr.peek_current_token();
         switch (tok.first) {
             case tok_def:
