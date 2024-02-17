@@ -8,7 +8,8 @@ target_include_directories(logger PRIVATE ${INCLUDE_LOGGING_DIR})
 
 # codegenVisior
 add_library(codegenVisitor SHARED ${CMAKE_CURRENT_LIST_DIR}/codegenVisitor.cpp)
-target_include_directories(codegenVisitor PRIVATE ${INCLUDE_PROJECT_DIR})
+target_include_directories(codegenVisitor PRIVATE ${INCLUDE_PROJECT_DIR} ${INCLUDE_LOGGING_DIR})
+target_link_libraries(codegenVisitor PRIVATE logger)
 
 # parser
 add_library(parser SHARED ${CMAKE_CURRENT_LIST_DIR}/parser.cpp)

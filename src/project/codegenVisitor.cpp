@@ -4,40 +4,45 @@
 
 #include "codegenVisitor.h"
 #include "LLVMResource.h"
-
+#include "spdlog/spdlog.h"
 #include <iostream>
 Value *CodeGenVisitor::Visit(const NumberExprAST *AST) const {
+    SPDLOG_INFO("CodeGenVisitor's visit invoked on a NumberExprAST*");
     return ConstantFP::get(*llvmResoucePtr->TheContext, APFloat(AST->getVal()));
 }
 
 Value * CodeGenVisitor::Visit(const CallExprAST *AST) {
-        // Look up the name in the global module table.
-        Function *CalleeF = getFunction(AST->Callee);
-        if (!CalleeF) {
-            std::cout << "Unknown function referenced" << std::endl;
-            return nullptr;
-        }
+    SPDLOG_INFO("CodeGenVisitor's visit invoked on a CallExprAST*");
 
-        // If argument mismatch error.
-        if (CalleeF->arg_size() != AST->Args.size()){
-            std::cout << "Function argument mismatched in size" << std::endl;
-            return nullptr;
-        }
-        std::vector<Value *> ArgsV;
-        for (unsigned i = 0, e = AST->Args.size(); i != e; ++i) {
-            ArgsV.push_back(AST->Args[i]->Accept((AstVisitor*)      this));
-            if (!ArgsV.back())
-                return nullptr;
-        }
+    // Look up the name in the global module table.
+    Function *CalleeF = getFunction(AST->Callee);
+    if (!CalleeF) {
+        std::cout << "Unknown function referenced" << std::endl;
+        return nullptr;
+    }
 
-        return llvmResoucePtr->Builder->CreateCall(CalleeF, ArgsV, "calltmp");
+    // If argument mismatch error.
+    if (CalleeF->arg_size() != AST->Args.size()){
+        std::cout << "Function argument mismatched in size" << std::endl;
+        return nullptr;
+    }
+    std::vector<Value *> ArgsV;
+    for (unsigned i = 0, e = AST->Args.size(); i != e; ++i) {
+        ArgsV.push_back(AST->Args[i]->Accept((AstVisitor*)      this));
+        if (!ArgsV.back())
+            return nullptr;
+    }
+
+    return llvmResoucePtr->Builder->CreateCall(CalleeF, ArgsV, "calltmp");
 }
 
 Value *CodeGenVisitor::Visit(const VariableExprAST *AST) {
+    SPDLOG_INFO("CodeGenVisitor's visit invoked on a VariableExprAST*");
     return llvmResoucePtr->NamedValues[AST->getName()];
 }
 
 Value *CodeGenVisitor::Visit(const BinaryExprAST *AST) {
+    SPDLOG_INFO("CodeGenVisitor's visit invoked on a BinaryExprAST*");
     Value *L = AST->LHS->Accept((AstVisitor*) (this));
     Value *R = AST->RHS->Accept((AstVisitor*) (this));
     if (!L || !R)
@@ -61,6 +66,8 @@ Value *CodeGenVisitor::Visit(const BinaryExprAST *AST) {
 }
 
 Function *CodeGenVisitor::Visit(const PrototypeAST *AST) const {
+    SPDLOG_INFO("CodeGenVisitor's visit invoked on a PrototypeAST*");
+
     // Make the function type:  double(double,double) etc.
     std::vector<Type *> Doubles(AST->Args.size(), Type::getDoubleTy(*(llvmResoucePtr->TheContext)));
     FunctionType *FT =
@@ -78,6 +85,8 @@ Function *CodeGenVisitor::Visit(const PrototypeAST *AST) const {
 }
 
 Function *CodeGenVisitor::Visit(const FunctionAST *AST) {
+    SPDLOG_INFO("CodeGenVisitor's visit invoked on a FunctionAST*");
+
     Function *TheFunction = getFunction(AST->Proto->getName());
 
     if (!TheFunction)
@@ -112,6 +121,7 @@ Function *CodeGenVisitor::Visit(const FunctionAST *AST) {
 }
 
 Value *CodeGenVisitor::Visit(const ExprAST *AST) const {
+    SPDLOG_ERROR("CodeGenVisitor's visit invoked on a pure virtual ExprAST*. This should never happen");
     return nullptr;
 }
 
