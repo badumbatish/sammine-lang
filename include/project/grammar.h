@@ -24,6 +24,9 @@ enum TokenType {
     tok_opar,
     tok_comma,
     tok_binop,
+    tok_if,
+    tok_else,
+    tok_then
     tok_invalid,
 };
 
@@ -44,7 +47,14 @@ namespace sammine_lang {
     struct tok_opar : TAO_PEGTL_STRING("(") {};
     struct tok_epar : TAO_PEGTL_STRING(")") {};
     struct tok_comma : TAO_PEGTL_STRING(",") {};
+
+    struct tok_if : TAO_PEGTL_STRING("if") {};
+    struct tok_else : TAO_PEGTL_STRING("else") {};
+    struct tok_then : TAO_PEGTL_STRING("then") {};
     struct tok_binop : pegtl::one<'+', '-', '*', '<'> {};
+
+
+
     struct expression : pegtl::sor<tok_def, tok_extern, tok_number, tok_identifier, tok_whitespace, tok_opar, tok_epar,tok_semicolon, tok_comma, tok_binop, tok_invalid>{};
     struct grammar : pegtl::seq<pegtl::plus<expression>, tok_eof>{};
     template< typename Rule >
@@ -133,6 +143,30 @@ namespace sammine_lang {
         template<typename ActionInput>
         static void apply(const ActionInput& in, std::vector<Token>& tok_vector) {
             tok_vector.push_back({TokenType::tok_invalid, in.string()});
+        }
+    };
+
+    template<>
+    struct action<tok_if> {
+        template<typename ActionInput>
+        static void apply(const ActionInput& in, std::vector<Token>& tok_vector) {
+            tok_vector.push_back({TokenType::tok_if, in.string()});
+        }
+    };
+
+    template<>
+    struct action<tok_else> {
+        template<typename ActionInput>
+        static void apply(const ActionInput& in, std::vector<Token>& tok_vector) {
+            tok_vector.push_back({TokenType::tok_else, in.string()});
+        }
+    };
+
+    template<>
+    struct action<tok_then> {
+        template<typename ActionInput>
+        static void apply(const ActionInput& in, std::vector<Token>& tok_vector) {
+            tok_vector.push_back({TokenType::tok_then, in.string()});
         }
     };
 }
