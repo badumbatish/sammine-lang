@@ -6,16 +6,27 @@
 #include <string>
 #include "Lexer.h"
 
+#include "spdlog/spdlog.h"
+
 
 int main(int argc, char* argv[]) {
+    SPDLOG_INFO("In function main()");
+
+    SPDLOG_INFO("Checking if argument length is 1");
     if (argc == 1) {
-        std::cout << "No arguments provided." << std::endl;
-    } else if (argc == 2) {
+        SPDLOG_ERROR("Argument length is 1. No arguments provided");
+        return 1;
+    }
+    SPDLOG_INFO("Checking if argument length is 2");
+    if (argc == 2) {
         Parser p((Lexer(argv[1])));
         p.parse();
-    } else {
-        std::cout << "Invalid number of arguments. Use either no arguments or two arguments." << std::endl;
+        SPDLOG_INFO("Finish parsing");
+        return 0;
     }
 
-    return 0;
+    SPDLOG_ERROR("Argument length is larger than 2.");
+    SPDLOG_INFO("Invalid number of arguments. Use either no arguments or two arguments.");
+    return 1;
+
 }

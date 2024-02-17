@@ -8,13 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Set CMP0135 to NEW for fetchContent
 cmake_policy(SET CMP0135 NEW)
 SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/project/")
+SET(INCLUDE_LOGGING_DIR "${CMAKE_SOURCE_DIR}/include")
 
-
+# Set logging on
+add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_ON)
 
 project(sammine_lang)
 
 find_package(LLVM REQUIRED CONFIG)
 find_package(pegtl)
+
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
@@ -31,7 +34,7 @@ llvm_map_components_to_libnames(llvm_libs native orcjit support core irreader)
 
 include(src/CMakeLists.txt)
 include(integration_tests/CMakeLists.txt)
-include_directories(${CMAKE_SOURCE_DIR}/include/) # For including headers-path
+#include_directories(${CMAKE_SOURCE_DIR}/include/) # For including headers-path
 
 
 

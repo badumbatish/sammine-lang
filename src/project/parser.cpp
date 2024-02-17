@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "spdlog/spdlog.h"
 #include "iostream"
 std::unique_ptr<PrototypeAST> Parser::ParseExtern() {
     lxr.consume_current_token();
@@ -237,6 +238,7 @@ void Parser::HandleTopLevelExpression() {
     }
 }
 void Parser::parse() {
+    SPDLOG_INFO("Parser's parse() invoked.");
     while (true) {
         Token tok = this->lxr.peek_current_token();
         switch (tok.first) {
