@@ -52,8 +52,14 @@ enum TokenType {
     TokLeftCurly, // {
     TokRightCurly, // }
 
+    // Comma and colons and all that
+    TokComma, // ,
+    TokColon, // .
     //TokFunction
     TokFunc, // func
+
+    // TokID
+    TokID, // Representing an identifier
 
     // TokIf
     TokIf, // if
