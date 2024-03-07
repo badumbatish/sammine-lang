@@ -38,6 +38,8 @@ cmake-build-debug/
 cmake-build-release/
 build/
 
+# Docs
+generated_docs/
 
 # C-lion
 .idea/
