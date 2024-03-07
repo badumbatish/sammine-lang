@@ -1,0 +1,1 @@
+add_executable(sammine ${CMAKE_CURRENT_LIST_DIR}/sammine.cpp)

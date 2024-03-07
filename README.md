@@ -18,7 +18,7 @@ at the root tree to build the build files.
 
 Run 
 ```bash
-cd build && ./main && cd ..
+cd build && ./sammine && cd ..
 ```
 to run the **main** executable
 
