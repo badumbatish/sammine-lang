@@ -6,27 +6,9 @@ The section is written with codes in triple quotes to utilize Clion run-in-markd
 
 Run
 ```bash
-cmake -S . -B  build 
+ python3 build_and_test.py
 ```
-at the root tree to create build files.
-
-Run
-```bash
-cmake --build build
-```
-at the root tree to build the build files.
-
-Run 
-```bash
-cd build && ./sammine && cd ..
-```
-to run the **main** executable
-
-Run
-```bash
-cd build && ctest && cd ..
-```
-to go to build folder and test and return to root.
+in the project root folder to cycle through the development process
 
 Run
 ```bash
