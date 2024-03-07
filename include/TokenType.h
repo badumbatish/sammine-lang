@@ -5,6 +5,9 @@
 #ifndef SAMMINE_LANG_TOKENTYPE_H
 #define SAMMINE_LANG_TOKENTYPE_H
 
+///
+/// Hi there this is a TokenType enum
+///
 enum TokenType {
 
 };
