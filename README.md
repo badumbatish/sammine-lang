@@ -8,7 +8,9 @@ Run
 ```bash
  python3 build_and_test.py
 ```
-in the project root folder to cycle through the development process
+in the project root folder to cycle through the development process.
+
+The default build folder for `build_and_test.py` is named `build`.
 
 Run
 ```bash
@@ -16,6 +18,7 @@ python3 docs.py
 ```
 to generate documentation for the project and have your default web browser open it.
 
+The default documentation folder for `docs.py` is named `generated_docs`.
 Run
 ```bash
 rm -rf build
