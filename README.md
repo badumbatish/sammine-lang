@@ -19,6 +19,7 @@ python3 docs.py
 to generate documentation for the project and have your default web browser open it.
 
 The default documentation folder for `docs.py` is named `generated_docs`.
+
 Run
 ```bash
 rm -rf build
