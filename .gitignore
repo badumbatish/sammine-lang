@@ -37,10 +37,12 @@
 cmake-build-debug/
 cmake-build-release/
 build/
+Testing/
 
 # Docs
 generated_docs/
-
+html/
+latex/
 # C-lion
 .idea/
 .DS_Store
