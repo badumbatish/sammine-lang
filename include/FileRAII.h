@@ -7,6 +7,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <sstream>
+
 class FileRAII {
 public:
     // Constructor opens the file
@@ -42,6 +44,15 @@ public:
             is_opened = false;  // Mark the file as closed if there are no more characters
             return '\0';       // Return null character to indicate end of file
         }
+    }
+    // Function to read the entire file into a string
+    std::string readFileToString() {
+        std::stringstream buffer = {};
+        char ch;
+        while (file.get(ch)) {
+            buffer.put(ch);
+        }
+        return buffer.str();
     }
 
 private:
