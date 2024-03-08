@@ -22,13 +22,27 @@ void Lexer::consume() {
 
 
 Lexer::Lexer(const std::string& input) : Lexer() {
-    int i = 0;
-
+    size_t i = 0;
+    size_t i_0 = 0;
     while (i < input.length()) {
-        while(isspace(input[i])) {
-            i++;
-        }
 
+        i = handleSpaces(i, input);
+
+
+        i_0 = i;
+        i = handleID(i, input);
+        if (i != i_0) continue;
+
+        i_0 = i;
+        i = handleNumber(i, input);
+        if (i != i_0) continue;
+
+
+    }
+
+}
+
+    size_t Lexer::handleNumber(size_t i, const std::string &input) {
         if (isalpha(input[i])) { // identifier: [a-zA-Z][a-zA-Z0-9]*
             std::string IdentifierStr;
             IdentifierStr = input[i];
@@ -44,10 +58,12 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 TokStream.push_back(Token(TokElse, ""));
             else
                 TokStream.push_back(Token(TokID, IdentifierStr));
-
-            continue;
         }
 
+        return i;
+    }
+
+    size_t Lexer::handleID(size_t i, const std::string &input) {
         if (isdigit(input[i]) || input[i] == '.') { // Number: [0-9.]+
             std::string NumStr;
             do {
@@ -55,11 +71,17 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             } while (isdigit(input[i]) || input[i] == '.');
 
             TokStream.push_back(Token(TokNum, NumStr));
-            continue;
         }
 
+        return i;
     }
 
-}
+    size_t Lexer::handleSpaces(size_t i, const std::string &input) {
+        while(isspace(input[i])) {
+            i++;
+        }
+
+        return i;
+    }
 
 }

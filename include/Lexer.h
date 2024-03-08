@@ -138,6 +138,10 @@ private:
         hasError = false;
         TokStream = {};
     }
+
+    size_t handleNumber(size_t i, const std::string& input);
+    size_t handleSpaces(size_t i, const std::string& input);
+    size_t handleID(size_t i, const std::string& input);
 public:
     explicit Lexer(const std::string& input);
     explicit Lexer(FileRAII file) : Lexer(file.readFileToString()) {}
