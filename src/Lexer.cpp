@@ -7,30 +7,16 @@
 namespace sammine_lang {
 
 
-std::shared_ptr <Token> Lexer::lex(const std::string& str) {
-
-    return nullptr;
-}
-
-
 bool Lexer::hasErrors() const {
     return false;
 }
 
 std::shared_ptr<Token> Lexer::peek() {
-    return {};
-}
-
-std::shared_ptr<Token> Lexer::peek_n() {
-    return {};
-}
-
-std::shared_ptr<Token> Lexer::expect(TokenType tok) {
-    return {};
+    return TokStream.peek();
 }
 
 void Lexer::consume() {
-
+    return TokStream.consume();
 }
 
 
@@ -68,7 +54,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 NumStr += input[i++];
             } while (isdigit(input[i]) || input[i] == '.');
 
-            TokStream.push_back(std::make_shared<Token>(Token(TokID, NumStr)));
+            TokStream.push_back(std::make_shared<Token>(Token(TokNum, NumStr)));
             continue;
         }
 

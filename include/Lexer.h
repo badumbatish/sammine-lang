@@ -65,6 +65,8 @@ enum TokenType {
     // TokID
     TokID, // Representing an identifier
 
+    // TokNum
+    TokNum, // Representing a number
     // TokIf
     TokIf, // if
     TokElse, // else
@@ -91,6 +93,30 @@ public:
     };
 };
 
+class TokenStream {
+    std::vector<std::shared_ptr<Token>> TokStream;
+    size_t i;
+public:
+    TokenStream() {
+        i = 0;
+        TokStream = {};
+    }
+
+    void push_back(const std::shared_ptr<Token>& token) {
+        TokStream.push_back(token);
+    }
+
+    void push_back(Token token) {
+        TokStream.push_back(std::make_shared<Token>(std::move(token)));
+    }
+
+    std::shared_ptr<Token> peek() {
+        return TokStream[i];
+    };
+    void consume() {
+        i = std::min(TokStream.size() - 1, i + 1);
+    }
+};
 //! A lexer for sammine-lang
 
 //! Not sure what to put in here
@@ -99,9 +125,9 @@ class Lexer {
 private:
     int column, row;
     bool hasError;
-    std::vector<std::shared_ptr<Token>> TokStream;
 
-    std::shared_ptr<Token> lex(const std::string& str);
+    TokenStream TokStream;
+
     Lexer() {
         column = 0;
         row = 0;
@@ -115,8 +141,6 @@ public:
     [[nodiscard]] bool hasErrors() const;
 
     std::shared_ptr<Token> peek();
-    std::shared_ptr<Token> peek_n();
-    std::shared_ptr<Token> expect(TokenType tok);
     void consume();
 
 };
