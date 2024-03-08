@@ -2,7 +2,8 @@
 // Created by jjasmine on 3/8/24.
 //
 
-/// \file
+//! \file test_lexer.cpp
+//! \brief The unit-test file for all things related to a lexer.
 #include <catch2/catch_test_macros.hpp>
 #include "Lexer.h"
 

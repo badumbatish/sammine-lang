@@ -4,6 +4,8 @@
 
 #ifndef SAMMINE_LANG_LEXER_H
 #define SAMMINE_LANG_LEXER_H
+//! \file Lexer.h
+//! \brief Houses declaration (and some small implementation) of TokenType, Token, TokenStream, Lexer
 
 #include <memory>
 #include <utility>
