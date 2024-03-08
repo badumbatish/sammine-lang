@@ -37,6 +37,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         i = handleInvalid(i, input);
     }
 
+    TokStream.push_back({TokEOF, ""});
 }
 
     size_t Lexer::handleNumber(size_t i, const std::string &input) {
