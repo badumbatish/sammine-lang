@@ -6,6 +6,7 @@
 #define SAMMINE_LANG_LEXER_H
 
 #include <memory>
+#include <utility>
 #include <vector>
 #include <map>
 #include "FileRAII.h"
@@ -76,10 +77,14 @@ enum TokenType {
 };
 
 
-struct Token {
+class Token {
     TokenType type;
     std::string lexeme;
     std::pair<int, int> position;
+public:
+    Token(TokenType type, std::string lexeme) : type(type), lexeme(std::move(lexeme)) {
+        position = {0,0};
+    };
 };
 
 //! A lexer for sammine-lang
@@ -101,7 +106,7 @@ private:
     }
 public:
     explicit Lexer(const std::string& input);
-    explicit Lexer(FileRAII file);
+    explicit Lexer(FileRAII file) : Lexer(file.readFileToString()) {}
 
     [[nodiscard]] bool hasErrors() const;
 
