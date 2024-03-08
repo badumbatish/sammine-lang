@@ -93,6 +93,10 @@ public:
     };
 };
 
+//! A helper class for Lexer to simplify the process of getting a token.
+
+//!
+//!
 class TokenStream {
     std::vector<std::shared_ptr<Token>> TokStream;
     size_t i;
