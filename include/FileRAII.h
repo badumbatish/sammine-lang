@@ -29,6 +29,10 @@ public:
         return is_opened;
     }
 
+    bool isEOF() const {
+        return !file || file.eof();
+    }
+
     // Function to read one character at a time
     char readChar() {
         char ch;
