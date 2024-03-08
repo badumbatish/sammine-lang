@@ -9,6 +9,10 @@
 #include <iostream>
 #include <sstream>
 
+//! A RAII-wrapper around C++ file type to use in the project for lexer and parser
+
+//!
+//!
 class FileRAII {
 public:
     // Constructor opens the file
