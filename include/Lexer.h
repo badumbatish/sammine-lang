@@ -110,8 +110,8 @@ public:
         TokStream.push_back(token);
     }
 
-    void push_back(Token token) {
-        TokStream.push_back(std::make_shared<Token>(std::move(token)));
+    void push_back(const Token& token) {
+        TokStream.push_back(std::make_shared<Token>(token));
     }
 
     std::shared_ptr<Token> peek() {

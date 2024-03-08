@@ -37,13 +37,13 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 IdentifierStr += input[i];
 
             if (IdentifierStr == "func")
-                TokStream.push_back(std::make_shared<Token>(Token(TokFunc, "")));
+                TokStream.push_back(Token(TokFunc, ""));
             else if (IdentifierStr == "if")
-                TokStream.push_back(std::make_shared<Token>(Token(TokIf, "")));
+                TokStream.push_back(Token(TokIf, ""));
             else if (IdentifierStr == "else")
-                TokStream.push_back(std::make_shared<Token>(Token(TokElse, "")));
+                TokStream.push_back(Token(TokElse, ""));
             else
-                TokStream.push_back(std::make_shared<Token>(Token(TokID, IdentifierStr)));
+                TokStream.push_back(Token(TokID, IdentifierStr));
 
             continue;
         }
@@ -54,7 +54,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 NumStr += input[i++];
             } while (isdigit(input[i]) || input[i] == '.');
 
-            TokStream.push_back(std::make_shared<Token>(Token(TokNum, NumStr)));
+            TokStream.push_back(Token(TokNum, NumStr));
             continue;
         }
 
