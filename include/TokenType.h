@@ -4,47 +4,48 @@
 
 #ifndef SAMMINE_LANG_TOKENTYPE_H
 #define SAMMINE_LANG_TOKENTYPE_H
-
+#include <string>
+#include <utility>
 ///
 /// Hi there this is a TokenType enum
 ///
 enum TokenType {
-   TokADD, // +
-   TokSUB, // -
-   TokMUL, // *
-   TokDIV, // /
-   TokMOD, // %
+    TokADD, // +
+    TokSUB, // -
+    TokMUL, // *
+    TokDIV, // /
+    TokMOD, // %
 
-   TokAddAssign, // +=
-   TokAddIncr,   // ++
-   TokSubAssign, // -=
-   TokSubDecr,   // --
-   TokMulAssign, // *=
-   TokDivAssign, // /=
+    TokAddAssign, // +=
+    TokAddIncr,   // ++
+    TokSubAssign, // -=
+    TokSubDecr,   // --
+    TokMulAssign, // *=
+    TokDivAssign, // /=
 
-   TokAND, // &&
-   TokOR,  // ||
-   TokXOR, // ^
-   TokSHL, // <<
-   TokSHR, // >>
+    TokAND, // &&
+    TokOR,  // ||
+    TokXOR, // ^
+    TokSHL, // <<
+    TokSHR, // >>
 
-   TokEQUAL,   // ==
-   TokLESS,    // <
-   TokGREATER, // >
-   TokASSIGN,  // =
-   TokNOT,     // !
+    TokEQUAL,   // ==
+    TokLESS,    // <
+    TokGREATER, // >
+    TokASSIGN,  // =
+    TokNOT,     // !
 
-   TokAndAssign,    // &=
-   TokOrAssign,     // !=
-   TokXorAssign,    // ^=
-   TokShlAssign,    // <<=
-   TokShrAssign,    // >>=
-   TokAndNotAssign, // &^=
+    TokAndAssign,    // &=
+    TokOrAssign,     // !=
+    TokXorAssign,    // ^=
+    TokShlAssign,    // <<=
+    TokShrAssign,    // >>=
+    TokAndNotAssign, // &^=
 
     //TokEXP AND FloorDiv
-   TokEXP,      // **
-   TokFloorDiv, // /_
-   TokCeilDiv,  // /^
+    TokEXP,      // **
+    TokFloorDiv, // /_
+    TokCeilDiv,  // /^
 
     //TokPAREN
     TokLeftParen, // (
@@ -66,10 +67,15 @@ enum TokenType {
     TokElse, // else
 
     //TokCOMMENTS
-   TokSingleComment, //
-   TokEOF,
-   TokINVALID,
+    TokSingleComment, //
+    TokEOF,
+    TokINVALID,
+};
 
 
+struct Token {
+    TokenType type;
+    std::string lexeme;
+    std::pair<int, int> position;
 };
 #endif //SAMMINE_LANG_TOKENTYPE_H
