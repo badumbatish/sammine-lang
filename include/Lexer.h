@@ -113,6 +113,9 @@ public:
         TokStream.push_back(std::make_shared<Token>(token));
     }
 
+    bool isEnd() {
+        return i == (TokStream.size() - 1);
+    }
     std::shared_ptr<Token> peek() {
         return TokStream[i];
     };
