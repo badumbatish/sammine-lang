@@ -7,8 +7,20 @@
 
 TEST_CASE( "hello (lex) world", "[Lexer]" ) {
     sammine_lang::Lexer lex("a 2");
-    REQUIRE( lex.peek().get()->type == sammine_lang::TokID );
-    lex.consume();
-    REQUIRE( lex.peek().get()->type == sammine_lang::TokNum );
-    lex.consume();
+
+    SECTION( "Test token type") {
+        REQUIRE( lex.peek().get()->type == sammine_lang::TokID );
+        lex.consume();
+
+        REQUIRE( lex.peek().get()->type == sammine_lang::TokNum );
+        lex.consume();
+    }
+
+    SECTION( "Test lexeme") {
+        REQUIRE( lex.peek().get()->lexeme == "a");
+        lex.consume();
+
+        REQUIRE( lex.peek().get()->lexeme == "2");
+        lex.consume();
+    }
 }
