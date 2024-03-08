@@ -76,12 +76,16 @@ enum TokenType {
     DISCARD, // A Discard signal
 };
 
+//! A class representing a token for sammine-lang, includes TokenType, lexeme and position pair as its members.
 
+//! .
+//! .
 class Token {
+public:
     TokenType type;
     std::string lexeme;
     std::pair<int, int> position;
-public:
+
     Token(TokenType type, std::string lexeme) : type(type), lexeme(std::move(lexeme)) {
         position = {0,0};
     };
