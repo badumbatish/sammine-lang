@@ -3,7 +3,7 @@
 //
 
 #include "Lexer.h"
-
+#include "functional"
 namespace sammine_lang {
 
 
@@ -20,23 +20,26 @@ std::shared_ptr<Token> Lexer::consume() {
 Lexer::Lexer(const std::string& input) : Lexer() {
     size_t i = 0;
     size_t i_0 = 0;
+
+    static std::vector<std::function<size_t (Lexer*, size_t, const std::string&)>> MatchFunctions = 
+        {   &Lexer::handleID,
+            &Lexer::handleNumber,
+            &Lexer::handleOperators,
+            &Lexer::handleUtility,
+            &Lexer::handleInvalid,
+    };
+
     while (i < input.length()) {
 
         i = handleSpaces(i, input);
 
-
-        i_0 = i;
-        i = handleID(i, input);
-        if (i != i_0) continue;
-
-        i_0 = i;
-        i = handleNumber(i, input);
-        if (i != i_0) continue;
-
-
-        i = handleInvalid(i, input);
+        for(auto fn : MatchFunctions) {
+            i_0 = i;
+            i = fn(this, i, input);
+            if (i != i_0) break;
+        }
+        
     }
-
     TokStream.push_back({TokEOF, ""});
 }
 
@@ -90,75 +93,78 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     }
 
     size_t Lexer::handleOperators(size_t i, const std::string &input) {
-        return 0;
+        size_t i_0 = 0;
+        i_0 = i;
+
+        return i;
     }
 
     size_t Lexer::handleOperatorsADD(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsSUB(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsMUL(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsDIV(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsMOD(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleUtility(size_t i, const std::string &input) {
-        return 0;
+        return i;
     }
 
     size_t Lexer::handleUtilityPAREN(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleUtilityCURLY(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleUtilityCOMMENT(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleUtilityCOMMA(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleUtilityDOT(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleUtilityCOLON(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsAND(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsOR(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsXOR(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsSHIFT(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     size_t Lexer::handleOperatorsCOMP(size_t i, const std::string &input) {
-      return size_t();
+      return i;
     }
 
     } // namespace sammine_lang
