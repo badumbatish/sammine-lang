@@ -115,18 +115,24 @@ public:
 class TokenStream {
     std::vector<std::shared_ptr<Token>> TokStream;
     size_t i;
+    bool error;
 public:
-    TokenStream() {
-        i = 0;
-        TokStream = {};
-    }
+    TokenStream() : i(0), TokStream(), error(false) {}
 
     void push_back(const std::shared_ptr<Token>& token) {
         TokStream.push_back(token);
+
+        if (token->type == TokINVALID) {
+            error = true;
+        }
+    }
+
+    bool hasErrors() {
+        return error;
     }
 
     void push_back(const Token& token) {
-        TokStream.push_back(std::make_shared<Token>(token));
+        this->push_back(std::make_shared<Token>(token));
     }
 
     bool isEnd() {
