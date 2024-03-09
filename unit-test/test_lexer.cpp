@@ -130,3 +130,47 @@ TEST_CASE ("Basic utility tokens", "[Lexer]") {
         REQUIRE(lex.consume().get()->type == sammine_lang::TokEOF);
     }
 }
+
+TEST_CASE( "Complex combination", "[Lexer]") {
+    SECTION( "Parenthesis and curly tokens") {
+        sammine_lang::Lexer lex("({}{)");
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokLeftParen);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokLeftCurly);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokRightCurly);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokLeftCurly);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokRightParen);
+    }
+
+    SECTION( "Identifier complex test") {
+        sammine_lang::Lexer lex("x2x2 xya2 func2 func");
+
+        auto token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokID);
+        REQUIRE(token->lexeme == "x2x2");
+
+        token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokID);
+        REQUIRE(token->lexeme == "xya2");
+
+        token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokID);
+        REQUIRE(token->lexeme == "func2");
+
+        token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokFunc);
+    }
+
+    SECTION("Identifer and operator") {
+        sammine_lang::Lexer lex("x+=2.3");
+        auto token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokID);
+        REQUIRE(token->lexeme == "x");
+
+        token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokAddAssign);
+
+        token = lex.consume().get();
+        REQUIRE(token->type == sammine_lang::TokNum);
+        REQUIRE(token->lexeme == "2.3");
+    }
+}
