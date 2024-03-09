@@ -142,6 +142,27 @@ private:
     size_t handleSpaces(size_t i, const std::string& input);
     size_t handleID(size_t i, const std::string& input);
     size_t handleInvalid(size_t i, const std::string& input);
+    size_t handleOperators(size_t i, const std::string& input);
+    size_t handleOperatorsADD(size_t i, const std::string& input);
+    size_t handleOperatorsSUB(size_t i, const std::string& input);
+    size_t handleOperatorsMUL(size_t i, const std::string& input);
+    size_t handleOperatorsDIV(size_t i, const std::string& input);
+    size_t handleOperatorsMOD(size_t i, const std::string& input);
+    size_t handleOperatorsAND(size_t i, const std::string& input);
+    size_t handleOperatorsOR(size_t i, const std::string& input);
+    size_t handleOperatorsXOR(size_t i, const std::string& input);
+    size_t handleOperatorsSHIFT(size_t i, const std::string& input);
+    size_t handleOperatorsCOMP(size_t i, const std::string& input);
+
+
+    size_t handleUtility(size_t i, const std::string& input);
+    size_t handleUtilityPAREN(size_t i, const std::string& input);
+    size_t handleUtilityCURLY(size_t i, const std::string& input);
+    size_t handleUtilityCOMMENT(size_t i, const std::string& input);
+    size_t handleUtilityCOMMA(size_t i, const std::string& input);
+    size_t handleUtilityDOT(size_t i, const std::string& input);
+    size_t handleUtilityCOLON(size_t i, const std::string& input);
+
 
 public:
     explicit Lexer(const std::string& input);

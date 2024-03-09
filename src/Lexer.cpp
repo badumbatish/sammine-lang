@@ -88,4 +88,12 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         return i;
     }
 
+    size_t Lexer::handleOperators(size_t i, const std::string &input) {
+        return 0;
+    }
+
+    size_t Lexer::handleUtility(size_t i, const std::string &input) {
+        return 0;
+    }
+
 }
