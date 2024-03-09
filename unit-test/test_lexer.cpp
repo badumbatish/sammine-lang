@@ -45,18 +45,10 @@ TEST_CASE("Basic operators", "[Lexer]") {
     }
 
     SECTION ("* related tokens") {
-        sammine_lang::Lexer lex("** *= -");
+        sammine_lang::Lexer lex("** *= *");
         REQUIRE(lex.consume().get()->type == sammine_lang::TokEXP);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokMulAssign);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokMUL);
-    }
-
-    SECTION ("/ related tokens") {
-        sammine_lang::Lexer lex("/= /_ /^ /");
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokDivAssign);
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokFloorDiv);
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokCeilDiv);
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokDIV);
     }
 
     SECTION ("/ related tokens") {
