@@ -7,10 +7,6 @@
 namespace sammine_lang {
 
 
-bool Lexer::hasErrors() const {
-    return false;
-}
-
 std::shared_ptr<Token> Lexer::peek() {
     return TokStream.peek();
 }

@@ -129,14 +129,12 @@ public:
 class Lexer {
 private:
     int column, row;
-    bool hasError;
 
     TokenStream TokStream;
 
     Lexer() {
         column = 0;
         row = 0;
-        hasError = false;
         TokStream = {};
     }
 
@@ -148,8 +146,6 @@ private:
 public:
     explicit Lexer(const std::string& input);
     explicit Lexer(FileRAII file) : Lexer(file.readFileToString()) {}
-
-    [[nodiscard]] bool hasErrors() const;
 
     std::shared_ptr<Token> peek();
     std::shared_ptr<Token> consume();
