@@ -1,7 +1,6 @@
 <h1>sammine-lang</h1>
 
-![How I pictured sammine-lang in my head](https://github.com/badumbatish/sammine-lang/img.png)
-
+![How I pictured sammine-lang in my head](https://github.com/badumbatish/sammine-lang/blob/main/img.png)
 How I pictured sammine-lang in my head
 
 
