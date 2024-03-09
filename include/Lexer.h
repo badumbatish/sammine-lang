@@ -81,6 +81,18 @@ enum TokenType {
     TokINVALID,
 };
 
+//! A class representing a location for sammine-lang, this is helpful in debugging
+
+//! .
+//! .
+class Location {
+    size_t line;
+
+public:
+    Location() : line(0) {}
+
+    void newLine() { line++; }
+};
 //! A class representing a token for sammine-lang, includes TokenType, lexeme and position pair as its members.
 
 //! .
@@ -89,12 +101,12 @@ class Token {
 public:
     TokenType type;
     std::string lexeme;
-    std::pair<int, int> position;
+    Location location;
 
-    Token(TokenType type, std::string lexeme) : type(type), lexeme(std::move(lexeme)) {
-        position = {0,0};
-    };
+    Token(TokenType type, std::string lexeme, Location location) : type(type), lexeme(std::move(lexeme)), location(location) {};
 };
+
+
 
 //! A helper class for Lexer to simplify the process of getting a token.
 
@@ -135,15 +147,10 @@ public:
 //! Not sure what to put in here
 class Lexer {
 private:
-    int column, row;
-
+    Location location;
     TokenStream TokStream;
 
-    Lexer() {
-        column = 0;
-        row = 0;
-        TokStream = {};
-    }
+    Lexer() : location(), TokStream() {}
 
     size_t handleNumber(size_t i, const std::string& input);
     size_t handleSpaces(size_t i, const std::string& input);
