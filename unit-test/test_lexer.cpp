@@ -28,20 +28,13 @@ TEST_CASE( "hello (lex) world", "[Lexer]" ) {
     }
 }
 
-TEST_CASE("operators", "[Lexer]") {
+TEST_CASE("Basic operators", "[Lexer]") {
 
     SECTION ("+ related tokens") {
         sammine_lang::Lexer lex("++ += +");
         REQUIRE(lex.consume().get()->type == sammine_lang::TokAddIncr);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokAddAssign);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokADD);
-    }
-
-    SECTION ("- related tokens") {
-        sammine_lang::Lexer lex("-- -= -");
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokSubDecr);
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokSubAssign);
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokSUB);
     }
 
     SECTION ("- related tokens") {
@@ -116,7 +109,7 @@ TEST_CASE("operators", "[Lexer]") {
 
 }
 
-TEST_CASE ("Utility tokens", "[Lexer]") {
+TEST_CASE ("Basic utility tokens", "[Lexer]") {
     SECTION( "Parenthesis and curly tokens") {
         sammine_lang::Lexer lex("( ) { }");
         REQUIRE(lex.consume().get()->type == sammine_lang::TokLeftParen);
