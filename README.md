@@ -1,5 +1,11 @@
 <h1>sammine-lang</h1>
 
+![How I pictured sammine-lang in my head](https://github.com/badumbatish/sammine-lang/img.png)
+
+How I pictured sammine-lang in my head
+
+
+
 The section is written with codes in triple quotes to utilize Clion run-in-markdown capabilities.
 
 <h2>Dev</h2>
