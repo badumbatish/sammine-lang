@@ -15,7 +15,7 @@ std::shared_ptr<Token> Lexer::peek() {
     return TokStream.peek();
 }
 
-void Lexer::consume() {
+std::shared_ptr<Token> Lexer::consume() {
     return TokStream.consume();
 }
 
@@ -38,6 +38,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         if (i != i_0) continue;
 
 
+        i = handleInvalid(i, input);
     }
 
 }
@@ -80,6 +81,13 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         while(isspace(input[i])) {
             i++;
         }
+
+        return i;
+    }
+
+    size_t Lexer::handleInvalid(size_t i, const std::string &input) {
+        TokStream.push_back(Token(TokINVALID, input.substr(i, 1)));
+        i++;
 
         return i;
     }

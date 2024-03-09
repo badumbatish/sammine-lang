@@ -10,7 +10,6 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include <map>
 #include "FileRAII.h"
 
 namespace sammine_lang {
@@ -29,7 +28,9 @@ enum TokenType {
     TokDivAssign, // /=
 
     TokAND, // &&
+    TokAndLogical, // &
     TokOR,  // ||
+    TokORLogical, // |
     TokXOR, // ^
     TokSHL, // <<
     TokSHR, // >>
@@ -40,12 +41,6 @@ enum TokenType {
     TokASSIGN,  // =
     TokNOT,     // !
 
-    TokAndAssign,    // &=
-    TokOrAssign,     // !=
-    TokXorAssign,    // ^=
-    TokShlAssign,    // <<=
-    TokShrAssign,    // >>=
-    TokAndNotAssign, // &^=
 
     //TokEXP AND FloorDiv
     TokEXP,      // **
@@ -60,7 +55,10 @@ enum TokenType {
 
     // Comma and colons and all that
     TokComma, // ,
-    TokColon, // .
+    TokDot, // .
+    TokColon, // :
+    TokDoubleColon, // ::
+
     //TokFunction
     TokFunc, // func
 
@@ -77,7 +75,6 @@ enum TokenType {
     TokSingleComment, //
     TokEOF,
     TokINVALID,
-    DISCARD, // A Discard signal
 };
 
 //! A class representing a token for sammine-lang, includes TokenType, lexeme and position pair as its members.
@@ -119,8 +116,10 @@ public:
     std::shared_ptr<Token> peek() {
         return TokStream[i];
     };
-    void consume() {
+    std::shared_ptr<Token> consume() {
+        auto token = peek();
         i = std::min(TokStream.size() - 1, i + 1);
+        return token;
     }
 };
 //! A lexer for sammine-lang
@@ -144,6 +143,8 @@ private:
     size_t handleNumber(size_t i, const std::string& input);
     size_t handleSpaces(size_t i, const std::string& input);
     size_t handleID(size_t i, const std::string& input);
+    size_t handleInvalid(size_t i, const std::string& input);
+
 public:
     explicit Lexer(const std::string& input);
     explicit Lexer(FileRAII file) : Lexer(file.readFileToString()) {}
@@ -151,7 +152,7 @@ public:
     [[nodiscard]] bool hasErrors() const;
 
     std::shared_ptr<Token> peek();
-    void consume();
+    std::shared_ptr<Token> consume();
 
 };
 }
