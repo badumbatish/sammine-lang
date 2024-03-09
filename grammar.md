@@ -1,5 +1,3 @@
-//! \file
-
 # Grammar.md: A markdown file describing the grammar 
 
 ## Conventions
