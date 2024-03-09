@@ -27,7 +27,7 @@ def main():
 
     # Step 4: Run tests
     os.chdir("build")
-    run_command("ctest")
+    run_command("ctest --output-on-failure")
     os.chdir("..")
 
 if __name__ == "__main__":
