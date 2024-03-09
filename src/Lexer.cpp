@@ -72,6 +72,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             } while (i < input.length() -1 && isdigit(input[i]));
 
             if (input[i] == '.') {
+                NumStr += input[i];
                 i++;
                 do {
                     NumStr += input[i++];
@@ -83,6 +84,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         } 
         else if (input[i] == '.') {
             int i_0 = i;
+            NumStr += input[i];
             i++;
 
             while (i < input.length() -1 && isdigit(input[i])) {
