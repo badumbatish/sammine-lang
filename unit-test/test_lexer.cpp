@@ -89,13 +89,15 @@ TEST_CASE("Basic operators", "[Lexer]") {
     }
 
     SECTION ("Basic comparision tokens") {
-        sammine_lang::Lexer lex("== < > = !");
+        sammine_lang::Lexer lex("== < > = ! <= >=");
 
         REQUIRE(lex.consume().get()->type == sammine_lang::TokEQUAL);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokLESS);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokGREATER);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokASSIGN);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokNOT);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokLessEqual);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokGreaterEqual);
     }
 
 
@@ -120,7 +122,7 @@ TEST_CASE ("Basic utility tokens", "[Lexer]") {
 
     SECTION(" Comments") {
         sammine_lang::Lexer lex("# ");
-        REQUIRE(lex.consume().get()->type == sammine_lang::TokSingleComment);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokEOF);
     }
 
     SECTION("EOF") {

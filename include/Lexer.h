@@ -37,7 +37,11 @@ enum TokenType {
 
     TokEQUAL,   // ==
     TokLESS,    // <
+    TokLessEqual,    // <=
+
     TokGREATER, // >
+    TokGreaterEqual,    // >=
+
     TokASSIGN,  // =
     TokNOT,     // !
 
@@ -154,8 +158,10 @@ private:
     size_t handleOperatorsAND(size_t i, const std::string& input);
     size_t handleOperatorsOR(size_t i, const std::string& input);
     size_t handleOperatorsXOR(size_t i, const std::string& input);
-    size_t handleOperatorsSHIFT(size_t i, const std::string& input);
-    size_t handleOperatorsCOMP(size_t i, const std::string& input);
+    size_t handleOperatorsCompLeft(size_t i, const std::string& input);
+    size_t handleOperatorsCompRight(size_t i, const std::string& input);
+    size_t handleOperatorsEqual(size_t i, const std::string& input);
+    size_t handleOperatorsNot(size_t i, const std::string& input);
 
 
     size_t handleUtility(size_t i, const std::string& input);
