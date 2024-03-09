@@ -12,6 +12,7 @@
 //! \file FileRAII.h
 //! \brief A RAII-wrapper around C++ file type to use in the project for lexer and parser
 
+//! \brief FileRAII class
 class FileRAII {
 public:
     // Constructor opens the file
