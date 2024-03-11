@@ -24,6 +24,8 @@ namespace sammine_lang {
         class VariableExprAST;
 
         class BlockAST;
+
+        class StmtAST;
         class ProgramAST : AstBase {
             std::vector<std::shared_ptr<DefinitionAST>> DefinitionVec;
         };
@@ -34,10 +36,23 @@ namespace sammine_lang {
             double Val;
         };
 
+        //! \brief A prototype to present func func_name(...) -> type;
+
+        //!
+        //!
         class PrototypeAST : AstBase {};
         class FuncDefAST : DefinitionAST {
             std::shared_ptr<PrototypeAST> Prototype;
             std::shared_ptr<BlockAST> Block;
         };
+
+        //! \brief To simulate a { } code block
+
+        //!
+        //!
+        class BlockAST : AstBase {
+            std::vector<StmtAST> Statements;
+        };
+
     }
 }
