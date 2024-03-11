@@ -20,9 +20,7 @@ namespace sammine_lang {
         };
 
         class AstBase : Visitable {
-        public:
-            virtual ~AstBase() = default;
-            virtual void accept_vis (ASTVisitor &vis) = 0;
+    
         };
     }
 }

@@ -7,7 +7,9 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 
 ## Grammar
-program ::= (var_def | func_def)* main_func_def?
+
+// 
+program ::= (var_def | func_def)*
 
 typed_var ::= ID : type
 type ::= ID
