@@ -7,19 +7,23 @@
 
 namespace sammine_lang {
     namespace AST {
+        class Visitable;
+        class ASTVisitor;
 
         class ASTVisitor {
-
+            virtual void visit(Visitable& vible) = 0;
         };
         class Visitable {
         public:
             virtual ~Visitable () = default;
             virtual void accept_vis (ASTVisitor &vis) = 0;
         };
-        class AstBase {
 
+        class AstBase : Visitable {
+        public:
+            virtual ~AstBase() = default;
+            virtual void accept_vis (ASTVisitor &vis) = 0;
         };
-
     }
 }
 #endif //SAMMINE_LANG_ASTBASE_H
