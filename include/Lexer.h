@@ -154,9 +154,11 @@ public:
 class Lexer {
 private:
     Location location;
-    TokenStream TokStream;
+    std::shared_ptr<TokenStream> TokStream;
 
-    Lexer() : location(), TokStream() {}
+    Lexer() : location()  {
+        TokStream = std::make_shared<TokenStream>();
+    }
 
     size_t handleNumber(size_t i, const std::string& input);
     size_t handleSpaces(size_t i, const std::string& input);
