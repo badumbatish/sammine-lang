@@ -10,8 +10,8 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 ## Grammar
 
-// 
-**program** ::= (**var_def** | **func_def**)*
+
+**program** ::= (**var_def** | **func_def**)* 
 
 **typed_var** ::= ID : **type**
 
@@ -26,50 +26,44 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 **block** ::= LeftCurly **stmt***  RightCurly
 
-**stmt** ::= **simple_stmt** SemiColon 
-| IF **expr** COLON **block** [ ELSE IF ]
+**stmt** ::= **simple_stmt** SemiColon <br>
+&emsp; | IF **expr** COLON **block** [ ELSE IF ]
 
-**simple_stmt** ::= **expr** | **assign_expr**
+**simple_stmt** ::= **expr** <br>
+&emsp; | **assign_expr**
 
 **return_expr** ::= RETURN **expr**
 
 **assign_expr** ::= **target** ASSIGN **expr**
 
-**expr** ::= **cexpr**
-    | NOT **expr**
-    | **expr** [AND | OR] **expr**
+**expr** ::= **cexpr** <br>
+&emsp; | NOT **expr** <br>
+&emsp; | **expr** [AND | OR] **expr**
 
-**cexpr** ::= ID 
-\
-| StringLiteral 
-\
-| LeftParen **expr** RightParen
-\
-| **member_expr** 
-\
-    | **member_expr** LeftParen (**expr** (COMMA **expr**)*)? RightParen
-\
-| **index_expr**
-\
-| ID LeftParen (**expr** (COMMA **expr**)*)? RightParen
-\
-| **cexpr** **bin_op** **cexpr**
-\
-| **un_op** **cexpr**
-\
-| **cexpr** **un_op**
+**cexpr** ::= ID <br>
+&emsp; | StringLiteral <br>
+&emsp; | LeftParen **expr** RightParen <br>
+&emsp; | **member_expr** <br>
+&emsp; | **member_expr** LeftParen (**expr** (COMMA **expr**)*)? RightParen <br>
+&emsp; | **index_expr** <br>
+&emsp; | ID LeftParen (**expr** (COMMA **expr**)*)? RightParen <br>
+&emsp; | **cexpr** **bin_op** **cexpr** <br>
+&emsp; | **un_op** **cexpr** <br>
+&emsp; | **cexpr** **un_op** <br>
 
-**member_expr** ::= **cexpr** DOT ID
+**member_expr** ::= **cexpr** DOT ID 
 
 **index_expr** ::= LeftBracket  **expr** RightBracket
 
-**bin_op** ::= + | - | * | / | % | += | -= 
-    | *= | /= | && | DoublePipe | SingularPipe |
-    | ^ | << | >> | == | < | > | <= | >= | ** |
-    | /_ | /^ 
+**bin_op** ::= + | - | * | / | % | += | -= <br>
+&emsp; | *= | /= | && | DoublePipe | SingularPipe | <br>
+&emsp; | ^ | << | >> | == | < | > | <= | >= | ** | <br>
+&emsp; | /_ | /^ 
 
 
-**target** ::= ID | **member_expr** | **index_expr** 
+**target** ::= ID <br>
+&emsp; | **member_expr** <br>
+&emsp; | **index_expr** 
 
 **un_op** ::= ++ | -- | -
 
