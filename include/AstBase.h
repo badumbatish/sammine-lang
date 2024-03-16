@@ -11,12 +11,13 @@ namespace sammine_lang {
         class ASTVisitor;
 
         class ASTVisitor {
-            virtual void visit(Visitable& vible) = 0;
+        public:
+            virtual void visit(Visitable* visitable) = 0;
         };
         class Visitable {
         public:
             virtual ~Visitable () = default;
-            virtual void accept_vis (ASTVisitor &vis) = 0;
+            virtual void accept_vis (ASTVisitor &visitor) { visitor.visit(this);};
         };
 
         class AstBase : Visitable {
