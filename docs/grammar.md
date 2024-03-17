@@ -67,5 +67,4 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 **un_op** ::= ++ | -- | -
 
-## Error recovery
 
