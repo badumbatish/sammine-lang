@@ -87,9 +87,9 @@ enum TokenType {
 //! .
 //! .
 class Location {
+public:
     size_t line;
     size_t column;
-public:
     Location() : line(0), column(0) {}
 
     inline void advance() { column++; }
