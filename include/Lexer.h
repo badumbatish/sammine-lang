@@ -60,6 +60,7 @@ enum TokenType {
     // Comma and colons and all that
     TokComma, // ,
     TokDot, // .
+    TokSemiColon, // ;
     TokColon, // :
     TokDoubleColon, // ::
 
@@ -184,7 +185,7 @@ private:
     size_t handleUtilityCURLY(size_t i, const std::string& input);
     size_t handleUtilityCOMMENT(size_t i, const std::string& input);
     size_t handleUtilityCOMMA(size_t i, const std::string& input);
-    size_t handleUtilityDOT(size_t i, const std::string& input);
+    size_t handleUtilitySemiColon(size_t i, const std::string& input);
     size_t handleUtilityCOLON(size_t i, const std::string& input);
 
 
