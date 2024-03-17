@@ -24,8 +24,8 @@ namespace sammine_lang {
         class VariableExprAST;
 
         class BlockAST;
-
         class StmtAST;
+
         class ProgramAST : AstBase {
         public:
             std::vector<std::shared_ptr<DefinitionAST>> DefinitionVec;
@@ -58,8 +58,18 @@ namespace sammine_lang {
         //!
         //!
         class BlockAST : AstBase {
-            std::vector<StmtAST> Statements;
+            std::vector<std::shared_ptr<StmtAST>> Statements;
         };
 
+        class StmtAST : AstBase {
+        };
+
+        class SimpleStmtAST : StmtAST {
+
+        };
+
+        class IfStmtAST : StmtAST {
+
+        };
     }
 }
