@@ -17,7 +17,7 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 **type** ::= ID
 
-**var_def** ::= **typed_var** ASSIGN **expr** SemiColon
+**var_def** ::= LET **typed_var** ASSIGN **expr** SemiColon
 
 **func_def** ::= FUNC ID LeftParen (**typed_var** (COMMA **typed_var**)*)?  RightParen -> **type** **block**
 
