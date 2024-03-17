@@ -16,7 +16,7 @@ namespace sammine_lang {
         auto ParseTypedVar() -> std::shared_ptr<AST::TypedVarAST>;
 
         // Parse expressions
-        auto ParseExpression() -> std::shared_ptr<AST::ExprAST>;
+        auto ParseExpr() -> std::shared_ptr<AST::ExprAST>;
         auto ParseBinaryExpr() -> std::shared_ptr<AST::BinaryExprAST>;
         auto ParseCallExpr() -> std::shared_ptr<AST::CallExprAST>;
         auto ParseNumberExpr() ->std::shared_ptr<AST::NumberExprAST>;
@@ -25,7 +25,14 @@ namespace sammine_lang {
         // Parse block
         auto ParseBlock() -> std::shared_ptr<AST::BlockAST>;
 
+        // Parse Statements
+        auto ParseStmt() -> std::shared_ptr<AST::StmtAST>;
+        auto ParseSimpleStmt() -> std::shared_ptr<AST::SimpleStmtAST>;
+        auto ParseIfStmtStmt() -> std::shared_ptr<AST::IfStmtAST>;
+
+
     public:
+        Parser(std::shared_ptr<TokenStream> tokStream) : tokStream(tokStream) {}
         auto Parse() -> std::shared_ptr<AST::ProgramAST>;
     };
 }

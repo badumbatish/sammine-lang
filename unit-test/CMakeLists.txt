@@ -10,7 +10,7 @@ FetchContent_MakeAvailable(Catch2)
 
 file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
-set(lib_source Lexer)
+set(lib_source Lexer Parser)
 
 add_executable(tests)
 target_sources(tests PRIVATE ${test_sources})
