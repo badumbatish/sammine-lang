@@ -27,6 +27,7 @@ namespace sammine_lang {
 
         class StmtAST;
         class ProgramAST : AstBase {
+        public:
             std::vector<std::shared_ptr<DefinitionAST>> DefinitionVec;
         };
 
@@ -34,6 +35,7 @@ namespace sammine_lang {
 
         //! \brief A variable definition: "var x = expression;"
         class VarDefAST : DefinitionAST {
+        public:
             std::shared_ptr<TypedVarAST> TypedVar;
             std::shared_ptr<ExprAST> Expression;
         };
@@ -46,6 +48,7 @@ namespace sammine_lang {
 
         //! \brief A Function Definition that has the prototype and definition in terms of a block
         class FuncDefAST : DefinitionAST {
+        public:
             std::shared_ptr<PrototypeAST> Prototype;
             std::shared_ptr<BlockAST> Block;
         };
