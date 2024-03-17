@@ -66,7 +66,7 @@ enum TokenType {
 
     //TokFunction
     TokFunc, // func
-
+    TokLet, // let
     // TokID
     TokID, // Representing an identifier
 

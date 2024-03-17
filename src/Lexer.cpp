@@ -6,7 +6,7 @@
 #include "functional"
 namespace sammine_lang {
 
-
+    using LexFunction = std::function<size_t (Lexer*, size_t, const std::string&)>;
 std::shared_ptr<Token> Lexer::peek() {
     return tokStream->peek();
 }
@@ -21,7 +21,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t i = 0;
     size_t i_0 = 0;
 
-    static std::vector<std::function<size_t (Lexer*, size_t, const std::string&)>> MatchFunctions = 
+    static std::vector<LexFunction> MatchFunctions =
         {   &Lexer::handleID,
             &Lexer::handleNumber,
             &Lexer::handleOperators,
@@ -57,6 +57,8 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 tokStream->push_back(Token(TokIf, "", location));
             else if (IdentifierStr == "else")
                 tokStream->push_back(Token(TokElse, "", location));
+            else if (IdentifierStr == "let")
+                tokStream->push_back(Token(TokLet, "", location));
             else
                 tokStream->push_back(Token(TokID, IdentifierStr, location));
         }
@@ -122,7 +124,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         size_t i_0 = 0;
         i_0 = i;
 
-        static std::vector<std::function<size_t (Lexer*, size_t, const std::string&)>> MatchFunctions = 
+        static std::vector<LexFunction> MatchFunctions =
             {   
                 &Lexer::handleOperatorsADD,
                 &Lexer::handleOperatorsSUB,
@@ -424,13 +426,14 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         size_t i_0 = 0;
         i_0 = i;
 
-        static std::vector<std::function<size_t (Lexer*, size_t, const std::string&)>> MatchFunctions = 
+        static std::vector<LexFunction> MatchFunctions =
             {   
                 &Lexer::handleUtilityPAREN,
                 &Lexer::handleUtilityCURLY,
                 &Lexer::handleUtilityCOMMENT,
                 &Lexer::handleUtilityCOMMA,
-                &Lexer::handleUtilityCOLON
+                &Lexer::handleUtilityCOLON,
+                &Lexer::handleUtilitySemiColon,
             };
 
         for(auto fn : MatchFunctions) {
@@ -506,5 +509,13 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             i--;
         }
         return i;        
+    }
+
+    size_t Lexer::handleUtilitySemiColon(size_t i, const std::string &input) {
+        if (input[i] == ';') {
+            tokStream->push_back(Token(TokSemiColon, "", location));
+            i++;
+        }
+        return i;
     }
 } // namespace sammine_lang
