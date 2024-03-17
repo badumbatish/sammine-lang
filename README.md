@@ -23,7 +23,9 @@ python3 docs.py
 ```
 to generate documentation for the project and have your default web browser open it.
 
-The default documentation folder for `docs.py` is named `generated_docs`.
+The default markdown-based documentation and all related is named `docs`
+
+The default generated documentation folder for `docs.py` is named `generated_docs`.
 
 Run
 ```bash
