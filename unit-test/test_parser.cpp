@@ -16,5 +16,20 @@ TEST_CASE("Empty program parsing", "[Parser]") {
     auto programAST = pg.Parse();
 
     REQUIRE(programAST->DefinitionVec.empty() == true);
+}
+
+TEST_CASE("Definition parsing", "[Parser]") {
+    auto lexer = sammine_lang::Lexer("let b : blablabla = 0;");
+    auto tokStreamPtr = lexer.getTokenStream();
+    auto pg = sammine_lang::Parser(tokStreamPtr);
+
+    auto programAST = pg.Parse();
+
+
+    REQUIRE(programAST->DefinitionVec.size() == 1);
+
+    auto varDef = dynamic_pointer_cast<sammine_lang::AST::VarDefAST>(programAST->DefinitionVec.front());
+    REQUIRE(varDef->TypedVar->name == "b");
+    REQUIRE(varDef->TypedVar->type == "blablabla");
 
 }

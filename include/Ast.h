@@ -34,10 +34,14 @@ namespace sammine_lang {
         class DefinitionAST : AstBase {};
 
         //! \brief A variable definition: "var x = expression;"
-        class VarDefAST : DefinitionAST {
+        class VarDefAST : public DefinitionAST {
         public:
             std::shared_ptr<TypedVarAST> TypedVar;
             std::shared_ptr<ExprAST> Expression;
+
+            VarDefAST (std::shared_ptr<TypedVarAST> TypedVar, std::shared_ptr<ExprAST> Expression) :
+                                            TypedVar(TypedVar),
+                                            Expression(Expression) {};
         };
 
         //! \brief A prototype to present "func func_name(...) -> type;"
@@ -47,7 +51,7 @@ namespace sammine_lang {
         class PrototypeAST : AstBase {};
 
         //! \brief A Function Definition that has the prototype and definition in terms of a block
-        class FuncDefAST : DefinitionAST {
+        class FuncDefAST : public DefinitionAST {
         public:
             std::shared_ptr<PrototypeAST> Prototype;
             std::shared_ptr<BlockAST> Block;
@@ -71,5 +75,21 @@ namespace sammine_lang {
         class IfStmtAST : StmtAST {
 
         };
+
+        class ExprAST : public AstBase {
+
+        };
+
+        class NumberExprAST : public ExprAST {
+        public:
+            std::string number;
+        };
+
+        class TypedVarAST : public AstBase {
+        public:
+            std::string name;
+            std::string type;
+        };
+
     }
 }
