@@ -88,11 +88,16 @@ enum TokenType {
 //! .
 class Location {
     size_t line;
-
+    size_t column;
 public:
-    Location() : line(0) {}
+    Location() : line(0), column(0) {}
 
-    void newLine() { line++; }
+    inline void advance() { column++; }
+    inline void devance() {
+        if (column == 0) return;
+        else column--;
+    }
+    inline void newLine() { line++; column = 0;}
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme and position pair as its members.
 
@@ -103,8 +108,8 @@ public:
     TokenType type;
     std::string lexeme;
     Location location;
-
-    Token(TokenType type, std::string lexeme, Location location) : type(type), lexeme(std::move(lexeme)), location(location) {};
+    Token(TokenType type, std::string lexeme, Location location) :
+            type(type), lexeme(std::move(lexeme)), location(location) {};
 };
 
 
@@ -198,6 +203,9 @@ public:
 
     std::shared_ptr<TokenStream> getTokenStream() { return tokStream; }
 
+    size_t advance(size_t i);
+
+    size_t devance(size_t i);
 };
 }
 #endif //SAMMINE_LANG_LEXER_H

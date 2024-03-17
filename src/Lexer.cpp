@@ -44,21 +44,26 @@ Lexer::Lexer(const std::string& input) : Lexer() {
 }
 
     size_t Lexer::handleID(size_t i, const std::string &input) {
+        auto startLocation = location;
         if (isalpha(input[i])) { // identifier: [a-zA-Z][a-zA-Z0-9]*
             std::string IdentifierStr;
             IdentifierStr = input[i];
 
-            while (isalnum(input[++i]))
+            i = advance(i);
+            while (isalnum(input[i])) {
                 IdentifierStr += input[i];
+                i = advance(i);
+            }
+
 
             if (IdentifierStr == "func")
-                tokStream->push_back(Token(TokFunc, "", location));
+                tokStream->push_back(Token(TokFunc, "",  location));
             else if (IdentifierStr == "if")
-                tokStream->push_back(Token(TokIf, "", location));
+                tokStream->push_back(Token(TokIf, "",  location));
             else if (IdentifierStr == "else")
                 tokStream->push_back(Token(TokElse, "", location));
             else if (IdentifierStr == "let")
-                tokStream->push_back(Token(TokLet, "", location));
+                tokStream->push_back(Token(TokLet, "",  location));
             else
                 tokStream->push_back(Token(TokID, IdentifierStr, location));
         }
@@ -68,16 +73,19 @@ Lexer::Lexer(const std::string& input) : Lexer() {
 
     size_t Lexer::handleNumber(size_t i, const std::string &input) {
         std::string NumStr = {};
+
         if (isdigit(input[i])) {
             do {
-                NumStr += input[i++];
+                NumStr += input[i];
+                i = advance(i);
             } while (i < input.length() -1 && isdigit(input[i]));
 
             if (input[i] == '.') {
                 NumStr += input[i];
-                i++;
+                i = advance(i);
                 do {
-                    NumStr += input[i++];
+                    NumStr += input[i];
+                    i = advance(i);
                 } while (i < input.length() -1 && isdigit(input[i]));
             }
 
@@ -87,10 +95,12 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         else if (input[i] == '.') {
             int i_0 = i;
             NumStr += input[i];
-            i++;
+            i = advance(i);
+
 
             while (i < input.length() -1 && isdigit(input[i])) {
-                NumStr += input[i++];
+                NumStr += input[i];
+                i = advance(i);
             }
 
             if (i-1 == i_0) {
@@ -107,7 +117,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             if (input[i] == '\n') {
                 location.newLine();
             }
-            i++;
+            i = advance(i);
         }
 
         return i;
@@ -115,8 +125,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
 
     size_t Lexer::handleInvalid(size_t i, const std::string &input) {
         tokStream->push_back(Token(TokINVALID, input.substr(i, 1), location));
-        i++;
-
+        i = advance(i);
         return i;
     }
 
@@ -155,25 +164,25 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '+' && input[i+1] != '=')) {
                 tokStream->push_back(Token(TokADD, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '+') {
                 tokStream->push_back(Token(TokAddIncr, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokAddAssign, "", location));
-                i++;
+                i = advance(i);
                 return i;
-            } 
-            
-            i--;
+            }
+
+            i = devance(i);
         }
         return i;
     }
@@ -184,25 +193,25 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '-' && input[i+1] != '=')) {
                 tokStream->push_back(Token(TokSUB, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '-') {
                 tokStream->push_back(Token(TokSubDecr, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokSubAssign, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -213,25 +222,25 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '*' && input[i+1] != '=')) {
                 tokStream->push_back(Token(TokMUL, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '*') {
                 tokStream->push_back(Token(TokEXP, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokMulAssign, "", location));
-                i++;
+                i = advance(i);
                 return i;
-            } 
+            }
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -242,31 +251,31 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '^' && input[i+1] != '_' && input[i+1] != '=')) {
                 tokStream->push_back(Token(TokDIV, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '^') {
                 tokStream->push_back(Token(TokCeilDiv, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '_') {
                 tokStream->push_back(Token(TokFloorDiv, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokDivAssign, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -274,7 +283,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleOperatorsMOD(size_t i, const std::string &input) {
         if (input[i] == '%') {
             tokStream->push_back(Token(TokMOD, "", location));
-            i++;
+            i = advance(i);
         }
         return i;
     }
@@ -285,19 +294,19 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '&')) {
                 tokStream->push_back(Token(TokAndLogical, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '&') {
                 tokStream->push_back(Token(TokAND, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -308,19 +317,19 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '|')) {
                 tokStream->push_back(Token(TokORLogical, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '|') {
                 tokStream->push_back(Token(TokOR, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
             
-            i--;
+            i = devance(i);
         }
         return i;    
     }
@@ -328,7 +337,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleOperatorsXOR(size_t i, const std::string &input) {
         if (input[i] == '^') {
             tokStream->push_back(Token(TokXOR, "", location));
-            i++;
+            i = advance(i);
         }
         return i;
     }
@@ -339,25 +348,25 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '<' && input[i+1] != '=')) {
                 tokStream->push_back(Token(TokLESS, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '<') {
                 tokStream->push_back(Token(TokSHL, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokLessEqual, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -368,25 +377,25 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '>' && input[i+1] != '=')) {
                 tokStream->push_back(Token(TokGREATER, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
+            i = advance(i);
 
             if (input[i] == '>') {
                 tokStream->push_back(Token(TokSHR, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokGreaterEqual, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -397,19 +406,18 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             // If the next index (i+1) is outside of input, we should return ADD
             if (input.length() - 1 < i + 1 || (input[i+1] != '=')) {
                 tokStream->push_back(Token(TokASSIGN, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
 
-            i++;
-
+            i = advance(i);
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokEQUAL, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;
     }
@@ -417,7 +425,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleOperatorsNot(size_t i, const std::string &input) {
         if (input[i] == '!') {
             tokStream->push_back(Token(TokNOT, "", location));
-            i++;
+            i = advance(i);
         }
         return i;
     }
@@ -448,12 +456,12 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleUtilityPAREN(size_t i, const std::string &input) {
         if (input[i] == '(') {
             tokStream->push_back(Token(TokLeftParen, "", location));
-            i++;
+            i = advance(i);
             return i;
         }
         if (input[i] == ')') {
             tokStream->push_back(Token(TokRightParen, "", location));
-            i++;
+            i = advance(i);
             return i;
         }
         return i;
@@ -462,12 +470,12 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleUtilityCURLY(size_t i, const std::string &input) {
         if (input[i] == '{') {
             tokStream->push_back(Token(TokLeftCurly, "", location));
-            i++;
+            i = advance(i);
             return i;
         }
         if (input[i] == '}') {
             tokStream->push_back(Token(TokRightCurly, "", location));
-            i++;
+            i = advance(i);
             return i;
         }
         return i;    
@@ -476,7 +484,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleUtilityCOMMENT(size_t i, const std::string &input) {
       if (input[i] == '#') {
         while (i < input.length() && input[i] != '\n' ) {
-            i++;
+            i = advance(i);
         }
 
       }
@@ -486,7 +494,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleUtilityCOMMA(size_t i, const std::string &input) {
         if (input[i] == ',') {
             tokStream->push_back(Token(TokComma, "", location));
-            i++;
+            i = advance(i);
         }
         return i;
     }
@@ -495,18 +503,18 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         if (input[i] == ':') {
             if (input.length() - 1 < i + 1 || (input[i+1] != ':')) {
                 tokStream->push_back(Token(TokColon, "", location));
-                i++;
+                i = advance(i);
                 return i;
             }
-            i++;
+            i = advance(i);
 
             if (input[i] == ':') {
                 tokStream->push_back(Token(TokDoubleColon, "", location));
-                i++;
+                i = advance(i);
                 return i;
             } 
 
-            i--;
+            i = devance(i);
         }
         return i;        
     }
@@ -514,8 +522,20 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     size_t Lexer::handleUtilitySemiColon(size_t i, const std::string &input) {
         if (input[i] == ';') {
             tokStream->push_back(Token(TokSemiColon, "", location));
-            i++;
+            i = advance(i);
         }
+        return i;
+    }
+
+    size_t Lexer::advance(size_t i) {
+        i++;
+        location.advance();
+        return i;
+    }
+
+    size_t Lexer::devance(size_t i) {
+        i--;
+        location.devance();
         return i;
     }
 } // namespace sammine_lang
