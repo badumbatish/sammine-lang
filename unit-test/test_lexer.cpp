@@ -153,7 +153,7 @@ TEST_CASE( "Complex combination", "[Lexer]") {
     }
 
     SECTION( "Identifier complex test") {
-        sammine_lang::Lexer lex("x2x2 xya2 func2 func");
+        sammine_lang::Lexer lex("x2x2 xya2 func2 fn");
 
         auto token = lex.consume().get();
         REQUIRE(token->type == sammine_lang::TokID);
