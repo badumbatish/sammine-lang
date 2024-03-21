@@ -18,7 +18,7 @@ TEST_CASE("Empty program parsing", "[Parser]") {
     REQUIRE(programAST->DefinitionVec.empty() == true);
 }
 
-TEST_CASE("Definition parsing", "[Parser]") {
+TEST_CASE("Variable definition parsing", "[Parser]") {
 
     SECTION("Variable definition with number") {
         auto lexer = sammine_lang::Lexer("let b : blablabla = 0;");
@@ -80,5 +80,7 @@ TEST_CASE("Definition parsing", "[Parser]") {
         REQUIRE(varDef->TypedVar->name == "b");
         REQUIRE(varDef->TypedVar->type == "blablabla");
     }
+
+
 
 }
