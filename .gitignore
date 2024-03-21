@@ -46,3 +46,4 @@ latex/
 # C-lion
 .idea/
 .DS_Store
+.vscode/settings.json
