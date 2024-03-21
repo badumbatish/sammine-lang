@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#ifndef SAMMINE_LANG_AST_H
+#define SAMMINE_LANG_AST_H
 namespace sammine_lang {
     namespace AST {
 
@@ -93,3 +95,5 @@ namespace sammine_lang {
 
     }
 }
+
+#endif //SAMMINE_LANG_AST_H
