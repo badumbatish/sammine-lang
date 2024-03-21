@@ -33,7 +33,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
         REQUIRE(programAST->DefinitionVec.size() == 1);
 
-        auto varDef = dynamic_pointer_cast<sammine_lang::AST::VarDefAST>(programAST->DefinitionVec.front());
+        auto varDef = static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
         REQUIRE(varDef->TypedVar->name == "b");
         REQUIRE(varDef->TypedVar->type == "blablabla");
     }
@@ -48,7 +48,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
         REQUIRE(programAST->DefinitionVec.size() == 1);
 
-        auto varDef = dynamic_pointer_cast<sammine_lang::AST::VarDefAST>(programAST->DefinitionVec.front());
+        auto varDef = static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
         REQUIRE(varDef->TypedVar->name == "b");
         REQUIRE(varDef->TypedVar->type == "blablabla");
     }
@@ -63,7 +63,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
         REQUIRE(programAST->DefinitionVec.size() == 1);
 
-        auto varDef = dynamic_pointer_cast<sammine_lang::AST::VarDefAST>(programAST->DefinitionVec.front());
+        auto varDef = static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
         REQUIRE(varDef->TypedVar->name == "b");
         REQUIRE(varDef->TypedVar->type == "blablabla");
     }
@@ -79,7 +79,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
         REQUIRE(programAST->DefinitionVec.size() == 1);
 
-        auto varDef = dynamic_pointer_cast<sammine_lang::AST::VarDefAST>(programAST->DefinitionVec.front());
+        auto varDef = static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
         REQUIRE(varDef->TypedVar->name == "b");
         REQUIRE(varDef->TypedVar->type == "blablabla");
     }

@@ -3,23 +3,23 @@
 #include "Parser.h"
 
 namespace sammine_lang {
-    auto Parser::Parse() -> std::shared_ptr<AST::ProgramAST> {
+    auto Parser::Parse() -> std::unique_ptr<AST::ProgramAST> {
         return ParseProgram();
     }
 
-    auto Parser::ParseProgram() -> std::shared_ptr<AST::ProgramAST> {
-        auto programAST = std::make_shared<AST::ProgramAST>();
+    auto Parser::ParseProgram() -> std::unique_ptr<AST::ProgramAST> {
+        auto programAST = std::make_unique<AST::ProgramAST>();
         while (!tokStream->isEnd()) {
             auto def = ParseDefinition();
             if (def == nullptr) return nullptr;
-            programAST->DefinitionVec.push_back(def);
+            programAST->DefinitionVec.push_back(std::move(def));
         }
 
         return programAST;
     }
 
-    auto Parser::ParseDefinition() -> std::shared_ptr<AST::DefinitionAST> {
-        using ParseFunction = std::function<std::shared_ptr<AST::DefinitionAST> (Parser*)>;
+    auto Parser::ParseDefinition() -> std::unique_ptr<AST::DefinitionAST> {
+        using ParseFunction = std::function<std::unique_ptr<AST::DefinitionAST> (Parser*)>;
         std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
                 {&Parser::ParseFuncDef, false},
                 {&Parser::ParseVarDef, false},
@@ -32,38 +32,38 @@ namespace sammine_lang {
         return nullptr;
     }
 
-    auto Parser::ParseFuncDef() -> std::shared_ptr<AST::DefinitionAST> {
+    auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto prototype = ParsePrototype();
         auto block = ParseBlock();
         return {};
     }
 
-    auto Parser::ParseVarDef() -> std::shared_ptr<AST::DefinitionAST> {
+    auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto let = expect(TokenType::TokLet);
         auto typedVar = ParseTypedVar();
         auto assign = expect(TokenType::TokASSIGN);
         auto expr = ParseExpr();
         auto semicolon = expect(TokenType::TokSemiColon);
 
-        auto varDef = std::make_shared<AST::VarDefAST>(typedVar, expr);
+        auto varDef = std::make_unique<AST::VarDefAST>(std::move(typedVar), std::move(expr));
 
         return varDef;
     }
 
-    auto Parser::ParseTypedVar() -> std::shared_ptr<AST::TypedVarAST> {
+    auto Parser::ParseTypedVar() -> std::unique_ptr<AST::TypedVarAST> {
         auto name = expect(TokenType::TokID);
         auto colon = expect(TokenType::TokColon);
         auto type = expect(TokenType::TokID);
 
-        auto typedVar = std::make_shared<AST::TypedVarAST>();
+        auto typedVar = std::make_unique<AST::TypedVarAST>();
 
         typedVar->name = name->lexeme;
         typedVar->type = type->lexeme;
         return typedVar;
     }
 
-    auto Parser::ParseExpr() -> std::shared_ptr<AST::ExprAST> {
-        using ParseFunction = std::function<std::shared_ptr<AST::ExprAST> (Parser*)>;
+    auto Parser::ParseExpr() -> std::unique_ptr<AST::ExprAST> {
+        using ParseFunction = std::function<std::unique_ptr<AST::ExprAST> (Parser*)>;
         std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
                 {&Parser::ParseBinaryExpr, false},
                 {&Parser::ParseCallExpr, false},
@@ -78,16 +78,16 @@ namespace sammine_lang {
         return nullptr;
     }
 
-    auto Parser::ParseBinaryExpr() -> std::shared_ptr<AST::ExprAST> {
+    auto Parser::ParseBinaryExpr() -> std::unique_ptr<AST::ExprAST> {
         return {};
     }
 
-    auto Parser::ParseCallExpr() -> std::shared_ptr<AST::ExprAST> {
+    auto Parser::ParseCallExpr() -> std::unique_ptr<AST::ExprAST> {
         return {};
     }
 
-    auto Parser::ParseNumberExpr() -> std::shared_ptr<AST::ExprAST> {
-        auto numberExpr = std::make_shared<AST::NumberExprAST>();
+    auto Parser::ParseNumberExpr() -> std::unique_ptr<AST::ExprAST> {
+        auto numberExpr = std::make_unique<AST::NumberExprAST>();
 
         auto numberToken = expect(TokenType::TokNum);
 
@@ -100,11 +100,11 @@ namespace sammine_lang {
         return numberExpr;
     }
 
-    auto Parser::ParseVariableExpr() -> std::shared_ptr<AST::ExprAST> {
+    auto Parser::ParseVariableExpr() -> std::unique_ptr<AST::ExprAST> {
         return {};
     }
 
-    auto Parser::ParsePrototype() -> std::shared_ptr<AST::PrototypeAST> {
+    auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
         auto fn = expect(TokFunc);
         auto id = expect(TokID);
         auto leftParen = expect(TokLeftParen);
@@ -113,19 +113,19 @@ namespace sammine_lang {
         return {};
     }
 
-    auto Parser::ParseBlock() -> std::shared_ptr<AST::BlockAST> {
+    auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
         return {};
     }
 
-    auto Parser::ParseStmt() -> std::shared_ptr<AST::StmtAST> {
+    auto Parser::ParseStmt() -> std::unique_ptr<AST::StmtAST> {
         return {};
     }
 
-    auto Parser::ParseSimpleStmt() -> std::shared_ptr<AST::SimpleStmtAST> {
+    auto Parser::ParseSimpleStmt() -> std::unique_ptr<AST::SimpleStmtAST> {
         return {};
     }
 
-    auto Parser::ParseIfStmtStmt() -> std::shared_ptr<AST::IfStmtAST> {
+    auto Parser::ParseIfStmtStmt() -> std::unique_ptr<AST::IfStmtAST> {
         return {};
     }
 

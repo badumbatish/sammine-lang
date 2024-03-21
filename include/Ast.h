@@ -30,7 +30,7 @@ namespace sammine_lang {
 
         class ProgramAST : AstBase {
         public:
-            std::vector<std::shared_ptr<DefinitionAST>> DefinitionVec;
+            std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
         };
 
         class DefinitionAST : AstBase {};
@@ -38,12 +38,12 @@ namespace sammine_lang {
         //! \brief A variable definition: "var x = expression;"
         class VarDefAST : public DefinitionAST {
         public:
-            std::shared_ptr<TypedVarAST> TypedVar;
-            std::shared_ptr<ExprAST> Expression;
+            std::unique_ptr<TypedVarAST> TypedVar;
+            std::unique_ptr<ExprAST> Expression;
 
-            VarDefAST (std::shared_ptr<TypedVarAST> TypedVar, std::shared_ptr<ExprAST> Expression) :
-                                            TypedVar(TypedVar),
-                                            Expression(Expression) {};
+            VarDefAST (std::unique_ptr<TypedVarAST> TypedVar, std::unique_ptr<ExprAST> Expression) :
+                                            TypedVar(std::move(TypedVar)),
+                                            Expression(std::move(Expression)) {};
         };
 
         //! \brief A prototype to present "func func_name(...) -> type;"
@@ -55,8 +55,8 @@ namespace sammine_lang {
         //! \brief A Function Definition that has the prototype and definition in terms of a block
         class FuncDefAST : public DefinitionAST {
         public:
-            std::shared_ptr<PrototypeAST> Prototype;
-            std::shared_ptr<BlockAST> Block;
+            std::unique_ptr<PrototypeAST> Prototype;
+            std::unique_ptr<BlockAST> Block;
         };
 
         //! \brief An AST to simulate a { } code block
@@ -64,7 +64,7 @@ namespace sammine_lang {
         //!
         //!
         class BlockAST : AstBase {
-            std::vector<std::shared_ptr<StmtAST>> Statements;
+            std::vector<std::unique_ptr<StmtAST>> Statements;
         };
 
         class StmtAST : AstBase {
