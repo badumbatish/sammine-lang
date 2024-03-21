@@ -65,6 +65,7 @@ enum TokenType {
     TokDoubleColon, // ::
 
     //TokFunction
+    TokMain,
     TokFunc, // fn
     TokLet, // let
     // TokID
