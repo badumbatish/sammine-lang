@@ -196,7 +196,7 @@ private:
 
 public:
     explicit Lexer(const std::string& input);
-    explicit Lexer(FileRAII file) : Lexer(file.readFileToString()) {}
+    explicit Lexer(FileRAII& file) : Lexer(file.readFileToString()) {}
 
     std::shared_ptr<Token> peek();
     std::shared_ptr<Token> consume();
