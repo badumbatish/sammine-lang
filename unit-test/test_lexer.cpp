@@ -104,10 +104,12 @@ TEST_CASE("Basic operators", "[Lexer]") {
 }
 TEST_CASE ("Identifiers and keywords", "[Lexer]") {
     SECTION (" Keywords ") {
-        sammine_lang::Lexer lex("let if else");
+        sammine_lang::Lexer lex("let if else main fn");
         REQUIRE(lex.consume().get()->type == sammine_lang::TokLet);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokIf);
         REQUIRE(lex.consume().get()->type == sammine_lang::TokElse);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokMain);
+        REQUIRE(lex.consume().get()->type == sammine_lang::TokFunc);
 
     }
 }

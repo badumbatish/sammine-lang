@@ -66,7 +66,6 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 tokStream->push_back(Token(TokLet, "",  location));
             else if (IdentifierStr == "main")
                 tokStream->push_back(Token(TokMain, "",  location));
-
             else
                 tokStream->push_back(Token(TokID, IdentifierStr, location));
         }
