@@ -6,7 +6,10 @@
 //! \brief The unit-test file for all things related to a parser.
 #include <catch2/catch_test_macros.hpp>
 #include "Parser.h"
+#include "FileRAII.h"
 #include "Lexer.h"
+
+using namespace sammine_lang;
 
 TEST_CASE("Empty program parsing", "[Parser]") {
     auto lexer = sammine_lang::Lexer("");
@@ -83,4 +86,16 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
 
 
+}
+
+TEST_CASE("Function declaration parsing", "[Parser]") {
+    // func f(x:f64) -> f64 {
+    //  return 0;
+    //}
+
+    auto fl = FileRAII("parser/fn_def_1.txt");
+    auto pg = Parser(Lexer(fl).getTokenStream());
+
+    auto programAST = pg.Parse();
+    REQUIRE(programAST->DefinitionVec.size() == 1);
 }
