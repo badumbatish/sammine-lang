@@ -56,7 +56,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             }
 
 
-            if (IdentifierStr == "func")
+            if (IdentifierStr == "fn")
                 tokStream->push_back(Token(TokFunc, "",  location));
             else if (IdentifierStr == "if")
                 tokStream->push_back(Token(TokIf, "",  location));
