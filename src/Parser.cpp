@@ -33,6 +33,8 @@ namespace sammine_lang {
     }
 
     auto Parser::ParseFuncDef() -> std::shared_ptr<AST::DefinitionAST> {
+        auto prototype = ParsePrototype();
+        auto block = ParseBlock();
         return {};
     }
 
@@ -102,6 +104,15 @@ namespace sammine_lang {
         return {};
     }
 
+    auto Parser::ParsePrototype() -> std::shared_ptr<AST::PrototypeAST> {
+        auto fn = expect(TokFunc);
+        auto id = expect(TokID);
+        auto leftParen = expect(TokLeftParen);
+        auto rightParen = expect(TokRightParen);
+        auto arrow = expect(TokArrow);
+        return {};
+    }
+
     auto Parser::ParseBlock() -> std::shared_ptr<AST::BlockAST> {
         return {};
     }
@@ -117,6 +128,7 @@ namespace sammine_lang {
     auto Parser::ParseIfStmtStmt() -> std::shared_ptr<AST::IfStmtAST> {
         return {};
     }
+
 
     auto Parser::expect(TokenType tokType) -> std::shared_ptr<Token> {
         if (!tokStream->isEnd() && tokStream->peek()->type == tokType) {

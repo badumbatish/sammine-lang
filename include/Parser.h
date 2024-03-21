@@ -9,6 +9,7 @@ namespace sammine_lang {
 
         // Parse definition
         auto ParseDefinition() -> std::shared_ptr<AST::DefinitionAST>;
+        auto ParsePrototype() -> std::shared_ptr<AST::PrototypeAST>;
         auto ParseFuncDef() -> std::shared_ptr<AST::DefinitionAST>;
         auto ParseVarDef() -> std::shared_ptr<AST::DefinitionAST>;
 
