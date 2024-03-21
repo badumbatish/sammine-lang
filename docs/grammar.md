@@ -19,7 +19,7 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 **var_def** ::= LET **typed_var** ASSIGN **expr** SemiColon
 
-**func_def** ::= FUNC ID LeftParen (**typed_var** (COMMA **typed_var**)*)?  RightParen -> **type** **block**
+**func_def** ::= FN ID LeftParen (**typed_var** (COMMA **typed_var**)*)?  RightParen -> **type** **block**
 
 
 **def_block** ::= LeftCurly **stmt*** **return_expr** RightCurly
