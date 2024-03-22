@@ -8,7 +8,7 @@
 #include <map>
 
 //! \file Lexer.h
-//! \brief Houses declaration (and some small implementation) of TokenType, Token, TokenStream, Lexer
+//! \brief Houses declaration (and some small implementation) of TokenType, TokenMap, Token, TokenStream, Lexer
 
 #include <memory>
 #include <utility>

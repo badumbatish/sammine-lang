@@ -42,8 +42,13 @@ namespace sammine_lang {
         return std::make_unique<AST::FuncDefAST>(std::move(prototype), std::move(block));
     }
 
+    //! Parsing implementation for a variable decl/def
+
+    //! Accepts a let, continue parsing inside and (enable error reporting if possible).
+    //! If a `let` is not found then return a nullptr.
     auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto let = expect(TokenType::TokLet);
+        // TODO: Add stopping nullpr checker
         auto typedVar = ParseTypedVar();
         auto assign = expect(TokenType::TokASSIGN);
         auto expr = ParseExpr();
