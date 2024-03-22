@@ -4,7 +4,6 @@ namespace sammine_lang {
     class Parser {
     private:
         std::shared_ptr<TokenStream> tokStream;
-
         auto ParseProgram() -> std::unique_ptr<AST::ProgramAST>;
 
         // Parse definition
@@ -36,7 +35,9 @@ namespace sammine_lang {
         auto ParseParams() -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>;
         auto expect(TokenType tokType) -> std::shared_ptr<Token>;
     public:
+        std::vector<std::string> error_msgs;
         Parser(std::shared_ptr<TokenStream> tokStream) : tokStream(tokStream) {}
         auto Parse() -> std::unique_ptr<AST::ProgramAST>;
+
     };
 }

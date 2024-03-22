@@ -2,6 +2,7 @@
 #include <functional>
 #include "Parser.h"
 
+
 namespace sammine_lang {
     auto Parser::Parse() -> std::unique_ptr<AST::ProgramAST> {
         return ParseProgram();
@@ -34,7 +35,10 @@ namespace sammine_lang {
 
     auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto prototype = ParsePrototype();
+        if (prototype == nullptr) return nullptr;
+
         auto block = ParseBlock();
+        if (block == nullptr) return nullptr;
         return std::make_unique<AST::FuncDefAST>(std::move(prototype), std::move(block));
     }
 
@@ -162,7 +166,8 @@ namespace sammine_lang {
         return vec;
     }
     auto Parser::expect(TokenType tokType) -> std::shared_ptr<Token> {
-        if (!tokStream->isEnd() && tokStream->peek()->type == tokType) {
+        auto currentToken = tokStream->peek();
+        if (!tokStream->isEnd() && currentToken->type == tokType) {
             return tokStream->consume();
         } else {
             return nullptr;
