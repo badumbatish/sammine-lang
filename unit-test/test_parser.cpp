@@ -100,4 +100,18 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
 
     auto programAST = pg.Parse();
     REQUIRE(programAST->DefinitionVec.size() == 1);
+
+
+    auto func_def = std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST*>(programAST->DefinitionVec.front().release()));
+
+    // Check if downcast is valid.
+    REQUIRE(func_def != nullptr);
+
+    REQUIRE(func_def->Prototype->returnType == "f64");
+    REQUIRE(func_def->Prototype->functionName == "f");
+    REQUIRE(func_def->Prototype->parameterVectors->size() == 1);
+    REQUIRE(func_def->Block->Statements.empty());
+    REQUIRE(func_def->Block->returnStmt != nullptr);
+
+
 }
