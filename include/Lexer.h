@@ -65,6 +65,7 @@ enum TokenType {
     TokDoubleColon, // ::
 
     //TokFunction
+    TokReturn,
     TokMain,
     TokFunc, // fn
     TokArrow, // ->
