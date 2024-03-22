@@ -22,7 +22,7 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 **func_def** ::= FN ID LeftParen (**typed_var** (COMMA **typed_var**)*)?  RightParen -> **type** **block**
 
 
-**def_block** ::= LeftCurly **stmt*** **return_expr** RightCurly
+**def_block** ::= LeftCurly **stmt*** **return_stmt** RightCurly
 
 **block** ::= LeftCurly **stmt***  RightCurly
 
@@ -32,7 +32,7 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 **simple_stmt** ::= **expr** <br>
 &emsp; | **assign_expr**
 
-**return_expr** ::= RETURN **expr**
+**return_stmt** ::= RETURN **expr** SemiColon
 
 **assign_expr** ::= **target** ASSIGN **expr**
 
