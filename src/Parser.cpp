@@ -125,10 +125,14 @@ namespace sammine_lang {
     }
 
     auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
+
+        auto blockAST = std::make_unique<AST::BlockAST>();
         auto leftCurly = expect(TokLeftCurly);
         auto returnStmt = ParseReturnStmt();
         auto rightCurly = expect(TokRightCurly);
-        return {};
+
+        blockAST->returnStmt = std::move(returnStmt);
+        return blockAST;
     }
 
     auto Parser::ParseReturnStmt() -> std::unique_ptr<AST::ExprAST> {

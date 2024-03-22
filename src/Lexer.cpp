@@ -40,7 +40,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         }
         
     }
-    tokStream->push_back({TokEOF, "end of line", location});
+    tokStream->push_back({TokEOF, "end of file", location});
 }
 
     size_t Lexer::handleID(size_t i, const std::string &input) {

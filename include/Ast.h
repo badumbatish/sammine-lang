@@ -78,7 +78,9 @@ namespace sammine_lang {
         //!
         //!
         class BlockAST : AstBase {
+        public:
             std::vector<std::unique_ptr<StmtAST>> Statements;
+            std::unique_ptr<ExprAST> returnStmt;
         };
 
         class StmtAST : AstBase {

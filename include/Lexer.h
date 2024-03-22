@@ -224,6 +224,15 @@ public:
         i = std::min(TokStream.size() - 1, i + 1);
         return token;
     }
+
+    Location currentLocation() {
+        if (!TokStream.empty()) {
+            return TokStream.front()->location;
+        } else {
+            return {};
+        }
+        return {};
+    }
 };
 //! A lexer for sammine-lang
 
