@@ -4,6 +4,9 @@
 
 #ifndef SAMMINE_LANG_LEXER_H
 #define SAMMINE_LANG_LEXER_H
+
+#include <map>
+
 //! \file Lexer.h
 //! \brief Houses declaration (and some small implementation) of TokenType, Token, TokenStream, Lexer
 
@@ -83,6 +86,72 @@ enum TokenType {
     TokSingleComment, //
     TokEOF,
     TokINVALID,
+};
+
+static const std::map<TokenType, std::string> TokenMap = {
+        { TokADD, "+"},
+        { TokSUB, "-" },
+        {TokMUL, "*"},
+        {TokDIV, "/"},
+        {TokMOD, "%"},
+
+        {TokAddAssign, "+="},
+        {TokAddIncr, "++"},
+        {TokSubAssign, "-="},
+        {TokSubDecr, "--"},
+        {TokMulAssign, "*="},
+        {TokDivAssign, "/="},
+
+        {TokAND, "&&"},
+        {TokAndLogical, "&"},
+        {TokOR, "||"},
+        {TokORLogical, "|"},
+        {TokXOR, "^"},
+        {TokSHL, ">>"},
+        {TokSHR, "<<"},
+        {TokEQUAL, "=="},
+        {TokLESS, "<"},
+        {TokLessEqual, "<="},
+
+        {TokGREATER, ">"},
+        {TokGreaterEqual, ">="},
+
+        {TokASSIGN, "="},
+        {TokNOT, "!"},
+        {TokEXP, "**"},
+        {TokFloorDiv, "/_"},
+        {TokCeilDiv, "/^"},
+
+        {TokLeftParen, "("},
+        {TokRightParen, ")"},
+        {TokLeftCurly, "{"},
+        {TokRightCurly, "}"},
+
+
+        {TokComma, ","},
+        {TokDot, "."},
+        {TokSemiColon, ";"},
+        {TokColon, ":"},
+        {TokDoubleColon, "::"},
+
+        //TokFunction
+        {TokReturn, "return"},
+        {TokMain, "main"},
+        {TokFunc, "fn"},
+        {TokArrow, "->"},
+        {TokLet, "let"},
+        {TokID, "identifier"},
+
+
+        {TokNum, "number"},
+
+        {TokIf, "if"},
+        {TokElse, "else"},
+
+        //TokCOMMENTS
+        {TokSingleComment, "#"},
+        {TokEOF, "EOF" },
+        {TokINVALID, "UNRECOGNIZED"},
 };
 
 //! A class representing a location for sammine-lang, this is helpful in debugging
