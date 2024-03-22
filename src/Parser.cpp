@@ -115,6 +115,8 @@ namespace sammine_lang {
 
     auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
         auto fn = expect(TokFunc);
+
+        // TODO: Please add error reporting after this point
         auto id = expect(TokID);
 
         auto params = ParseParams();
@@ -128,6 +130,8 @@ namespace sammine_lang {
 
         auto blockAST = std::make_unique<AST::BlockAST>();
         auto leftCurly = expect(TokLeftCurly);
+        // TODO : Cannot just parse a return stmt.
+        // TODO : We need to also parse other statement as well
         auto returnStmt = ParseReturnStmt();
         auto rightCurly = expect(TokRightCurly);
 
@@ -179,6 +183,7 @@ namespace sammine_lang {
         if (!tokStream->isEnd() && currentToken->type == tokType) {
             return tokStream->consume();
         } else {
+            // TODO: Add error reporting after this point.
             return nullptr;
         }
     }

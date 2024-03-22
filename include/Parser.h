@@ -33,6 +33,9 @@ namespace sammine_lang {
 
         // Parse parameters
         auto ParseParams() -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>;
+
+
+        // Utilities
         auto expect(TokenType tokType) -> std::shared_ptr<Token>;
     public:
         std::vector<std::string> error_msgs;
