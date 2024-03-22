@@ -184,4 +184,8 @@ TEST_CASE( "Complex combination", "[Lexer]") {
         REQUIRE(token->type == sammine_lang::TokNum);
         REQUIRE(token->lexeme == "2.3");
     }
+
+    SECTION("Function calls") {
+        sammine_lang::Lexer lex("fn f(x:f64) -> f64 {\n return 0;\n }");
+    }
 }

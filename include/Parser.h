@@ -30,7 +30,10 @@ namespace sammine_lang {
         auto ParseStmt() -> std::unique_ptr<AST::StmtAST>;
         auto ParseSimpleStmt() -> std::unique_ptr<AST::SimpleStmtAST>;
         auto ParseIfStmtStmt() -> std::unique_ptr<AST::IfStmtAST>;
+        auto ParseReturnStmt() -> std::unique_ptr<AST::ExprAST>;
 
+        // Parse parameters
+        auto ParseParams() -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>;
         auto expect(TokenType tokType) -> std::shared_ptr<Token>;
     public:
         Parser(std::shared_ptr<TokenStream> tokStream) : tokStream(tokStream) {}

@@ -58,6 +58,8 @@ Lexer::Lexer(const std::string& input) : Lexer() {
 
             if (IdentifierStr == "fn")
                 tokStream->push_back(Token(TokFunc, "",  location));
+            else if (IdentifierStr == "return")
+                tokStream->push_back(Token(TokReturn, "",  location));
             else if (IdentifierStr == "if")
                 tokStream->push_back(Token(TokIf, "",  location));
             else if (IdentifierStr == "else")
@@ -193,7 +195,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         if (input[i] == '-') {
 
             // If the next index (i+1) is outside of input, we should return ADD
-            if (input.length() - 1 < i + 1 || (input[i+1] != '-' && input[i+1] != '=')) {
+            if (input.length() - 1 < i + 1 || (input[i+1] != '-' && input[i+1] != '=' && input[i+1] != '>')) {
                 tokStream->push_back(Token(TokSUB, "", location));
                 i = advance(i);
                 return i;
@@ -205,7 +207,13 @@ Lexer::Lexer(const std::string& input) : Lexer() {
                 tokStream->push_back(Token(TokSubDecr, "", location));
                 i = advance(i);
                 return i;
-            } 
+            }
+
+            if (input[i] == '>') {
+                tokStream->push_back(Token(TokArrow, "", location));
+                i = advance(i);
+                return i;
+            }
 
             if (input[i] == '=') {
                 tokStream->push_back(Token(TokSubAssign, "", location));
@@ -483,6 +491,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         return i;    
     }
 
+
     size_t Lexer::handleUtilityCOMMENT(size_t i, const std::string &input) {
       if (input[i] == '#') {
         while (i < input.length() && input[i] != '\n' ) {
@@ -500,6 +509,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
         }
         return i;
     }
+
 
     size_t Lexer::handleUtilityCOLON(size_t i, const std::string &input) {
         if (input[i] == ':') {
@@ -536,7 +546,7 @@ Lexer::Lexer(const std::string& input) : Lexer() {
     }
 
     size_t Lexer::devance(size_t i) {
-        i--;
+        if (i > 0) i--;
         location.devance();
         return i;
     }

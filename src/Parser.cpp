@@ -35,7 +35,7 @@ namespace sammine_lang {
     auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto prototype = ParsePrototype();
         auto block = ParseBlock();
-        return {};
+        return std::make_unique<AST::FuncDefAST>(std::move(prototype), std::move(block));
     }
 
     auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
@@ -107,16 +107,27 @@ namespace sammine_lang {
     auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
         auto fn = expect(TokFunc);
         auto id = expect(TokID);
-        auto leftParen = expect(TokLeftParen);
-        auto rightParen = expect(TokRightParen);
+
+        auto params = ParseParams();
         auto arrow = expect(TokArrow);
-        return {};
+        auto returnType = expect(TokID);
+
+        return std::make_unique<AST::PrototypeAST>(id->lexeme, returnType->lexeme, std::move(params));
     }
 
     auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
+        auto leftCurly = expect(TokLeftCurly);
+        auto returnStmt = ParseReturnStmt();
+        auto rightCurly = expect(TokRightCurly);
         return {};
     }
 
+    auto Parser::ParseReturnStmt() -> std::unique_ptr<AST::ExprAST> {
+        auto returnTok = expect(TokReturn);
+        auto expr = ParseExpr();
+        auto semiColon = expect(TokSemiColon);
+        return expr;
+    }
     auto Parser::ParseStmt() -> std::unique_ptr<AST::StmtAST> {
         return {};
     }
@@ -129,7 +140,27 @@ namespace sammine_lang {
         return {};
     }
 
+    // Parsing of parameters in a function call, we use leftParen and rightParen as appropriate stopping point
+    auto Parser::ParseParams() -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> {
+        auto leftParen = expect(TokLeftParen);
+        if (leftParen == nullptr) return {};
 
+        std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> vec = std::make_unique<std::vector<std::unique_ptr<AST::TypedVarAST>>>();
+        auto typeVar = ParseTypedVar();
+        if (typeVar != nullptr) { vec->push_back(std::move(typeVar)); }
+        while (true) {
+            //auto typeVar = ParseTypedVar();
+            auto comma = expect(TokComma);
+            if (comma == nullptr) break;
+
+            typeVar = ParseTypedVar();
+            if (typeVar == nullptr) return {};
+        }
+        auto rightParen = expect(TokRightParen);
+        if (rightParen == nullptr) return nullptr;
+
+        return vec;
+    }
     auto Parser::expect(TokenType tokType) -> std::shared_ptr<Token> {
         if (!tokStream->isEnd() && tokStream->peek()->type == tokType) {
             return tokStream->consume();

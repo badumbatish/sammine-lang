@@ -93,8 +93,10 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     //  return 0;
     //}
 
-    auto fl = FileRAII("parser/fn_def_1.txt");
-    auto pg = Parser(Lexer(fl).getTokenStream());
+    // auto fl = FileRAII("parser/fn_def_1.txt");
+    auto lex = Lexer("fn f(x:f64) -> f64 {\n return 0 ; \n }");
+    REQUIRE(lex.getTokenStream()->hasErrors() == false);
+    auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
     REQUIRE(programAST->DefinitionVec.size() == 1);

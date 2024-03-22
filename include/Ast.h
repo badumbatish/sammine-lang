@@ -50,13 +50,27 @@ namespace sammine_lang {
 
         //!
         //!
-        class PrototypeAST : AstBase {};
+        class PrototypeAST : AstBase {
+        public:
+            std::string functionName;
+            std::string returnType;
+            std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> parameterVectors;
+
+            PrototypeAST(std::string functionName, std::string returnType,
+                         std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> parameterVectors )
+                         : functionName(functionName), returnType(std::move(returnType)), parameterVectors(std::move(parameterVectors)){
+
+            }
+        };
 
         //! \brief A Function Definition that has the prototype and definition in terms of a block
         class FuncDefAST : public DefinitionAST {
         public:
             std::unique_ptr<PrototypeAST> Prototype;
             std::unique_ptr<BlockAST> Block;
+
+            FuncDefAST(std::unique_ptr<PrototypeAST> Prototype, std::unique_ptr<BlockAST> Block) :
+                Prototype(std::move(Prototype)), Block(std::move(Block)) {}
         };
 
         //! \brief An AST to simulate a { } code block
