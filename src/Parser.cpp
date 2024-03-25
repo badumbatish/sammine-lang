@@ -115,7 +115,7 @@ namespace sammine_lang {
 
     auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
         auto fn = expect(TokFunc);
-
+        if (fn == nullptr) return nullptr;
         // TODO: Please add error reporting after this point
         auto id = expect(TokID);
 
