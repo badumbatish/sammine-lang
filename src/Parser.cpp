@@ -48,11 +48,22 @@ namespace sammine_lang {
     }
 
     auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
+        auto fn = expect(TokenType::TokFunc);
+        if (fn == nullptr) return nullptr;
+
         auto prototype = ParsePrototype();
-        if (prototype == nullptr) return nullptr;
+        if (prototype == nullptr) {
+          expect(TokenType::TokINVALID, true, TokRightCurly, "Failed to parse a prototype of a function");
+          return std::make_unique<AST::FuncDefAST>(nullptr, nullptr);
+        }
 
         auto block = ParseBlock();
-        if (!block) expect(TokenType::TokINVALID, true, TokRightCurly, "Failed to parse a block");
+        if (!block) {
+          expect(TokenType::TokINVALID, true, TokRightCurly,
+                 "Failed to parse a block");
+          return std::make_unique<AST::FuncDefAST>(std::move(prototype), nullptr);
+        }
+
         return std::make_unique<AST::FuncDefAST>(std::move(prototype), std::move(block));
     }
 
@@ -176,14 +187,16 @@ namespace sammine_lang {
     }
 
     auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
-        auto fn = expect(TokFunc);
-        if (fn == nullptr) return nullptr;
-        // TODO: Please add error reporting after this point
         auto id = expect(TokID);
+        if (!id) return nullptr;
 
         auto params = ParseParams();
+        if (!params) return nullptr;
         auto arrow = expect(TokArrow);
+        if (!arrow) return nullptr;
+
         auto returnType = expect(TokID);
+        if (!returnType) return nullptr;
 
         return std::make_unique<AST::PrototypeAST>(id->lexeme, returnType->lexeme, std::move(params));
     }
