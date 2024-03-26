@@ -17,7 +17,8 @@ namespace sammine_lang {
 
         // Parse expressions
         auto ParseExpr() -> std::unique_ptr<AST::ExprAST>;
-        auto ParseBinaryExpr() -> std::unique_ptr<AST::ExprAST>;
+        auto ParsePrimaryExpr() -> std::unique_ptr<AST::ExprAST>;
+        auto ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS) -> std::unique_ptr<AST::ExprAST>;
         auto ParseCallExpr() -> std::unique_ptr<AST::ExprAST>;
         auto ParseNumberExpr() ->std::unique_ptr<AST::ExprAST>;
         auto ParseVariableExpr() -> std::unique_ptr<AST::ExprAST>;

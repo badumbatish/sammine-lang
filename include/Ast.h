@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-
+#include "Lexer.h"
 #ifndef SAMMINE_LANG_AST_H
 #define SAMMINE_LANG_AST_H
 namespace sammine_lang {
@@ -98,9 +98,18 @@ namespace sammine_lang {
 
         };
 
+
+
         class NumberExprAST : public ExprAST {
         public:
             std::string number;
+        };
+
+        class BinaryExprAST : public ExprAST {
+        public:
+          std::shared_ptr<Token> Op;
+          std::unique_ptr<ExprAST> LHS, RHS;
+          BinaryExprAST(std::shared_ptr<Token> op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS) : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
         };
 
         class TypedVarAST : public AstBase {

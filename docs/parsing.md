@@ -3,7 +3,9 @@
 Hi there :) enjoy your stay
 ## Parsing protocol
 
+Parsing expression, and binary expression.
 
+Since by our definition, binary expression can have a 
 
 ## Error recovery
 

@@ -4,6 +4,17 @@
 
 
 namespace sammine_lang {
+    static std::map<TokenType, int> binopPrecedence = { {TokenType::TokLESS, 10},
+                                                       {TokenType::TokADD, 20},
+                                                       {TokenType::TokSUB, 20},
+                                                       {TokenType::TokMUL, 40}};
+
+    int GetTokPrecedence(TokenType tokType) {
+      int TokPrec = binopPrecedence[tokType];
+      if (TokPrec <= 0) return -1;
+      return TokPrec;
+    }
+
     auto Parser::Parse() -> std::unique_ptr<AST::ProgramAST> {
         return ParseProgram();
     }
@@ -89,25 +100,49 @@ namespace sammine_lang {
         typedVar->type = type->lexeme;
         return typedVar;
     }
+    auto Parser::ParsePrimaryExpr() -> std::unique_ptr<AST::ExprAST> {
+      using ParseFunction = std::function<std::unique_ptr<AST::ExprAST> (Parser*)>;
+      std::vector<ParseFunction> ParseFunctions = {
+          &Parser::ParseCallExpr,
+          &Parser::ParseNumberExpr,
+          &Parser::ParseVariableExpr,
+      };
 
+      for (auto fn : ParseFunctions) {
+        auto result = fn(this);
+        if (result != nullptr) return result;
+      }
+
+      return nullptr;
+    }
     auto Parser::ParseExpr() -> std::unique_ptr<AST::ExprAST> {
-        using ParseFunction = std::function<std::unique_ptr<AST::ExprAST> (Parser*)>;
-        std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
-                {&Parser::ParseBinaryExpr, false},
-                {&Parser::ParseCallExpr, false},
-                {&Parser::ParseNumberExpr, false},
-                {&Parser::ParseVariableExpr, false},
-        };
+        auto LHS = ParsePrimaryExpr();
+        if (!LHS) return nullptr;
 
-        for (auto [fn, required] : ParseFunctions) {
-            auto result = fn(this);
-            if (result != nullptr) return result;
-        }
-        return nullptr;
+        return ParseBinaryExpr(0, std::move(LHS));
     }
 
-    auto Parser::ParseBinaryExpr() -> std::unique_ptr<AST::ExprAST> {
-        return {};
+    auto Parser::ParseBinaryExpr(int prededence,
+                                 std::unique_ptr<AST::ExprAST> LHS)
+        -> std::unique_ptr<AST::ExprAST> {
+      while (true) {
+        int TokPrec = GetTokPrecedence(tokStream->peek()->type);
+
+        if (TokPrec < prededence) return LHS;
+
+        auto binOpToken = tokStream->consume();
+
+        auto RHS = ParsePrimaryExpr();
+        if (!RHS) return nullptr;
+
+        int NextPrec = GetTokPrecedence(tokStream->peek()->type);
+        if (TokPrec < NextPrec) {
+          RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS));
+          if (!RHS) return nullptr;
+        }
+
+        LHS = std::make_unique<AST::BinaryExprAST>(binOpToken, std::move(LHS), std::move(RHS));
+      }
     }
 
     auto Parser::ParseCallExpr() -> std::unique_ptr<AST::ExprAST> {
@@ -220,5 +255,6 @@ namespace sammine_lang {
             }
         }
     }
-}
+
+    }
 
