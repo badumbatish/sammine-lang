@@ -26,11 +26,10 @@ Non-terminal is not capitalized and uses _ as seperator (if any)
 
 **block** ::= LeftCurly **stmt***  RightCurly
 
-**stmt** ::= **simple_stmt** SemiColon <br>
+**stmt** ::= **simple_stmt** <br>
 &emsp; | IF **expr** COLON **block** [ ELSE IF ]
 
-**simple_stmt** ::= **expr** <br>
-&emsp; | **assign_expr**
+**simple_stmt** ::= (**expr** | **assign_expr**) SemiColon
 
 **return_stmt** ::= RETURN **expr** SemiColon
 
