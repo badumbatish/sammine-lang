@@ -214,6 +214,15 @@ public:
         this->push_back(std::make_shared<Token>(token));
     }
 
+    std::shared_ptr<Token>& exhaust_until(TokenType tokType) {
+      while (!isEnd()) {
+        if (TokStream[i]->type == tokType) return TokStream[i];
+        else i++;
+      }
+
+      return TokStream.back();
+    }
+
     bool isEnd() {
         return i == (TokStream.size() - 1);
     }
