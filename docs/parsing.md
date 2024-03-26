@@ -26,12 +26,18 @@ If statement parsing: if we encounter an error in matching a token, we exhaust t
 Of course we need to account for error reporting at appropriate places.
 
 This means that for Simple statement, if a ParseExpr* commits and fails, it can push back to
-error_msg vector and then promptly return nullptr. If simple statement has loop all over the function vector and
-cannot have anything non-null, it exhausts until semicolon. Else if it has sth non-null. then it expects a semicolon, 
+error_msg vector and then promptly return a partially completed AST with error = True. If simple statement has loop all over the function vector and
+cannot have anything non-null or it receives partial error, it exhausts until semicolon. Else if it has sth non-null. then it expects a semicolon, 
 if it doesn't have it, then it errors and also exhausts until semicolon.
 
-
+  
 ### Definition Parsing
+
+Same as statement parsing, since a variable definition ends in a semicolon and the other two
+ends in a right curly, you delegate the exhaustion responsbilities to each of them.
+
+If at first we can't even match them against the first token in each rule, we return nullptr for
+all of them, and then since ParseProgram fails at this point, we stop computation with exhaust_until_EOF.
 Since a statement can be a simple statement which ends in a semicolon or an if
 - Definition parsing
   - ClassDef: 
