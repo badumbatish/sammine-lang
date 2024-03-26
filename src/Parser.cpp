@@ -163,7 +163,7 @@ namespace sammine_lang {
         auto numberToken = expect(TokenType::TokNum);
 
         if (numberToken == nullptr) {
-
+          return nullptr;
         } else {
             numberExpr->number = numberToken->lexeme;
         }
