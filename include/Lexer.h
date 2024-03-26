@@ -225,6 +225,10 @@ public:
     }
 
     std::shared_ptr<Token>& exhaust_until(TokenType tokType) {
+      if (tokType == TokenType::TokEOF) {
+        i = TokStream.size() - 1;
+        return TokStream.back();
+      }
       while (!isEnd()) {
         if (TokStream[i]->type == tokType) return TokStream[i];
         else i++;
@@ -234,7 +238,7 @@ public:
     }
 
     bool isEnd() {
-        return i == (TokStream.size() - 1);
+        return i >= (TokStream.size() - 1);
     }
     std::shared_ptr<Token> peek() {
         return TokStream[i];
