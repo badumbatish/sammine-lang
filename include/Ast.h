@@ -112,6 +112,15 @@ namespace sammine_lang {
           BinaryExprAST(std::shared_ptr<Token> op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS) : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
         };
 
+        class CallExprAST : public ExprAST {
+
+        public:
+          std::string functionName;
+          std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> arguments;
+          CallExprAST(std::string functionName, std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> arguments) :
+            functionName(functionName), arguments(std::move(arguments))
+          {}
+        };
         class TypedVarAST : public AstBase {
         public:
             std::string name;

@@ -146,7 +146,15 @@ namespace sammine_lang {
     }
 
     auto Parser::ParseCallExpr() -> std::unique_ptr<AST::ExprAST> {
-        return {};
+        auto id = expect(TokenType::TokID);
+        if (id == nullptr) return nullptr;
+        else {
+          auto args = ParseArguments();
+
+          return std::make_unique<AST::CallExprAST>(id->lexeme, std::move(args));
+        }
+
+        return nullptr;
     }
 
     auto Parser::ParseNumberExpr() -> std::unique_ptr<AST::ExprAST> {
@@ -237,6 +245,29 @@ namespace sammine_lang {
 
         return vec;
     }
+
+    auto Parser::ParseArguments() -> std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> {
+      auto leftParen = expect(TokLeftParen);
+      if (leftParen == nullptr) return {};
+
+      std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> vec = std::make_unique<std::vector<std::unique_ptr<AST::ExprAST>>>();
+
+      auto expr = ParseExpr();
+      if (expr != nullptr) { vec->push_back(std::move(expr)); }
+      while (true) {
+        //auto typeVar = ParseTypedVar();
+        auto comma = expect(TokComma);
+        if (comma == nullptr) break;
+
+        expr = ParseExpr();
+        if (expr == nullptr) return {};
+      }
+      auto rightParen = expect(TokRightParen);
+      if (rightParen == nullptr) return nullptr;
+
+      return vec;
+    }
+
     auto Parser::expect(TokenType tokType, bool exhausts, TokenType until, const std::string& message) -> std::shared_ptr<Token> {
         auto currentToken = tokStream->peek();
         auto result = !tokStream->isEnd() && currentToken->type == tokType;
