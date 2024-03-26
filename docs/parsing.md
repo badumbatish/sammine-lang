@@ -7,9 +7,15 @@ Hi there :) enjoy your stay
 
 ## Error recovery
 
-In principle, when we are parsing a certain AST via a certain Parse* method, even when we hit an error, we don't return 
-want to return a nullptr to indicate that we've hit an error. We would want to instead still create the intended AST, 
-and set the error flag to be true instead.
+In principle, we say that if a Parse*() result is nullptr, then we haven't
+committed to calling that Parse*() function yet. 
 
-The general error recovery mode for parsing is parsing until we hit the
-SemiColon token, then we consume that token and start a new.
+If a Parse*() result is non-null, then it can either parse successfully, or failed since its
+commitment to parsing via that Parse*(). The error message is sent directly to a vector of error messages in parser.
+
+If a Parse*() commits and at a certain time cannot match against a TokenType,
+it will suppose that it has matched successfully against that token and report an error.
+
+There are two kind of Parse* that can be recoverable:
+- Statement parsing.
+- Declaration parsing.

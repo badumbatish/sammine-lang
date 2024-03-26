@@ -171,6 +171,16 @@ public:
         else column--;
     }
     inline void newLine() { line++; column = 0;}
+
+    friend std::ostream& operator<<(std::ostream& out, const Location& loc) {
+      out << "line:" << loc.line << "," << "column" << loc.column;
+      return out;
+    }
+
+
+    std::string to_string() const {
+      return "line:" +  std::to_string(this->line) +  "," +  "column:" + std::to_string(this->column);
+    }
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme and position pair as its members.
 

@@ -12,7 +12,10 @@ namespace sammine_lang {
         auto programAST = std::make_unique<AST::ProgramAST>();
         while (!tokStream->isEnd()) {
             auto def = ParseDefinition();
-            if (def == nullptr) return nullptr;
+            if (def == nullptr) {
+              error_msgs.push_back("Failed to parse any definition at " + tokStream->currentLocation().to_string());
+              break;
+            }
             programAST->DefinitionVec.push_back(std::move(def));
         }
 
