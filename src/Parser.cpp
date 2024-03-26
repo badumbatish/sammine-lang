@@ -12,11 +12,9 @@ namespace sammine_lang {
         auto programAST = std::make_unique<AST::ProgramAST>();
         while (!tokStream->isEnd()) {
             auto def = ParseDefinition();
-            if (def == nullptr) {
-              error_msgs.push_back("Failed to parse any definition at " + tokStream->currentLocation().to_string());
-              break;
+            if (def != nullptr)  {
+              programAST->DefinitionVec.push_back(std::move(def));
             }
-            programAST->DefinitionVec.push_back(std::move(def));
         }
 
         return programAST;
@@ -33,6 +31,8 @@ namespace sammine_lang {
             auto result = fn(this);
             if (result != nullptr) return result;
         }
+
+        expect(TokenType::TokINVALID, true, TokEOF, "Failed to parse any meaningful definitions");
         return nullptr;
     }
 
@@ -41,7 +41,7 @@ namespace sammine_lang {
         if (prototype == nullptr) return nullptr;
 
         auto block = ParseBlock();
-        if (block == nullptr) return nullptr;
+        if (!block) expect(TokenType::TokINVALID, true, TokRightCurly, "Failed to parse a block");
         return std::make_unique<AST::FuncDefAST>(std::move(prototype), std::move(block));
     }
 
@@ -51,11 +51,15 @@ namespace sammine_lang {
     //! If a `let` is not found then return a nullptr.
     auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto let = expect(TokenType::TokLet);
-        // TODO: Add stopping nullpr checker
+        // TODO: Add stopping nullptr checker
         auto typedVar = ParseTypedVar();
-        auto assign = expect(TokenType::TokASSIGN);
+        if (!typedVar) expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse typed variable");
+
+        auto assign = expect(TokenType::TokASSIGN, true, TokSemiColon, "Failed to match assign token `=`");
         auto expr = ParseExpr();
-        auto semicolon = expect(TokenType::TokSemiColon);
+        if (!expr) expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse expression");
+
+        auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon, "Failed to match semicolon token `;`");
 
         auto varDef = std::make_unique<AST::VarDefAST>(std::move(typedVar), std::move(expr));
 
@@ -64,8 +68,11 @@ namespace sammine_lang {
 
     auto Parser::ParseTypedVar() -> std::unique_ptr<AST::TypedVarAST> {
         auto name = expect(TokenType::TokID);
+        if (!name) return nullptr;
         auto colon = expect(TokenType::TokColon);
+        if (!colon) return nullptr;
         auto type = expect(TokenType::TokID);
+        if (!type) return nullptr;
 
         auto typedVar = std::make_unique<AST::TypedVarAST>();
 
@@ -131,15 +138,20 @@ namespace sammine_lang {
 
     auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
 
-        auto blockAST = std::make_unique<AST::BlockAST>();
-        auto leftCurly = expect(TokLeftCurly);
-        // TODO : Cannot just parse a return stmt.
-        // TODO : We need to also parse other statement as well
-        auto returnStmt = ParseReturnStmt();
-        auto rightCurly = expect(TokRightCurly);
+      auto leftCurly = expect(TokLeftCurly);
+      if (!leftCurly) return nullptr;
+      // TODO : Cannot just parse a return stmt.
+      // TODO : We need to also parse other statement as well
+      auto returnStmt = ParseReturnStmt();
+      auto rightCurly = expect(TokRightCurly);
 
-        blockAST->returnStmt = std::move(returnStmt);
-        return blockAST;
+      if (!rightCurly) return nullptr;
+
+      auto blockAST = std::make_unique<AST::BlockAST>();
+
+
+      blockAST->returnStmt = std::move(returnStmt);
+      return blockAST;
     }
 
     auto Parser::ParseReturnStmt() -> std::unique_ptr<AST::ExprAST> {
@@ -181,13 +193,22 @@ namespace sammine_lang {
 
         return vec;
     }
-    auto Parser::expect(TokenType tokType) -> std::shared_ptr<Token> {
+    auto Parser::expect(TokenType tokType, bool exhausts, TokenType until, const std::string& message) -> std::shared_ptr<Token> {
         auto currentToken = tokStream->peek();
-        if (!tokStream->isEnd() && currentToken->type == tokType) {
+        auto result = !tokStream->isEnd() && currentToken->type == tokType;
+        if (result) {
             return tokStream->consume();
         } else {
             // TODO: Add error reporting after this point.
-            return nullptr;
+            if (exhausts) {
+              auto it = TokenMap.find(tokType);
+              auto tok =  it != TokenMap.end() ? it->second : "`invalid`";
+              error_msgs.push_back(message +  " at " + tokStream->currentLocation().to_string());
+              tokStream->exhaust_until(until);
+              return nullptr;
+            } else {
+              return nullptr;
+            }
         }
     }
 }
