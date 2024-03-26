@@ -43,3 +43,13 @@ Since a statement can be a simple statement which ends in a semicolon or an if
   - ClassDef: 
   - VarDef
   - FuncDef
+
+TLDR: unless the current parse is at simple_stmt or return_stmt or if_stmt or one of the ParseDef, if we errors on a match, immediately 
+exhausts until EOF with an error message.
+
+- If we error at simple_stmt or return_stmt, exhausts until semicolon.
+- If we error at if_stmt, exhausts until right curly.
+- If we error at VarDef, exhausts until semicolon.
+- If we error at FuncDef or ClassDef, exhausts until right curly.
+
+Error means we have committed at that level of Parse() but failed to match against a token.
