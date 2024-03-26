@@ -51,13 +51,22 @@ namespace sammine_lang {
     //! If a `let` is not found then return a nullptr.
     auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto let = expect(TokenType::TokLet);
+        if (let == nullptr) return nullptr;
         // TODO: Add stopping nullptr checker
         auto typedVar = ParseTypedVar();
-        if (!typedVar) expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse typed variable");
+        if (!typedVar) {
+          expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse typed variable");
+          return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
+        }
 
         auto assign = expect(TokenType::TokASSIGN, true, TokSemiColon, "Failed to match assign token `=`");
+        if (!assign) return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
+
         auto expr = ParseExpr();
-        if (!expr) expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse expression");
+        if (!expr) {
+          expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse expression");
+          return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
+        }
 
         auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon, "Failed to match semicolon token `;`");
 

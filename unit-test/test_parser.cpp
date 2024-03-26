@@ -38,20 +38,20 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
         REQUIRE(varDef->TypedVar->type == "blablabla");
     }
     
-    // SECTION("Variable definition with binary expression") {
-    //     auto lexer = sammine_lang::Lexer("let b : blablabla = 1+2;");
-    //     auto tokStreamPtr = lexer.getTokenStream();
-    //     auto pg = sammine_lang::Parser(tokStreamPtr);
+     SECTION("Variable definition with binary expression") {
+         auto lexer = sammine_lang::Lexer("let b : blablabla = 1+2;");
+         auto tokStreamPtr = lexer.getTokenStream();
+         auto pg = sammine_lang::Parser(tokStreamPtr);
 
-    //     auto programAST = pg.Parse();
+         auto programAST = pg.Parse();
 
+         REQUIRE(!pg.hasErrors());
+         REQUIRE(programAST->DefinitionVec.size() == 1);
 
-    //     REQUIRE(programAST->DefinitionVec.size() == 1);
-
-    //     auto varDef = static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
-    //     REQUIRE(varDef->TypedVar->name == "b");
-    //     REQUIRE(varDef->TypedVar->type == "blablabla");
-    // }
+         auto varDef = static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
+         REQUIRE(varDef->TypedVar->name == "b");
+         REQUIRE(varDef->TypedVar->type == "blablabla");
+     }
 
     // SECTION("Variable definition with call expression") {
     //     auto lexer = sammine_lang::Lexer("let b : blablabla = hi();");
