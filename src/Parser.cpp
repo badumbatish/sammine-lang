@@ -74,7 +74,6 @@ namespace sammine_lang {
     auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
         auto let = expect(TokenType::TokLet);
         if (let == nullptr) return nullptr;
-        // TODO: Add stopping nullptr checker
         auto typedVar = ParseTypedVar();
         if (!typedVar) {
           expect(TokenType::TokINVALID, true, TokSemiColon, "Failed to parse typed variable");
