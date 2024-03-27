@@ -21,9 +21,9 @@ def main():
     run_command(f"cmake --build build -j{args.cores}")
 
     # Step 3: Run the main executable
-    os.chdir("build")
-    run_command("./sammine")
-    os.chdir("..")
+    # os.chdir("build")
+    # run_command("./sammine")
+    # os.chdir("..")
 
     # Step 4: Run tests
     os.chdir("build")
