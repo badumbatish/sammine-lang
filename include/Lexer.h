@@ -270,10 +270,6 @@ private:
     Location location;
     std::shared_ptr<TokenStream> tokStream;
 
-    Lexer() : location()  {
-        tokStream = std::make_shared<TokenStream>();
-    }
-
     size_t handleNumber(size_t i, const std::string& input);
     size_t handleSpaces(size_t i, const std::string& input);
     size_t handleID(size_t i, const std::string& input);
@@ -304,7 +300,9 @@ private:
 
 public:
     explicit Lexer(const std::string& input);
-
+    Lexer() : location()  {
+      tokStream = std::make_shared<TokenStream>();
+    }
     std::shared_ptr<Token> peek();
     std::shared_ptr<Token> consume();
 
@@ -313,6 +311,7 @@ public:
     size_t advance(size_t i);
 
     size_t devance(size_t i);
+
 };
 }
 #endif //SAMMINE_LANG_LEXER_H

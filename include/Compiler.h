@@ -10,19 +10,17 @@
 #include "Parser.h"
 namespace sammine_lang {
   class Compiler {
+    std::shared_ptr<TokenStream> tokStream;
+    std::unique_ptr<AST::ProgramAST> programAST;
+    std::string input, file_name;
+    bool error;
+
+    void lex();
+    void parse();
+
   public:
-    Compiler(std::string input, std::string file_name) {
-      Lexer lxr = Lexer(input);
-
-
-      if (lxr.getTokenStream()->hasErrors()) {
-        std::cerr << "Error during lexing phase " << std::endl;
-        auto tokStream = lxr.getTokenStream();
-        for (auto i : tokStream->ErrStream) {
-          std::cerr << "Encountered invalid : " << i->lexeme << " at " << i->location << std::endl;
-        }
-      }
-    }
+    Compiler(const std::string &input, const std::string &file_name);
+    void start();
   };
 }
 #endif // SAMMINE_LANG_COMPILER_H

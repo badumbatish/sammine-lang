@@ -41,6 +41,7 @@ namespace sammine_lang {
         auto expect(TokenType tokType, bool exhausts = false, TokenType until = TokenType::TokEOF, const std::string& message = "") -> std::shared_ptr<Token>;
       public:
         std::vector<std::string> error_msgs;
+        Parser() {}
         Parser(std::shared_ptr<TokenStream> tokStream) : tokStream(tokStream) {}
         auto Parse() -> std::unique_ptr<AST::ProgramAST>;
         auto hasErrors() -> bool { return !error_msgs.empty(); }
