@@ -26,7 +26,6 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             &Lexer::handleNumber,
             &Lexer::handleOperators,
             &Lexer::handleUtility,
-            &Lexer::handleInvalid,
     };
 
     while (i < input.length()) {
@@ -38,7 +37,10 @@ Lexer::Lexer(const std::string& input) : Lexer() {
             i = fn(this, i, input);
             if (i != i_0) break;
         }
-        
+
+        if (i == i_0 && i < input.length()) {
+          handleInvalid(i, input);
+        }
     }
     tokStream->push_back({TokEOF, "end of file", location});
 }

@@ -186,6 +186,13 @@ TEST_CASE( "Complex combination", "[Lexer]") {
     }
 
     SECTION("Function calls") {
-        sammine_lang::Lexer lex("fn f(x:f64) -> f64 {\n return 0;\n }");
+      auto file = FileRAII("../unit-test/parser/fn_def_1.txt");
+      REQUIRE(file.isOpen());
+      auto input = file.getInternalStr();
+      sammine_lang::Lexer lex(input);
+
+      auto tokStream = lex.getTokenStream();
+
+      REQUIRE(!tokStream->hasErrors());
     }
 }
