@@ -206,13 +206,16 @@ class TokenStream {
     size_t i;
     bool error;
 public:
+  std::vector<std::shared_ptr<Token>> ErrStream;
+
     TokenStream() : i(0), TokStream(), error(false) {}
 
     void push_back(const std::shared_ptr<Token>& token) {
-        TokStream.push_back(token);
-
         if (token->type == TokINVALID) {
-            error = true;
+          error = true;
+          ErrStream.push_back(token);
+        } else {
+          TokStream.push_back(token);
         }
     }
 
@@ -301,7 +304,6 @@ private:
 
 public:
     explicit Lexer(const std::string& input);
-    explicit Lexer(FileRAII& file) : Lexer(file.readFileToString()) {}
 
     std::shared_ptr<Token> peek();
     std::shared_ptr<Token> consume();

@@ -21,6 +21,9 @@ public:
             std::cerr << "Error: Unable to open file: " << filename << std::endl;
             is_opened = false;
         }
+
+        str = std::string((std::istreambuf_iterator<char>(file)),
+            (std::istreambuf_iterator<char>()));
     }
 
     // Destructor closes the file
@@ -35,32 +38,13 @@ public:
         return is_opened;
     }
 
-    bool isEOF() const {
-        return !file || file.eof();
-    }
-
-    // Function to read one character at a time
-    char readChar() {
-        char ch;
-        if (file.get(ch)) {
-            return ch;
-        } else {
-            is_opened = false;  // Mark the file as closed if there are no more characters
-            return '\0';       // Return null character to indicate end of file
-        }
-    }
-    // Function to read the entire file into a string
-    std::string readFileToString() {
-        std::stringstream buffer = {};
-        char ch;
-        while (file.get(ch)) {
-            buffer.put(ch);
-        }
-        return buffer.str();
+    std::string getInternalStr() {
+      return str;
     }
 
 private:
     std::ifstream file;
     bool is_opened;
+    std::string str;
 };
 #endif //SAMMINE_LANG_FILERAII_H
