@@ -5,4 +5,17 @@
 #ifndef SAMMINE_LANG_CODEGENVISITOR_H
 #define SAMMINE_LANG_CODEGENVISITOR_H
 
+#include "AstBase.h"
+#include "LLVMRes.h"
+#include <memory>
+namespace sammine_lang::AST {
+class CgVisitor : public ASTVisitor {
+private:
+  std::shared_ptr<sammine_lang::LLVMRes> resPtr;
+
+public:
+  CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr) : resPtr(resPtr) {}
+};
+} // namespace sammine_lang::AST
+
 #endif // SAMMINE_LANG_CODEGENVISITOR_H
