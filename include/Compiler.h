@@ -17,6 +17,7 @@ class Compiler {
 
   void lex();
   void parse();
+  void set_error() { error = true; }
 
 public:
   Compiler(const std::string &input, const std::string &file_name);

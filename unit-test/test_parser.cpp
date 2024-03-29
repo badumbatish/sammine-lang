@@ -116,3 +116,11 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
   REQUIRE(func_def->Block->Statements.empty());
   REQUIRE(func_def->Block->returnStmt != nullptr);
 }
+
+TEST_CASE("FAILED TO PARSE", "[Parser]") {
+  auto lex = Lexer("a a a a a");
+  REQUIRE(lex.getTokenStream()->hasErrors() == false);
+  auto pg = Parser(lex.getTokenStream());
+  auto programAST = pg.Parse();
+  REQUIRE(pg.hasErrors() == true);
+}

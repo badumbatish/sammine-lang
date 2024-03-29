@@ -29,6 +29,6 @@ int main(int argc, char *argv[]) {
   std::string string_input =
       program.present("-s") ? program.get("-s") : FileRAII(f).getInternalStr();
   Compiler jjasmine(string_input, f);
-
+  jjasmine.start();
   return 0;
 }
