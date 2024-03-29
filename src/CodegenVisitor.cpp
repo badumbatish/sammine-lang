@@ -10,5 +10,7 @@ void CgVisitor::visit(ProgramAST *ast) {
     def->accept_vis(this);
   }
 }
-void CgVisitor::visit(VarDefAST *ast) {}
+void CgVisitor::visit(VarDefAST *ast) {
+
+}
 }
