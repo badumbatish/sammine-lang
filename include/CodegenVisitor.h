@@ -18,7 +18,6 @@ public:
   CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr) : resPtr(resPtr) {}
 
   void visit(ProgramAST* ast);
-  void visit(DefinitionAST* ast);
   void visit(VarDefAST* ast);
   void visit(FuncDefAST* ast);
   void visit(ExprAST* ast);

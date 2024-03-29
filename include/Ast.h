@@ -31,12 +31,12 @@ class SimpleStmtAST;
 class IfStmtAST;
 
 
-class ProgramAST : AstBase {
+class ProgramAST : public AstBase {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
 };
 
-class DefinitionAST : AstBase {};
+class DefinitionAST : public AstBase {};
 
 //! \brief A variable definition: "var x = expression;"
 class VarDefAST : public DefinitionAST {
@@ -53,7 +53,7 @@ public:
 
 //!
 //!
-class PrototypeAST : AstBase {
+class PrototypeAST : public AstBase {
 public:
   std::string functionName;
   std::string returnType;
@@ -83,17 +83,17 @@ public:
 
 //!
 //!
-class BlockAST : AstBase {
+class BlockAST : public AstBase {
 public:
   std::vector<std::unique_ptr<StmtAST>> Statements;
   std::unique_ptr<ExprAST> returnStmt;
 };
 
-class StmtAST : AstBase {};
+class StmtAST : public AstBase {};
 
-class SimpleStmtAST : StmtAST {};
+class SimpleStmtAST : public StmtAST {};
 
-class IfStmtAST : StmtAST {};
+class IfStmtAST : public StmtAST {};
 
 class ExprAST : public AstBase {};
 

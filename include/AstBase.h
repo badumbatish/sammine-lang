@@ -20,7 +20,7 @@ public:
   virtual void accept_vis(ASTVisitor *visitor) { accept_vis(visitor); }
 };
 
-class AstBase : Visitable {};
+class AstBase : public Visitable {};
 } // namespace AST
 } // namespace sammine_lang
 #endif // SAMMINE_LANG_ASTBASE_H
