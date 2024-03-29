@@ -17,7 +17,7 @@ public:
 class Visitable {
 public:
   virtual ~Visitable() = default;
-  virtual void accept_vis(ASTVisitor *visitor) { visitor->visit(this); };
+  virtual void accept_vis(ASTVisitor *visitor) { accept_vis(visitor); }
 };
 
 class AstBase : Visitable {};

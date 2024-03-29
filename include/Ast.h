@@ -27,6 +27,10 @@ class VariableExprAST;
 class BlockAST;
 class StmtAST;
 
+class SimpleStmtAST;
+class IfStmtAST;
+
+
 class ProgramAST : AstBase {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
