@@ -1,4 +1,4 @@
-#include "KaleidoscopeJIT.h"
+#include "SammineJIT.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/Analysis/CGSCCPassManager.h"
@@ -39,7 +39,7 @@ std::unique_ptr<llvm::CGSCCAnalysisManager> CgAnalysis;
 std::unique_ptr<llvm::ModuleAnalysisManager> ModuleAnalysis;
 std::unique_ptr<llvm::PassInstrumentationCallbacks> PassCallbacks;
 std::unique_ptr<llvm::StandardInstrumentations>  StdIns;
-std::unique_ptr<llvm::orc::KaleidoscopeJIT> KaleiJIT;
+std::unique_ptr<SammineJIT> sammineJIT;
 std::map<std::string, std::unique_ptr<sammine_lang::AST::PrototypeAST>> FnProto;
 
 llvm::PassBuilder PB;
@@ -50,7 +50,7 @@ LLVMRes() {
   llvm::InitializeNativeTargetAsmPrinter();
   llvm::InitializeNativeTargetAsmParser();
 
-  KaleiJIT = ExitOnErr(llvm::orc::KaleidoscopeJIT::Create());
+  sammineJIT = ExitOnErr(SammineJIT::Create());
   InitializeModuleAndManagers();
 }
 
@@ -78,7 +78,7 @@ void InitializeEssentials() {
 
   Context = std::make_unique<llvm::LLVMContext>();
   Module = std::make_unique<llvm::Module>("KaleidoscopeJIT", *Context);
-  Module->setDataLayout(KaleiJIT->getDataLayout());
+  Module->setDataLayout(sammineJIT->getDataLayout());
 
   // Create a new builder for the module.
   Builder = std::make_unique<llvm::IRBuilder<>>(*Context);
