@@ -20,7 +20,6 @@ public:
   void visit(ProgramAST* ast);
   void visit(VarDefAST* ast);
   void visit(FuncDefAST* ast);
-  void visit(ExprAST* ast);
   void visit(CallExprAST* ast);
   void visit(BinaryExprAST* ast);
   void visit(NumberExprAST* ast);

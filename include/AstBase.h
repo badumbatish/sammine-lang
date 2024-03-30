@@ -4,7 +4,8 @@
 
 #ifndef SAMMINE_LANG_ASTBASE_H
 #define SAMMINE_LANG_ASTBASE_H
-#include "LLVMRes.h"
+#include <llvm/IR/Value.h>
+
 namespace sammine_lang {
 namespace AST {
 class Visitable;
@@ -21,8 +22,8 @@ public:
 };
 
 class AstBase : public Visitable {
-  using Value = llvm::Value;
-  Value* val;
+public:
+  llvm::Value* val;
 };
 } // namespace AST
 } // namespace sammine_lang
