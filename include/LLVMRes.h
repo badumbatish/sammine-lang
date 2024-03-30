@@ -55,6 +55,25 @@ LLVMRes() {
 }
 
 void InitializeModuleAndManagers() {
+  InitializeEssentials();
+
+  InitializeManagers();
+
+  InitializeInstrs();
+
+  // Add transform passes.
+  // Do simple "peephole" optimizations and bit-twiddling optzns.
+//  FnPass->addPass(llvm::InstCombinePass());
+//  // Reassociate expressions.
+//  FnPass->addPass(llvm::ReassociatePass());
+//  // Eliminate Common SubExpressions.
+//  FnPass->addPass(llvm::GVNPass());
+//  // Simplify the control flow graph (deleting unreachable blocks, etc).
+//  FnPass->addPass(llvm::SimplifyCFGPass());
+
+  InitializePassBuilder();
+}
+void InitializeEssentials() {
   // Open a new context and module.
 
   Context = std::make_unique<llvm::LLVMContext>();
@@ -63,34 +82,28 @@ void InitializeModuleAndManagers() {
 
   // Create a new builder for the module.
   Builder = std::make_unique<llvm::IRBuilder<>>(*Context);
-
+}
+void InitializeManagers() {
   // Create new pass and analysis managers.
   FnPass = std::make_unique<llvm::FunctionPassManager>();
   LpAnalysis = std::make_unique<llvm::LoopAnalysisManager>();
   FnAnalysis = std::make_unique<llvm::FunctionAnalysisManager>();
   CgAnalysis = std::make_unique<llvm::CGSCCAnalysisManager>();
   ModuleAnalysis = std::make_unique<llvm::ModuleAnalysisManager>();
+}
+
+void InitializeInstrs() {
   PassCallbacks = std::make_unique<llvm::PassInstrumentationCallbacks>();
+
   StdIns = std::make_unique<llvm::StandardInstrumentations>(*Context,
-                                                     /*DebugLogging*/ true);
+                                                            /*DebugLogging*/ true);
   StdIns->registerCallbacks(*PassCallbacks, ModuleAnalysis.get());
-
-  // Add transform passes.
-  // Do simple "peephole" optimizations and bit-twiddling optzns.
-  FnPass->addPass(llvm::InstCombinePass());
-  // Reassociate expressions.
-  FnPass->addPass(llvm::ReassociatePass());
-  // Eliminate Common SubExpressions.
-  FnPass->addPass(llvm::GVNPass());
-  // Simplify the control flow graph (deleting unreachable blocks, etc).
-  FnPass->addPass(llvm::SimplifyCFGPass());
-
+}
+void InitializePassBuilder() {
   // Register analysis passes used in these transform passes.
   PB.registerModuleAnalyses(*ModuleAnalysis);
   PB.registerFunctionAnalyses(*FnAnalysis);
   PB.crossRegisterProxies(*LpAnalysis, *FnAnalysis, *CgAnalysis, *ModuleAnalysis);
 }
-
-
 };
 } // namespace sammine_lang
