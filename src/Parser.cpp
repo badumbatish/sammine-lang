@@ -66,7 +66,7 @@ auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
   auto block = ParseBlock();
   if (!block) {
     expect(TokenType::TokINVALID, true, TokRightCurly,
-           "Failed to parse a block");
+           "Failed to parse a block of a function definition");
     return std::make_unique<AST::FuncDefAST>(std::move(prototype), nullptr);
   }
 
@@ -246,9 +246,14 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
 }
 
 auto Parser::ParseReturnStmt() -> std::unique_ptr<AST::ExprAST> {
+  auto returnStmt = std::make_unique<AST::NumberExprAST>();
   auto returnTok = expect(TokReturn);
+  if (returnTok == nullptr) {
+    returnStmt->number = "0.0";
+    return returnStmt;
+  }
   auto expr = ParseExpr();
-  auto semiColon = expect(TokSemiColon);
+  auto semiColon = expect(TokSemiColon, true, TokSemiColon, "Failed to match semicolon token `;` in return statement");
   return expr;
 }
 auto Parser::ParseStmt() -> std::unique_ptr<AST::StmtAST> { return {}; }
@@ -267,6 +272,7 @@ auto Parser::ParseParams()
   if (leftParen == nullptr)
     return {};
 
+  // COMMITMENT POINT
   std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> vec =
       std::make_unique<std::vector<std::unique_ptr<AST::TypedVarAST>>>();
   auto typeVar = ParseTypedVar();
@@ -274,18 +280,24 @@ auto Parser::ParseParams()
     vec->push_back(std::move(typeVar));
   }
   while (true) {
-    // auto typeVar = ParseTypedVar();
     auto comma = expect(TokComma);
     if (comma == nullptr)
       break;
 
+    // Report error if we find comma but cannot find typeVar
     typeVar = ParseTypedVar();
-    if (typeVar == nullptr)
+    if (typeVar == nullptr) {
+      log_error("Failed to find typed variable after comma");
       return {};
+    } else {
+      vec->push_back(std::move(typeVar));
+    }
   }
   auto rightParen = expect(TokRightParen);
-  if (rightParen == nullptr)
+  if (rightParen == nullptr) {
+    log_error("Failed to find right parenthesis after processing [typed variables]");
     return nullptr;
+  }
 
   return vec;
 }
@@ -329,10 +341,7 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
   } else {
     // TODO: Add error reporting after this point.
     if (exhausts) {
-      auto it = TokenMap.find(tokType);
-      auto tok = it != TokenMap.end() ? it->second : "`invalid`";
-      error_msgs.push_back(message + " at " +
-                           tokStream->currentLocation().to_string());
+      log_error(message);
       tokStream->exhaust_until(until);
       return nullptr;
     } else {
@@ -341,4 +350,8 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
   }
 }
 
+auto Parser::log_error(const std::string &message) -> void {
+  error_msgs.push_back(message + " at " +
+                       tokStream->currentLocation().to_string());
+}
 } // namespace sammine_lang

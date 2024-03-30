@@ -50,5 +50,6 @@ public:
   Parser(std::shared_ptr<TokenStream> tokStream) : tokStream(tokStream) {}
   auto Parse() -> std::unique_ptr<AST::ProgramAST>;
   auto hasErrors() -> bool { return !error_msgs.empty(); }
+  void log_error(const std::string &message);
 };
 } // namespace sammine_lang

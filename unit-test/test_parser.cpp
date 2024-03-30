@@ -95,26 +95,51 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
   //  return 0;
   //}
 
-  // auto fl = FileRAII("parser/fn_def_1.txt");
-  auto lex = Lexer("fn f(x:f64) -> f64 {\n return 0 ; \n }");
-  REQUIRE(lex.getTokenStream()->hasErrors() == false);
-  auto pg = Parser(lex.getTokenStream());
+  SECTION("Single argument") {
+    auto lex = Lexer("fn f(x:f64) -> f64 {\n return 0 ; \n }");
+    REQUIRE(lex.getTokenStream()->hasErrors() == false);
+    auto pg = Parser(lex.getTokenStream());
 
-  auto programAST = pg.Parse();
-  REQUIRE(programAST->DefinitionVec.size() == 1);
+    auto programAST = pg.Parse();
+    REQUIRE(programAST->DefinitionVec.size() == 1);
 
-  auto func_def =
-      std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
-          programAST->DefinitionVec.front().release()));
+    auto func_def =
+        std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
+            programAST->DefinitionVec.front().release()));
 
-  // Check if downcast is valid.
-  REQUIRE(func_def != nullptr);
+    // Check if downcast is valid.
+    REQUIRE(func_def != nullptr);
 
-  REQUIRE(func_def->Prototype->returnType == "f64");
-  REQUIRE(func_def->Prototype->functionName == "f");
-  REQUIRE(func_def->Prototype->parameterVectors->size() == 1);
-  REQUIRE(func_def->Block->Statements.empty());
-  REQUIRE(func_def->Block->returnStmt != nullptr);
+    REQUIRE(func_def->Prototype->returnType == "f64");
+    REQUIRE(func_def->Prototype->functionName == "f");
+    REQUIRE(func_def->Prototype->parameterVectors->size() == 1);
+    REQUIRE(func_def->Block->Statements.empty());
+    REQUIRE(func_def->Block->returnStmt != nullptr);
+  }
+
+  SECTION("Multiple argument") {
+    auto lex = Lexer("fn f(x:f64, y : hi, z : hoe) -> f64 {\n return 1+2 ; \n }");
+    REQUIRE(lex.getTokenStream()->hasErrors() == false);
+    auto pg = Parser(lex.getTokenStream());
+
+    auto programAST = pg.Parse();
+    REQUIRE(programAST->DefinitionVec.size() == 1);
+
+    auto func_def =
+        std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
+            programAST->DefinitionVec.front().release()));
+
+    // Check if downcast is valid.
+    REQUIRE(func_def != nullptr);
+
+    REQUIRE(func_def->Prototype->returnType == "f64");
+    REQUIRE(func_def->Prototype->functionName == "f");
+    REQUIRE(func_def->Prototype->parameterVectors->size() == 3);
+    REQUIRE(func_def->Block->Statements.empty());
+    REQUIRE(func_def->Block->returnStmt != nullptr);
+  }
+
+
 }
 
 TEST_CASE("FAILED TO PARSE", "[Parser]") {
