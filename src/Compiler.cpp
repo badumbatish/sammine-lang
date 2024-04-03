@@ -16,7 +16,7 @@ void Compiler::lex() {
     std::cerr << "[Error during lexing phase]" << std::endl;
     auto stream = lxr.getTokenStream();
     for (auto i : stream->ErrStream) {
-      std::cerr << file_name << i->location <<  ": Encountered invalid : " << i->lexeme << std::endl;
+      std::cerr << file_name << ":" << i->location <<  ": Encountered invalid : " << i->lexeme << std::endl;
     }
   }
 
