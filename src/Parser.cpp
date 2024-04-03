@@ -351,7 +351,6 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
 }
 
 auto Parser::log_error(const std::string &message) -> void {
-  error_msgs.push_back(message + " at " +
-                       tokStream->currentLocation().to_string());
+  error_msgs.push_back(tokStream->currentLocation().to_string() + ": " + message);
 }
 } // namespace sammine_lang

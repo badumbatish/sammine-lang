@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  std::string f = program.present("-f") ? program.get("-f") : "";
+  std::string f = program.present("-f") ? program.get("-f") : "String-input";
   std::string string_input =
       program.present("-s") ? program.get("-s") : FileRAII(f).getInternalStr();
   Compiler jjasmine(string_input, f);

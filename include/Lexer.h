@@ -177,14 +177,14 @@ public:
   }
 
   friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
-    out << "line:" << loc.line << ","
-        << "column" << loc.column;
+    out << loc.line << ":"
+        << loc.column;
     return out;
   }
 
   std::string to_string() const {
-    return "line:" + std::to_string(this->line) + "," +
-           "column:" + std::to_string(this->column);
+    return std::to_string(this->line) + ":" +
+           std::to_string(this->column);
   }
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme

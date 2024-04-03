@@ -11,14 +11,12 @@ Compiler::Compiler(const std::string &input, const std::string &file_name)
 void Compiler::lex() {
 
   Lexer lxr = Lexer(input);
-
   if (lxr.getTokenStream()->hasErrors()) {
     set_error();
     std::cerr << "[Error during lexing phase]" << std::endl;
     auto stream = lxr.getTokenStream();
     for (auto i : stream->ErrStream) {
-      std::cerr << "Encountered invalid : " << i->lexeme << " at "
-                << i->location << std::endl;
+      std::cerr << file_name << i->location <<  ": Encountered invalid : " << i->lexeme << std::endl;
     }
   }
 
@@ -34,7 +32,7 @@ void Compiler::parse() {
     set_error();
     std::cerr << "[Error during parsing phase]" << std::endl;
     for (auto i : psr.error_msgs) {
-      std::cerr << i << std::endl;
+      std::cerr << file_name << ":" << i << std::endl;
     }
   }
 }
