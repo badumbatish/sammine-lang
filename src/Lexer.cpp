@@ -34,7 +34,7 @@ Lexer::Lexer(const std::string &input) : Lexer() {
     }
 
     if (i == i_0 && i < input.length()) {
-      handleInvalid(i, input);
+      i = handleInvalid(i, input);
     }
   }
   tokStream->push_back({TokEOF, "end of file", location});
