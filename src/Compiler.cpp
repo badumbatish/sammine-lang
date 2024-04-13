@@ -7,7 +7,9 @@
 namespace sammine_lang {
 
 Compiler::Compiler(const std::string &input, const std::string &file_name)
-    : input(input), file_name(file_name), error(false) {}
+    : input(input), file_name(file_name), error(false) {
+    resPtr = std::shared_ptr<LLVMRes>();
+}
 void Compiler::lex() {
 
   Lexer lxr = Lexer(input);
@@ -41,7 +43,8 @@ void Compiler::parse() {
 void Compiler::codegen() {
     std::cout << "Start partial codegen" << std::endl;
     std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
-      std::unique_ptr<sammine_lang::AST::CgVisitor>();
+      std::make_unique<sammine_lang::AST::CgVisitor>(resPtr);
+    assert(cg != nullptr);
   programAST->accept_vis(cg.get());
 
   std::cout << "Finish partial codegen" << std::endl;

@@ -7,11 +7,13 @@
 
 #include "Lexer.h"
 #include "Parser.h"
+#include "LLVMRes.h"
 #include <string>
 namespace sammine_lang {
 class Compiler {
   std::shared_ptr<TokenStream> tokStream;
   std::unique_ptr<AST::ProgramAST> programAST;
+  std::shared_ptr<LLVMRes> resPtr;
   std::string input, file_name;
   bool error;
 
