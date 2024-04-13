@@ -121,6 +121,12 @@ public:
       std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> arguments)
       : functionName(functionName), arguments(std::move(arguments)) {}
 };
+
+class VariableExprAST : public ExprAST {
+public:
+  std::string variableName;
+  VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme) {};
+};
 class TypedVarAST : public AstBase {
 public:
   std::string name;
