@@ -39,17 +39,20 @@ void Compiler::parse() {
 }
 
 void Compiler::codegen() {
-  std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
+    std::cout << "Start partial codegen" << std::endl;
+    std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
       std::unique_ptr<sammine_lang::AST::CgVisitor>();
   programAST->accept_vis(cg.get());
 
+  std::cout << "Finish partial codegen" << std::endl;
   // TODO : Check for codegen error
 }
 
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
   std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
-      {&Compiler::lex, "lexing"}, {&Compiler::parse, "parsing"}};
+      {&Compiler::lex, "lexing"}, {&Compiler::parse, "parsing"},
+      {&Compiler::codegen, "codegen"}};
 
   for (auto stage : CompilerStages) {
     if (!error) {
