@@ -30,7 +30,6 @@ class StmtAST;
 class SimpleStmtAST;
 class IfStmtAST;
 
-
 class ProgramAST : public AstBase {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
@@ -53,8 +52,9 @@ public:
 
 //!
 //!
-class PrototypeAST : public AstBase {
+class PrototypeAST : public Visitable {
 public:
+  llvm::Function *function;
   std::string functionName;
   std::string returnType;
   std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>
@@ -125,7 +125,7 @@ public:
 class VariableExprAST : public ExprAST {
 public:
   std::string variableName;
-  VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme) {};
+  VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme){};
 };
 class TypedVarAST : public AstBase {
 public:

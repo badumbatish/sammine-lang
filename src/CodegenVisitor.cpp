@@ -11,7 +11,41 @@ void CgVisitor::visit(ProgramAST *ast) {
   }
 }
 void CgVisitor::visit(VarDefAST *ast) {}
-void CgVisitor::visit(FuncDefAST *ast) {}
+void CgVisitor::visit(FuncDefAST *ast) {
+  llvm::Function *Function =
+      resPtr->Module->getFunction(ast->Prototype->functionName);
+
+  if (!Function) {
+    ast->Prototype->accept_vis(this);
+    Function = ast->Prototype->function;
+  }
+
+  if (!Function) {
+    // TODO: Please add better error handling
+    return;
+  }
+  llvm::BasicBlock *mainblock =
+      llvm::BasicBlock::Create(*resPtr->Context, "entry", Function);
+  resPtr->Builder->SetInsertPoint(mainblock);
+
+  resPtr->NamedValues.clear();
+  for (auto &Arg : Function->args()) {
+    resPtr->NamedValues[std::string(Arg.getName())] = &Arg;
+  }
+
+  ast->Block->accept_vis(this);
+  if (llvm::Value *RetVal = ast->Block->val) {
+    // Finish off the function.
+    resPtr->Builder->CreateRet(RetVal);
+
+    // Validate the generated code, checking for consistency.
+    verifyFunction(*Function);
+  }
+
+  // Error reading body, remove function.
+  Function->eraseFromParent();
+  return;
+}
 void CgVisitor::visit(CallExprAST *ast) {}
 void CgVisitor::visit(BinaryExprAST *ast) {
   ast->LHS->accept_vis(this);
@@ -38,6 +72,7 @@ void CgVisitor::visit(BinaryExprAST *ast) {
         L, llvm::Type::getDoubleTy(*(resPtr->Context)), "booltmp");
   }
 }
+void CgVisitor::visit(PrototypeAST *ast) {}
 void CgVisitor::visit(NumberExprAST *ast) {
   ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                    llvm::APFloat(std::stod(ast->number)));
