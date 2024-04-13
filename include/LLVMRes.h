@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SammineJIT.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -21,7 +23,6 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Scalar/Reassociate.h"
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
-#pragma once
 
 namespace sammine_lang {
 class LLVMRes {
