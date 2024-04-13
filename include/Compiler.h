@@ -17,6 +17,7 @@ class Compiler {
 
   void lex();
   void parse();
+  void codegen();
   void set_error() { error = true; }
 
 public:

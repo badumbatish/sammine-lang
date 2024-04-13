@@ -3,7 +3,7 @@
 //
 
 #include "Compiler.h"
-
+#include "CodegenVisitor.h"
 namespace sammine_lang {
 
 Compiler::Compiler(const std::string &input, const std::string &file_name)
@@ -16,7 +16,8 @@ void Compiler::lex() {
     std::cerr << "[Error during lexing phase]" << std::endl;
     auto stream = lxr.getTokenStream();
     for (auto i : stream->ErrStream) {
-      std::cerr << file_name << ":" << i->location <<  ": Encountered invalid : " << i->lexeme << std::endl;
+      std::cerr << file_name << ":" << i->location
+                << ": Encountered invalid : " << i->lexeme << std::endl;
     }
   }
 
@@ -37,15 +38,24 @@ void Compiler::parse() {
   }
 }
 
+void Compiler::codegen() {
+  std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
+      std::unique_ptr<sammine_lang::AST::CgVisitor>();
+  programAST->accept_vis(cg.get());
+
+  // TODO : Check for codegen error
+}
+
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
-  std::vector<CompilerStage> CompilerStages = {&Compiler::lex,
-                                               &Compiler::parse};
+  std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
+      {&Compiler::lex, "lexing"}, {&Compiler::parse, "parsing"}};
 
   for (auto stage : CompilerStages) {
     if (!error) {
-      stage(this);
+      stage.first(this);
     } else {
+      std::cout << "Failed at " << stage.second << std::endl;
       break;
     }
   }

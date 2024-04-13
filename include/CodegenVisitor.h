@@ -30,6 +30,7 @@ public:
   void visit(StmtAST *ast);
   void visit(IfStmtAST *ast);
   void visit(TypedVarAST *ast);
+  void visit(Visitable *ast);
 };
 } // namespace sammine_lang::AST
 
