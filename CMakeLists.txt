@@ -11,8 +11,8 @@ project(sammine_lang)
 
 # PROJECT_INCLUDE_DIR
 SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/")
-include(src/CMakeLists.txt)
-include(unit-test/CMakeLists.txt)
+add_subdirectory(src)
+add_subdirectory(unit-test)
 
 
 
