@@ -183,7 +183,7 @@ TEST_CASE("Complex combination", "[Lexer]") {
   }
 
   SECTION("Function calls") {
-    auto file = FileRAII("../unit-test/parser/fn_def_1.txt");
+    auto file = FileRAII("artifacts/fn_def_1.txt");
     REQUIRE(file.isOpen());
     auto input = file.getInternalStr();
     sammine_lang::Lexer lex(input);
