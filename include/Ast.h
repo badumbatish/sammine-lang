@@ -1,5 +1,6 @@
-#include "AstBase.h"
 #include "Lexer.h"
+#include "AstBase.h"
+
 #include <memory>
 #include <string>
 #include <vector>

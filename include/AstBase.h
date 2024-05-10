@@ -4,7 +4,7 @@
 
 #ifndef SAMMINE_LANG_ASTBASE_H
 #define SAMMINE_LANG_ASTBASE_H
-#include <llvm/IR/Value.h>
+#include "llvm/IR/Value.h"
 
 namespace sammine_lang {
 namespace AST {
