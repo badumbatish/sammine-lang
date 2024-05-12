@@ -1,0 +1,7 @@
+fn f(x:f64) {
+    return;
+} 
+
+fn f2(x:f64) -> f64 {
+    return 2;
+} 
