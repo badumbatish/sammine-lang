@@ -216,7 +216,8 @@ auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
     return nullptr;
   auto arrow = expect(TokArrow);
   if (!arrow)
-    return nullptr;
+    return std::make_unique<AST::PrototypeAST>(id->lexeme, "",
+                                             std::move(params));;
 
   auto returnType = expect(TokID);
   if (!returnType)
@@ -247,13 +248,15 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
 
 auto Parser::ParseReturnStmt() -> std::unique_ptr<AST::ExprAST> {
   auto returnStmt = std::make_unique<AST::NumberExprAST>();
+  returnStmt->number = "0.0";
   auto returnTok = expect(TokReturn);
   if (returnTok == nullptr) {
-    returnStmt->number = "0.0";
     return returnStmt;
   }
   auto expr = ParseExpr();
   auto semiColon = expect(TokSemiColon, true, TokSemiColon, "Failed to match semicolon token `;` in return statement");
+
+  if (expr == nullptr) return returnStmt;
   return expr;
 }
 auto Parser::ParseStmt() -> std::unique_ptr<AST::StmtAST> { return {}; }

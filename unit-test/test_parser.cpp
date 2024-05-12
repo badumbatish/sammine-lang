@@ -123,6 +123,8 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
+    REQUIRE(pg.hasErrors() == false);
+
     REQUIRE(programAST->DefinitionVec.size() == 1);
 
     auto func_def =
@@ -140,14 +142,15 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
   }
 
   SECTION("None return") {
-    sammine_lang::Lexer lex(test_util::get_string_from_file("artifacts/fn_def_2.txt"));
+    auto lex = Lexer("fn f() {\n return; \n }");
+
+    //sammine_lang::Lexer lex("fn f(x:f64, y : hi, z : hoe) -> f64 {\n return 2; \n }");
 
     auto pg = Parser(lex.getTokenStream());
     auto programAST = pg.Parse();
 
-    REQUIRE(!pg.hasErrors());
+    REQUIRE(pg.hasErrors() == false);
   }
-
 
 }
 
