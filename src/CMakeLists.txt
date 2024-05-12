@@ -2,6 +2,8 @@
 #include_directories(${LLVM_INCLUDE_DIRS})
 
 
+add_library(Utilities ${CMAKE_CURRENT_LIST_DIR}/Utilities.cpp)
+target_include_directories(Utilities PRIVATE ${INCLUDE_PROJECT_DIR})
 
 add_library(Lexer ${CMAKE_CURRENT_LIST_DIR}/Lexer.cpp)
 target_include_directories(Lexer PRIVATE ${INCLUDE_PROJECT_DIR} ${LLVM_INCLUDE_DIRS})

@@ -5,6 +5,7 @@
 //! \file test_lexer.cpp
 //! \brief The unit-test file for all things related to a lexer.
 #include "Lexer.h"
+#include "Utilities.h"
 #include <catch2/catch_test_macros.hpp>
 
 //! Simple test cases for a Lexer, test for an identifier followed by a number
@@ -183,10 +184,7 @@ TEST_CASE("Complex combination", "[Lexer]") {
   }
 
   SECTION("Function calls") {
-    auto file = FileRAII("artifacts/fn_def_1.txt");
-    REQUIRE(file.isOpen());
-    auto input = file.getInternalStr();
-    sammine_lang::Lexer lex(input);
+    sammine_lang::Lexer lex(test_util::get_string_from_file("artifacts/fn_def_1.txt"));
 
     auto tokStream = lex.getTokenStream();
 
