@@ -57,11 +57,13 @@ void Compiler::start() {
       {&Compiler::lex, "lexing"}, {&Compiler::parse, "parsing"},
       {&Compiler::codegen, "codegen"}};
 
+  std::string prev = "";
   for (auto stage : CompilerStages) {
     if (!error) {
       stage.first(this);
+      prev = stage.second;
     } else {
-      std::cout << "Failed at " << stage.second << std::endl;
+      std::cout << std::endl << "Sammine-lang compiler done processing" << std::endl;
       break;
     }
   }
