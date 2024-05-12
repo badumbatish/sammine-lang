@@ -139,6 +139,18 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     REQUIRE(func_def->Block->returnStmt != nullptr);
   }
 
+  SECTION("None return") {
+    auto file = FileRAII("artifacts/fn_def_2.txt");
+    REQUIRE(file.isOpen());
+    auto input = file.getInternalStr();
+    sammine_lang::Lexer lex(input);
+
+    auto pg = Parser(lex.getTokenStream());
+    auto programAST = pg.Parse();
+
+    REQUIRE(!pg.hasErrors());
+  }
+
 
 }
 
