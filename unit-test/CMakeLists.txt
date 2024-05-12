@@ -1,12 +1,5 @@
-Include(FetchContent)
+find_package(Catch2 3 REQUIRED)
 
-FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v3.4.0 # or a later release
-)
-
-FetchContent_MakeAvailable(Catch2)
 
 file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
