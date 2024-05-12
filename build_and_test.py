@@ -15,7 +15,7 @@ def main():
     args = parser.parse_args()
 
     # Step 1: Create build files
-    run_command("cmake -S . -B build -DLLVM_ROOT=usr/local")
+    run_command("cmake -S . -B build -DLLVM_ROOT=usr/local -DCMAKE_BUILD_TYPE=Debug")
 
     # Step 2: Build the project
     run_command(f"cmake --build build -j{args.cores}")
