@@ -39,7 +39,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
   }
 
   SECTION("Variable definition with binary expression") {
-    auto lexer = sammine_lang::Lexer("let b : blablabla = 1+2;");
+    auto lexer = sammine_lang::Lexer("let b : blablabla = 1+2*3;");
     auto tokStreamPtr = lexer.getTokenStream();
     auto pg = sammine_lang::Parser(tokStreamPtr);
 
@@ -74,20 +74,20 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     REQUIRE(expr->arguments->size() == 0);
   }
 
-  // SECTION("Variable definition with string literal expression") {
-  //     auto lexer = sammine_lang::Lexer("let b : blablabla = \"how about
-  //     this\" "); auto tokStreamPtr = lexer.getTokenStream(); auto pg =
-  //     sammine_lang::Parser(tokStreamPtr);
+  SECTION("Variable definition with string literal expression") {
+      auto lexer = sammine_lang::Lexer("let b : blablabla = \"how aboutthis\" "); 
+      auto tokStreamPtr = lexer.getTokenStream(); 
+      auto pg = sammine_lang::Parser(tokStreamPtr);
 
-  //     auto programAST = pg.Parse();
+      auto programAST = pg.Parse();
 
-  //     REQUIRE(programAST->DefinitionVec.size() == 1);
+      REQUIRE(programAST->DefinitionVec.size() == 1);
 
-  //     auto varDef =
-  //     static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
-  //     REQUIRE(varDef->TypedVar->name == "b");
-  //     REQUIRE(varDef->TypedVar->type == "blablabla");
-  // }
+      auto varDef =
+      static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
+      REQUIRE(varDef->TypedVar->name == "b");
+      REQUIRE(varDef->TypedVar->type == "blablabla");
+  }
 }
 
 TEST_CASE("Function declaration parsing", "[Parser]") {
