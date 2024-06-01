@@ -27,8 +27,6 @@ public:
   void visit(VariableExprAST *ast);
 
   void visit(BlockAST *ast);
-  void visit(StmtAST *ast);
-  void visit(IfStmtAST *ast);
   void visit(TypedVarAST *ast);
   void visit(Visitable *ast);
 };

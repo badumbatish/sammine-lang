@@ -234,7 +234,6 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
     return nullptr;
   // TODO : Cannot just parse a return stmt.
   // TODO : We need to also parse other statement as well
-  auto returnStmt = ParseReturnStmt();
   auto rightCurly = expect(TokRightCurly);
 
   if (!rightCurly)
@@ -242,30 +241,9 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
 
   auto blockAST = std::make_unique<AST::BlockAST>();
 
-  blockAST->returnStmt = std::move(returnStmt);
   return blockAST;
 }
 
-auto Parser::ParseReturnStmt() -> std::unique_ptr<AST::ExprAST> {
-  auto returnStmt = std::make_unique<AST::NumberExprAST>();
-  returnStmt->number = "0.0";
-  auto returnTok = expect(TokReturn);
-  if (returnTok == nullptr) {
-    return returnStmt;
-  }
-  auto expr = ParseExpr();
-  auto semiColon = expect(TokSemiColon, true, TokSemiColon, "Failed to match semicolon token `;` in return statement");
-
-  if (expr == nullptr) return returnStmt;
-  return expr;
-}
-auto Parser::ParseStmt() -> std::unique_ptr<AST::StmtAST> { return {}; }
-
-auto Parser::ParseSimpleStmt() -> std::unique_ptr<AST::SimpleStmtAST> {
-  return {};
-}
-
-auto Parser::ParseIfStmtStmt() -> std::unique_ptr<AST::IfStmtAST> { return {}; }
 
 // Parsing of parameters in a function call, we use leftParen and rightParen as
 // appropriate stopping point

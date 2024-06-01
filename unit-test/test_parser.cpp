@@ -96,7 +96,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
   //}
 
   SECTION("Single argument") {
-    auto lex = Lexer("fn f(x:f64) -> f64 {\n return 0 ; \n }");
+    auto lex = Lexer("fn f(x:f64) -> f64 {\n \n }");
     REQUIRE(lex.getTokenStream()->hasErrors() == false);
     auto pg = Parser(lex.getTokenStream());
 
@@ -113,12 +113,10 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     REQUIRE(func_def->Prototype->returnType == "f64");
     REQUIRE(func_def->Prototype->functionName == "f");
     REQUIRE(func_def->Prototype->parameterVectors->size() == 1);
-    REQUIRE(func_def->Block->Statements.empty());
-    REQUIRE(func_def->Block->returnStmt != nullptr);
   }
 
   SECTION("Multiple argument") {
-    auto lex = Lexer("fn f(x:f64, y : hi, z : hoe) -> f64 {\n return 1+2 ; \n }");
+    auto lex = Lexer("fn f(x:f64, y : hi, z : hoe) {\n  \n }");
     REQUIRE(lex.getTokenStream()->hasErrors() == false);
     auto pg = Parser(lex.getTokenStream());
 
@@ -134,15 +132,12 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);
 
-    REQUIRE(func_def->Prototype->returnType == "f64");
     REQUIRE(func_def->Prototype->functionName == "f");
     REQUIRE(func_def->Prototype->parameterVectors->size() == 3);
-    REQUIRE(func_def->Block->Statements.empty());
-    REQUIRE(func_def->Block->returnStmt != nullptr);
   }
 
   SECTION("None return") {
-    auto lex = Lexer("fn f() {\n return; \n }");
+    auto lex = Lexer("fn f() {\n  \n }");
 
     //sammine_lang::Lexer lex("fn f(x:f64, y : hi, z : hoe) -> f64 {\n return 2; \n }");
 

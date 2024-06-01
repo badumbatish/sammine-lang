@@ -26,10 +26,6 @@ class NumberExprAST;
 class VariableExprAST;
 
 class BlockAST;
-class StmtAST;
-
-class SimpleStmtAST;
-class IfStmtAST;
 
 class ProgramAST : public AstBase {
 public:
@@ -86,15 +82,8 @@ public:
 //!
 class BlockAST : public AstBase {
 public:
-  std::vector<std::unique_ptr<StmtAST>> Statements;
-  std::unique_ptr<ExprAST> returnStmt;
+  std::vector<std::unique_ptr<ExprAST>> Statements;
 };
-
-class StmtAST : public AstBase {};
-
-class SimpleStmtAST : public StmtAST {};
-
-class IfStmtAST : public StmtAST {};
 
 class ExprAST : public AstBase {};
 

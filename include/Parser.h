@@ -29,12 +29,6 @@ private:
   // Parse block
   auto ParseBlock() -> std::unique_ptr<AST::BlockAST>;
 
-  // Parse Statements
-  auto ParseStmt() -> std::unique_ptr<AST::StmtAST>;
-  auto ParseSimpleStmt() -> std::unique_ptr<AST::SimpleStmtAST>;
-  auto ParseIfStmtStmt() -> std::unique_ptr<AST::IfStmtAST>;
-  auto ParseReturnStmt() -> std::unique_ptr<AST::ExprAST>;
-
   // Parse parameters
   auto ParseParams()
       -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>;
