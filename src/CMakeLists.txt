@@ -10,7 +10,7 @@ target_include_directories(Lexer PRIVATE ${INCLUDE_PROJECT_DIR} ${LLVM_INCLUDE_D
 
 add_library(Parser ${CMAKE_CURRENT_LIST_DIR}/Parser.cpp)
 target_include_directories(Parser PRIVATE ${INCLUDE_PROJECT_DIR} ${LLVM_INCLUDE_DIRS})
-target_link_libraries(Parser PRIVATE LLVMSupport ${llvm_libs})
+target_link_libraries(Parser PRIVATE LLVMSupport ${llvm_libs} Utilities)
 
 add_library(SammineJIT ${CMAKE_CURRENT_LIST_DIR}/SammineJIT.cpp)
 target_include_directories(SammineJIT PRIVATE ${INCLUDE_PROJECT_DIR} ${LLVM_INCLUDE_DIRS})

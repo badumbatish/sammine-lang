@@ -1,11 +1,15 @@
 
 #include "Parser.h"
 #include "Lexer.h"
+#include <cstdlib>
+#include "Utilities.h"
 #include <functional>
+#include <memory>
 
 namespace sammine_lang {
 
-static std::map<TokenType, int> binopPrecedence = {{TokenType::TokLESS, 10},
+static std::map<TokenType, int> binopPrecedence = {{TokenType::TokASSIGN, 2},
+                                                   {TokenType::TokLESS, 10},
                                                    {TokenType::TokADD, 20},
                                                    {TokenType::TokSUB, 20},
                                                    {TokenType::TokMUL, 40}};
@@ -205,7 +209,14 @@ auto Parser::ParseNumberExpr() -> std::unique_ptr<AST::ExprAST> {
   return numberExpr;
 }
 
-auto Parser::ParseVariableExpr() -> std::unique_ptr<AST::ExprAST> { return {}; }
+auto Parser::ParseVariableExpr() -> std::unique_ptr<AST::ExprAST> { 
+  auto name = expect(TokenType::TokID);
+  
+  if (name) 
+    return std::make_unique<AST::VariableExprAST>(name);
+  return nullptr;
+  
+}
 
 auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
   auto id = expect(TokID);
