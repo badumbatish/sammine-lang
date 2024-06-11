@@ -42,9 +42,15 @@ Testing/
 
 # Docs
 generated_docs/
+docs
 html/
 latex/
 # C-lion
 .idea/
 .DS_Store
 .vscode/settings.json
+
+# VS-code
+.vscode/
+.cache/
+.devcontainer/
