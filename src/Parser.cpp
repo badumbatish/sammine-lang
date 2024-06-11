@@ -1,5 +1,6 @@
 
 #include "Parser.h"
+#include "Lexer.h"
 #include <functional>
 
 namespace sammine_lang {
@@ -220,10 +221,8 @@ auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
                                              std::move(params));;
 
   auto returnType = expect(TokID);
-  if (!returnType)
-    return nullptr;
 
-  return std::make_unique<AST::PrototypeAST>(id->lexeme, returnType->lexeme,
+  return std::make_unique<AST::PrototypeAST>(id->lexeme, returnType ? returnType->lexeme : "",
                                              std::move(params));
 }
 
@@ -234,6 +233,10 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
     return nullptr;
   // TODO : Cannot just parse a return stmt.
   // TODO : We need to also parse other statement as well
+
+  while (ParseExpr()) {
+    
+  }
   auto rightCurly = expect(TokRightCurly);
 
   if (!rightCurly)
@@ -324,10 +327,9 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
     if (exhausts) {
       log_error(message);
       tokStream->exhaust_until(until);
-      return nullptr;
-    } else {
-      return nullptr;
     }
+
+    return nullptr;
   }
 }
 

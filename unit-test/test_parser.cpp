@@ -156,3 +156,11 @@ TEST_CASE("FAILED TO PARSE", "[Parser]") {
   auto programAST = pg.Parse();
   REQUIRE(pg.hasErrors() == true);
 }
+
+TEST_CASE("VALID GRAMMAR", "[Parser]") {
+  auto lex = Lexer(test_util::get_string_from_file("artifacts/valid_grammar.txt"));
+  REQUIRE(lex.getTokenStream()->hasErrors() == false);
+  auto pg = Parser(lex.getTokenStream());
+  auto programAST = pg.Parse();
+  REQUIRE(pg.hasErrors() == false);
+}
