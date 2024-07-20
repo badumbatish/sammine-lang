@@ -1,11 +1,17 @@
 #include "Ast.h"
 #include "Lexer.h"
+#include "tl/expected.hpp"
 namespace sammine_lang {
+enum ParserError {
+  COMMITTED,
+  NONCOMMITTED,
+};
 class Parser {
 private:
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]]
-  auto ParseProgram() -> std::unique_ptr<AST::ProgramAST>;
+  auto
+  ParseProgram() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
 
   // Parse definition
   [[nodiscard]]
@@ -62,7 +68,7 @@ public:
   Parser(std::shared_ptr<TokenStream> tokStream)
       : tokStream(tokStream) {}
   [[nodiscard]]
-  auto Parse() -> std::unique_ptr<AST::ProgramAST>;
+  auto Parse() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
   [[nodiscard]]
   auto hasErrors() -> bool {
     return !error_msgs.empty();

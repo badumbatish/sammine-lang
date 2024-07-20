@@ -8,7 +8,7 @@ namespace sammine_lang {
 
 Compiler::Compiler(const std::string &input, const std::string &file_name)
     : input(input), file_name(file_name), error(false) {
-    resPtr = std::shared_ptr<LLVMRes>();
+  resPtr = std::shared_ptr<LLVMRes>();
 }
 void Compiler::lex() {
 
@@ -29,9 +29,10 @@ void Compiler::lex() {
 void Compiler::parse() {
   Parser psr = Parser(tokStream);
 
-  programAST = psr.Parse();
-
-  if (psr.hasErrors()) {
+  auto result = psr.Parse();
+  if (result.has_value()) {
+    programAST = std::move(result.value());
+  } else if (psr.hasErrors()) {
     set_error();
     std::cerr << "[Error during parsing phase]" << std::endl;
     for (auto i : psr.error_msgs) {
@@ -41,10 +42,10 @@ void Compiler::parse() {
 }
 
 void Compiler::codegen() {
-    std::cout << "Start partial codegen" << std::endl;
-    std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
+  std::cout << "Start partial codegen" << std::endl;
+  std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
       std::make_unique<sammine_lang::AST::CgVisitor>(resPtr);
-    assert(cg != nullptr);
+  assert(cg != nullptr);
   programAST->accept_vis(cg.get());
 
   std::cout << "Finish partial codegen" << std::endl;
@@ -54,7 +55,8 @@ void Compiler::codegen() {
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
   std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
-      {&Compiler::lex, "lexing"}, {&Compiler::parse, "parsing"},
+      {&Compiler::lex, "lexing"},
+      {&Compiler::parse, "parsing"},
       {&Compiler::codegen, "codegen"}};
 
   std::string prev = "";
@@ -63,7 +65,8 @@ void Compiler::start() {
       stage.first(this);
       prev = stage.second;
     } else {
-      std::cout << std::endl << "Sammine-lang compiler done processing" << std::endl;
+      std::cout << std::endl
+                << "Sammine-lang compiler done processing" << std::endl;
       break;
     }
   }

@@ -1,8 +1,8 @@
 
 #include "Parser.h"
 #include "Lexer.h"
-#include <cstdlib>
 #include "Utilities.h"
+#include <cstdlib>
 #include <functional>
 #include <memory>
 
@@ -21,11 +21,13 @@ int GetTokPrecedence(TokenType tokType) {
   return TokPrec;
 }
 
-auto Parser::Parse() -> std::unique_ptr<AST::ProgramAST> {
+auto Parser::Parse()
+    -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
   return ParseProgram();
 }
 
-auto Parser::ParseProgram() -> std::unique_ptr<AST::ProgramAST> {
+auto Parser::ParseProgram()
+    -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
   auto programAST = std::make_unique<AST::ProgramAST>();
   while (!tokStream->isEnd()) {
     auto def = ParseDefinition();
@@ -51,8 +53,8 @@ auto Parser::ParseDefinition() -> std::unique_ptr<AST::DefinitionAST> {
       return result;
   }
 
-  expect(TokenType::TokINVALID, true, TokEOF,
-         "Failed to parse any meaningful definitions");
+  auto result = expect(TokenType::TokINVALID, true, TokEOF,
+                       "Failed to parse any meaningful definitions");
   return nullptr;
 }
 
@@ -63,15 +65,15 @@ auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
 
   auto prototype = ParsePrototype();
   if (prototype == nullptr) {
-    expect(TokenType::TokINVALID, true, TokRightCurly,
-           "Failed to parse a prototype of a function");
+    auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
+                         "Failed to parse a prototype of a function");
     return std::make_unique<AST::FuncDefAST>(nullptr, nullptr);
   }
 
   auto block = ParseBlock();
   if (!block) {
-    expect(TokenType::TokINVALID, true, TokRightCurly,
-           "Failed to parse a block of a function definition");
+    auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
+                         "Failed to parse a block of a function definition");
     return std::make_unique<AST::FuncDefAST>(std::move(prototype), nullptr);
   }
 
@@ -89,8 +91,8 @@ auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
     return nullptr;
   auto typedVar = ParseTypedVar();
   if (!typedVar) {
-    expect(TokenType::TokINVALID, true, TokSemiColon,
-           "Failed to parse typed variable");
+    auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
+                         "Failed to parse typed variable");
     return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
   }
 
@@ -101,8 +103,8 @@ auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
 
   auto expr = ParseExpr();
   if (!expr) {
-    expect(TokenType::TokINVALID, true, TokSemiColon,
-           "Failed to parse expression");
+    auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
+                         "Failed to parse expression");
     return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
   }
 
@@ -209,13 +211,12 @@ auto Parser::ParseNumberExpr() -> std::unique_ptr<AST::ExprAST> {
   return numberExpr;
 }
 
-auto Parser::ParseVariableExpr() -> std::unique_ptr<AST::ExprAST> { 
+auto Parser::ParseVariableExpr() -> std::unique_ptr<AST::ExprAST> {
   auto name = expect(TokenType::TokID);
-  
-  if (name) 
+
+  if (name)
     return std::make_unique<AST::VariableExprAST>(name);
   return nullptr;
-  
 }
 
 auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
@@ -229,12 +230,13 @@ auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
   auto arrow = expect(TokArrow);
   if (!arrow)
     return std::make_unique<AST::PrototypeAST>(id->lexeme, "",
-                                             std::move(params));;
+                                               std::move(params));
+  ;
 
   auto returnType = expect(TokID);
 
-  return std::make_unique<AST::PrototypeAST>(id->lexeme, returnType ? returnType->lexeme : "",
-                                             std::move(params));
+  return std::make_unique<AST::PrototypeAST>(
+      id->lexeme, returnType ? returnType->lexeme : "", std::move(params));
 }
 
 auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
@@ -246,7 +248,6 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
   // TODO : We need to also parse other statement as well
 
   while (ParseExpr()) {
-    
   }
   auto rightCurly = expect(TokRightCurly);
 
@@ -257,7 +258,6 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
 
   return blockAST;
 }
-
 
 // Parsing of parameters in a function call, we use leftParen and rightParen as
 // appropriate stopping point
@@ -290,7 +290,8 @@ auto Parser::ParseParams()
   }
   auto rightParen = expect(TokRightParen);
   if (rightParen == nullptr) {
-    log_error("Failed to find right parenthesis after processing [typed variables]");
+    log_error(
+        "Failed to find right parenthesis after processing [typed variables]");
     return nullptr;
   }
 
@@ -345,6 +346,7 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
 }
 
 auto Parser::log_error(const std::string &message) -> void {
-  error_msgs.push_back(tokStream->currentLocation().to_string() + ": " + message);
+  error_msgs.push_back(tokStream->currentLocation().to_string() + ": " +
+                       message);
 }
 } // namespace sammine_lang

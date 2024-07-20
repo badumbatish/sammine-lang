@@ -4,9 +4,10 @@
 
 //! \file test_parser.cpp
 //! \brief The unit-test file for all things related to a parser.
-#include "Utilities.h"
 #include "Lexer.h"
 #include "Parser.h"
+#include "Utilities.h"
+#include "tl/expected.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace sammine_lang;
@@ -18,7 +19,7 @@ TEST_CASE("Empty program parsing", "[Parser]") {
 
   auto programAST = pg.Parse();
 
-  REQUIRE(programAST->DefinitionVec.empty() == true);
+  REQUIRE(programAST.value()->DefinitionVec.empty() == true);
 }
 
 TEST_CASE("Variable definition parsing", "[Parser]") {
@@ -30,10 +31,10 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.Parse();
 
-    REQUIRE(programAST->DefinitionVec.size() == 1);
+    REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto varDef = static_cast<sammine_lang::AST::VarDefAST *>(
-        programAST->DefinitionVec.front().get());
+        programAST.value()->DefinitionVec.front().get());
     REQUIRE(varDef->TypedVar->name == "b");
     REQUIRE(varDef->TypedVar->type == "blablabla");
   }
@@ -46,10 +47,10 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto programAST = pg.Parse();
 
     REQUIRE(!pg.hasErrors());
-    REQUIRE(programAST->DefinitionVec.size() == 1);
+    REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto varDef = static_cast<sammine_lang::AST::VarDefAST *>(
-        programAST->DefinitionVec.front().get());
+        programAST.value()->DefinitionVec.front().get());
     REQUIRE(varDef->TypedVar->name == "b");
     REQUIRE(varDef->TypedVar->type == "blablabla");
   }
@@ -61,10 +62,10 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.Parse();
 
-    REQUIRE(programAST->DefinitionVec.size() == 1);
+    REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto varDef = static_cast<sammine_lang::AST::VarDefAST *>(
-        programAST->DefinitionVec.front().get());
+        programAST.value()->DefinitionVec.front().get());
     REQUIRE(varDef->TypedVar->name == "b");
     REQUIRE(varDef->TypedVar->type == "blablabla");
 
@@ -75,18 +76,18 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
   }
 
   SECTION("Variable definition with string literal expression") {
-      auto lexer = sammine_lang::Lexer("let b : blablabla = \"how aboutthis\" "); 
-      auto tokStreamPtr = lexer.getTokenStream(); 
-      auto pg = sammine_lang::Parser(tokStreamPtr);
+    auto lexer = sammine_lang::Lexer("let b : blablabla = \"how aboutthis\" ");
+    auto tokStreamPtr = lexer.getTokenStream();
+    auto pg = sammine_lang::Parser(tokStreamPtr);
 
-      auto programAST = pg.Parse();
+    auto programAST = pg.Parse();
 
-      REQUIRE(programAST->DefinitionVec.size() == 1);
+    REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
-      auto varDef =
-      static_cast<sammine_lang::AST::VarDefAST*>(programAST->DefinitionVec.front().get());
-      REQUIRE(varDef->TypedVar->name == "b");
-      REQUIRE(varDef->TypedVar->type == "blablabla");
+    auto varDef = static_cast<sammine_lang::AST::VarDefAST *>(
+        programAST.value()->DefinitionVec.front().get());
+    REQUIRE(varDef->TypedVar->name == "b");
+    REQUIRE(varDef->TypedVar->type == "blablabla");
   }
 }
 
@@ -101,11 +102,11 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(programAST->DefinitionVec.size() == 1);
+    REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto func_def =
         std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
-            programAST->DefinitionVec.front().release()));
+            programAST.value()->DefinitionVec.front().release()));
 
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);
@@ -123,11 +124,11 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto programAST = pg.Parse();
     REQUIRE(pg.hasErrors() == false);
 
-    REQUIRE(programAST->DefinitionVec.size() == 1);
+    REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto func_def =
         std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
-            programAST->DefinitionVec.front().release()));
+            programAST.value()->DefinitionVec.front().release()));
 
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);
@@ -139,14 +140,14 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
   SECTION("None return") {
     auto lex = Lexer("fn f() {\n  \n }");
 
-    //sammine_lang::Lexer lex("fn f(x:f64, y : hi, z : hoe) -> f64 {\n return 2; \n }");
+    // sammine_lang::Lexer lex("fn f(x:f64, y : hi, z : hoe) -> f64 {\n return
+    // 2; \n }");
 
     auto pg = Parser(lex.getTokenStream());
     auto programAST = pg.Parse();
 
     REQUIRE(pg.hasErrors() == false);
   }
-
 }
 
 TEST_CASE("FAILED TO PARSE", "[Parser]") {
@@ -158,7 +159,8 @@ TEST_CASE("FAILED TO PARSE", "[Parser]") {
 }
 
 TEST_CASE("VALID GRAMMAR", "[Parser]") {
-  auto lex = Lexer(test_util::get_string_from_file("artifacts/valid_grammar.txt"));
+  auto lex =
+      Lexer(test_util::get_string_from_file("artifacts/valid_grammar.txt"));
   REQUIRE(lex.getTokenStream()->hasErrors() == false);
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
