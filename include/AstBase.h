@@ -14,16 +14,24 @@ class ASTVisitor;
 class ASTVisitor {
 public:
   virtual void visit(Visitable *visitable) = 0;
+  virtual void preorder_walk(Visitable *visitable) {}
+  virtual void postorder_walk(Visitable *visitable) {}
 };
 class Visitable {
 public:
   virtual ~Visitable() = default;
   virtual void accept_vis(ASTVisitor *visitor) { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) {
+    visitor->postorder_walk(this);
+  }
 };
 
 class AstBase : public Visitable {
 public:
-  llvm::Value* val;
+  llvm::Value *val;
 };
 } // namespace AST
 } // namespace sammine_lang
