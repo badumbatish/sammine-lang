@@ -1,5 +1,5 @@
-#include "Lexer.h"
 #include "AstBase.h"
+#include "Lexer.h"
 
 #include <memory>
 #include <string>
@@ -30,6 +30,7 @@ class BlockAST;
 class ProgramAST : public AstBase {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
+  virtual std::string getASTName() override { return "ProgramAST"; }
 };
 
 class DefinitionAST : public AstBase {};
@@ -43,13 +44,15 @@ public:
   VarDefAST(std::unique_ptr<TypedVarAST> TypedVar,
             std::unique_ptr<ExprAST> Expression)
       : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)){};
+
+  virtual std::string getASTName() override { return "VarDefAST"; }
 };
 
 //! \brief A prototype to present "func func_name(...) -> type;"
 
 //!
 //!
-class PrototypeAST : public Visitable {
+class PrototypeAST : public AstBase {
 public:
   llvm::Function *function;
   std::string functionName;
@@ -62,6 +65,8 @@ public:
                    parameterVectors)
       : functionName(functionName), returnType(std::move(returnType)),
         parameterVectors(std::move(parameterVectors)) {}
+
+  virtual std::string getASTName() override { return "PrototypeAST"; }
 };
 
 //! \brief A Function Definition that has the prototype and definition in terms
@@ -74,6 +79,8 @@ public:
   FuncDefAST(std::unique_ptr<PrototypeAST> Prototype,
              std::unique_ptr<BlockAST> Block)
       : Prototype(std::move(Prototype)), Block(std::move(Block)) {}
+
+  virtual std::string getASTName() override { return "FuncDefAST"; }
 };
 
 //! \brief An AST to simulate a { } code block
@@ -83,6 +90,7 @@ public:
 class BlockAST : public AstBase {
 public:
   std::vector<std::unique_ptr<ExprAST>> Statements;
+  virtual std::string getASTName() override { return "BlockAST"; }
 };
 
 class ExprAST : public AstBase {};
@@ -90,6 +98,8 @@ class ExprAST : public AstBase {};
 class NumberExprAST : public ExprAST {
 public:
   std::string number;
+
+  virtual std::string getASTName() override { return "NumberExprAST"; }
 };
 
 class BinaryExprAST : public ExprAST {
@@ -99,6 +109,8 @@ public:
   BinaryExprAST(std::shared_ptr<Token> op, std::unique_ptr<ExprAST> LHS,
                 std::unique_ptr<ExprAST> RHS)
       : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+
+  virtual std::string getASTName() override { return "BinaryExprAST"; }
 };
 
 class CallExprAST : public ExprAST {
@@ -110,17 +122,22 @@ public:
       std::string functionName,
       std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> arguments)
       : functionName(functionName), arguments(std::move(arguments)) {}
+
+  virtual std::string getASTName() override { return "CallExprAST"; }
 };
 
 class VariableExprAST : public ExprAST {
 public:
   std::string variableName;
   VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme){};
+
+  virtual std::string getASTName() override { return "VariableExprAST"; }
 };
 class TypedVarAST : public AstBase {
 public:
   std::string name;
   std::string type;
+  virtual std::string getASTName() override { return "TypedVarAST"; }
 };
 
 } // namespace AST

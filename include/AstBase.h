@@ -32,6 +32,7 @@ public:
 class AstBase : public Visitable {
 public:
   llvm::Value *val;
+  virtual std::string getASTName() = 0;
 };
 } // namespace AST
 } // namespace sammine_lang
