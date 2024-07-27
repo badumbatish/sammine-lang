@@ -27,12 +27,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) {
     visitor->postorder_walk(this);
   }
+  virtual std::string getTreeName() = 0;
 };
 
 class AstBase : public Visitable {
 public:
   llvm::Value *val;
-  virtual std::string getASTName() = 0;
 };
 } // namespace AST
 } // namespace sammine_lang
