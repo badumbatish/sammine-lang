@@ -16,5 +16,6 @@ class BinaryExprAST;
 class NumberExprAST;
 class VariableExprAST;
 class BlockAST;
+
 } // namespace AST
 } // namespace sammine_lang

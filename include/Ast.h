@@ -1,11 +1,11 @@
+#ifndef SAMMINE_LANG_AST_H
+#define SAMMINE_LANG_AST_H
 #include "AstBase.h"
 #include "Lexer.h"
-
 #include <memory>
 #include <string>
 #include <vector>
-#ifndef SAMMINE_LANG_AST_H
-#define SAMMINE_LANG_AST_H
+
 namespace sammine_lang {
 namespace AST {
 
@@ -133,6 +133,7 @@ public:
 
   virtual std::string getTreeName() override { return "VariableExprAST"; }
 };
+
 class TypedVarAST : public AstBase {
 public:
   std::string name;

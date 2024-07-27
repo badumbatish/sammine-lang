@@ -4,7 +4,12 @@
 
 #ifndef SAMMINE_LANG_ASTBASE_H
 #define SAMMINE_LANG_ASTBASE_H
-#include "llvm/IR/Value.h"
+#include "AstDecl.h"
+namespace llvm {
+class Value;
+
+class Function;
+} // namespace llvm
 
 namespace sammine_lang {
 namespace AST {
@@ -16,6 +21,7 @@ public:
   virtual void visit(Visitable *visitable) = 0;
   virtual void preorder_walk(Visitable *visitable) {}
   virtual void postorder_walk(Visitable *visitable) {}
+  virtual void visit(ProgramAST *ast);
 };
 class Visitable {
 public:

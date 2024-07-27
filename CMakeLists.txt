@@ -12,6 +12,15 @@ add_definitions(${LLVM_DEFINITIONS})
 project(sammine_lang)
 # LLVM-STUFF
 find_package(LLVM REQUIRED CONFIG)
+
+# Find ninja
+find_program(NINJA_EXECUTABLE ninja)
+if(NINJA_EXECUTABLE)
+  set(CMAKE_GENERATOR "Ninja")
+  message(STATUS "Using Ninja build system")
+else()
+  message(STATUS "Ninja not found, using default generator")
+endif()
 # PROJECT_INCLUDE_DIR
 SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/")
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
