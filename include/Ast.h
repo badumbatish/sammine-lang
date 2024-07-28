@@ -31,6 +31,13 @@ class ProgramAST : public AstBase {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
   virtual std::string getTreeName() override { return "ProgramAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 class DefinitionAST : public AstBase {};
@@ -46,6 +53,13 @@ public:
       : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)){};
 
   virtual std::string getTreeName() override { return "VarDefAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 //! \brief A prototype to present "func func_name(...) -> type;"
@@ -67,6 +81,13 @@ public:
         parameterVectors(std::move(parameterVectors)) {}
 
   virtual std::string getTreeName() override { return "PrototypeAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 //! \brief A Function Definition that has the prototype and definition in terms
@@ -81,6 +102,13 @@ public:
       : Prototype(std::move(Prototype)), Block(std::move(Block)) {}
 
   virtual std::string getTreeName() override { return "FuncDefAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 //! \brief An AST to simulate a { } code block
@@ -91,6 +119,13 @@ class BlockAST : public AstBase {
 public:
   std::vector<std::unique_ptr<ExprAST>> Statements;
   virtual std::string getTreeName() override { return "BlockAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 class ExprAST : public AstBase {};
@@ -100,6 +135,13 @@ public:
   std::string number;
 
   virtual std::string getTreeName() override { return "NumberExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 class BinaryExprAST : public ExprAST {
@@ -111,6 +153,13 @@ public:
       : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
 
   virtual std::string getTreeName() override { return "BinaryExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 class CallExprAST : public ExprAST {
@@ -124,6 +173,13 @@ public:
       : functionName(functionName), arguments(std::move(arguments)) {}
 
   virtual std::string getTreeName() override { return "CallExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 class VariableExprAST : public ExprAST {
@@ -132,6 +188,13 @@ public:
   VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme){};
 
   virtual std::string getTreeName() override { return "VariableExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 class TypedVarAST : public AstBase {
@@ -139,6 +202,13 @@ public:
   std::string name;
   std::string type;
   virtual std::string getTreeName() override { return "TypedVarAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 } // namespace AST

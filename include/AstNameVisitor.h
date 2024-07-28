@@ -3,6 +3,7 @@
 #define SAMMINE_LANG_ASTNAMEVISITOR_H
 #include "Ast.h"
 #include "AstBase.h"
+#include "Utilities.h"
 
 namespace sammine_lang::AST {
 class AstNameVisitor : public ASTVisitor {
@@ -12,8 +13,35 @@ public:
   std::vector<std::string> PostOrderNames;
   AstNameVisitor() {}
 
-  virtual void preorder_walk(Visitable *visitable) override {
-    PreOrderNames.push_back(visitable->getTreeName());
+  void preorder_walk(ProgramAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(VarDefAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(FuncDefAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(PrototypeAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(CallExprAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(BinaryExprAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(NumberExprAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(VariableExprAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(BlockAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(TypedVarAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
   }
 };
 } // namespace sammine_lang::AST

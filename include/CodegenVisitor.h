@@ -16,18 +16,7 @@ private:
 
 public:
   CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr) : resPtr(resPtr) {}
-
-  void visit(VarDefAST *ast);
-  void visit(FuncDefAST *ast);
-  void visit(PrototypeAST *ast);
-  void visit(CallExprAST *ast);
-  void visit(BinaryExprAST *ast);
-  void visit(NumberExprAST *ast);
-  void visit(VariableExprAST *ast);
-
-  void visit(BlockAST *ast);
-  void visit(TypedVarAST *ast);
-  void visit(Visitable *ast);
+  void visit(Visitable *visitable) {}
 };
 } // namespace sammine_lang::AST
 
