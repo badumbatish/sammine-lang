@@ -30,18 +30,19 @@ auto Parser::ParseProgram()
     -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
   auto programAST = std::make_unique<AST::ProgramAST>();
   while (!tokStream->isEnd()) {
-    auto def = ParseDefinition();
-    if (def != nullptr) {
-      programAST->DefinitionVec.push_back(std::move(def));
+    auto def_result = ParseDefinition();
+    if (def_result) {
+      programAST->DefinitionVec.push_back(std::move(def_result.value()));
     }
   }
 
   return programAST;
 }
 
-auto Parser::ParseDefinition() -> std::unique_ptr<AST::DefinitionAST> {
-  using ParseFunction =
-      std::function<std::unique_ptr<AST::DefinitionAST>(Parser *)>;
+auto Parser::ParseDefinition()
+    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
+  using ParseFunction = std::function<
+      tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
       {&Parser::ParseFuncDef, false},
       {&Parser::ParseVarDef, false},
@@ -49,84 +50,87 @@ auto Parser::ParseDefinition() -> std::unique_ptr<AST::DefinitionAST> {
 
   for (auto [fn, required] : ParseFunctions) {
     auto result = fn(this);
-    if (result != nullptr)
+    if (result)
       return result;
   }
 
   auto result = expect(TokenType::TokINVALID, true, TokEOF,
                        "Failed to parse any meaningful definitions");
-  return nullptr;
+  return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
 
-auto Parser::ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST> {
+auto Parser::ParseFuncDef()
+    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
   auto fn = expect(TokenType::TokFunc);
-  if (fn == nullptr)
-    return nullptr;
+  if (!fn)
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
 
   auto prototype = ParsePrototype();
-  if (prototype == nullptr) {
+  if (!prototype) {
     auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
                          "Failed to parse a prototype of a function");
-    return std::make_unique<AST::FuncDefAST>(nullptr, nullptr);
+    return tl::make_unexpected(ParserError::COMMITTED);
   }
 
   auto block = ParseBlock();
   if (!block) {
     auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
                          "Failed to parse a block of a function definition");
-    return std::make_unique<AST::FuncDefAST>(std::move(prototype), nullptr);
+    return tl::make_unexpected(ParserError::COMMITTED);
   }
 
-  return std::make_unique<AST::FuncDefAST>(std::move(prototype),
-                                           std::move(block));
+  return std::make_unique<AST::FuncDefAST>(std::move(prototype.value()),
+                                           std::move(block.value()));
 }
 
 //! Parsing implementation for a variable decl/def
 
 //! Accepts a let, continue parsing inside and (enable error reporting if
 //! possible). If a `let` is not found then return a nullptr.
-auto Parser::ParseVarDef() -> std::unique_ptr<AST::DefinitionAST> {
+auto Parser::ParseVarDef()
+    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
   auto let = expect(TokenType::TokLet);
-  if (let == nullptr)
-    return nullptr;
+  if (!let)
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
   auto typedVar = ParseTypedVar();
   if (!typedVar) {
     auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
                          "Failed to parse typed variable");
-    return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
+    return tl::make_unexpected(ParserError::COMMITTED);
   }
 
   auto assign = expect(TokenType::TokASSIGN, true, TokSemiColon,
                        "Failed to match assign token `=`");
   if (!assign)
-    return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
+    return tl::make_unexpected(ParserError::COMMITTED);
 
   auto expr = ParseExpr();
   if (!expr) {
     auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
                          "Failed to parse expression");
-    return std::make_unique<AST::VarDefAST>(nullptr, nullptr);
+    return tl::make_unexpected(ParserError::COMMITTED);
   }
 
   auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon,
                           "Failed to match semicolon token `;`");
 
-  auto varDef =
-      std::make_unique<AST::VarDefAST>(std::move(typedVar), std::move(expr));
+  auto varDef = std::make_unique<AST::VarDefAST>(std::move(typedVar.value()),
+                                                 std::move(expr.value()));
 
   return varDef;
 }
 
-auto Parser::ParseTypedVar() -> std::unique_ptr<AST::TypedVarAST> {
+auto Parser::ParseTypedVar()
+    -> tl::expected<std::unique_ptr<AST::TypedVarAST>, ParserError> {
   auto name = expect(TokenType::TokID);
   if (!name)
-    return nullptr;
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
   auto colon = expect(TokenType::TokColon);
   if (!colon)
-    return nullptr;
+    return tl::make_unexpected(ParserError::COMMITTED);
   auto type = expect(TokenType::TokID);
   if (!type)
-    return nullptr;
+    return tl::make_unexpected(ParserError::COMMITTED);
 
   auto typedVar = std::make_unique<AST::TypedVarAST>();
 
@@ -134,8 +138,11 @@ auto Parser::ParseTypedVar() -> std::unique_ptr<AST::TypedVarAST> {
   typedVar->type = type->lexeme;
   return typedVar;
 }
-auto Parser::ParsePrimaryExpr() -> std::unique_ptr<AST::ExprAST> {
-  using ParseFunction = std::function<std::unique_ptr<AST::ExprAST>(Parser *)>;
+auto Parser::ParsePrimaryExpr()
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+  using ParseFunction =
+      std::function<tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>(
+          Parser *)>;
   std::vector<ParseFunction> ParseFunctions = {
       &Parser::ParseCallExpr,
       &Parser::ParseNumberExpr,
@@ -144,22 +151,23 @@ auto Parser::ParsePrimaryExpr() -> std::unique_ptr<AST::ExprAST> {
 
   for (auto fn : ParseFunctions) {
     auto result = fn(this);
-    if (result != nullptr)
+    if (result)
       return result;
   }
 
-  return nullptr;
+  return tl::make_unexpected(ParserError::COMMITTED);
 }
-auto Parser::ParseExpr() -> std::unique_ptr<AST::ExprAST> {
+auto Parser::ParseExpr()
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
   auto LHS = ParsePrimaryExpr();
   if (!LHS)
-    return nullptr;
+    return LHS;
 
-  return ParseBinaryExpr(0, std::move(LHS));
+  return ParseBinaryExpr(0, std::move(LHS.value()));
 }
 
 auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
-    -> std::unique_ptr<AST::ExprAST> {
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
   while (true) {
     int TokPrec = GetTokPrecedence(tokStream->peek()->type);
 
@@ -170,40 +178,46 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
 
     auto RHS = ParsePrimaryExpr();
     if (!RHS)
-      return nullptr;
+      return RHS;
 
     int NextPrec = GetTokPrecedence(tokStream->peek()->type);
     if (TokPrec < NextPrec) {
-      RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS));
+      RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS.value()));
       if (!RHS)
-        return nullptr;
+        return RHS;
     }
 
     LHS = std::make_unique<AST::BinaryExprAST>(binOpToken, std::move(LHS),
-                                               std::move(RHS));
+                                               std::move(RHS.value()));
   }
 }
 
-auto Parser::ParseCallExpr() -> std::unique_ptr<AST::ExprAST> {
+auto Parser::ParseCallExpr()
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+
   auto id = expect(TokenType::TokID);
   if (id == nullptr)
-    return nullptr;
-  else {
-    auto args = ParseArguments();
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
 
-    return std::make_unique<AST::CallExprAST>(id->lexeme, std::move(args));
+  auto args = ParseArguments();
+  if (args)
+    return std::make_unique<AST::CallExprAST>(id->lexeme,
+                                              std::move(args.value()));
+  else {
+    return std::make_unique<AST::VariableExprAST>(id->lexeme);
   }
 
-  return nullptr;
+  return tl::make_unexpected(ParserError::COMMITTED);
 }
 
-auto Parser::ParseNumberExpr() -> std::unique_ptr<AST::ExprAST> {
+auto Parser::ParseNumberExpr()
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
   auto numberExpr = std::make_unique<AST::NumberExprAST>();
 
   auto numberToken = expect(TokenType::TokNum);
 
   if (numberToken == nullptr) {
-    return nullptr;
+    return tl::make_unexpected(ParserError::COMMITTED);
   } else {
     numberExpr->number = numberToken->lexeme;
   }
@@ -211,39 +225,43 @@ auto Parser::ParseNumberExpr() -> std::unique_ptr<AST::ExprAST> {
   return numberExpr;
 }
 
-auto Parser::ParseVariableExpr() -> std::unique_ptr<AST::ExprAST> {
+auto Parser::ParseVariableExpr()
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
   auto name = expect(TokenType::TokID);
 
   if (name)
     return std::make_unique<AST::VariableExprAST>(name);
-  return nullptr;
+  return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
 
-auto Parser::ParsePrototype() -> std::unique_ptr<AST::PrototypeAST> {
+auto Parser::ParsePrototype()
+    -> tl::expected<std::unique_ptr<AST::PrototypeAST>, ParserError> {
   auto id = expect(TokID);
   if (!id)
-    return nullptr;
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
 
   auto params = ParseParams();
   if (!params)
-    return nullptr;
+    return tl::make_unexpected(params.error());
   auto arrow = expect(TokArrow);
   if (!arrow)
     return std::make_unique<AST::PrototypeAST>(id->lexeme, "",
-                                               std::move(params));
+                                               std::move(params.value()));
   ;
 
   auto returnType = expect(TokID);
 
   return std::make_unique<AST::PrototypeAST>(
-      id->lexeme, returnType ? returnType->lexeme : "", std::move(params));
+      id->lexeme, returnType ? returnType->lexeme : "",
+      std::move(params.value()));
 }
 
-auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
+auto Parser::ParseBlock()
+    -> tl::expected<std::unique_ptr<AST::BlockAST>, ParserError> {
 
   auto leftCurly = expect(TokLeftCurly);
   if (!leftCurly)
-    return nullptr;
+    return tl::make_unexpected(ParserError::COMMITTED);
   // TODO : Cannot just parse a return stmt.
   // TODO : We need to also parse other statement as well
 
@@ -252,7 +270,7 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
   auto rightCurly = expect(TokRightCurly);
 
   if (!rightCurly)
-    return nullptr;
+    return tl::make_unexpected(ParserError::COMMITTED);
 
   auto blockAST = std::make_unique<AST::BlockAST>();
 
@@ -262,17 +280,19 @@ auto Parser::ParseBlock() -> std::unique_ptr<AST::BlockAST> {
 // Parsing of parameters in a function call, we use leftParen and rightParen as
 // appropriate stopping point
 auto Parser::ParseParams()
-    -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> {
+    -> tl::expected<
+        std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>,
+        ParserError> {
   auto leftParen = expect(TokLeftParen);
   if (leftParen == nullptr)
-    return {};
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
 
   // COMMITMENT POINT
   std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> vec =
       std::make_unique<std::vector<std::unique_ptr<AST::TypedVarAST>>>();
   auto typeVar = ParseTypedVar();
-  if (typeVar != nullptr) {
-    vec->push_back(std::move(typeVar));
+  if (typeVar) {
+    vec->push_back(std::move(typeVar.value()));
   }
   while (true) {
     auto comma = expect(TokComma);
@@ -281,49 +301,50 @@ auto Parser::ParseParams()
 
     // Report error if we find comma but cannot find typeVar
     typeVar = ParseTypedVar();
-    if (typeVar == nullptr) {
+    if (!typeVar) {
       log_error("Failed to find typed variable after comma");
-      return {};
+      return tl::make_unexpected(typeVar.error());
     } else {
-      vec->push_back(std::move(typeVar));
+      vec->push_back(std::move(typeVar.value()));
     }
   }
   auto rightParen = expect(TokRightParen);
   if (rightParen == nullptr) {
     log_error(
         "Failed to find right parenthesis after processing [typed variables]");
-    return nullptr;
+    return tl::make_unexpected(ParserError::COMMITTED);
   }
 
   return vec;
 }
 
 auto Parser::ParseArguments()
-    -> std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> {
+    -> tl::expected<std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>>,
+                    ParserError> {
   auto leftParen = expect(TokLeftParen);
   if (leftParen == nullptr)
-    return {};
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
 
   std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> vec =
       std::make_unique<std::vector<std::unique_ptr<AST::ExprAST>>>();
 
   auto expr = ParseExpr();
-  if (expr != nullptr) {
-    vec->push_back(std::move(expr));
+  if (expr) {
+    vec->push_back(std::move(expr.value()));
   }
   while (true) {
-    // auto typeVar = ParseTypedVar();
+    /*auto typeVar = ParseTypedVar();*/
     auto comma = expect(TokComma);
     if (comma == nullptr)
       break;
 
     expr = ParseExpr();
-    if (expr == nullptr)
-      return {};
+    if (!expr)
+      return tl::make_unexpected(ParserError::COMMITTED);
   }
   auto rightParen = expect(TokRightParen);
-  if (rightParen == nullptr)
-    return nullptr;
+  if (!rightParen)
+    return tl::make_unexpected(ParserError::COMMITTED);
 
   return vec;
 }

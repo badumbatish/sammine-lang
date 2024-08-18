@@ -1,5 +1,6 @@
 #include "Ast.h"
 #include "Lexer.h"
+#include "Utilities.h"
 #include "tl/expected.hpp"
 namespace sammine_lang {
 enum ParserError {
@@ -15,44 +16,61 @@ private:
 
   // Parse definition
   [[nodiscard]]
-  auto ParseDefinition() -> std::unique_ptr<AST::DefinitionAST>;
+  auto ParseDefinition()
+      -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>;
   [[nodiscard]]
-  auto ParsePrototype() -> std::unique_ptr<AST::PrototypeAST>;
+  auto ParsePrototype()
+      -> tl::expected<std::unique_ptr<AST::PrototypeAST>, ParserError>;
   [[nodiscard]]
-  auto ParseFuncDef() -> std::unique_ptr<AST::DefinitionAST>;
+  auto ParseFuncDef()
+      -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>;
   [[nodiscard]]
-  auto ParseVarDef() -> std::unique_ptr<AST::DefinitionAST>;
+  auto ParseVarDef()
+      -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>;
 
   // Parse type
   [[nodiscard]]
-  auto ParseTypedVar() -> std::unique_ptr<AST::TypedVarAST>;
+  auto ParseTypedVar()
+      -> tl::expected<std::unique_ptr<AST::TypedVarAST>, ParserError>;
+  [[nodiscard]]
 
   // Parse expressions
   [[nodiscard]]
-  auto ParseExpr() -> std::unique_ptr<AST::ExprAST>;
+  auto ParseExpr() -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto ParsePrimaryExpr() -> std::unique_ptr<AST::ExprAST>;
+  auto ParsePrimaryExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
-      -> std::unique_ptr<AST::ExprAST>;
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto ParseCallExpr() -> std::unique_ptr<AST::ExprAST>;
+  auto
+  ParseCallExpr() -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParseArguments()
-      -> std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>>;
+      -> tl::expected<
+          std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>>,
+          ParserError>;
   [[nodiscard]]
-  auto ParseNumberExpr() -> std::unique_ptr<AST::ExprAST>;
+  auto
+  ParseNumberExpr() -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto ParseVariableExpr() -> std::unique_ptr<AST::ExprAST>;
+  auto ParseVariableExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
+  [[nodiscard]]
 
   // Parse block
   [[nodiscard]]
-  auto ParseBlock() -> std::unique_ptr<AST::BlockAST>;
+  auto
+  ParseBlock() -> tl::expected<std::unique_ptr<AST::BlockAST>, ParserError>;
+  [[nodiscard]]
 
   // Parse parameters
   [[nodiscard]]
   auto ParseParams()
-      -> std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>;
+      -> tl::expected<
+          std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>,
+          ParserError>;
 
   // Utilities
   [[nodiscard]]

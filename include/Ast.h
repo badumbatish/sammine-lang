@@ -186,6 +186,7 @@ class VariableExprAST : public ExprAST {
 public:
   std::string variableName;
   VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme){};
+  VariableExprAST(std::string variableName) : variableName(variableName){};
 
   virtual std::string getTreeName() override { return "VariableExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
