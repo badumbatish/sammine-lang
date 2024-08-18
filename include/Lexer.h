@@ -177,14 +177,12 @@ public:
   }
 
   friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
-    out << loc.line << ":"
-        << loc.column;
+    out << loc.line << ":" << loc.column;
     return out;
   }
 
   std::string to_string() const {
-    return std::to_string(this->line) + ":" +
-           std::to_string(this->column);
+    return std::to_string(this->line) + ":" + std::to_string(this->column);
   }
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme
@@ -207,13 +205,13 @@ public:
 //!
 class TokenStream {
   std::vector<std::shared_ptr<Token>> TokStream;
-  size_t i;
+  size_t current_index;
   bool error;
 
 public:
   std::vector<std::shared_ptr<Token>> ErrStream;
 
-  TokenStream() : i(0), TokStream(), error(false) {}
+  TokenStream() : current_index(0), TokStream(), error(false) {}
 
   void push_back(const std::shared_ptr<Token> &token) {
     if (token->type == TokINVALID) {
@@ -232,30 +230,30 @@ public:
 
   std::shared_ptr<Token> &exhaust_until(TokenType tokType) {
     if (tokType == TokenType::TokEOF) {
-      i = TokStream.size() - 1;
+      current_index = TokStream.size() - 1;
       return TokStream.back();
     }
     while (!isEnd()) {
-      if (TokStream[i]->type == tokType)
-        return TokStream[i];
+      if (TokStream[current_index]->type == tokType)
+        return TokStream[current_index];
       else
-        i++;
+        current_index++;
     }
 
     return TokStream.back();
   }
 
-  bool isEnd() { return i >= (TokStream.size() - 1); }
-  std::shared_ptr<Token> peek() { return TokStream[i]; };
+  bool isEnd() { return current_index >= (TokStream.size() - 1); }
+  std::shared_ptr<Token> peek() { return TokStream[current_index]; };
   std::shared_ptr<Token> consume() {
     auto token = peek();
-    i = std::min(TokStream.size() - 1, i + 1);
+    current_index = std::min(TokStream.size() - 1, current_index + 1);
     return token;
   }
 
   Location currentLocation() {
     if (!TokStream.empty()) {
-      return TokStream.front()->location;
+      return TokStream[current_index]->location;
     } else {
       return {};
     }
