@@ -13,6 +13,7 @@ public:
   std::vector<std::string> PostOrderNames;
   AstNameVisitor() {}
 
+  // pre order
   void preorder_walk(ProgramAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
@@ -43,6 +44,18 @@ public:
   void preorder_walk(TypedVarAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
+
+  // post order
+  void postorder_walk(ProgramAST *ast) override {}
+  void postorder_walk(VarDefAST *ast) override {}
+  void postorder_walk(FuncDefAST *ast) override {}
+  void postorder_walk(PrototypeAST *ast) override {}
+  void postorder_walk(CallExprAST *ast) override {}
+  void postorder_walk(BinaryExprAST *ast) override {}
+  void postorder_walk(NumberExprAST *ast) override {}
+  void postorder_walk(VariableExprAST *ast) override {}
+  void postorder_walk(BlockAST *ast) override {}
+  void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST
 #endif // SAMMINE_LANG_ASTNAMEVISITOR_H
