@@ -78,11 +78,16 @@ public:
     // Open a new context and module.
 
     Context = std::make_unique<llvm::LLVMContext>();
+    assert(Context);
+
     Module = std::make_unique<llvm::Module>("KaleidoscopeJIT", *Context);
+    assert(Module);
+
     Module->setDataLayout(sammineJIT->getDataLayout());
 
     // Create a new builder for the module.
     Builder = std::make_unique<llvm::IRBuilder<>>(*Context);
+    assert(Builder);
   }
   void InitializeManagers() {
     // Create new pass and analysis managers.

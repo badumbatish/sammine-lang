@@ -15,8 +15,21 @@ private:
   std::shared_ptr<sammine_lang::LLVMRes> resPtr;
 
 public:
-  CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr) : resPtr(resPtr) {}
+  CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr) : resPtr(resPtr) {
+    assert(this->resPtr);
+  }
 
+  // visit
+  void visit(ProgramAST *ast) override;
+  void visit(VarDefAST *ast) override;
+  void visit(FuncDefAST *ast) override;
+  void visit(PrototypeAST *ast) override;
+  void visit(CallExprAST *ast) override;
+  void visit(BinaryExprAST *ast) override;
+  void visit(NumberExprAST *ast) override;
+  void visit(VariableExprAST *ast) override;
+  void visit(BlockAST *ast) override;
+  void visit(TypedVarAST *ast) override;
   // pre order
   // TODO: Implement these
   void preorder_walk(ProgramAST *ast) override {}

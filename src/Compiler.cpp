@@ -8,7 +8,8 @@ namespace sammine_lang {
 
 Compiler::Compiler(const std::string &input, const std::string &file_name)
     : input(input), file_name(file_name), error(false) {
-  resPtr = std::shared_ptr<LLVMRes>();
+  this->resPtr = std::make_shared<LLVMRes>();
+  assert(this->resPtr);
 }
 void Compiler::lex() {
 
