@@ -47,6 +47,7 @@ void CgVisitor::visit(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
   assert(resPtr);
   assert(resPtr->Module);
+  assert(resPtr->Context);
   llvm::Function *Function = resPtr->Module->getFunction(name);
 
   if (!Function) {
@@ -58,8 +59,11 @@ void CgVisitor::visit(FuncDefAST *ast) {
     // TODO: Please add better error handling
     return;
   }
+
+  assert(Function);
   llvm::BasicBlock *mainblock =
       llvm::BasicBlock::Create(*resPtr->Context, "entry", Function);
+
   resPtr->Builder->SetInsertPoint(mainblock);
 
   resPtr->NamedValues.clear();

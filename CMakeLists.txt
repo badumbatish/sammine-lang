@@ -5,13 +5,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+# LLVM-STUFF
+find_package(LLVM REQUIRED CONFIG)
+
 #option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
 project(sammine_lang)
-# LLVM-STUFF
-find_package(LLVM REQUIRED CONFIG)
 
 # Find ninja
 find_program(NINJA_EXECUTABLE ninja)

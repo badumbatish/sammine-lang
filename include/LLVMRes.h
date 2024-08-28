@@ -1,5 +1,6 @@
 #pragma once
 
+#include "KaleidoscopeJIT.h"
 #include "SammineJIT.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -25,6 +26,7 @@
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
 
 namespace sammine_lang {
+using llvm::orc::KaleidoscopeJIT;
 class LLVMRes {
 public:
   llvm::ExitOnError ExitOnErr;
@@ -40,18 +42,19 @@ public:
   std::unique_ptr<llvm::ModuleAnalysisManager> ModuleAnalysis;
   std::unique_ptr<llvm::PassInstrumentationCallbacks> PassCallbacks;
   std::unique_ptr<llvm::StandardInstrumentations> StdIns;
-  std::unique_ptr<SammineJIT> sammineJIT;
+  std::unique_ptr<KaleidoscopeJIT> sammineJIT;
   std::map<std::string, std::unique_ptr<sammine_lang::AST::PrototypeAST>>
       FnProto;
 
   llvm::PassBuilder PB;
 
   LLVMRes() {
+    sammineJIT = ExitOnErr(KaleidoscopeJIT::Create());
+
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
     llvm::InitializeNativeTargetAsmParser();
 
-    sammineJIT = ExitOnErr(SammineJIT::Create());
     InitializeModuleAndManagers();
   }
 
