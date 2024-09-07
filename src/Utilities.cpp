@@ -15,4 +15,5 @@ auto abort(const std::string &message) -> void {
   std::abort();
 }
 
+size_t get_unique_ast_id() { return unique_ast_id; }
 } // namespace sammine_util

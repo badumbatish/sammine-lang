@@ -2,6 +2,7 @@
 #define SAMMINE_LANG_AST_H
 #include "AstBase.h"
 #include "Lexer.h"
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
@@ -116,8 +117,10 @@ public:
 //!
 //!
 class BlockAST : public AstBase {
+
 public:
   std::vector<std::unique_ptr<ExprAST>> Statements;
+  inline static size_t scope_id_counter = 0;
   virtual std::string getTreeName() override { return "BlockAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {

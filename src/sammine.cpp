@@ -16,9 +16,10 @@ int main(int argc, char *argv[]) {
       .help("An input file for compiler to scan over.");
   group.add_argument("-s", "--str")
       .help("An input string for compiler to scan over.");
-  group.add_argument("", "--llvm-ir") // TODO: Somehow make the internal compiler aware of this llvm flag
+  group
+      .add_argument("", "--llvm-ir") // TODO: Somehow make the internal compiler
+                                     // aware of this llvm flag
       .help("sammine compiler spits out LLVM-IR to stdout");
-
   try {
     program.parse_args(argc, argv); // Example: ./main -abc 1.95 2.47
   } catch (const std::exception &err) {

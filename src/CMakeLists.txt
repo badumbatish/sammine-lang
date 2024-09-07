@@ -22,11 +22,12 @@ add_project_library(Lexer)
 add_project_library(Parser)
 add_project_library(SammineJIT)
 add_project_library(CodegenVisitor)
+add_project_library(ScopeGeneratorVisitor)
 
 
 add_library(Compiler ${CMAKE_CURRENT_LIST_DIR}/Compiler.cpp)
 target_include_directories(Compiler PRIVATE ${INCLUDE_PROJECT_DIR} ${LLVM_INCLUDE_DIRS})
-target_link_libraries(Compiler Lexer Parser CodegenVisitor Ast Utilities)
+target_link_libraries(Compiler Lexer Parser CodegenVisitor Ast Utilities ScopeGeneratorVisitor)
 
 
 add_executable(sammine ${CMAKE_CURRENT_LIST_DIR}/sammine.cpp)
