@@ -7,9 +7,12 @@
 #include "Compiler.h"
 #include "argparse/argparse.hpp"
 using sammine_lang::Compiler;
+using sammine_lang::compiler_option_enum;
 
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("sammine");
+
+  std::map<compiler_option_enum, std::string> compiler_options;
 
   auto &group = program.add_mutually_exclusive_group(true);
   group.add_argument("-f", "--file")
@@ -22,16 +25,23 @@ int main(int argc, char *argv[]) {
       .help("sammine compiler spits out LLVM-IR to stdout");
   try {
     program.parse_args(argc, argv); // Example: ./main -abc 1.95 2.47
+    if (program.present("-f"))
+      compiler_options[compiler_option_enum::FILE] =
+          program.present("-f") ? program.get("-f") : "String-input";
+    if (program.present("-s"))
+      compiler_options[compiler_option_enum::STR] =
+          program.present("-s") ? program.get("-s")
+                                : FileRAII(program.get("-f")).getInternalStr();
+    if (program.present("-llvm-ir"))
+      compiler_options[compiler_option_enum::STR] = program.get("-llvm-ir");
+
   } catch (const std::exception &err) {
     std::cerr << err.what() << std::endl;
     std::cerr << program;
     return 1;
   }
 
-  std::string f = program.present("-f") ? program.get("-f") : "String-input";
-  std::string string_input =
-      program.present("-s") ? program.get("-s") : FileRAII(f).getInternalStr();
-  Compiler jjasmine(string_input, f);
+  Compiler jjasmine(compiler_options);
   jjasmine.start();
   return 0;
 }

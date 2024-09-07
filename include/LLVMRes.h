@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Ast.h"
 #include "KaleidoscopeJIT.h"
 #include "SammineJIT.h"
 #include "llvm/ADT/APFloat.h"
@@ -24,6 +25,7 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Scalar/Reassociate.h"
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
+#include <map>
 
 namespace sammine_lang {
 using llvm::orc::KaleidoscopeJIT;

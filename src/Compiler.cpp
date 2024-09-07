@@ -6,9 +6,13 @@
 #include "CodegenVisitor.h"
 namespace sammine_lang {
 
-Compiler::Compiler(const std::string &input, const std::string &file_name)
-    : input(input), file_name(file_name), error(false) {
-  this->resPtr = std::make_shared<LLVMRes>();
+Compiler::Compiler(
+    std::map<compiler_option_enum, std::string> &compiler_options)
+    : compiler_options(compiler_options) {
+  this->error = false;
+  this->file_name = compiler_options[compiler_option_enum::FILE];
+  this->input = compiler_options[compiler_option_enum::STR];
+
   assert(this->resPtr);
 }
 void Compiler::lex() {

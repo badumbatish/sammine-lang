@@ -5,16 +5,22 @@
 #ifndef SAMMINE_LANG_COMPILER_H
 #define SAMMINE_LANG_COMPILER_H
 
+#include "LLVMRes.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "LLVMRes.h"
 #include <string>
 namespace sammine_lang {
+enum class compiler_option_enum {
+  FILE,
+  STR,
+  LLVM_IR,
+};
 class Compiler {
   std::shared_ptr<TokenStream> tokStream;
   std::unique_ptr<AST::ProgramAST> programAST;
+  std::map<compiler_option_enum, std::string> &compiler_options;
   std::shared_ptr<LLVMRes> resPtr;
-  std::string input, file_name;
+  std::string file_name, input;
   bool error;
 
   void lex();
@@ -23,7 +29,7 @@ class Compiler {
   void set_error() { error = true; }
 
 public:
-  Compiler(const std::string &input, const std::string &file_name);
+  Compiler(std::map<compiler_option_enum, std::string> &compiler_options);
   void start();
 };
 } // namespace sammine_lang
