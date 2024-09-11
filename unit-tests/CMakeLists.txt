@@ -17,3 +17,9 @@ include(Catch)
 
 catch_discover_tests(tests  WORKING_DIRECTORY  ${CMAKE_CURRENT_LIST_DIR}
   DISCOVERY_MODE PRE_TEST)
+
+add_custom_target(unit-tests
+    COMMAND ctest --test-dir ${CMAKE_SOURCE_DIR}/build --output-on-failure
+)
+
+

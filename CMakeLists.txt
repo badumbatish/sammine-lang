@@ -32,7 +32,8 @@ llvm_map_components_to_libnames(llvm_libs native orcjit support core irreader)
 add_subdirectory(src)
 
 enable_testing()
-add_subdirectory(unit-test)
+add_subdirectory(unit-tests)
+add_subdirectory(e2e-tests)
 
 
 
