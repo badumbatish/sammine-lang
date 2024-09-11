@@ -57,6 +57,7 @@ void Compiler::codegen() {
   // TODO : Check for codegen error
 }
 
+void Compiler::produce_executable() {}
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
   std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
