@@ -4,6 +4,7 @@
 
 //! \file test_parser.cpp
 //! \brief The unit-test file for all things related to a parser.
+#include "Ast.h"
 #include "AstNameVisitor.h"
 #include "Lexer.h"
 #include "Parser.h"
@@ -123,9 +124,8 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto programAST = pg.Parse();
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
-    auto func_def =
-        std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
-            programAST.value()->DefinitionVec.front().release()));
+    auto func_def = std::static_pointer_cast<AST::FuncDefAST>(
+        programAST.value()->DefinitionVec.front());
 
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);
@@ -145,9 +145,8 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
 
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
-    auto func_def =
-        std::unique_ptr<AST::FuncDefAST>(dynamic_cast<AST::FuncDefAST *>(
-            programAST.value()->DefinitionVec.front().release()));
+    auto func_def = std::static_pointer_cast<AST::FuncDefAST>(
+        programAST.value()->DefinitionVec.front());
 
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);

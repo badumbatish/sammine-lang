@@ -45,7 +45,7 @@ public:
   std::unique_ptr<llvm::PassInstrumentationCallbacks> PassCallbacks;
   std::unique_ptr<llvm::StandardInstrumentations> StdIns;
   std::unique_ptr<KaleidoscopeJIT> sammineJIT;
-  std::map<std::string, std::unique_ptr<sammine_lang::AST::PrototypeAST>>
+  std::map<std::string, std::shared_ptr<sammine_lang::AST::PrototypeAST>>
       FnProto;
 
   llvm::PassBuilder PB;

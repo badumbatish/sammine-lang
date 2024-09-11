@@ -48,8 +48,7 @@ void Compiler::parse() {
 
 void Compiler::codegen() {
   std::cout << "Start partial codegen" << std::endl;
-  std::unique_ptr<sammine_lang::AST::CgVisitor> cg =
-      std::make_unique<sammine_lang::AST::CgVisitor>(resPtr);
+  auto cg = std::make_shared<sammine_lang::AST::CgVisitor>(resPtr);
   assert(cg != nullptr);
   programAST->accept_vis(cg.get());
 

@@ -8,6 +8,7 @@
 #include "LLVMRes.h"
 #include "Lexer.h"
 #include "Parser.h"
+#include <memory>
 #include <string>
 namespace sammine_lang {
 enum class compiler_option_enum {
@@ -17,7 +18,7 @@ enum class compiler_option_enum {
 };
 class Compiler {
   std::shared_ptr<TokenStream> tokStream;
-  std::unique_ptr<AST::ProgramAST> programAST;
+  std::shared_ptr<AST::ProgramAST> programAST;
   std::map<compiler_option_enum, std::string> &compiler_options;
   std::shared_ptr<LLVMRes> resPtr;
   std::string file_name, input;

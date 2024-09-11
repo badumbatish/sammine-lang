@@ -22,13 +22,13 @@ int GetTokPrecedence(TokenType tokType) {
 }
 
 auto Parser::Parse()
-    -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::ProgramAST>, ParserError> {
   return ParseProgram();
 }
 
 auto Parser::ParseProgram()
-    -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
-  auto programAST = std::make_unique<AST::ProgramAST>();
+    -> tl::expected<std::shared_ptr<AST::ProgramAST>, ParserError> {
+  auto programAST = std::make_shared<AST::ProgramAST>();
   while (!tokStream->isEnd()) {
     auto def_result = ParseDefinition();
     if (def_result) {
@@ -40,9 +40,9 @@ auto Parser::ParseProgram()
 }
 
 auto Parser::ParseDefinition()
-    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError> {
   using ParseFunction = std::function<
-      tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>(Parser *)>;
+      tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
       {&Parser::ParseFuncDef, false},
       {&Parser::ParseVarDef, false},
@@ -60,7 +60,7 @@ auto Parser::ParseDefinition()
 }
 
 auto Parser::ParseFuncDef()
-    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError> {
   auto fn = expect(TokenType::TokFunc);
   if (!fn)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
@@ -79,7 +79,7 @@ auto Parser::ParseFuncDef()
     return tl::make_unexpected(ParserError::COMMITTED);
   }
 
-  return std::make_unique<AST::FuncDefAST>(std::move(prototype.value()),
+  return std::make_shared<AST::FuncDefAST>(std::move(prototype.value()),
                                            std::move(block.value()));
 }
 
@@ -88,7 +88,7 @@ auto Parser::ParseFuncDef()
 //! Accepts a let, continue parsing inside and (enable error reporting if
 //! possible). If a `let` is not found then return a nullptr.
 auto Parser::ParseVarDef()
-    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError> {
   auto let = expect(TokenType::TokLet);
   if (!let)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
@@ -114,14 +114,14 @@ auto Parser::ParseVarDef()
   auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon,
                           "Failed to match semicolon token `;`");
 
-  auto varDef = std::make_unique<AST::VarDefAST>(std::move(typedVar.value()),
+  auto varDef = std::make_shared<AST::VarDefAST>(std::move(typedVar.value()),
                                                  std::move(expr.value()));
 
   return varDef;
 }
 
 auto Parser::ParseTypedVar()
-    -> tl::expected<std::unique_ptr<AST::TypedVarAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::TypedVarAST>, ParserError> {
   auto name = expect(TokenType::TokID);
   if (!name)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
@@ -132,16 +132,16 @@ auto Parser::ParseTypedVar()
   if (!type)
     return tl::make_unexpected(ParserError::COMMITTED);
 
-  auto typedVar = std::make_unique<AST::TypedVarAST>();
+  auto typedVar = std::make_shared<AST::TypedVarAST>();
 
   typedVar->name = name->lexeme;
   typedVar->type = type->lexeme;
   return typedVar;
 }
 auto Parser::ParsePrimaryExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   using ParseFunction =
-      std::function<tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>(
+      std::function<tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>(
           Parser *)>;
   std::vector<ParseFunction> ParseFunctions = {
       &Parser::ParseCallExpr,
@@ -158,7 +158,7 @@ auto Parser::ParsePrimaryExpr()
   return tl::make_unexpected(ParserError::COMMITTED);
 }
 auto Parser::ParseExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   auto LHS = ParsePrimaryExpr();
   if (!LHS)
     return LHS;
@@ -166,8 +166,8 @@ auto Parser::ParseExpr()
   return ParseBinaryExpr(0, std::move(LHS.value()));
 }
 
-auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseBinaryExpr(int prededence, std::shared_ptr<AST::ExprAST> LHS)
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   while (true) {
     int TokPrec = GetTokPrecedence(tokStream->peek()->type);
 
@@ -187,13 +187,13 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
         return RHS;
     }
 
-    LHS = std::make_unique<AST::BinaryExprAST>(binOpToken, std::move(LHS),
+    LHS = std::make_shared<AST::BinaryExprAST>(binOpToken, std::move(LHS),
                                                std::move(RHS.value()));
   }
 }
 
 auto Parser::ParseCallExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
 
   auto id = expect(TokenType::TokID);
   if (id == nullptr)
@@ -201,18 +201,18 @@ auto Parser::ParseCallExpr()
 
   auto args = ParseArguments();
   if (args)
-    return std::make_unique<AST::CallExprAST>(id->lexeme,
+    return std::make_shared<AST::CallExprAST>(id->lexeme,
                                               std::move(args.value()));
   else {
-    return std::make_unique<AST::VariableExprAST>(id->lexeme);
+    return std::make_shared<AST::VariableExprAST>(id->lexeme);
   }
 
   return tl::make_unexpected(ParserError::COMMITTED);
 }
 
 auto Parser::ParseNumberExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  auto numberExpr = std::make_unique<AST::NumberExprAST>();
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
+  auto numberExpr = std::make_shared<AST::NumberExprAST>();
 
   auto numberToken = expect(TokenType::TokNum);
 
@@ -226,16 +226,16 @@ auto Parser::ParseNumberExpr()
 }
 
 auto Parser::ParseVariableExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   auto name = expect(TokenType::TokID);
 
   if (name)
-    return std::make_unique<AST::VariableExprAST>(name);
+    return std::make_shared<AST::VariableExprAST>(name);
   return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
 
 auto Parser::ParsePrototype()
-    -> tl::expected<std::unique_ptr<AST::PrototypeAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::PrototypeAST>, ParserError> {
   auto id = expect(TokID);
   if (!id)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
@@ -245,19 +245,19 @@ auto Parser::ParsePrototype()
     return tl::make_unexpected(params.error());
   auto arrow = expect(TokArrow);
   if (!arrow)
-    return std::make_unique<AST::PrototypeAST>(id->lexeme, "",
+    return std::make_shared<AST::PrototypeAST>(id->lexeme, "",
                                                std::move(params.value()));
   ;
 
   auto returnType = expect(TokID);
 
-  return std::make_unique<AST::PrototypeAST>(
+  return std::make_shared<AST::PrototypeAST>(
       id->lexeme, returnType ? returnType->lexeme : "",
       std::move(params.value()));
 }
 
 auto Parser::ParseBlock()
-    -> tl::expected<std::unique_ptr<AST::BlockAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::BlockAST>, ParserError> {
 
   auto leftCurly = expect(TokLeftCurly);
   if (!leftCurly)
@@ -272,7 +272,7 @@ auto Parser::ParseBlock()
   if (!rightCurly)
     return tl::make_unexpected(ParserError::COMMITTED);
 
-  auto blockAST = std::make_unique<AST::BlockAST>();
+  auto blockAST = std::make_shared<AST::BlockAST>();
 
   return blockAST;
 }
@@ -281,15 +281,15 @@ auto Parser::ParseBlock()
 // appropriate stopping point
 auto Parser::ParseParams()
     -> tl::expected<
-        std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>>,
+        std::shared_ptr<std::vector<std::shared_ptr<AST::TypedVarAST>>>,
         ParserError> {
   auto leftParen = expect(TokLeftParen);
   if (leftParen == nullptr)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
 
   // COMMITMENT POINT
-  std::unique_ptr<std::vector<std::unique_ptr<AST::TypedVarAST>>> vec =
-      std::make_unique<std::vector<std::unique_ptr<AST::TypedVarAST>>>();
+  std::shared_ptr<std::vector<std::shared_ptr<AST::TypedVarAST>>> vec =
+      std::make_shared<std::vector<std::shared_ptr<AST::TypedVarAST>>>();
   auto typeVar = ParseTypedVar();
   if (typeVar) {
     vec->push_back(std::move(typeVar.value()));
@@ -319,14 +319,14 @@ auto Parser::ParseParams()
 }
 
 auto Parser::ParseArguments()
-    -> tl::expected<std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>>,
+    -> tl::expected<std::shared_ptr<std::vector<std::shared_ptr<AST::ExprAST>>>,
                     ParserError> {
   auto leftParen = expect(TokLeftParen);
   if (leftParen == nullptr)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
 
-  std::unique_ptr<std::vector<std::unique_ptr<AST::ExprAST>>> vec =
-      std::make_unique<std::vector<std::unique_ptr<AST::ExprAST>>>();
+  std::shared_ptr<std::vector<std::shared_ptr<AST::ExprAST>>> vec =
+      std::make_shared<std::vector<std::shared_ptr<AST::ExprAST>>>();
 
   auto expr = ParseExpr();
   if (expr) {
