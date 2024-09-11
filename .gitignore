@@ -41,6 +41,8 @@ build/
 build_ssh/
 Testing/
 Output/
+e2e-tests/.lit_test_times.txt
+
 
 # Docs
 generated_docs/

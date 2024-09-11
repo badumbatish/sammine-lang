@@ -1,6 +1,6 @@
 
 // RUN: cc %s -o %t
-// RUN: %t | grep -e "hello world"
+// RUN: %t | grep -e "cat"
 #include <stdio.h>
 
 int main() {
