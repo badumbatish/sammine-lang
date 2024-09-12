@@ -8,14 +8,19 @@ How I pictured sammine-lang in my head
 The section is written with codes in triple quotes to utilize Clion run-in-markdown capabilities.
 
 <h2>Dev</h2>
+Run
+```bash
+cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+```
+
+for configuration. We need llvm and FileCheck
 
 Run
 ```bash
- python3 build_and_test.py
+cmake --build build -j4 --target unit-tests e2e-tests
 ```
 in the project root folder to cycle through the development process.
 
-The default build folder for `build_and_test.py` is named `build`.
 
 Run
 ```bash

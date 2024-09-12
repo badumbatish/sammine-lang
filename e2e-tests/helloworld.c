@@ -1,6 +1,8 @@
 
 // RUN: cc %s -o %t
-// RUN: %t | grep -e "cat"
+// RUN: %t | FileCheck %s
+//
+// CHECK: hello world
 #include <stdio.h>
 
 int main() {
