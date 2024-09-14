@@ -1,7 +1,6 @@
 
 #include "Parser.h"
 #include "Lexer.h"
-#include "Utilities.h"
 #include "tl/expected.hpp"
 #include <cstdlib>
 #include <functional>

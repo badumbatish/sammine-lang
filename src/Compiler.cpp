@@ -3,9 +3,7 @@
 //
 
 #include "Compiler.h"
-#include "AstNameVisitor.h"
 #include "CodegenVisitor.h"
-#include "FileRAII.h"
 #include "Utilities.h"
 #include "llvm/Support/raw_ostream.h"
 namespace sammine_lang {
@@ -52,12 +50,6 @@ void Compiler::parse() {
   if (result.has_value()) {
     std::cout << "hello" << std::endl;
     programAST = std::move(result.value());
-    auto name_visitor = AST::AstNameVisitor();
-    programAST->accept_vis(&name_visitor);
-
-    for (auto &name : name_visitor.PreOrderNames) {
-      std::cout << name << std::endl;
-    }
   } else if (psr.hasErrors()) {
     set_error();
     std::cerr << "[Error during parsing phase]" << std::endl;
@@ -96,7 +88,7 @@ void Compiler::start() {
       stage.first(this);
       prev = stage.second;
     } else {
-      std::cout << std::endl
+      std::cerr << std::endl
                 << "Sammine-lang compiler done processing" << std::endl;
       break;
     }
