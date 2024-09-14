@@ -4,6 +4,9 @@
 
 #include "SammineJIT.h"
 
+#include "llvm/ExecutionEngine/Orc/CompileUtils.h" // Provides the SimpleCompiler class.
+#include "llvm/ExecutionEngine/Orc/ExecutionUtils.h" // Provides the DynamicLibrarySearchGenerator class.
+#include "llvm/ExecutionEngine/SectionMemoryManager.h"
 namespace sammine_lang {
 
 SammineJIT::SammineJIT(std::unique_ptr<llvm::orc::ExecutionSession> ES,
@@ -21,7 +24,6 @@ SammineJIT::SammineJIT(std::unique_ptr<llvm::orc::ExecutionSession> ES,
       cantFail(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
           DL.getGlobalPrefix())));
 }
-
 
 SammineJIT::~SammineJIT() {
   if (auto Err = ES->endSession())
@@ -46,7 +48,8 @@ llvm::Expected<std::unique_ptr<SammineJIT>> SammineJIT::Create() {
                                       std::move(*DL));
 }
 
-llvm::Error SammineJIT::addModule(llvm::orc::ThreadSafeModule TSM, llvm::orc::ResourceTrackerSP RT) {
+llvm::Error SammineJIT::addModule(llvm::orc::ThreadSafeModule TSM,
+                                  llvm::orc::ResourceTrackerSP RT) {
   if (!RT)
     RT = MainJD.getDefaultResourceTracker();
   return CompileLayer.add(RT, std::move(TSM));

@@ -6,13 +6,10 @@
 #define SAMMINE_LANG_SAMMINEJIT_H
 
 #include "llvm/ADT/StringRef.h"
-#include "llvm/ExecutionEngine/Orc/CompileUtils.h" // Provides the SimpleCompiler class.
 #include "llvm/ExecutionEngine/Orc/Core.h" // Core utilities such as ExecutionSession and JITDylib.
-#include "llvm/ExecutionEngine/Orc/ExecutionUtils.h" // Provides the DynamicLibrarySearchGenerator class.
 #include "llvm/ExecutionEngine/Orc/IRCompileLayer.h"
 #include "llvm/ExecutionEngine/Orc/JITTargetMachineBuilder.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
-#include "llvm/ExecutionEngine/SectionMemoryManager.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/LLVMContext.h"
 namespace sammine_lang {
@@ -27,24 +24,26 @@ private:
   llvm::DataLayout DL;
   llvm::orc::MangleAndInterner Mangle;
   llvm::orc::JITDylib &MainJD;
+
 public:
   SammineJIT(std::unique_ptr<llvm::orc::ExecutionSession> ES,
-                  llvm::orc::JITTargetMachineBuilder JTMB, llvm::DataLayout DL);
+             llvm::orc::JITTargetMachineBuilder JTMB, llvm::DataLayout DL);
 
-    ~SammineJIT();
+  ~SammineJIT();
 
-    static llvm::Expected<std::unique_ptr<SammineJIT>> Create();
+  static llvm::Expected<std::unique_ptr<SammineJIT>> Create();
 
-    const llvm::DataLayout &getDataLayout() const { return DL; }
+  const llvm::DataLayout &getDataLayout() const { return DL; }
 
-    llvm::orc::JITDylib &getMainJITDylib() { return MainJD; }
+  llvm::orc::JITDylib &getMainJITDylib() { return MainJD; }
 
-    llvm::Error addModule(llvm::orc::ThreadSafeModule TSM, llvm::orc::ResourceTrackerSP RT = nullptr);
+  llvm::Error addModule(llvm::orc::ThreadSafeModule TSM,
+                        llvm::orc::ResourceTrackerSP RT = nullptr);
 
-    llvm::Expected<llvm::orc::ExecutorSymbolDef> lookup(llvm::StringRef Name) {
-      return ES->lookup({&MainJD}, Mangle(Name.str()));
-    }
+  llvm::Expected<llvm::orc::ExecutorSymbolDef> lookup(llvm::StringRef Name) {
+    return ES->lookup({&MainJD}, Mangle(Name.str()));
+  }
 };
 
-}
+} // namespace sammine_lang
 #endif // SAMMINE_LANG_SAMMINEJIT_H

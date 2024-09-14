@@ -6,5 +6,3 @@ add_custom_target(e2e-tests
     WORKING_DIRECTORY ${CMAKE_LIST_DIR}
 )
 
-message("${LLVM_TOOLS_BINARY_DIR}")
-message(STATUS "LLVM_FILECHECK_EXECUTABLE: ${LLVM_FileCheck_EXECUTABLE}")

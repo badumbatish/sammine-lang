@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Ast.h"
-#include "KaleidoscopeJIT.h"
 #include "SammineJIT.h"
+#include "iostream"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/Analysis/CGSCCPassManager.h"
@@ -20,15 +20,11 @@
 #include "llvm/Passes/StandardInstrumentations.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Target/TargetMachine.h"
-#include "llvm/Transforms/InstCombine/InstCombine.h"
-#include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Scalar/Reassociate.h"
-#include "llvm/Transforms/Scalar/SimplifyCFG.h"
 #include <map>
 
 namespace sammine_lang {
-using llvm::orc::KaleidoscopeJIT;
 class LLVMRes {
 public:
   llvm::ExitOnError ExitOnErr;
@@ -44,19 +40,19 @@ public:
   std::unique_ptr<llvm::ModuleAnalysisManager> ModuleAnalysis;
   std::unique_ptr<llvm::PassInstrumentationCallbacks> PassCallbacks;
   std::unique_ptr<llvm::StandardInstrumentations> StdIns;
-  std::unique_ptr<KaleidoscopeJIT> sammineJIT;
+  std::unique_ptr<SammineJIT> sammineJIT;
   std::map<std::string, std::shared_ptr<sammine_lang::AST::PrototypeAST>>
       FnProto;
 
   llvm::PassBuilder PB;
 
   LLVMRes() {
-    sammineJIT = ExitOnErr(KaleidoscopeJIT::Create());
 
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
     llvm::InitializeNativeTargetAsmParser();
 
+    sammineJIT = ExitOnErr(std::move(SammineJIT::Create()));
     InitializeModuleAndManagers();
   }
 

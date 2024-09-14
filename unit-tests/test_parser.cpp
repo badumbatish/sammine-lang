@@ -62,9 +62,6 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     programAST.value()->accept_vis(&nameVisitor);
 
     auto names = nameVisitor.PreOrderNames;
-    for (auto &name : names) {
-      std::cout << name << std::endl;
-    }
     std::vector<std::string> expectedNames = {
         "ProgramAST",    "VarDefAST",     "TypedVarAST",   "BinaryExprAST",
         "NumberExprAST", "BinaryExprAST", "NumberExprAST", "NumberExprAST"};
@@ -183,4 +180,12 @@ TEST_CASE("VALID GRAMMAR", "[Parser]") {
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
   REQUIRE(pg.error_msgs == decltype(pg.error_msgs)());
+  auto nameVisitor = sammine_lang::AST::AstNameVisitor();
+  programAST.value()->accept_vis(&nameVisitor);
+
+  auto names = nameVisitor.PreOrderNames;
+  std::vector<std::string> expectedNames = {
+      "ProgramAST", "VarDefAST",    "TypedVarAST", "NumberExprAST",
+      "FuncDefAST", "PrototypeAST", "TypedVarAST", "BlockAST"};
+  REQUIRE(names == expectedNames);
 }

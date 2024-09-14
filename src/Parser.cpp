@@ -2,6 +2,7 @@
 #include "Parser.h"
 #include "Lexer.h"
 #include "Utilities.h"
+#include "tl/expected.hpp"
 #include <cstdlib>
 #include <functional>
 #include <memory>
@@ -217,7 +218,7 @@ auto Parser::ParseNumberExpr()
   auto numberToken = expect(TokenType::TokNum);
 
   if (numberToken == nullptr) {
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
   } else {
     numberExpr->number = numberToken->lexeme;
   }
@@ -265,14 +266,21 @@ auto Parser::ParseBlock()
   // TODO : Cannot just parse a return stmt.
   // TODO : We need to also parse other statement as well
 
-  while (ParseExpr()) {
+  auto blockAST = std::make_shared<AST::BlockAST>();
+  while (auto a = ParseExpr()) {
+    if (!a && a.error() == ParserError::COMMITTED)
+      return tl::make_unexpected(a.error());
+    else if (a) {
+      blockAST->Statements.push_back(a.value());
+      auto semi = expect(TokenType::TokSemiColon);
+      if (!semi)
+        return tl::make_unexpected(ParserError::COMMITTED);
+    }
   }
   auto rightCurly = expect(TokRightCurly);
 
   if (!rightCurly)
     return tl::make_unexpected(ParserError::COMMITTED);
-
-  auto blockAST = std::make_shared<AST::BlockAST>();
 
   return blockAST;
 }

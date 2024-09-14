@@ -3,13 +3,34 @@
 //
 
 #include "CodegenVisitor.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Type.h"
 namespace sammine_lang::AST {
 void CgVisitor::visit(ProgramAST *ast) {
   for (auto &def : ast->DefinitionVec)
     def->accept_vis(this);
 }
 void CgVisitor::visit(VarDefAST *ast) {}
-void CgVisitor::visit(PrototypeAST *ast) {}
+void CgVisitor::visit(PrototypeAST *ast) {
+  std::vector<llvm::Type *> Doubles(
+      ast->parameterVectors->size(),
+      llvm::Type::getDoubleTy(*(resPtr->Context)));
+  llvm::FunctionType *FT = llvm::FunctionType::get(
+      llvm::Type::getDoubleTy(*resPtr->Context), Doubles, false);
+
+  llvm::Function *F =
+      llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
+                             ast->functionName, resPtr->Module.get());
+
+  size_t param_index = 0;
+  auto &vect = *ast->parameterVectors.get();
+  for (auto &arg : F->args()) {
+    auto &typed_var = vect[param_index++];
+    arg.setName(typed_var->name);
+  }
+  ast->function = F;
+}
 void CgVisitor::visit(CallExprAST *ast) {}
 void CgVisitor::visit(BinaryExprAST *ast) {
   ast->LHS->accept_vis(this);
@@ -27,7 +48,7 @@ void CgVisitor::visit(BinaryExprAST *ast) {
   if (ast->Op->type == TokenType::TokMUL) {
     ast->val = resPtr->Builder->CreateFMul(L, R, "multmp");
   }
-  if (ast->Op->type == TokenType::TokSUB) {
+  if (ast->Op->type == TokenType::TokDIV) {
     ast->val = resPtr->Builder->CreateFDiv(L, R, "multmp");
   }
   if (ast->Op->type == TokenType::TokLESS) {
@@ -37,6 +58,7 @@ void CgVisitor::visit(BinaryExprAST *ast) {
   }
 }
 void CgVisitor::visit(NumberExprAST *ast) {
+  std::cerr << ast->number << std::endl;
   ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                    llvm::APFloat(std::stod(ast->number)));
 }
@@ -57,7 +79,8 @@ void CgVisitor::visit(FuncDefAST *ast) {
 
   if (!Function) {
     // TODO: Please add better error handling
-    return;
+    std::cerr << "this should not happen" << std::endl;
+    assert(false);
   }
 
   assert(Function);
@@ -71,21 +94,28 @@ void CgVisitor::visit(FuncDefAST *ast) {
     resPtr->NamedValues[std::string(Arg.getName())] = &Arg;
   }
 
+  std::cerr << "visiting block in funcdef ast " << std::endl;
   ast->Block->accept_vis(this);
-  if (llvm::Value *RetVal = ast->Block->val) {
-    // Finish off the function.
-    resPtr->Builder->CreateRet(RetVal);
+  std::cerr << "visiting block after funcdef ast " << std::endl;
 
-    // Validate the generated code, checking for consistency.
-    verifyFunction(*Function);
-  }
+  // Validate the generated code, checking for consistency.
+  auto verified = verifyFunction(*Function);
+  // if (llvm::Value *RetVal = ast->Block->val) {
+  //   // Finish off the function.
+  // }
 
   // Error reading body, remove function.
-  Function->eraseFromParent();
+  if (!verified) {
+    Function->eraseFromParent();
+  }
   return;
 }
 
-void CgVisitor::visit(BlockAST *ast) {}
+void CgVisitor::visit(BlockAST *ast) {
+  for (auto &statement : ast->Statements) {
+    statement->accept_vis(this);
+  }
+}
 void CgVisitor::visit(TypedVarAST *ast) {};
 
 } // namespace sammine_lang::AST

@@ -7,11 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 # LLVM-STUFF
 find_package(LLVM REQUIRED CONFIG)
-#option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-project(sammine_lang)
+project(sammine_lang )
 
 # Find ninja
 find_program(NINJA_EXECUTABLE ninja)
@@ -27,7 +27,7 @@ separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
-llvm_map_components_to_libnames(llvm_libs native orcjit support core irreader)
+llvm_map_components_to_libnames(llvm_libs native orcjit core support irreader)
 
 add_subdirectory(src)
 

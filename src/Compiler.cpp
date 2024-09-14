@@ -3,7 +3,11 @@
 //
 
 #include "Compiler.h"
+#include "AstNameVisitor.h"
 #include "CodegenVisitor.h"
+#include "FileRAII.h"
+#include "Utilities.h"
+#include "llvm/Support/raw_ostream.h"
 namespace sammine_lang {
 
 Compiler::Compiler(
@@ -12,8 +16,18 @@ Compiler::Compiler(
   this->error = false;
   this->file_name = compiler_options[compiler_option_enum::FILE];
   this->input = compiler_options[compiler_option_enum::STR];
-
-  assert(this->resPtr);
+  if (this->input != "") {
+    this->file_name = "From string input";
+  } else if (this->file_name != "") {
+    this->input = sammine_util::get_string_from_file(this->file_name);
+  } else {
+    std::cerr << "[Error during compiler initial phase]" << std::endl;
+    std::cerr << "[Both the file name and the string input is empty]"
+              << std::endl;
+    set_error();
+  }
+  std::cerr << this->input << std::endl;
+  this->resPtr = std::make_shared<LLVMRes>();
 }
 void Compiler::lex() {
 
@@ -36,7 +50,14 @@ void Compiler::parse() {
 
   auto result = psr.Parse();
   if (result.has_value()) {
+    std::cout << "hello" << std::endl;
     programAST = std::move(result.value());
+    auto name_visitor = AST::AstNameVisitor();
+    programAST->accept_vis(&name_visitor);
+
+    for (auto &name : name_visitor.PreOrderNames) {
+      std::cout << name << std::endl;
+    }
   } else if (psr.hasErrors()) {
     set_error();
     std::cerr << "[Error during parsing phase]" << std::endl;
@@ -56,13 +77,18 @@ void Compiler::codegen() {
   // TODO : Check for codegen error
 }
 
-void Compiler::produce_executable() {}
+void Compiler::produce_executable() {
+
+  resPtr->Module->print(llvm::errs(), nullptr);
+}
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
   std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
       {&Compiler::lex, "lexing"},
       {&Compiler::parse, "parsing"},
-      {&Compiler::codegen, "codegen"}};
+      {&Compiler::codegen, "codegen"},
+      {&Compiler::produce_executable, "produce_executable"},
+  };
 
   std::string prev = "";
   for (auto stage : CompilerStages) {

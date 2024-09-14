@@ -1,5 +1,5 @@
-#include <string>
 #pragma once
+#include <string>
 namespace sammine_lang {
 namespace AST {
 using Identifier = std::string;

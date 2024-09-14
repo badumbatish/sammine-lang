@@ -1,3 +1,4 @@
+#pragma once
 #include "Ast.h"
 #include "Lexer.h"
 #include "Utilities.h"

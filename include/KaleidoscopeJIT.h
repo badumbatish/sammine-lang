@@ -31,7 +31,7 @@
 namespace llvm {
 namespace orc {
 
-class KaleidoscopeJIT {
+class SammineJIT {
 private:
   std::unique_ptr<ExecutionSession> ES;
 
@@ -44,8 +44,8 @@ private:
   JITDylib &MainJD;
 
 public:
-  KaleidoscopeJIT(std::unique_ptr<ExecutionSession> ES,
-                  JITTargetMachineBuilder JTMB, DataLayout DL)
+  SammineJIT(std::unique_ptr<ExecutionSession> ES, JITTargetMachineBuilder JTMB,
+             DataLayout DL)
       : ES(std::move(ES)), DL(std::move(DL)), Mangle(*this->ES, this->DL),
         ObjectLayer(*this->ES,
                     []() { return std::make_unique<SectionMemoryManager>(); }),
@@ -61,12 +61,12 @@ public:
     }
   }
 
-  ~KaleidoscopeJIT() {
+  ~SammineJIT() {
     if (auto Err = ES->endSession())
       ES->reportError(std::move(Err));
   }
 
-  static Expected<std::unique_ptr<KaleidoscopeJIT>> Create() {
+  static Expected<std::unique_ptr<SammineJIT>> Create() {
     auto EPC = SelfExecutorProcessControl::Create();
     if (!EPC)
       return EPC.takeError();
@@ -80,8 +80,8 @@ public:
     if (!DL)
       return DL.takeError();
 
-    return std::make_unique<KaleidoscopeJIT>(std::move(ES), std::move(JTMB),
-                                             std::move(*DL));
+    return std::make_unique<SammineJIT>(std::move(ES), std::move(JTMB),
+                                        std::move(*DL));
   }
 
   const DataLayout &getDataLayout() const { return DL; }
