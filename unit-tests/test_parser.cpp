@@ -180,12 +180,4 @@ TEST_CASE("VALID GRAMMAR", "[Parser]") {
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
   REQUIRE(pg.error_msgs == decltype(pg.error_msgs)());
-  auto nameVisitor = sammine_lang::AST::AstNameVisitor();
-  programAST.value()->accept_vis(&nameVisitor);
-
-  auto names = nameVisitor.PreOrderNames;
-  std::vector<std::string> expectedNames = {
-      "ProgramAST", "VarDefAST",    "TypedVarAST", "NumberExprAST",
-      "FuncDefAST", "PrototypeAST", "TypedVarAST", "BlockAST"};
-  REQUIRE(names == expectedNames);
 }

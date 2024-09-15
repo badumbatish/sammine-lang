@@ -1,13 +1,12 @@
-# RUN: %sammine_exe% --file %s 
-
+# RUN: %sammine_exe% --file %s  | FileCheck %s --implicit-check-not . 
 # Use `let` keyword
 let x : f64 = 0;
 
 # this is a function
 fn f(x : f64) {
-    3 + 1
-    x + 2
-    x
-    x = 2
-
+     x + 2 + 3 +1;
+    # x;
+     x = 2;
+     x = 2;
+    printd(x);
 }

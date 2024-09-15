@@ -31,7 +31,7 @@ public:
   std::unique_ptr<llvm::LLVMContext> Context;
   std::unique_ptr<llvm::IRBuilder<>> Builder;
   std::unique_ptr<llvm::Module> Module;
-  std::map<std::string, llvm::Value *> NamedValues;
+  std::map<std::string, llvm::AllocaInst *> NamedValues;
 
   std::unique_ptr<llvm::FunctionPassManager> FnPass;
   std::unique_ptr<llvm::LoopAnalysisManager> LpAnalysis;
@@ -54,14 +54,23 @@ public:
 
     sammineJIT = ExitOnErr(std::move(SammineJIT::Create()));
     InitializeModuleAndManagers();
+
+    InitializeUtilities();
   }
 
+  void InitializeUtilities() {
+    std::vector<llvm::Type *> printdArgs{llvm::Type::getDoubleTy(*Context)};
+    llvm::FunctionType *printdType = llvm::FunctionType::get(
+        llvm::Type::getInt32Ty(*Context), printdArgs, false);
+    llvm::Function *printdFunc = llvm::Function::Create(
+        printdType, llvm::Function::ExternalLinkage, "printd", *Module);
+  }
   void InitializeModuleAndManagers() {
     InitializeEssentials();
 
-    InitializeManagers();
-
-    InitializeInstrs();
+    // InitializeManagers();
+    //
+    // InitializeInstrs();
 
     // Add transform passes.
     // Do simple "peephole" optimizations and bit-twiddling optzns.
@@ -73,7 +82,7 @@ public:
     //  // Simplify the control flow graph (deleting unreachable blocks, etc).
     //  FnPass->addPass(llvm::SimplifyCFGPass());
 
-    InitializePassBuilder();
+    // InitializePassBuilder();
   }
   void InitializeEssentials() {
     // Open a new context and module.

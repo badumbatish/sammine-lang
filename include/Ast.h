@@ -131,7 +131,10 @@ public:
   }
 };
 
-class ExprAST : public AstBase {};
+class ExprAST : public AstBase {
+public:
+  inline static int personal_id_counter = 0;
+};
 
 class NumberExprAST : public ExprAST {
 public:

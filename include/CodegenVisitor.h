@@ -18,7 +18,8 @@ public:
   CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr) : resPtr(resPtr) {
     assert(this->resPtr);
   }
-
+  llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,
+                                           const std::string &VarName);
   // visit
   void visit(ProgramAST *ast) override;
   void visit(VarDefAST *ast) override;

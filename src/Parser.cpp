@@ -276,6 +276,7 @@ auto Parser::ParseBlock()
         return tl::make_unexpected(ParserError::COMMITTED);
     }
   }
+
   auto rightCurly = expect(TokRightCurly);
 
   if (!rightCurly)

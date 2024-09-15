@@ -24,7 +24,6 @@ Compiler::Compiler(
               << std::endl;
     set_error();
   }
-  std::cerr << this->input << std::endl;
   this->resPtr = std::make_shared<LLVMRes>();
 }
 void Compiler::lex() {
@@ -48,7 +47,6 @@ void Compiler::parse() {
 
   auto result = psr.Parse();
   if (result.has_value()) {
-    std::cout << "hello" << std::endl;
     programAST = std::move(result.value());
   } else if (psr.hasErrors()) {
     set_error();
@@ -60,12 +58,12 @@ void Compiler::parse() {
 }
 
 void Compiler::codegen() {
-  std::cout << "Start partial codegen" << std::endl;
+  std::cerr << "Start partial codegen" << std::endl;
   auto cg = std::make_shared<sammine_lang::AST::CgVisitor>(resPtr);
   assert(cg != nullptr);
   programAST->accept_vis(cg.get());
 
-  std::cout << "Finish partial codegen" << std::endl;
+  std::cerr << "Finish partial codegen" << std::endl;
   // TODO : Check for codegen error
 }
 

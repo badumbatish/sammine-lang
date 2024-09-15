@@ -27,13 +27,10 @@ int main(int argc, char *argv[]) {
       .help("sammine compiler spits out LLVM-IR to stdout");
   try {
     program.parse_args(argc, argv); // Example: ./main -abc 1.95 2.47
-    if (program.present<std::string>("-f"))
-      compiler_options[compiler_option_enum::FILE] =
-          program.present("-f") ? program.get("-f") : "String-input";
-    if (program.present("-s"))
-      compiler_options[compiler_option_enum::STR] =
-          program.present("-s") ? program.get("-s")
-                                : FileRAII(program.get("-f")).getInternalStr();
+    compiler_options[compiler_option_enum::FILE] =
+        program.present("-f") ? program.get("-f") : "";
+    compiler_options[compiler_option_enum::STR] =
+        program.present("-s") ? program.get("-s") : "";
     compiler_options[compiler_option_enum::LLVM_IR] = program.get("--llvm-ir");
 
     std::cerr << compiler_options[compiler_option_enum::STR] << std::endl;
