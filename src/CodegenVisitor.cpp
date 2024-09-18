@@ -6,10 +6,13 @@
 #include "Ast.h"
 #include "Lexer.h"
 #include "Utilities.h"
+#include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Type.h"
+#include "llvm/IR/Value.h"
+#include "llvm/Support/raw_ostream.h"
 #include <random>
 namespace sammine_lang::AST {
 
@@ -126,6 +129,12 @@ void CgVisitor::visit(VariableExprAST *ast) {
   ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(), Alloca,
                                          ast->variableName);
 }
+void CgVisitor::visit(ExternAST *ast) {
+
+  ast->Prototype->accept_vis(this);
+
+  resPtr->FnProto[ast->Prototype->functionName] = std::move(ast->Prototype);
+}
 void CgVisitor::visit(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
   assert(resPtr);
@@ -160,14 +169,17 @@ void CgVisitor::visit(FuncDefAST *ast) {
 
   ast->Block->accept_vis(this);
 
+  resPtr->Builder->CreateRet(
+      llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(1.0)));
   // Validate the generated code, checking for consistency.
-  auto verified = verifyFunction(*Function);
+  auto not_verified = verifyFunction(*Function, &llvm::errs());
   // if (llvm::Value *RetVal = ast->Block->val) {
   //   // Finish off the function.
   // }
 
   // Error reading body, remove function.
-  if (!verified) {
+  if (not_verified) {
+    sammine_util::abort("Abort from creating a function");
     Function->eraseFromParent();
   }
   return;

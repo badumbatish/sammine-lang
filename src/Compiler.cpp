@@ -5,7 +5,11 @@
 #include "Compiler.h"
 #include "CodegenVisitor.h"
 #include "Utilities.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/Support/CodeGen.h"
+#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/raw_ostream.h"
+#include <system_error>
 namespace sammine_lang {
 
 Compiler::Compiler(
@@ -62,14 +66,36 @@ void Compiler::codegen() {
   auto cg = std::make_shared<sammine_lang::AST::CgVisitor>(resPtr);
   assert(cg != nullptr);
   programAST->accept_vis(cg.get());
+  std::cerr << programAST->DefinitionVec.size() << std::endl;
 
   std::cerr << "Finish partial codegen" << std::endl;
   // TODO : Check for codegen error
+  //
 }
 
 void Compiler::produce_executable() {
 
+  std::cerr << "Starting .o" << std::endl;
   resPtr->Module->print(llvm::errs(), nullptr);
+  llvm::raw_fd_ostream dest(llvm::raw_fd_ostream(resPtr->FileName, resPtr->EC));
+  if (resPtr->EC) {
+    llvm::errs() << "Could not open file: " << resPtr->EC.message();
+    return;
+  }
+
+  auto FileType = llvm::CodeGenFileType::ObjectFile;
+
+  if (resPtr->target_machine->addPassesToEmitFile(resPtr->pass, dest, nullptr,
+                                                  FileType)) {
+    llvm::errs() << "TargetMachine can't emit a file of this type";
+    return;
+  }
+
+  resPtr->pass.run(*resPtr->Module);
+  dest.flush();
+
+  set_error();
+  std::cerr << "ending .o " << std::endl;
 }
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;

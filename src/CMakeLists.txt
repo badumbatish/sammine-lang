@@ -37,4 +37,5 @@ target_link_libraries(visitors INTERFACE CodegenVisitor ScopeGeneratorVisitor)
 
 add_executable(sammine ${CMAKE_CURRENT_LIST_DIR}/sammine.cpp)
 target_include_directories(sammine PRIVATE ${INCLUDE_PROJECT_DIR} ${LLVM_INCLUDE_DIRS})
-target_link_libraries(sammine Compiler SammineJIT Utilities Ast Lexer Parser CodegenVisitor ScopeGeneratorVisitor LLVMSupport ${llvm_libs} )
+target_link_libraries(sammine Compiler SammineJIT Utilities Ast Lexer Parser 
+    ${llvm_targets} CodegenVisitor ScopeGeneratorVisitor LLVMSupport ${llvm_libs} )

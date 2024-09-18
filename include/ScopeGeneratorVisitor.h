@@ -1,4 +1,5 @@
 #pragma once
+#include "Ast.h"
 #include "AstBase.h"
 #include <memory>
 
@@ -25,6 +26,7 @@ public:
   // pre order
   void preorder_walk(ProgramAST *ast) override;
   void preorder_walk(VarDefAST *ast) override;
+  void preorder_walk(ExternAST *ast) override;
   void preorder_walk(FuncDefAST *ast) override;
   void preorder_walk(PrototypeAST *ast) override;
   void preorder_walk(CallExprAST *ast) override;
@@ -37,6 +39,7 @@ public:
   // post order
   void postorder_walk(ProgramAST *ast) override;
   void postorder_walk(VarDefAST *ast) override;
+  void postorder_walk(ExternAST *ast) override;
   void postorder_walk(FuncDefAST *ast) override;
   void postorder_walk(PrototypeAST *ast) override;
   void postorder_walk(CallExprAST *ast) override;

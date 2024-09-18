@@ -1,6 +1,8 @@
 
 #include "Parser.h"
+#include "Ast.h"
 #include "Lexer.h"
+#include "Utilities.h"
 #include "tl/expected.hpp"
 #include <cstdlib>
 #include <functional>
@@ -61,6 +63,25 @@ auto Parser::ParseDefinition()
 
 auto Parser::ParseFuncDef()
     -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError> {
+  // this is for extern
+  auto extern_fn = expect(TokenType::TokExtern);
+  if (extern_fn) {
+
+    auto prototype = ParsePrototype();
+    if (!prototype) {
+      sammine_util::abort("abort extern");
+      auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
+                           "Failed to parse a prototype of a function");
+      return tl::make_unexpected(ParserError::COMMITTED);
+    }
+
+    auto semi_colon = expect(TokenType::TokSemiColon);
+    if (!semi_colon)
+      sammine_util::abort("Need semicolon when parsing extern");
+    return std::make_shared<AST::ExternAST>(prototype.value());
+  }
+
+  // this is for fn
   auto fn = expect(TokenType::TokFunc);
   if (!fn)
     return tl::make_unexpected(ParserError::NONCOMMITTED);

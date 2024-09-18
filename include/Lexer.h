@@ -71,9 +71,10 @@ enum TokenType {
   // TokFunction
   TokReturn,
   TokMain,
-  TokFunc,  // fn
-  TokArrow, // ->
-  TokLet,   // let
+  TokFunc,   // fn
+  TokArrow,  // ->
+  TokLet,    // let
+  TokExtern, // extern
   // TokID
   TokID, // Representing an identifier
 

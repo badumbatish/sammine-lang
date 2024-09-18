@@ -26,6 +26,10 @@ public:
   virtual void preorder_walk(VarDefAST *ast) = 0;
   virtual void postorder_walk(VarDefAST *ast) = 0;
 
+  virtual void visit(ExternAST *ast);
+  virtual void preorder_walk(ExternAST *ast) = 0;
+  virtual void postorder_walk(ExternAST *ast) = 0;
+
   virtual void visit(FuncDefAST *ast);
   virtual void preorder_walk(FuncDefAST *ast) = 0;
   virtual void postorder_walk(FuncDefAST *ast) = 0;

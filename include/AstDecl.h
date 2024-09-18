@@ -6,6 +6,7 @@ using Identifier = std::string;
 class ProgramAST;
 class DefinitionAST;
 class VarDefAST;
+class ExternAST;
 class FuncDefAST;
 class PrototypeAST;
 class TypedVarAST;

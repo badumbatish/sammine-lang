@@ -93,6 +93,23 @@ public:
 
 //! \brief A Function Definition that has the prototype and definition in terms
 //! of a block
+class ExternAST : public DefinitionAST {
+public:
+  std::shared_ptr<PrototypeAST> Prototype;
+
+  ExternAST(std::shared_ptr<PrototypeAST> Prototype)
+      : Prototype(std::move(Prototype)) {}
+
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+
+  virtual std::string getTreeName() override { return "ExternAST"; }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+};
 class FuncDefAST : public DefinitionAST {
 public:
   std::shared_ptr<PrototypeAST> Prototype;

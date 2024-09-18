@@ -21,6 +21,14 @@ void ASTVisitor::visit(VarDefAST *ast) {
 void ASTVisitor::preorder_walk(VarDefAST *ast) {}
 void ASTVisitor::postorder_walk(VarDefAST *ast) {}
 
+void ASTVisitor::visit(ExternAST *ast) {
+  ast->walk_with_preorder(this);
+  ast->Prototype->accept_vis(this);
+  ast->walk_with_postorder(this);
+}
+void ASTVisitor::preorder_walk(ExternAST *ast) {}
+void ASTVisitor::postorder_walk(ExternAST *ast) {}
+
 void ASTVisitor::visit(FuncDefAST *ast) {
   ast->walk_with_preorder(this);
   ast->Prototype->accept_vis(this);

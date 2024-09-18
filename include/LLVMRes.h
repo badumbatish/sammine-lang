@@ -2,6 +2,7 @@
 
 #include "Ast.h"
 #include "SammineJIT.h"
+#include "Utilities.h"
 #include "iostream"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -12,18 +13,25 @@
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Instructions.h"
 #include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/MC/TargetRegistry.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/StandardInstrumentations.h"
+#include "llvm/Support/CodeGen.h"
+#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include "llvm/TargetParser/Host.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Scalar/Reassociate.h"
 #include <map>
-
 namespace sammine_lang {
 class LLVMRes {
 public:
@@ -45,25 +53,19 @@ public:
       FnProto;
 
   llvm::PassBuilder PB;
-
+  std::unique_ptr<llvm::TargetMachine> target_machine;
+  llvm::legacy::PassManager pass;
+  std::string FileName = "output.o";
+  std::error_code EC;
   LLVMRes() {
-
-    llvm::InitializeNativeTarget();
-    llvm::InitializeNativeTargetAsmPrinter();
+    llvm::InitializeAllTargetInfos();
+    llvm::InitializeAllTargets();
+    llvm::InitializeAllTargetMCs();
     llvm::InitializeNativeTargetAsmParser();
+    llvm::InitializeNativeTargetAsmPrinter();
 
     sammineJIT = ExitOnErr(std::move(SammineJIT::Create()));
     InitializeModuleAndManagers();
-
-    InitializeUtilities();
-  }
-
-  void InitializeUtilities() {
-    std::vector<llvm::Type *> printdArgs{llvm::Type::getDoubleTy(*Context)};
-    llvm::FunctionType *printdType = llvm::FunctionType::get(
-        llvm::Type::getInt32Ty(*Context), printdArgs, false);
-    llvm::Function *printdFunc = llvm::Function::Create(
-        printdType, llvm::Function::ExternalLinkage, "printd", *Module);
   }
   void InitializeModuleAndManagers() {
     InitializeEssentials();
@@ -92,12 +94,22 @@ public:
 
     Module = std::make_unique<llvm::Module>("KaleidoscopeJIT", *Context);
     assert(Module);
+    auto TargetTriple = LLVMGetDefaultTargetTriple();
+    std::string Error;
+    auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
 
-    Module->setDataLayout(sammineJIT->getDataLayout());
+    auto CPU = "generic";
+    auto Features = "";
+    llvm::TargetOptions opt;
+    target_machine =
+        std::unique_ptr<llvm::TargetMachine>(Target->createTargetMachine(
+            TargetTriple, CPU, Features, opt, llvm::Reloc::PIC_));
 
     // Create a new builder for the module.
     Builder = std::make_unique<llvm::IRBuilder<>>(*Context);
     assert(Builder);
+
+    Module->setDataLayout(target_machine->createDataLayout());
   }
   void InitializeManagers() {
     // Create new pass and analysis managers.

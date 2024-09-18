@@ -24,6 +24,7 @@ public:
   void visit(ProgramAST *ast) override;
   void visit(VarDefAST *ast) override;
   void visit(FuncDefAST *ast) override;
+  void visit(ExternAST *ast) override;
   void visit(PrototypeAST *ast) override;
   void visit(CallExprAST *ast) override;
   void visit(BinaryExprAST *ast) override;
@@ -35,6 +36,7 @@ public:
   // TODO: Implement these
   void preorder_walk(ProgramAST *ast) override {}
   void preorder_walk(VarDefAST *ast) override {}
+  void preorder_walk(ExternAST *ast) override {}
   void preorder_walk(FuncDefAST *ast) override {}
   void preorder_walk(PrototypeAST *ast) override {}
   void preorder_walk(CallExprAST *ast) override {}
@@ -48,6 +50,7 @@ public:
   // TODO: Implement these?
   void postorder_walk(ProgramAST *ast) override {}
   void postorder_walk(VarDefAST *ast) override {}
+  void postorder_walk(ExternAST *ast) override {}
   void postorder_walk(FuncDefAST *ast) override {}
   void postorder_walk(PrototypeAST *ast) override {}
   void postorder_walk(CallExprAST *ast) override {}
