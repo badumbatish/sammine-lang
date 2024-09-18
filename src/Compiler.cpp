@@ -5,6 +5,9 @@
 #include "Compiler.h"
 #include "CodegenVisitor.h"
 #include "Utilities.h"
+#include "fmt/color.h"
+#include "fmt/core.h"
+#include "fmt/format.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Support/CodeGen.h"
 #include "llvm/Support/FileSystem.h"
@@ -23,9 +26,10 @@ Compiler::Compiler(
   } else if (this->file_name != "") {
     this->input = sammine_util::get_string_from_file(this->file_name);
   } else {
-    std::cerr << "[Error during compiler initial phase]" << std::endl;
-    std::cerr << "[Both the file name and the string input is empty]"
-              << std::endl;
+    fmt::print(stderr, fg(fmt::color::red),
+               "[Error during compiler initial phase]\n");
+    fmt::print(stderr, fg(fmt::color::red),
+               "[Both the file name and the string input is empty]\n");
     set_error();
   }
   this->resPtr = std::make_shared<LLVMRes>();
@@ -35,11 +39,12 @@ void Compiler::lex() {
   Lexer lxr = Lexer(input);
   if (lxr.getTokenStream()->hasErrors()) {
     set_error();
-    std::cerr << "[Error during lexing phase]" << std::endl;
+    fmt::print(stderr, fg(fmt::color::red), "[Error during lexing phase]\n");
     auto stream = lxr.getTokenStream();
     for (auto i : stream->ErrStream) {
-      std::cerr << file_name << ":" << i->location
-                << ": Encountered invalid : " << i->lexeme << std::endl;
+
+      fmt::print(stderr, "{}:{}: Encountered invalid token : {}\n", file_name,
+                 i->location.to_string(), i->lexeme);
     }
   }
 
@@ -54,9 +59,9 @@ void Compiler::parse() {
     programAST = std::move(result.value());
   } else if (psr.hasErrors()) {
     set_error();
-    std::cerr << "[Error during parsing phase]" << std::endl;
+    fmt::print(stderr, "[Error during parsing phase]\n");
     for (auto i : psr.error_msgs) {
-      std::cerr << file_name << ":" << i << std::endl;
+      fmt::print(stderr, "{}: {}\n", file_name, i);
     }
   }
 }

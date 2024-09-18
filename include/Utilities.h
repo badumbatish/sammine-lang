@@ -8,6 +8,8 @@ namespace sammine_util {
 auto get_string_from_file(std::string file_name) -> std::string;
 inline size_t unique_ast_id = 0;
 auto abort(const std::string &message = "<NO MESSAGE>") -> void;
+auto abort_on(bool abort_if_true,
+              const std::string &message = "<NO MESSAGE>") -> void;
 } // namespace sammine_util
 
 #endif

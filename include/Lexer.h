@@ -178,13 +178,13 @@ public:
   }
 
   friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
-    out << loc.line << ":" << loc.column;
-    return out;
+    return out << loc.line << ":" << loc.column;
   }
-
   std::string to_string() const {
     return std::to_string(this->line) + ":" + std::to_string(this->column);
   }
+
+  operator std::string() { return this->to_string(); }
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme
 //! and position pair as its members.

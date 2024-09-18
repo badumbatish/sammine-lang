@@ -20,7 +20,6 @@ public:
   explicit FileRAII(const std::string &filename)
       : file(filename), is_opened(true) {
     if (!file.is_open()) {
-      std::cerr << "Error: Unable to open file: " << filename << std::endl;
       is_opened = false;
     }
 

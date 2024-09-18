@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
-include_directories(externals/)
+add_subdirectory(externals/)
 # LLVM-STUFF
 find_package(LLVM REQUIRED CONFIG)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
@@ -16,6 +16,8 @@ llvm_map_components_to_libnames(llvm_libs native orcjit core support irreader)
 foreach(target ${LLVM_TARGETS_TO_BUILD})
   list(APPEND llvm_targets "LLVM${target}CodeGen")
 endforeach()
+
+
 
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
