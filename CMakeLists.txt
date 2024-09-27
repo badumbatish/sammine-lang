@@ -34,8 +34,6 @@ project(sammine_lang )
 # Use lld linker
 add_link_options("-fuse-ld=lld")
 
-
-
 # PROJECT_INCLUDE_DIR
 SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/")
 

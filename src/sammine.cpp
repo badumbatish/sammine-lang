@@ -5,9 +5,8 @@
 //! \brief The main file to produce an executable that is the sammine compiler
 
 #include "Compiler.h"
-#include "argparse/argparse.hpp"
 #include "fmt/color.h"
-#include "fmt/core.h"
+#include <argparse/argparse.hpp>
 using sammine_lang::Compiler;
 using sammine_lang::compiler_option_enum;
 

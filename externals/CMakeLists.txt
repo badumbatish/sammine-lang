@@ -1,8 +1,8 @@
 include(FetchContent)
 
-set(PROJECT_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-
-set(CMAKE_BUILD_TYPE Release)
+# set(PROJECT_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+#
+# set(CMAKE_BUILD_TYPE Release)
 message("Setting external dependencies build type to : ${CMAKE_BUILD_TYPE}")
 FetchContent_Declare(
   cpptrace
@@ -19,5 +19,16 @@ FetchContent_Declare(
   GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
 FetchContent_MakeAvailable(fmt)
 
-set(CMAKE_BUILD_TYPE ${PROJECT_BUILD_TYPE})
-message("Done with setting external dependencies, setting build type back to ${CMAKE_BUILD_TYPE}")
+
+# fetch latest argparse
+FetchContent_Declare(
+    argparse
+    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+)
+FetchContent_MakeAvailable(argparse)
+
+# set(CMAKE_BUILD_TYPE ${PROJECT_BUILD_TYPE})
+# message("Done with setting external dependencies, setting build type back to ${CMAKE_BUILD_TYPE}")
+
+
+

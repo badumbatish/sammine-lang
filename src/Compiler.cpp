@@ -89,6 +89,7 @@ void Compiler::produce_executable() {
 
   log_diagnostics("Start producing executable/object file stage");
   if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
+    force_log_diagnostics("Logging pre optimization llvm IR");
     resPtr->Module->print(llvm::errs(), nullptr);
   }
   llvm::raw_fd_ostream dest(llvm::raw_fd_ostream(resPtr->FileName, resPtr->EC));
@@ -108,6 +109,10 @@ void Compiler::produce_executable() {
   resPtr->pass.run(*resPtr->Module);
   dest.flush();
 
+  if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
+    force_log_diagnostics("Logging post optimization llvm IR");
+    resPtr->Module->print(llvm::errs(), nullptr);
+  }
   set_error();
 }
 void Compiler::start() {

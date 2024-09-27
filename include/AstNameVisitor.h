@@ -3,7 +3,6 @@
 #define SAMMINE_LANG_ASTNAMEVISITOR_H
 #include "Ast.h"
 #include "AstBase.h"
-#include "Utilities.h"
 
 namespace sammine_lang::AST {
 class AstNameVisitor : public ASTVisitor {

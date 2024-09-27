@@ -5,8 +5,6 @@
 #ifndef SAMMINE_LANG_FILERAII_H
 #define SAMMINE_LANG_FILERAII_H
 #include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 //! \file FileRAII.h

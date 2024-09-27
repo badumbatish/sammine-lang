@@ -1,6 +1,5 @@
 #ifndef SAMMINE_LANG_UTILITIES_H
 #define SAMMINE_LANG_UTILITIES_H
-#include "FileRAII.h"
 #include "Lexer.h"
 #include <cassert>
 #include <string>
