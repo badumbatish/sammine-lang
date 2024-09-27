@@ -163,17 +163,26 @@ class Location {
 public:
   size_t line;
   size_t column;
-  Location() : line(0), column(0) {}
+  size_t source_start; // Refers to the true location in the orignal source
+                       // code string
+  size_t source_end;
+  Location() : line(0), column(0), source_start(0), source_end(0) {}
 
-  inline void advance() { column++; }
+  Location(const Location &loc_a, const Location &loc_b) {}
+  inline void advance() {
+    column++;
+    source_end++;
+  }
   inline void devance() {
     if (column == 0)
       return;
-    else
-      column--;
+
+    column--;
+    source_end--;
   }
   inline void newLine() {
     line++;
+    source_end++;
     column = 0;
   }
 
@@ -184,6 +193,9 @@ public:
     return std::to_string(this->line) + ":" + std::to_string(this->column);
   }
 
+  bool operator==(const Location &other) {
+    return source_start == other.source_start && source_end == other.source_end;
+  }
   operator std::string() { return this->to_string(); }
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme
@@ -197,7 +209,9 @@ public:
   std::string lexeme;
   Location location;
   Token(TokenType type, std::string lexeme, Location location)
-      : type(type), lexeme(std::move(lexeme)), location(location){};
+      : type(type), lexeme(std::move(lexeme)), location(location) {
+    this->location.source_start = this->location.source_end - lexeme.size();
+  };
 };
 
 //! A helper class for Lexer to simplify the process of getting a token.

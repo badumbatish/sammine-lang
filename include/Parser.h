@@ -80,7 +80,7 @@ private:
               const std::string &message = "") -> std::shared_ptr<Token>;
 
 public:
-  std::vector<std::string> error_msgs;
+  sammine_util::ErrorMsgs error_msgs;
   [[nodiscard]]
   Parser() {}
   [[nodiscard]]
@@ -90,7 +90,7 @@ public:
   auto Parse() -> tl::expected<std::shared_ptr<AST::ProgramAST>, ParserError>;
   [[nodiscard]]
   auto hasErrors() -> bool {
-    return !error_msgs.empty();
+    return !error_msgs.errors.empty();
   }
   void log_error(const std::string &message);
 };

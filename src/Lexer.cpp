@@ -4,6 +4,7 @@
 
 #include "Lexer.h"
 #include "functional"
+#include <string>
 namespace sammine_lang {
 
 using LexFunction = std::function<size_t(Lexer *, size_t, const std::string &)>;

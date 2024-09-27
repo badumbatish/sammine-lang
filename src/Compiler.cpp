@@ -7,14 +7,19 @@
 #include "Utilities.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
-#include "fmt/format.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Support/CodeGen.h"
-#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/raw_ostream.h"
 #include <system_error>
 namespace sammine_lang {
 
+void Compiler::log_diagnostics(const std::string &diagnostics) {
+  if (compiler_options[compiler_option_enum::DIAGNOSTIC] == "true")
+    Compiler::force_log_diagnostics(diagnostics);
+}
+inline void Compiler::force_log_diagnostics(const std::string &diagnostics) {
+  fmt::print(stderr, fg(fmt::color::green), "{}\n", diagnostics);
+}
 Compiler::Compiler(
     std::map<compiler_option_enum, std::string> &compiler_options)
     : compiler_options(compiler_options) {
@@ -34,17 +39,20 @@ Compiler::Compiler(
   }
   this->resPtr = std::make_shared<LLVMRes>();
 }
-void Compiler::lex() {
 
+void Compiler::lex() {
+  log_diagnostics("Start lexing stage...");
   Lexer lxr = Lexer(input);
   if (lxr.getTokenStream()->hasErrors()) {
     set_error();
     fmt::print(stderr, fg(fmt::color::red), "[Error during lexing phase]\n");
     auto stream = lxr.getTokenStream();
     for (auto i : stream->ErrStream) {
-
-      fmt::print(stderr, "{}:{}: Encountered invalid token : {}\n", file_name,
-                 i->location.to_string(), i->lexeme);
+      fmt::print(
+          stderr, "{}:{}: Encountered invalid token : {}\n", file_name,
+          i->location.to_string(),
+          input.substr(i->location.source_start,
+                       i->location.source_end - i->location.source_start));
     }
   }
 
@@ -52,6 +60,7 @@ void Compiler::lex() {
 }
 
 void Compiler::parse() {
+  log_diagnostics("Start parser stage...");
   Parser psr = Parser(tokStream);
 
   auto result = psr.Parse();
@@ -60,28 +69,28 @@ void Compiler::parse() {
   } else if (psr.hasErrors()) {
     set_error();
     fmt::print(stderr, "[Error during parsing phase]\n");
-    for (auto i : psr.error_msgs) {
-      fmt::print(stderr, "{}: {}\n", file_name, i);
+    for (auto i : psr.error_msgs.errors) {
+      fmt::print(stderr, "{}: {}\n", file_name, i.second);
     }
   }
 }
 
 void Compiler::codegen() {
-  std::cerr << "Start partial codegen" << std::endl;
+  log_diagnostics("Start codegen stage...");
   auto cg = std::make_shared<sammine_lang::AST::CgVisitor>(resPtr);
   assert(cg != nullptr);
   programAST->accept_vis(cg.get());
-  std::cerr << programAST->DefinitionVec.size() << std::endl;
 
-  std::cerr << "Finish partial codegen" << std::endl;
   // TODO : Check for codegen error
   //
 }
 
 void Compiler::produce_executable() {
 
-  std::cerr << "Starting .o" << std::endl;
-  resPtr->Module->print(llvm::errs(), nullptr);
+  log_diagnostics("Start producing executable/object file stage");
+  if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
+    resPtr->Module->print(llvm::errs(), nullptr);
+  }
   llvm::raw_fd_ostream dest(llvm::raw_fd_ostream(resPtr->FileName, resPtr->EC));
   if (resPtr->EC) {
     llvm::errs() << "Could not open file: " << resPtr->EC.message();
@@ -100,7 +109,6 @@ void Compiler::produce_executable() {
   dest.flush();
 
   set_error();
-  std::cerr << "ending .o " << std::endl;
 }
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;

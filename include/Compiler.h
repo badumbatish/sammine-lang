@@ -15,6 +15,7 @@ enum class compiler_option_enum {
   FILE,
   STR,
   LLVM_IR,
+  DIAGNOSTIC,
 };
 class Compiler {
   std::shared_ptr<TokenStream> tokStream;
@@ -29,6 +30,8 @@ class Compiler {
   void codegen();
   void produce_executable();
   void set_error() { error = true; }
+  void log_diagnostics(const std::string &diagnostics);
+  void force_log_diagnostics(const std::string &diagnostics);
 
 public:
   Compiler(std::map<compiler_option_enum, std::string> &compiler_options);

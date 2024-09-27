@@ -33,7 +33,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.Parse();
 
-    REQUIRE(pg.error_msgs == decltype(pg.error_msgs)());
+    REQUIRE(pg.error_msgs.errors.empty());
     auto nameVisitor = sammine_lang::AST::AstNameVisitor();
     programAST.value()->accept_vis(&nameVisitor);
 
@@ -179,5 +179,5 @@ TEST_CASE("VALID GRAMMAR", "[Parser]") {
   REQUIRE(lex.getTokenStream()->hasErrors() == false);
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
-  REQUIRE(pg.error_msgs == decltype(pg.error_msgs)());
+  REQUIRE(pg.error_msgs.errors.empty());
 }
