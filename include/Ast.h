@@ -43,26 +43,6 @@ public:
 
 class DefinitionAST : public AstBase {};
 
-//! \brief A variable definition: "var x = expression;"
-class VarDefAST : public DefinitionAST {
-public:
-  std::shared_ptr<TypedVarAST> TypedVar;
-  std::shared_ptr<ExprAST> Expression;
-
-  VarDefAST(std::shared_ptr<TypedVarAST> TypedVar,
-            std::shared_ptr<ExprAST> Expression)
-      : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)){};
-
-  virtual std::string getTreeName() override { return "VarDefAST"; }
-  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
-  virtual void walk_with_preorder(ASTVisitor *visitor) override {
-    visitor->preorder_walk(this);
-  }
-  virtual void walk_with_postorder(ASTVisitor *visitor) override {
-    visitor->postorder_walk(this);
-  }
-};
-
 //! \brief A prototype to present "func func_name(...) -> type;"
 
 //!
@@ -153,6 +133,25 @@ public:
   inline static int personal_id_counter = 0;
 };
 
+//! \brief A variable definition: "var x = expression;"
+class VarDefAST : public ExprAST {
+public:
+  std::shared_ptr<TypedVarAST> TypedVar;
+  std::shared_ptr<ExprAST> Expression;
+
+  VarDefAST(std::shared_ptr<TypedVarAST> TypedVar,
+            std::shared_ptr<ExprAST> Expression)
+      : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)){};
+
+  virtual std::string getTreeName() override { return "VarDefAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+};
 class NumberExprAST : public ExprAST {
 public:
   std::string number;

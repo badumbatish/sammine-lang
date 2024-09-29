@@ -9,7 +9,7 @@ enum ParserError {
   NONCOMMITTED,
 };
 class Parser {
-private:
+public:
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]]
   auto
@@ -26,8 +26,8 @@ private:
   auto ParseFuncDef()
       -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError>;
   [[nodiscard]]
-  auto ParseVarDef()
-      -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError>;
+  auto
+  ParseVarDef() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
 
   // Parse type
   [[nodiscard]]
@@ -79,7 +79,6 @@ private:
               TokenType until = TokenType::TokEOF,
               const std::string &message = "") -> std::shared_ptr<Token>;
 
-public:
   sammine_util::ErrorMsgs error_msgs;
   [[nodiscard]]
   Parser() {}

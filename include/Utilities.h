@@ -17,6 +17,15 @@ class ErrorMsgs {
 
 public:
   std::vector<ErrorMsg> errors;
+
+  std::vector<std::string> stringify() {
+    std::vector<std::string> string_errors;
+    for (auto &error : errors) {
+      string_errors.push_back(error.second);
+    }
+
+    return string_errors;
+  }
 };
 } // namespace sammine_util
 

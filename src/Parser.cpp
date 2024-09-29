@@ -47,7 +47,6 @@ auto Parser::ParseDefinition()
       tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
       {&Parser::ParseFuncDef, false},
-      {&Parser::ParseVarDef, false},
   };
 
   for (auto [fn, required] : ParseFunctions) {
@@ -109,7 +108,7 @@ auto Parser::ParseFuncDef()
 //! Accepts a let, continue parsing inside and (enable error reporting if
 //! possible). If a `let` is not found then return a nullptr.
 auto Parser::ParseVarDef()
-    -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError> {
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   auto let = expect(TokenType::TokLet);
   if (!let)
     return tl::make_unexpected(ParserError::NONCOMMITTED);
@@ -174,15 +173,18 @@ auto Parser::ParsePrimaryExpr()
     auto result = fn(this);
     if (result)
       return result;
+    else if (!result && result.error() == ParserError::COMMITTED)
+      return result;
   }
 
-  return tl::make_unexpected(ParserError::COMMITTED);
+  return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
 auto Parser::ParseExpr()
     -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   auto LHS = ParsePrimaryExpr();
-  if (!LHS)
+  if (!LHS) {
     return LHS;
+  }
 
   return ParseBinaryExpr(0, std::move(LHS.value()));
 }
@@ -198,14 +200,16 @@ auto Parser::ParseBinaryExpr(int prededence, std::shared_ptr<AST::ExprAST> LHS)
     auto binOpToken = tokStream->consume();
 
     auto RHS = ParsePrimaryExpr();
-    if (!RHS)
+    if (!RHS) {
       return RHS;
+    }
 
     int NextPrec = GetTokPrecedence(tokStream->peek()->type);
     if (TokPrec < NextPrec) {
       RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS.value()));
-      if (!RHS)
+      if (!RHS) {
         return RHS;
+      }
     }
 
     LHS = std::make_shared<AST::BinaryExprAST>(binOpToken, std::move(LHS),
@@ -241,9 +245,8 @@ auto Parser::ParseNumberExpr()
     return tl::make_unexpected(ParserError::NONCOMMITTED);
   } else {
     numberExpr->number = numberToken->lexeme;
+    return numberExpr;
   }
-
-  return numberExpr;
 }
 
 auto Parser::ParseVariableExpr()
@@ -287,7 +290,10 @@ auto Parser::ParseBlock()
   // TODO : We need to also parse other statement as well
 
   auto blockAST = std::make_shared<AST::BlockAST>();
-  while (auto a = ParseExpr()) {
+  while (true) {
+    auto a = ParseExpr();
+    if (!a && a.error() == ParserError::NONCOMMITTED) {
+    }
     if (!a && a.error() == ParserError::COMMITTED)
       return tl::make_unexpected(a.error());
     else if (a) {
@@ -295,6 +301,18 @@ auto Parser::ParseBlock()
       auto semi = expect(TokenType::TokSemiColon);
       if (!semi)
         return tl::make_unexpected(ParserError::COMMITTED);
+
+      continue;
+    }
+
+    auto b = ParseVarDef();
+    if (!b && b.error() == ParserError::NONCOMMITTED) {
+      break;
+    }
+    if (!b && b.error() == ParserError::COMMITTED)
+      return tl::make_unexpected(b.error());
+    else if (b) {
+      blockAST->Statements.push_back(b.value());
     }
   }
 

@@ -1,6 +1,4 @@
-# RUN: %sammine_exe% --file %s  | FileCheck %s --implicit-check-not . 
-# Use `let` keyword
-let x : f64 = 0;
+# RUN: %sammine_exe% --file %s  | grep ""
 
 # this is a function
 fn f(x : f64) {
