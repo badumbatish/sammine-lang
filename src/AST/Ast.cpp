@@ -1,5 +1,5 @@
-#include "Ast.h"
-#include "AstBase.h"
+#include "AST/Ast.h"
+#include "AST/AstBase.h"
 
 namespace sammine_lang::AST {
 void ASTVisitor::visit(ProgramAST *ast) {
@@ -9,8 +9,8 @@ void ASTVisitor::visit(ProgramAST *ast) {
   }
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(ProgramAST *ast) {}
-void ASTVisitor::postorder_walk(ProgramAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] ProgramAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] ProgramAST *ast) {}
 
 void ASTVisitor::visit(VarDefAST *ast) {
   ast->walk_with_preorder(this);
@@ -18,16 +18,16 @@ void ASTVisitor::visit(VarDefAST *ast) {
   ast->Expression->accept_vis(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(VarDefAST *ast) {}
-void ASTVisitor::postorder_walk(VarDefAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] VarDefAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] VarDefAST *ast) {}
 
 void ASTVisitor::visit(ExternAST *ast) {
   ast->walk_with_preorder(this);
   ast->Prototype->accept_vis(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(ExternAST *ast) {}
-void ASTVisitor::postorder_walk(ExternAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] ExternAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] ExternAST *ast) {}
 
 void ASTVisitor::visit(FuncDefAST *ast) {
   ast->walk_with_preorder(this);
@@ -35,8 +35,8 @@ void ASTVisitor::visit(FuncDefAST *ast) {
   ast->Block->accept_vis(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(FuncDefAST *ast) {}
-void ASTVisitor::postorder_walk(FuncDefAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] FuncDefAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] FuncDefAST *ast) {}
 
 void ASTVisitor::visit(PrototypeAST *ast) {
   ast->walk_with_preorder(this);
@@ -46,8 +46,8 @@ void ASTVisitor::visit(PrototypeAST *ast) {
   ast->walk_with_postorder(this);
 }
 
-void ASTVisitor::preorder_walk(PrototypeAST *ast) {}
-void ASTVisitor::postorder_walk(PrototypeAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] PrototypeAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] PrototypeAST *ast) {}
 
 void ASTVisitor::visit(CallExprAST *ast) {
   ast->walk_with_preorder(this);
@@ -56,8 +56,8 @@ void ASTVisitor::visit(CallExprAST *ast) {
   }
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(CallExprAST *ast) {}
-void ASTVisitor::postorder_walk(CallExprAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] CallExprAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] CallExprAST *ast) {}
 
 void ASTVisitor::visit(BinaryExprAST *ast) {
   ast->walk_with_preorder(this);
@@ -65,22 +65,22 @@ void ASTVisitor::visit(BinaryExprAST *ast) {
   ast->RHS->accept_vis(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(BinaryExprAST *ast) {}
-void ASTVisitor::postorder_walk(BinaryExprAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] BinaryExprAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] BinaryExprAST *ast) {}
 
 void ASTVisitor::visit(NumberExprAST *ast) {
   ast->walk_with_preorder(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(NumberExprAST *ast) {}
-void ASTVisitor::postorder_walk(NumberExprAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] NumberExprAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] NumberExprAST *ast) {}
 
 void ASTVisitor::visit(VariableExprAST *ast) {
   ast->walk_with_preorder(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(VariableExprAST *ast) {}
-void ASTVisitor::postorder_walk(VariableExprAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] VariableExprAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] VariableExprAST *ast) {}
 
 void ASTVisitor::visit(BlockAST *ast) {
   ast->walk_with_preorder(this);
@@ -89,13 +89,13 @@ void ASTVisitor::visit(BlockAST *ast) {
   }
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(BlockAST *ast) {}
-void ASTVisitor::postorder_walk(BlockAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] BlockAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] BlockAST *ast) {}
 
 void ASTVisitor::visit(TypedVarAST *ast) {
   ast->walk_with_preorder(this);
   ast->walk_with_postorder(this);
 }
-void ASTVisitor::preorder_walk(TypedVarAST *ast) {}
-void ASTVisitor::postorder_walk(TypedVarAST *ast) {}
+void ASTVisitor::preorder_walk([[maybe_unused]] TypedVarAST *ast) {}
+void ASTVisitor::postorder_walk([[maybe_unused]] TypedVarAST *ast) {}
 } // namespace sammine_lang::AST

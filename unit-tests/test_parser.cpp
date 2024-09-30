@@ -4,8 +4,8 @@
 
 //! \file test_parser.cpp
 //! \brief The unit-test file for all things related to a parser.
-#include "Ast.h"
-#include "AstNameVisitor.h"
+#include "AST/Ast.h"
+#include "AST/AstNameVisitor.h"
 #include "Lexer.h"
 #include "Parser.h"
 #include "Utilities.h"

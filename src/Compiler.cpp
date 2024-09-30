@@ -3,7 +3,7 @@
 //
 
 #include "Compiler.h"
-#include "CodegenVisitor.h"
+#include "AST/CodegenVisitor.h"
 #include "Utilities.h"
 #include "fmt/color.h"
 #include "fmt/core.h"

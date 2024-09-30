@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ast.h"
+#include "AST/Ast.h"
 #include "SammineJIT.h"
 #include "Utilities.h"
 #include "iostream"
@@ -64,7 +64,7 @@ public:
     llvm::InitializeNativeTargetAsmParser();
     llvm::InitializeNativeTargetAsmPrinter();
 
-    sammineJIT = ExitOnErr(std::move(SammineJIT::Create()));
+    sammineJIT = ExitOnErr(SammineJIT::Create());
     InitializeModuleAndManagers();
   }
   void InitializeModuleAndManagers() {

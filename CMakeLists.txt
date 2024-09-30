@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-
+project(SammineLang)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,7 +19,6 @@ endforeach()
 
 
 
-
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
 # Find ccache
@@ -28,7 +27,6 @@ if(CCACHE_PROGRAM)
     set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
     set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
 endif()
-project(sammine_lang )
 
 
 # Use lld linker

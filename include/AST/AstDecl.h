@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-namespace sammine_lang {
-namespace AST {
+namespace sammine_lang::AST {
 using Identifier = std::string;
 class ProgramAST;
 class DefinitionAST;
@@ -18,5 +17,4 @@ class NumberExprAST;
 class VariableExprAST;
 class BlockAST;
 
-} // namespace AST
-} // namespace sammine_lang
+} // namespace sammine_lang::AST
