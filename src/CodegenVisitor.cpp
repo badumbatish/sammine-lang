@@ -169,6 +169,7 @@ void CgVisitor::visit(FuncDefAST *ast) {
 
   ast->Block->accept_vis(this);
 
+  // TODO: A function should return the last expression (only float for now)
   resPtr->Builder->CreateRet(
       llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(1.0)));
   // Validate the generated code, checking for consistency.
