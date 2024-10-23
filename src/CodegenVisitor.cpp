@@ -180,7 +180,7 @@ void CgVisitor::visit(FuncDefAST *ast) {
 
   // Error reading body, remove function.
   if (not_verified) {
-    sammine_util::abort("Abort from creating a function");
+    sammine_util::abort("ICE: Abort from creating a function");
     Function->eraseFromParent();
   }
   return;

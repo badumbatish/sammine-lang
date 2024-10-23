@@ -32,8 +32,10 @@ public:
   void preorder_walk(CallExprAST *ast) override;
   void preorder_walk(BinaryExprAST *ast) override;
   void preorder_walk(NumberExprAST *ast) override;
+  void preorder_walk(BoolExprAST *ast) override;
   void preorder_walk(VariableExprAST *ast) override;
   void preorder_walk(BlockAST *ast) override;
+  void preorder_walk(IfExprAST *ast) override;
   void preorder_walk(TypedVarAST *ast) override;
 
   // post order
@@ -45,8 +47,10 @@ public:
   void postorder_walk(CallExprAST *ast) override;
   void postorder_walk(BinaryExprAST *ast) override;
   void postorder_walk(NumberExprAST *ast) override;
+  void postorder_walk(BoolExprAST *ast) override;
   void postorder_walk(VariableExprAST *ast) override;
   void postorder_walk(BlockAST *ast) override;
+  void postorder_walk(IfExprAST *ast) override;
   void postorder_walk(TypedVarAST *ast) override;
 };
 

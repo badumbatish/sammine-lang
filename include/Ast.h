@@ -1,6 +1,7 @@
 #ifndef SAMMINE_LANG_AST_H
 #define SAMMINE_LANG_AST_H
 #include "AstBase.h"
+#include "AstDecl.h"
 #include "Lexer.h"
 #include <cstddef>
 #include <memory>
@@ -166,6 +167,19 @@ public:
   }
 };
 
+class BoolExprAST : public ExprAST {
+public:
+  bool b;
+  BoolExprAST(bool b) : b(b) {}
+  virtual std::string getTreeName() override { return "BoolExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+};
 class BinaryExprAST : public ExprAST {
 public:
   std::shared_ptr<Token> Op;
@@ -204,6 +218,21 @@ public:
   }
 };
 
+class IfExprAST : public ExprAST {
+public:
+  IfExprAST(std::shared_ptr<ExprAST> bool_expr,
+            std::shared_ptr<BlockAST> thenBlockAST,
+            std::shared_ptr<BlockAST> elseBlockAST) {}
+
+  virtual std::string getTreeName() override { return "IfExpr"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+};
 class VariableExprAST : public ExprAST {
 public:
   std::string variableName;

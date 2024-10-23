@@ -79,7 +79,9 @@ enum TokenType {
   TokID, // Representing an identifier
 
   // TokNum
-  TokNum, // Representing a number
+  TokNum,   // Representing a number
+  TokTrue,  // Representing a boolean true
+  TokFalse, // Representing a boolean false
   // TokIf
   TokIf,   // if
   TokElse, // else

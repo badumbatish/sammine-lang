@@ -166,6 +166,7 @@ auto Parser::ParsePrimaryExpr()
   std::vector<ParseFunction> ParseFunctions = {
       &Parser::ParseCallExpr,
       &Parser::ParseNumberExpr,
+      &Parser::ParseBoolExpr,
       &Parser::ParseVariableExpr,
   };
 
@@ -235,6 +236,37 @@ auto Parser::ParseCallExpr()
   return tl::make_unexpected(ParserError::COMMITTED);
 }
 
+auto Parser::ParseIfExpr()
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
+  auto if_tok = expect(TokenType::TokIf);
+
+  if (!if_tok)
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
+
+  auto cond = ParseExpr();
+
+  if (!cond)
+    return tl::make_unexpected(ParserError::COMMITTED);
+
+  auto then_block = ParseBlock();
+
+  if (!then_block)
+    return tl::make_unexpected(ParserError::COMMITTED);
+
+  auto else_tok = expect(TokenType::TokElse);
+  if (!else_tok)
+    return std::make_shared<AST::IfExprAST>(cond.value(), then_block.value(),
+                                            std::make_shared<AST::BlockAST>());
+  auto else_block = ParseBlock();
+  if (!else_block)
+    return tl::make_unexpected(ParserError::COMMITTED);
+  return std::make_shared<AST::IfExprAST>(cond.value(), then_block.value(),
+                                          else_block.value());
+}
+auto Parser::ParseElseExpr()
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
+  return nullptr;
+}
 auto Parser::ParseNumberExpr()
     -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   auto numberExpr = std::make_shared<AST::NumberExprAST>();
@@ -249,6 +281,19 @@ auto Parser::ParseNumberExpr()
   }
 }
 
+auto Parser::ParseBoolExpr()
+    -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
+
+  if (auto true_tok = expect(TokenType::TokTrue)) {
+    return std::make_shared<AST::BoolExprAST>(true);
+  }
+
+  if (auto false_tok = expect(TokenType::TokFalse)) {
+    return std::make_shared<AST::BoolExprAST>(false);
+  }
+
+  return tl::make_unexpected(ParserError::NONCOMMITTED);
+}
 auto Parser::ParseVariableExpr()
     -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError> {
   auto name = expect(TokenType::TokID);

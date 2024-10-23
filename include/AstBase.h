@@ -50,6 +50,10 @@ public:
   virtual void preorder_walk(NumberExprAST *ast) = 0;
   virtual void postorder_walk(NumberExprAST *ast) = 0;
 
+  virtual void visit(BoolExprAST *ast);
+  virtual void preorder_walk(BoolExprAST *ast) = 0;
+  virtual void postorder_walk(BoolExprAST *ast) = 0;
+
   virtual void visit(VariableExprAST *ast);
   virtual void preorder_walk(VariableExprAST *ast) = 0;
   virtual void postorder_walk(VariableExprAST *ast) = 0;
@@ -57,6 +61,10 @@ public:
   virtual void visit(BlockAST *ast);
   virtual void preorder_walk(BlockAST *ast) = 0;
   virtual void postorder_walk(BlockAST *ast) = 0;
+
+  virtual void visit(IfExprAST *ast);
+  virtual void preorder_walk(IfExprAST *ast) = 0;
+  virtual void postorder_walk(IfExprAST *ast) = 0;
 
   virtual void visit(TypedVarAST *ast);
   virtual void preorder_walk(TypedVarAST *ast) = 0;

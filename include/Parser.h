@@ -46,12 +46,21 @@ public:
       -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto
+  ParseBoolExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+
+  [[nodiscard]] auto
   ParseCallExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParseArguments()
       -> tl::expected<
           std::shared_ptr<std::vector<std::shared_ptr<AST::ExprAST>>>,
           ParserError>;
+  [[nodiscard]]
+  auto
+  ParseIfExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  [[nodiscard]]
+  auto
+  ParseElseExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto
   ParseNumberExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;

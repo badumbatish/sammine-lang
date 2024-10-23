@@ -1,4 +1,5 @@
 #pragma once
+#include "Ast.h"
 #include <string>
 namespace sammine_lang {
 namespace AST {
@@ -15,8 +16,10 @@ class ExprAST;
 class CallExprAST;
 class BinaryExprAST;
 class NumberExprAST;
+class BoolExprAST;
 class VariableExprAST;
 class BlockAST;
+class IfExprAST;
 
 } // namespace AST
 } // namespace sammine_lang

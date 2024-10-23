@@ -37,10 +37,16 @@ public:
   void preorder_walk(NumberExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
+  void preorder_walk(BoolExprAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
   void preorder_walk(VariableExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
   void preorder_walk(BlockAST *ast) override {
+    PreOrderNames.push_back(ast->getTreeName());
+  }
+  void preorder_walk(IfExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
   void preorder_walk(TypedVarAST *ast) override {
@@ -56,8 +62,10 @@ public:
   void postorder_walk(CallExprAST *ast) override {}
   void postorder_walk(BinaryExprAST *ast) override {}
   void postorder_walk(NumberExprAST *ast) override {}
+  void postorder_walk(BoolExprAST *ast) override {}
   void postorder_walk(VariableExprAST *ast) override {}
   void postorder_walk(BlockAST *ast) override {}
+  void postorder_walk(IfExprAST *ast) override {}
   void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST
