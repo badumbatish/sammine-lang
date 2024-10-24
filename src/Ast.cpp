@@ -82,6 +82,20 @@ void ASTVisitor::visit(VariableExprAST *ast) {
 void ASTVisitor::preorder_walk(VariableExprAST *ast) {}
 void ASTVisitor::postorder_walk(VariableExprAST *ast) {}
 
+void ASTVisitor::visit(IfExprAST *ast) {
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+}
+void ASTVisitor::preorder_walk(IfExprAST *ast) {}
+void ASTVisitor::postorder_walk(IfExprAST *ast) {}
+
+void ASTVisitor::visit(BoolExprAST *ast) {
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+}
+void ASTVisitor::preorder_walk(BoolExprAST *ast) {}
+void ASTVisitor::postorder_walk(BoolExprAST *ast) {}
+
 void ASTVisitor::visit(BlockAST *ast) {
   ast->walk_with_preorder(this);
   for (auto &stmt : ast->Statements) {

@@ -15,6 +15,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include <random>
 namespace sammine_lang::AST {
+using llvm::BasicBlock;
 
 /// CreateEntryBlockAlloca - Create an alloca instruction in the entry block of
 /// the function.  This is used for mutable variables etc.
@@ -116,6 +117,67 @@ void CgVisitor::visit(BinaryExprAST *ast) {
     ast->val = resPtr->Builder->CreateUIToFP(
         L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
   }
+}
+void CgVisitor::visit(BoolExprAST *ast) {
+  if (ast->b)
+    ast->val = llvm::ConstantFP::get(*resPtr->Context,
+                                     llvm::APFloat(std::stod("1.0")));
+  else
+    ast->val = llvm::ConstantFP::get(*resPtr->Context,
+                                     llvm::APFloat(std::stod("0.0")));
+}
+void CgVisitor::visit(IfExprAST *ast) {
+  ast->bool_expr->accept_vis(this);
+  if (!ast->bool_expr->val) {
+    sammine_util::abort("Failed to codegen condition of if-expr");
+  }
+  ast->bool_expr->val = resPtr->Builder->CreateFCmpONE(
+      ast->bool_expr->val,
+      llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(0.0)), "ifcond");
+
+  llvm::Function *function = resPtr->Builder->GetInsertBlock()->getParent();
+
+  // Create blocks for the then and else cases.  Insert the 'then' block at the
+  // end of the function.
+  BasicBlock *ThenBB = BasicBlock::Create(*resPtr->Context, "then", function);
+  BasicBlock *ElseBB = BasicBlock::Create(*resPtr->Context, "else");
+  BasicBlock *MergeBB = BasicBlock::Create(*resPtr->Context, "ifcont");
+
+  resPtr->Builder->CreateCondBr(ast->bool_expr->val, ThenBB, ElseBB);
+
+  std::cerr << "Hi from if expr codegen" << std::endl;
+
+  resPtr->Builder->SetInsertPoint(ThenBB);
+
+  ast->thenBlockAST->accept_vis(this);
+  if (!ast->thenBlockAST->val) {
+    sammine_util::abort("Failed to generate then block for if-expr");
+    return;
+  }
+
+  resPtr->Builder->CreateBr(MergeBB);
+
+  ThenBB = resPtr->Builder->GetInsertBlock();
+
+  function->insert(function->end(), ElseBB);
+  resPtr->Builder->SetInsertPoint(ElseBB);
+
+  ast->elseBlockAST->accept_vis(this);
+  if (!ast->elseBlockAST->val) {
+    return;
+  }
+
+  resPtr->Builder->CreateBr(MergeBB);
+
+  ElseBB = resPtr->Builder->GetInsertBlock();
+  function->insert(function->end(), MergeBB);
+  resPtr->Builder->SetInsertPoint(MergeBB);
+  llvm::PHINode *PN = resPtr->Builder->CreatePHI(
+      llvm::Type::getDoubleTy(*resPtr->Context), 2, "iftmp");
+
+  PN->addIncoming(ast->thenBlockAST->val, ThenBB);
+  PN->addIncoming(ast->elseBlockAST->val, ElseBB);
+  ast->val = PN;
 }
 void CgVisitor::visit(NumberExprAST *ast) {
   ast->val = llvm::ConstantFP::get(*resPtr->Context,

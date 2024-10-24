@@ -29,8 +29,10 @@ public:
   void visit(CallExprAST *ast) override;
   void visit(BinaryExprAST *ast) override;
   void visit(NumberExprAST *ast) override;
+  void visit(BoolExprAST *ast) override;
   void visit(VariableExprAST *ast) override;
   void visit(BlockAST *ast) override;
+  void visit(IfExprAST *ast) override;
   void visit(TypedVarAST *ast) override;
   // pre order
   // TODO: Implement these
@@ -42,8 +44,10 @@ public:
   void preorder_walk(CallExprAST *ast) override {}
   void preorder_walk(BinaryExprAST *ast) override {}
   void preorder_walk(NumberExprAST *ast) override {}
+  void preorder_walk(BoolExprAST *ast) override {}
   void preorder_walk(VariableExprAST *ast) override {}
   void preorder_walk(BlockAST *ast) override {}
+  void preorder_walk(IfExprAST *ast) override {}
   void preorder_walk(TypedVarAST *ast) override {}
 
   // post order
@@ -56,8 +60,10 @@ public:
   void postorder_walk(CallExprAST *ast) override {}
   void postorder_walk(BinaryExprAST *ast) override {}
   void postorder_walk(NumberExprAST *ast) override {}
+  void postorder_walk(BoolExprAST *ast) override {}
   void postorder_walk(VariableExprAST *ast) override {}
   void postorder_walk(BlockAST *ast) override {}
+  void postorder_walk(IfExprAST *ast) override {}
   void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST

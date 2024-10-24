@@ -6,6 +6,7 @@
 #include "tl/expected.hpp"
 #include <cstdlib>
 #include <functional>
+#include <iostream>
 #include <memory>
 
 namespace sammine_lang {
@@ -164,18 +165,20 @@ auto Parser::ParsePrimaryExpr()
       std::function<tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>(
           Parser *)>;
   std::vector<ParseFunction> ParseFunctions = {
-      &Parser::ParseCallExpr,
-      &Parser::ParseNumberExpr,
-      &Parser::ParseBoolExpr,
+      &Parser::ParseCallExpr,     &Parser::ParseIfExpr,
+      &Parser::ParseNumberExpr,   &Parser::ParseBoolExpr,
       &Parser::ParseVariableExpr,
   };
 
   for (auto fn : ParseFunctions) {
     auto result = fn(this);
-    if (result)
+    if (result) {
+      std::cerr << "Parse primary succesfully" << std::endl;
       return result;
-    else if (!result && result.error() == ParserError::COMMITTED)
+    } else if (!result && result.error() == ParserError::COMMITTED) {
+      sammine_util::abort("Failed to parse one of primary expr");
       return result;
+    }
   }
 
   return tl::make_unexpected(ParserError::NONCOMMITTED);
@@ -254,12 +257,16 @@ auto Parser::ParseIfExpr()
     return tl::make_unexpected(ParserError::COMMITTED);
 
   auto else_tok = expect(TokenType::TokElse);
-  if (!else_tok)
+  if (!else_tok) {
+    std::cerr << "Succesfully parse an if without else expr " << std::endl;
     return std::make_shared<AST::IfExprAST>(cond.value(), then_block.value(),
                                             std::make_shared<AST::BlockAST>());
+  }
   auto else_block = ParseBlock();
   if (!else_block)
     return tl::make_unexpected(ParserError::COMMITTED);
+
+  std::cerr << "Succesfully parse an if with else expr " << std::endl;
   return std::make_shared<AST::IfExprAST>(cond.value(), then_block.value(),
                                           else_block.value());
 }

@@ -220,9 +220,13 @@ public:
 
 class IfExprAST : public ExprAST {
 public:
+  std::shared_ptr<ExprAST> bool_expr;
+  std::shared_ptr<BlockAST> thenBlockAST, elseBlockAST;
   IfExprAST(std::shared_ptr<ExprAST> bool_expr,
             std::shared_ptr<BlockAST> thenBlockAST,
-            std::shared_ptr<BlockAST> elseBlockAST) {}
+            std::shared_ptr<BlockAST> elseBlockAST)
+      : bool_expr(bool_expr), thenBlockAST(thenBlockAST),
+        elseBlockAST(elseBlockAST) {}
 
   virtual std::string getTreeName() override { return "IfExpr"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
