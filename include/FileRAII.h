@@ -2,8 +2,7 @@
 // Created by jjasmine on 3/8/24.
 //
 
-#ifndef SAMMINE_LANG_FILERAII_H
-#define SAMMINE_LANG_FILERAII_H
+#pragma once
 #include <fstream>
 #include <string>
 
@@ -42,4 +41,3 @@ private:
   bool is_opened;
   std::string str;
 };
-#endif // SAMMINE_LANG_FILERAII_H

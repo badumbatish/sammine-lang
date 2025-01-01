@@ -2,9 +2,7 @@
 // Created by jjasmine on 3/7/24.
 //
 
-#ifndef SAMMINE_LANG_LEXER_H
-#define SAMMINE_LANG_LEXER_H
-
+#pragma once
 #include <map>
 
 //! \file Lexer.h
@@ -325,4 +323,3 @@ public:
   size_t devance(size_t i);
 };
 } // namespace sammine_lang
-#endif // SAMMINE_LANG_LEXER_H

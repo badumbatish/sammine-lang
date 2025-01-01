@@ -2,8 +2,7 @@
 // Created by Jasmine Tang on 3/27/24.
 //
 
-#ifndef SAMMINE_LANG_COMPILER_H
-#define SAMMINE_LANG_COMPILER_H
+#pragma once
 
 #include "LLVMRes.h"
 #include "Lexer.h"
@@ -38,4 +37,3 @@ public:
   void start();
 };
 } // namespace sammine_lang
-#endif // SAMMINE_LANG_COMPILER_H

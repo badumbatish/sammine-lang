@@ -1,6 +1,5 @@
 
-#ifndef SAMMINE_LANG_ASTNAMEVISITOR_H
-#define SAMMINE_LANG_ASTNAMEVISITOR_H
+#pragma once
 #include "Ast.h"
 #include "AstBase.h"
 
@@ -69,4 +68,3 @@ public:
   void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST
-#endif // SAMMINE_LANG_ASTNAMEVISITOR_H

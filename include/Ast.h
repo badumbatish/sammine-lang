@@ -1,5 +1,4 @@
-#ifndef SAMMINE_LANG_AST_H
-#define SAMMINE_LANG_AST_H
+#pragma once
 #include "AstBase.h"
 #include "AstDecl.h"
 #include "Lexer.h"
@@ -142,7 +141,7 @@ public:
 
   VarDefAST(std::shared_ptr<TypedVarAST> TypedVar,
             std::shared_ptr<ExprAST> Expression)
-      : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)){};
+      : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)) {};
 
   virtual std::string getTreeName() override { return "VarDefAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -240,8 +239,8 @@ public:
 class VariableExprAST : public ExprAST {
 public:
   std::string variableName;
-  VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme){};
-  VariableExprAST(std::string variableName) : variableName(variableName){};
+  VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme) {};
+  VariableExprAST(std::string variableName) : variableName(variableName) {};
 
   virtual std::string getTreeName() override { return "VariableExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -269,5 +268,3 @@ public:
 
 } // namespace AST
 } // namespace sammine_lang
-
-#endif // SAMMINE_LANG_AST_H

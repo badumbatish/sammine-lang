@@ -2,9 +2,7 @@
 // Created by Jasmine Tang on 3/27/24.
 //
 
-#ifndef SAMMINE_LANG_CODEGENVISITOR_H
-#define SAMMINE_LANG_CODEGENVISITOR_H
-
+#pragma once
 #include "Ast.h"
 #include "AstBase.h"
 #include "LLVMRes.h"
@@ -67,5 +65,3 @@ public:
   void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST
-
-#endif // SAMMINE_LANG_CODEGENVISITOR_H

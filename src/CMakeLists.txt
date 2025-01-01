@@ -1,9 +1,7 @@
 
-#include_directories(${LLVM_INCLUDE_DIRS})
 add_library(project_options INTERFACE)
 target_include_directories(project_options INTERFACE 
   ${INCLUDE_PROJECT_DIR}
-  ${LLVM_INCLUDE_DIRS}
 )
 target_link_libraries(project_options INTERFACE 
   LLVMSupport
