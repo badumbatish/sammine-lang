@@ -64,7 +64,7 @@ public:
     llvm::InitializeNativeTargetAsmParser();
     llvm::InitializeNativeTargetAsmPrinter();
 
-    sammineJIT = ExitOnErr(std::move(SammineJIT::Create()));
+    sammineJIT = ExitOnErr(SammineJIT::Create());
     InitializeModuleAndManagers();
   }
   void InitializeModuleAndManagers() {

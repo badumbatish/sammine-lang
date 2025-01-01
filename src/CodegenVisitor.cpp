@@ -94,26 +94,20 @@ void CgVisitor::visit(BinaryExprAST *ast) {
   auto L = ast->LHS->val;
   auto R = ast->RHS->val;
 
-  bool checked = false;
   if (ast->Op->type == TokenType::TokADD) {
-    checked = true;
     ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
   }
   if (ast->Op->type == TokenType::TokSUB) {
-    checked = true;
     ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
   }
   if (ast->Op->type == TokenType::TokMUL) {
-    checked = true;
     ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
   }
   if (ast->Op->type == TokenType::TokDIV) {
-    checked = true;
     ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
   }
   if (ast->Op->type == TokenType::TokLESS) {
-    checked = true;
-    auto cmp_int = resPtr->Builder->CreateFCmpULT(L, R, "less_cmp_expr");
+    /*auto cmp_int = resPtr->Builder->CreateFCmpULT(L, R, "less_cmp_expr");*/
     ast->val = resPtr->Builder->CreateUIToFP(
         L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
   }

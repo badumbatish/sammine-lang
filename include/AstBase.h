@@ -68,6 +68,8 @@ public:
   virtual void visit(TypedVarAST *ast);
   virtual void preorder_walk(TypedVarAST *ast) = 0;
   virtual void postorder_walk(TypedVarAST *ast) = 0;
+
+  virtual ~ASTVisitor() = 0;
 };
 class Visitable {
 public:

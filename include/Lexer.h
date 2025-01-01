@@ -226,7 +226,7 @@ class TokenStream {
 public:
   std::vector<std::shared_ptr<Token>> ErrStream;
 
-  TokenStream() : current_index(0), TokStream(), error(false) {}
+  TokenStream() : TokStream(), current_index(0), error(false) {}
 
   void push_back(const std::shared_ptr<Token> &token) {
     if (token->type == TokINVALID) {

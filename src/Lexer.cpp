@@ -42,7 +42,6 @@ Lexer::Lexer(const std::string &input) : Lexer() {
 }
 
 size_t Lexer::handleID(size_t i, const std::string &input) {
-  auto startLocation = location;
   if (isalpha(input[i])) { // identifier: [a-zA-Z][a-zA-Z0-9]*
     std::string IdentifierStr;
     IdentifierStr = input[i];
@@ -99,7 +98,7 @@ size_t Lexer::handleNumber(size_t i, const std::string &input) {
     tokStream->push_back(Token(TokNum, NumStr, location));
 
   } else if (input[i] == '.') {
-    int i_0 = i;
+    auto i_0 = i;
     NumStr += input[i];
     i = advance(i);
 

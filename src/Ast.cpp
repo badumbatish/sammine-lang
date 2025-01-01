@@ -2,6 +2,8 @@
 #include "AstBase.h"
 
 namespace sammine_lang::AST {
+
+ASTVisitor::~ASTVisitor() {}
 void ASTVisitor::visit(ProgramAST *ast) {
   ast->walk_with_preorder(this);
   for (auto &def : ast->DefinitionVec) {
