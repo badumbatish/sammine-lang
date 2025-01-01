@@ -30,7 +30,7 @@ class BlockAST;
 
 class ProgramAST : public AstBase {
 public:
-  std::vector<std::shared_ptr<DefinitionAST>> DefinitionVec;
+  std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
   virtual std::string getTreeName() override { return "ProgramAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
@@ -52,12 +52,10 @@ public:
   llvm::Function *function;
   std::string functionName;
   std::string returnType;
-  std::shared_ptr<std::vector<std::shared_ptr<AST::TypedVarAST>>>
-      parameterVectors;
+  std::vector<std::unique_ptr<AST::TypedVarAST>> parameterVectors;
 
   PrototypeAST(std::string functionName, std::string returnType,
-               std::shared_ptr<std::vector<std::shared_ptr<AST::TypedVarAST>>>
-                   parameterVectors)
+               std::vector<std::unique_ptr<AST::TypedVarAST>> parameterVectors)
       : functionName(functionName), returnType(std::move(returnType)),
         parameterVectors(std::move(parameterVectors)) {}
 
@@ -75,9 +73,9 @@ public:
 //! of a block
 class ExternAST : public DefinitionAST {
 public:
-  std::shared_ptr<PrototypeAST> Prototype;
+  std::unique_ptr<PrototypeAST> Prototype;
 
-  ExternAST(std::shared_ptr<PrototypeAST> Prototype)
+  ExternAST(std::unique_ptr<PrototypeAST> Prototype)
       : Prototype(std::move(Prototype)) {}
 
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -92,11 +90,11 @@ public:
 };
 class FuncDefAST : public DefinitionAST {
 public:
-  std::shared_ptr<PrototypeAST> Prototype;
-  std::shared_ptr<BlockAST> Block;
+  std::unique_ptr<PrototypeAST> Prototype;
+  std::unique_ptr<BlockAST> Block;
 
-  FuncDefAST(std::shared_ptr<PrototypeAST> Prototype,
-             std::shared_ptr<BlockAST> Block)
+  FuncDefAST(std::unique_ptr<PrototypeAST> Prototype,
+             std::unique_ptr<BlockAST> Block)
       : Prototype(std::move(Prototype)), Block(std::move(Block)) {}
 
   virtual std::string getTreeName() override { return "FuncDefAST"; }
@@ -116,7 +114,7 @@ public:
 class BlockAST : public AstBase {
 
 public:
-  std::vector<std::shared_ptr<ExprAST>> Statements;
+  std::vector<std::unique_ptr<ExprAST>> Statements;
   inline static size_t scope_id_counter = 0;
   virtual std::string getTreeName() override { return "BlockAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -136,12 +134,14 @@ public:
 //! \brief A variable definition: "var x = expression;"
 class VarDefAST : public ExprAST {
 public:
-  std::shared_ptr<TypedVarAST> TypedVar;
-  std::shared_ptr<ExprAST> Expression;
+  std::unique_ptr<TypedVarAST> TypedVar;
+  std::unique_ptr<ExprAST> Expression;
 
-  VarDefAST(std::shared_ptr<TypedVarAST> TypedVar,
-            std::shared_ptr<ExprAST> Expression)
-      : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)) {};
+  explicit VarDefAST(std::unique_ptr<TypedVarAST> TypedVar,
+                     std::unique_ptr<ExprAST> Expression)
+      : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)) {
+
+        };
 
   virtual std::string getTreeName() override { return "VarDefAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -182,9 +182,9 @@ public:
 class BinaryExprAST : public ExprAST {
 public:
   std::shared_ptr<Token> Op;
-  std::shared_ptr<ExprAST> LHS, RHS;
-  BinaryExprAST(std::shared_ptr<Token> op, std::shared_ptr<ExprAST> LHS,
-                std::shared_ptr<ExprAST> RHS)
+  std::unique_ptr<ExprAST> LHS, RHS;
+  BinaryExprAST(std::shared_ptr<Token> op, std::unique_ptr<ExprAST> LHS,
+                std::unique_ptr<ExprAST> RHS)
       : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
 
   virtual std::string getTreeName() override { return "BinaryExprAST"; }
@@ -201,10 +201,9 @@ class CallExprAST : public ExprAST {
 
 public:
   std::string functionName;
-  std::shared_ptr<std::vector<std::shared_ptr<AST::ExprAST>>> arguments;
-  CallExprAST(
-      std::string functionName,
-      std::shared_ptr<std::vector<std::shared_ptr<AST::ExprAST>>> arguments)
+  std::vector<std::unique_ptr<AST::ExprAST>> arguments;
+  CallExprAST(std::string functionName,
+              std::vector<std::unique_ptr<AST::ExprAST>> arguments)
       : functionName(functionName), arguments(std::move(arguments)) {}
 
   virtual std::string getTreeName() override { return "CallExprAST"; }
@@ -219,13 +218,13 @@ public:
 
 class IfExprAST : public ExprAST {
 public:
-  std::shared_ptr<ExprAST> bool_expr;
-  std::shared_ptr<BlockAST> thenBlockAST, elseBlockAST;
-  IfExprAST(std::shared_ptr<ExprAST> bool_expr,
-            std::shared_ptr<BlockAST> thenBlockAST,
-            std::shared_ptr<BlockAST> elseBlockAST)
-      : bool_expr(bool_expr), thenBlockAST(thenBlockAST),
-        elseBlockAST(elseBlockAST) {}
+  std::unique_ptr<ExprAST> bool_expr;
+  std::unique_ptr<BlockAST> thenBlockAST, elseBlockAST;
+  explicit IfExprAST(std::unique_ptr<ExprAST> bool_expr,
+                     std::unique_ptr<BlockAST> thenBlockAST,
+                     std::unique_ptr<BlockAST> elseBlockAST)
+      : bool_expr(std::move(bool_expr)), thenBlockAST(std::move(thenBlockAST)),
+        elseBlockAST(std::move(elseBlockAST)) {}
 
   virtual std::string getTreeName() override { return "IfExpr"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }

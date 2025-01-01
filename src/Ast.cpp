@@ -42,7 +42,7 @@ void ASTVisitor::postorder_walk(FuncDefAST *ast) {}
 
 void ASTVisitor::visit(PrototypeAST *ast) {
   ast->walk_with_preorder(this);
-  for (auto &var : *ast->parameterVectors.get()) {
+  for (auto &var : ast->parameterVectors) {
     var->accept_vis(this);
   }
   ast->walk_with_postorder(this);
@@ -53,7 +53,7 @@ void ASTVisitor::postorder_walk(PrototypeAST *ast) {}
 
 void ASTVisitor::visit(CallExprAST *ast) {
   ast->walk_with_preorder(this);
-  for (auto &arg : *ast->arguments.get()) {
+  for (auto &arg : ast->arguments) {
     arg->accept_vis(this);
   }
   ast->walk_with_postorder(this);

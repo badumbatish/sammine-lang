@@ -34,7 +34,7 @@ void CgVisitor::visit(ProgramAST *ast) {
 void CgVisitor::visit(VarDefAST *ast) {}
 void CgVisitor::visit(PrototypeAST *ast) {
   std::vector<llvm::Type *> Doubles(
-      ast->parameterVectors->size(),
+      ast->parameterVectors.size(),
       llvm::Type::getDoubleTy(*(resPtr->Context)));
   llvm::FunctionType *FT = llvm::FunctionType::get(
       llvm::Type::getDoubleTy(*resPtr->Context), Doubles, false);
@@ -44,7 +44,7 @@ void CgVisitor::visit(PrototypeAST *ast) {
                              ast->functionName, resPtr->Module.get());
 
   size_t param_index = 0;
-  auto &vect = *ast->parameterVectors.get();
+  auto &vect = ast->parameterVectors;
   for (auto &arg : F->args()) {
     auto &typed_var = vect[param_index++];
     arg.setName(typed_var->name);
@@ -56,12 +56,12 @@ void CgVisitor::visit(CallExprAST *ast) {
   if (!callee)
     sammine_util::abort("Unknown function called");
 
-  if (ast->arguments->size() != callee->arg_size())
+  if (ast->arguments.size() != callee->arg_size())
     sammine_util::abort("Incorrect number of arguments passed");
   std::vector<llvm::Value *> ArgsVector;
 
-  for (size_t i = 0; i < ast->arguments->size(); i++) {
-    auto arg_ast = (*ast->arguments)[i];
+  for (size_t i = 0; i < ast->arguments.size(); i++) {
+    auto arg_ast = ast->arguments[i].get();
     arg_ast->accept_vis(this);
     ArgsVector.push_back(arg_ast->val);
   }

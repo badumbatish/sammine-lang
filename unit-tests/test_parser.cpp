@@ -89,7 +89,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto expr =
         static_cast<sammine_lang::AST::CallExprAST *>(varDef->Expression.get());
     REQUIRE(expr->functionName == "hi");
-    REQUIRE(expr->arguments->size() == 0);
+    REQUIRE(expr->arguments.size() == 0);
   }
 
   SECTION("Variable definition with string literal expression") {
@@ -120,15 +120,15 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     REQUIRE(pg.error_msgs.stringify() == decltype(pg.error_msgs.stringify())());
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
-    auto func_def = std::static_pointer_cast<AST::FuncDefAST>(
-        programAST.value()->DefinitionVec.front());
+    auto func_def = static_cast<AST::FuncDefAST *>(
+        programAST.value()->DefinitionVec.front().get());
 
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);
 
     REQUIRE(func_def->Prototype->returnType == "f64");
     REQUIRE(func_def->Prototype->functionName == "f");
-    REQUIRE(func_def->Prototype->parameterVectors->size() == 1);
+    REQUIRE(func_def->Prototype->parameterVectors.size() == 1);
   }
 
   SECTION("Multiple argument") {
@@ -141,14 +141,14 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
 
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
-    auto func_def = std::static_pointer_cast<AST::FuncDefAST>(
-        programAST.value()->DefinitionVec.front());
+    auto func_def = static_cast<AST::FuncDefAST *>(
+        programAST.value()->DefinitionVec.front().get());
 
     // Check if downcast is valid.
     REQUIRE(func_def != nullptr);
 
     REQUIRE(func_def->Prototype->functionName == "f");
-    REQUIRE(func_def->Prototype->parameterVectors->size() == 3);
+    REQUIRE(func_def->Prototype->parameterVectors.size() == 3);
   }
 
   SECTION("None return") {

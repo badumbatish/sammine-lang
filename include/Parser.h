@@ -12,75 +12,72 @@ class Parser {
 public:
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]]
-  auto
-  ParseProgram() -> tl::expected<std::shared_ptr<AST::ProgramAST>, ParserError>;
+  auto ParseProgram()
+      -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
 
   // Parse definition
   [[nodiscard]]
   auto ParseDefinition()
-      -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError>;
+      -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>;
   [[nodiscard]]
   auto ParsePrototype()
-      -> tl::expected<std::shared_ptr<AST::PrototypeAST>, ParserError>;
+      -> tl::expected<std::unique_ptr<AST::PrototypeAST>, ParserError>;
   [[nodiscard]]
   auto ParseFuncDef()
-      -> tl::expected<std::shared_ptr<AST::DefinitionAST>, ParserError>;
+      -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>;
   [[nodiscard]]
-  auto
-  ParseVarDef() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseVarDef()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
 
   // Parse type
   [[nodiscard]]
   auto ParseTypedVar()
-      -> tl::expected<std::shared_ptr<AST::TypedVarAST>, ParserError>;
+      -> tl::expected<std::unique_ptr<AST::TypedVarAST>, ParserError>;
   [[nodiscard]]
 
   // Parse expressions
   [[nodiscard]]
-  auto ParseExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseExpr() -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParsePrimaryExpr()
-      -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto ParseBinaryExpr(int prededence, std::shared_ptr<AST::ExprAST> LHS)
-      -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto
-  ParseBoolExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseBoolExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
 
-  [[nodiscard]] auto
-  ParseCallExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  [[nodiscard]] auto ParseCallExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParseArguments()
-      -> tl::expected<
-          std::shared_ptr<std::vector<std::shared_ptr<AST::ExprAST>>>,
-          ParserError>;
+      -> tl::expected<std::vector<std::unique_ptr<AST::ExprAST>>, ParserError>;
   [[nodiscard]]
-  auto
-  ParseIfExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseIfExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto
-  ParseElseExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseElseExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
-  auto
-  ParseNumberExpr() -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+  auto ParseNumberExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParseVariableExpr()
-      -> tl::expected<std::shared_ptr<AST::ExprAST>, ParserError>;
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
 
   // Parse block
   [[nodiscard]]
-  auto
-  ParseBlock() -> tl::expected<std::shared_ptr<AST::BlockAST>, ParserError>;
+  auto ParseBlock()
+      -> tl::expected<std::unique_ptr<AST::BlockAST>, ParserError>;
   [[nodiscard]]
 
   // Parse parameters
   [[nodiscard]]
   auto ParseParams()
-      -> tl::expected<
-          std::shared_ptr<std::vector<std::shared_ptr<AST::TypedVarAST>>>,
-          ParserError>;
+      -> tl::expected<std::vector<std::unique_ptr<AST::TypedVarAST>>,
+                      ParserError>;
 
   // Utilities
   [[nodiscard]]
@@ -95,7 +92,7 @@ public:
   Parser(std::shared_ptr<TokenStream> tokStream)
       : tokStream(tokStream) {}
   [[nodiscard]]
-  auto Parse() -> tl::expected<std::shared_ptr<AST::ProgramAST>, ParserError>;
+  auto Parse() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
   [[nodiscard]]
   auto hasErrors() -> bool {
     return !error_msgs.errors.empty();
