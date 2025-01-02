@@ -4,12 +4,14 @@
 
 #include "Compiler.h"
 #include "CodegenVisitor.h"
+#include "ScopeGeneratorVisitor.h"
 #include "Utilities.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Support/CodeGen.h"
 #include "llvm/Support/raw_ostream.h"
+#include <memory>
 #include <system_error>
 namespace sammine_lang {
 
@@ -75,6 +77,12 @@ void Compiler::parse() {
   }
 }
 
+void Compiler::scopecheck() {
+  log_diagnostics("Start scope checking stage...");
+  auto sc = sammine_lang::AST::ScopeGeneratorVisitor();
+
+  /*programAST->accept_vis(&sc);*/
+}
 void Compiler::codegen() {
   log_diagnostics("Start codegen stage...");
   auto cg = std::make_shared<sammine_lang::AST::CgVisitor>(resPtr);
@@ -119,6 +127,7 @@ void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
   std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
       {&Compiler::lex, "lexing"},
+      {&Compiler::parse, "parsing"},
       {&Compiler::parse, "parsing"},
       {&Compiler::codegen, "codegen"},
       {&Compiler::produce_executable, "produce_executable"},

@@ -1,38 +1,76 @@
 #pragma once
 #include "Ast.h"
 #include "AstBase.h"
+#include "tl/expected.hpp"
 #include <memory>
 
 #include <map>
 #include <set>
+#include <stack>
+#include <string>
 
 namespace sammine_lang::AST {
+
+// A simple scoping class, doesn't differentiate between different names, like
+// variable name, func name and all that
 class LexicalScope {
   std::shared_ptr<LexicalScope> parent_scope;
-  std::map<std::string, AST::Visitable &> scope_map;
+  std::set<std::string> symbols;
 
 public:
   explicit LexicalScope() {}
   LexicalScope(std::shared_ptr<LexicalScope> parent_scope)
       : parent_scope(parent_scope) {}
-};
+
+  enum NameQueryResult {
+    nameFound,
+    nameNotFound,
+  };
+  void registerName(std::string name) { symbols.insert(name); }
+  NameQueryResult queryName(std::string name) const {
+    return symbols.find(name) != symbols.end() ? nameFound : nameNotFound;
+  }
+
+  NameQueryResult recursiveQueryName(std::string name) const {
+    if (symbols.find(name) != symbols.end())
+      return nameFound;
+    else if (parent_scope == nullptr)
+      return nameNotFound;
+    return parent_scope->recursiveQueryName(name);
+  }
+}; // namespace sammine_lang::AST
+
 class ScopeGeneratorVisitor : public ASTVisitor {
 public:
-  LexicalScope global_scope;
-  std::set<std::string> symbols;
-  ScopeGeneratorVisitor() {}
+  std::stack<LexicalScope> scope_stack;
+  ScopeGeneratorVisitor() { scope_stack.push(LexicalScope()); }
   LexicalScope get_scope_map();
 
+  // INFO: CheckAndReg means: Check if there's redefinition, if not, register
+  // INFO: Check for castable means: Check if the name existed, if not, register
+
   // pre order
+
+  // INFO: Nothing here
   void preorder_walk(ProgramAST *ast) override;
+
+  // INFO: CheckAndReg variable name
   void preorder_walk(VarDefAST *ast) override;
+
+  // INFO: CheckAndReg extern name
   void preorder_walk(ExternAST *ast) override;
+  // INFO: CheckAndReg function name, enter new block
   void preorder_walk(FuncDefAST *ast) override;
+  // INFO: CheckAndReg all variable name, which should only clash if you have
+  // the same names in prototype
   void preorder_walk(PrototypeAST *ast) override;
+  // INFO: Check
   void preorder_walk(CallExprAST *ast) override;
   void preorder_walk(BinaryExprAST *ast) override;
   void preorder_walk(NumberExprAST *ast) override;
   void preorder_walk(BoolExprAST *ast) override;
+
+  // INFO: Check
   void preorder_walk(VariableExprAST *ast) override;
   void preorder_walk(BlockAST *ast) override;
   void preorder_walk(IfExprAST *ast) override;
@@ -42,6 +80,7 @@ public:
   void postorder_walk(ProgramAST *ast) override;
   void postorder_walk(VarDefAST *ast) override;
   void postorder_walk(ExternAST *ast) override;
+  // INFO: Pop the scope
   void postorder_walk(FuncDefAST *ast) override;
   void postorder_walk(PrototypeAST *ast) override;
   void postorder_walk(CallExprAST *ast) override;
