@@ -28,7 +28,7 @@ public:
   };
   void registerName(std::string name) { symbols.insert(name); }
   NameQueryResult queryName(std::string name) const {
-    return symbols.find(name) != symbols.end() ? nameFound : nameNotFound;
+    return symbols.contains(name) ? nameFound : nameNotFound;
   }
 
   NameQueryResult recursiveQueryName(std::string name) const {

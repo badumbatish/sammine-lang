@@ -81,7 +81,7 @@ void Compiler::scopecheck() {
   log_diagnostics("Start scope checking stage...");
   auto sc = sammine_lang::AST::ScopeGeneratorVisitor();
 
-  /*programAST->accept_vis(&sc);*/
+  programAST->accept_vis(&sc);
 }
 void Compiler::codegen() {
   log_diagnostics("Start codegen stage...");
@@ -128,7 +128,7 @@ void Compiler::start() {
   std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
       {&Compiler::lex, "lexing"},
       {&Compiler::parse, "parsing"},
-      {&Compiler::parse, "parsing"},
+      {&Compiler::scopecheck, "scope check"},
       {&Compiler::codegen, "codegen"},
       {&Compiler::produce_executable, "produce_executable"},
   };

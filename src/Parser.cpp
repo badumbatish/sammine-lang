@@ -361,13 +361,15 @@ auto Parser::ParseBlock()
 
     auto b = ParseVarDef();
     if (!b && b.error() == ParserError::NONCOMMITTED) {
+
+      std::cerr << "Failed to find parse var def \n";
       break;
     }
-    if (!b && b.error() == ParserError::COMMITTED)
+    if (!b && b.error() == ParserError::COMMITTED) {
+      std::cerr << "Failed to find parse var def \n";
       return tl::make_unexpected(b.error());
-    else if (b) {
-      blockAST->Statements.push_back(std::move(b.value()));
     }
+    blockAST->Statements.push_back(std::move(b.value()));
   }
 
   auto rightCurly = expect(TokRightCurly);
