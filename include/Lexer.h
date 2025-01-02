@@ -3,6 +3,9 @@
 //
 
 #pragma once
+#include <algorithm>
+#include <cassert>
+#include <fmt/format.h>
 #include <map>
 
 //! \file Lexer.h
@@ -161,42 +164,76 @@ static const std::map<TokenType, std::string> TokenMap = {
 //! .
 class Location {
 public:
-  size_t line;
-  size_t column;
-  size_t source_start; // Refers to the true location in the orignal source
-                       // code string
+  size_t line_start, line_end;
+  size_t col_start, col_end;
+  size_t source_start; // True location in original source code string
   size_t source_end;
-  Location() : line(0), column(0), source_start(0), source_end(0) {}
 
-  Location(const Location &loc_a, const Location &loc_b) {}
+  // Default constructor
+  Location()
+      : line_start(0), line_end(0), col_start(0), col_end(0), source_start(0),
+        source_end(0) {}
+
+  Location(size_t line_start, size_t line_end, size_t col_start, size_t col_end,
+           size_t source_start, size_t source_end)
+      : line_start(0), line_end(0), col_start(0), col_end(0), source_start(0),
+        source_end(0) {}
+  // Advance column position
   inline void advance() {
-    column++;
+    col_end++;
     source_end++;
   }
-  inline void devance() {
-    if (column == 0)
-      return;
 
-    column--;
+  // Move column position backwards
+  inline void devance() {
+    if (col_end == 0)
+      return;
+    col_end--;
     source_end--;
   }
+
+  // Handle newline
   inline void newLine() {
-    line++;
+    line_end++;
     source_end++;
-    column = 0;
+    col_end = 0;
   }
 
+  // Combine two locations (union of spans)
+  Location operator|(const Location &other) const {
+    Location result;
+    result.line_start = std::min(line_start, other.line_start);
+    result.line_end = std::max(line_end, other.line_end);
+    result.col_start =
+        (line_start < other.line_start) ? col_start : other.col_start;
+    result.col_end = (line_end > other.line_end) ? col_end : other.col_end;
+    result.source_start = std::min(source_start, other.source_start);
+    result.source_end = std::max(source_end, other.source_end);
+    return result;
+  }
+
+  // Stream output operator
   friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
-    return out << loc.line << ":" << loc.column;
-  }
-  std::string to_string() const {
-    return std::to_string(this->line) + ":" + std::to_string(this->column);
+    out << loc.line_start << ":" << loc.col_start;
+    if (loc.line_end != loc.line_start || loc.col_end != loc.col_start) {
+      out << "-" << loc.line_end << ":" << loc.col_end;
+    }
+    return out;
   }
 
-  bool operator==(const Location &other) {
-    return source_start == other.source_start && source_end == other.source_end;
+  std::string to_string() {
+    return fmt::format("{}:{}-{}:{}", line_start, col_start, line_end, col_end);
   }
-  operator std::string() { return this->to_string(); }
+
+  // Equality operator
+  bool operator==(const Location &other) const {
+    return source_start == other.source_start &&
+           source_end == other.source_end && line_start == other.line_start &&
+           line_end == other.line_end && col_start == other.col_start &&
+           col_end == other.col_end;
+  }
+
+  // String conversion operator
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme
 //! and position pair as its members.
@@ -269,8 +306,6 @@ public:
   Location currentLocation() {
     if (!TokStream.empty()) {
       return TokStream[current_index]->location;
-    } else {
-      return {};
     }
     return {};
   }
@@ -309,6 +344,8 @@ private:
   size_t handleUtilityCOMMA(size_t i, const std::string &input);
   size_t handleUtilitySemiColon(size_t i, const std::string &input);
   size_t handleUtilityCOLON(size_t i, const std::string &input);
+
+  void updateLocation();
 
 public:
   explicit Lexer(const std::string &input);

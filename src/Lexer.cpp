@@ -12,6 +12,11 @@ std::shared_ptr<Token> Lexer::peek() { return tokStream->peek(); }
 
 std::shared_ptr<Token> Lexer::consume() { return tokStream->consume(); }
 
+void Lexer::updateLocation() {
+  location =
+      Location(location.line_end, location.line_end, location.col_end,
+               location.col_end, location.source_end, location.source_end);
+}
 Lexer::Lexer(const std::string &input) : Lexer() {
   size_t i = 0;
   size_t i_0 = 0;
@@ -30,8 +35,10 @@ Lexer::Lexer(const std::string &input) : Lexer() {
     for (auto fn : MatchFunctions) {
       i_0 = i;
       i = fn(this, i, input);
-      if (i != i_0)
+      if (i != i_0) {
+        updateLocation();
         break;
+      }
     }
 
     if (i == i_0 && i < input.length()) {
@@ -149,8 +156,10 @@ size_t Lexer::handleOperators(size_t i, const std::string &input) {
   for (auto fn : MatchFunctions) {
     i_0 = i;
     i = fn(this, i, input);
-    if (i != i_0)
+    if (i != i_0) {
+      updateLocation();
       break;
+    }
   }
 
   return i;
@@ -453,8 +462,10 @@ size_t Lexer::handleUtility(size_t i, const std::string &input) {
   for (auto fn : MatchFunctions) {
     i_0 = i;
     i = fn(this, i, input);
-    if (i != i_0)
+    if (i != i_0) {
+      updateLocation();
       break;
+    }
   }
 
   return i;

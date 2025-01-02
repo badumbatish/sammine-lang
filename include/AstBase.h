@@ -4,6 +4,7 @@
 
 #pragma once
 #include "AstDecl.h"
+#include "Lexer.h"
 namespace llvm {
 class Value;
 
@@ -82,6 +83,7 @@ public:
 
 class AstBase : public Visitable {
 public:
+  Location location;
   llvm::Value *val;
 };
 } // namespace AST
