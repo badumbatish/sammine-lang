@@ -173,7 +173,6 @@ auto Parser::ParsePrimaryExpr()
   for (auto fn : ParseFunctions) {
     auto result = fn(this);
     if (result) {
-      std::cerr << "Parse primary succesfully" << std::endl;
       return result;
     } else if (!result && result.error() == ParserError::COMMITTED) {
       sammine_util::abort("Failed to parse one of primary expr");
@@ -258,7 +257,6 @@ auto Parser::ParseIfExpr()
 
   auto else_tok = expect(TokenType::TokElse);
   if (!else_tok) {
-    std::cerr << "Succesfully parse an if without else expr " << std::endl;
     return std::make_unique<AST::IfExprAST>(std::move(cond.value()),
                                             std::move(then_block.value()),
                                             std::make_unique<AST::BlockAST>());
@@ -267,7 +265,6 @@ auto Parser::ParseIfExpr()
   if (!else_block)
     return tl::make_unexpected(ParserError::COMMITTED);
 
-  std::cerr << "Succesfully parse an if with else expr " << std::endl;
   return std::make_unique<AST::IfExprAST>(std::move(cond.value()),
                                           std::move(then_block.value()),
                                           std::move(else_block.value()));
@@ -362,11 +359,9 @@ auto Parser::ParseBlock()
     auto b = ParseVarDef();
     if (!b && b.error() == ParserError::NONCOMMITTED) {
 
-      std::cerr << "Failed to find parse var def \n";
       break;
     }
     if (!b && b.error() == ParserError::COMMITTED) {
-      std::cerr << "Failed to find parse var def \n";
       return tl::make_unexpected(b.error());
     }
     blockAST->Statements.push_back(std::move(b.value()));

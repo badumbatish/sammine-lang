@@ -20,7 +20,8 @@ void Compiler::log_diagnostics(const std::string &diagnostics) {
     Compiler::force_log_diagnostics(diagnostics);
 }
 inline void Compiler::force_log_diagnostics(const std::string &diagnostics) {
-  fmt::print(stderr, fg(fmt::color::green), "{}\n", diagnostics);
+  fmt::print(stderr, fg(fmt::terminal_color::bright_green), "{}\n",
+             diagnostics);
 }
 Compiler::Compiler(
     std::map<compiler_option_enum, std::string> &compiler_options)
@@ -33,9 +34,9 @@ Compiler::Compiler(
   } else if (this->file_name != "") {
     this->input = sammine_util::get_string_from_file(this->file_name);
   } else {
-    fmt::print(stderr, fg(fmt::color::red),
+    fmt::print(stderr, fg(fmt::terminal_color::bright_red),
                "[Error during compiler initial phase]\n");
-    fmt::print(stderr, fg(fmt::color::red),
+    fmt::print(stderr, fg(fmt::terminal_color::bright_red),
                "[Both the file name and the string input is empty]\n");
     set_error();
   }
@@ -47,7 +48,8 @@ void Compiler::lex() {
   Lexer lxr = Lexer(input);
   if (lxr.getTokenStream()->hasErrors()) {
     set_error();
-    fmt::print(stderr, fg(fmt::color::red), "[Error during lexing phase]\n");
+    fmt::print(stderr, fg(fmt::terminal_color::bright_red),
+               "[Error during lexing phase]\n");
     auto stream = lxr.getTokenStream();
     for (auto i : stream->ErrStream) {
       fmt::print(

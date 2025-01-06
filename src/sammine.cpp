@@ -43,7 +43,8 @@ int main(int argc, char *argv[]) {
         program.get("--diagnostics");
 
   } catch (const std::exception &err) {
-    fmt::print(stderr, fg(fmt::color::red), "Error while parsing arguments\n");
+    fmt::print(stderr, fg(fmt::terminal_color::bright_red),
+               "Error while parsing arguments\n");
     std::cerr << err.what() << std::endl;
     std::cerr << program;
     return 1;

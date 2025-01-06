@@ -18,9 +18,11 @@ auto get_string_from_file(std::string file_name) -> std::string {
 }
 
 auto abort(const std::string &message) -> void {
-  fmt::print(stderr, fg(fmt::color::red), "[Internal Compiler Error] : {}\n",
-             message);
-  fmt::print(stderr, fg(fmt::color::red), "[Generating stack traces]...\n");
+  fmt::print(stderr, fg(fmt::terminal_color::bright_red),
+             "[Internal Compiler Error] : {}\n", message);
+  fmt::print(stderr, fg(fmt::terminal_color::bright_red),
+             "[Generating stack traces]...\n");
+  fmt::print(stderr, fg(fmt::terminal_color::bright_red), "[Please wait]...\n");
   auto trace = cpptrace::generate_trace();
   trace.print_with_snippets();
   std::abort();
