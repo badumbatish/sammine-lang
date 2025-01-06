@@ -34,7 +34,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.ParseVarDef();
 
-    REQUIRE(pg.error_msgs.errors.empty());
+    REQUIRE(pg.reporter.reports.empty());
     auto nameVisitor = sammine_lang::AST::AstNameVisitor();
     programAST.value()->accept_vis(&nameVisitor);
 
@@ -117,7 +117,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(pg.error_msgs.stringify() == decltype(pg.error_msgs.stringify())());
+    REQUIRE(pg.reporter.reports == decltype(pg.reporter.reports)());
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto func_def = static_cast<AST::FuncDefAST *>(
@@ -137,7 +137,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(pg.error_msgs.stringify() == decltype(pg.error_msgs.stringify())());
+    REQUIRE(pg.reporter.reports == decltype(pg.reporter.reports)());
 
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
@@ -178,5 +178,5 @@ TEST_CASE("VALID GRAMMAR", "[Parser]") {
   REQUIRE(lex.getTokenStream()->hasErrors() == false);
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
-  REQUIRE(pg.error_msgs.stringify() == decltype(pg.error_msgs.stringify())());
+  REQUIRE(pg.reporter.reports == decltype(pg.reporter.reports)());
 }

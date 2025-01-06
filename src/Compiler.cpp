@@ -61,6 +61,11 @@ void Compiler::lex() {
   }
 
   tokStream = lxr.getTokenStream();
+  /*while (!tokStream->isEnd()) {*/
+  /*  auto x = tokStream->peek();*/
+  /*  std::cout << x->location << std::endl;*/
+  /*  tokStream->consume();*/
+  /*}*/
 }
 
 void Compiler::parse() {
@@ -68,15 +73,10 @@ void Compiler::parse() {
   Parser psr = Parser(tokStream);
 
   auto result = psr.Parse();
-  if (result.has_value()) {
+  if (result.has_value())
     programAST = std::move(result.value());
-  } else if (psr.hasErrors()) {
-    set_error();
-    fmt::print(stderr, "[Error during parsing phase]\n");
-    for (auto i : psr.error_msgs.errors) {
-      fmt::print(stderr, "{}: {}\n", file_name, i.second);
-    }
-  }
+
+  sammine_util::Reporter::report_and_abort(psr.reporter.reports, input);
 }
 
 void Compiler::scopecheck() {

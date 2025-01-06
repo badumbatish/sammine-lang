@@ -85,7 +85,7 @@ public:
               TokenType until = TokenType::TokEOF,
               const std::string &message = "") -> std::shared_ptr<Token>;
 
-  sammine_util::ErrorMsgs error_msgs;
+  sammine_util::Reporter reporter;
   [[nodiscard]]
   Parser() {}
   [[nodiscard]]
@@ -95,7 +95,7 @@ public:
   auto Parse() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
   [[nodiscard]]
   auto hasErrors() -> bool {
-    return !error_msgs.errors.empty();
+    return !reporter.reports.empty();
   }
   void log_error(const std::string &message);
 };

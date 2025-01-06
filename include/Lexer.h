@@ -176,8 +176,8 @@ public:
 
   Location(size_t line_start, size_t line_end, size_t col_start, size_t col_end,
            size_t source_start, size_t source_end)
-      : line_start(0), line_end(0), col_start(0), col_end(0), source_start(0),
-        source_end(0) {}
+      : line_start(line_start), line_end(line_end), col_start(col_start),
+        col_end(col_end), source_start(source_start), source_end(source_end) {}
   // Advance column position
   inline void advance() {
     col_end++;
@@ -187,15 +187,13 @@ public:
   // Move column position backwards
   inline void devance() {
     if (col_end == 0)
-      return;
-    col_end--;
+      col_end--;
     source_end--;
   }
 
   // Handle newline
   inline void newLine() {
     line_end++;
-    source_end++;
     col_end = 0;
   }
 
@@ -215,9 +213,8 @@ public:
   // Stream output operator
   friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
     out << loc.line_start << ":" << loc.col_start;
-    if (loc.line_end != loc.line_start || loc.col_end != loc.col_start) {
-      out << "-" << loc.line_end << ":" << loc.col_end;
-    }
+    out << "-" << loc.line_end << ":" << loc.col_end;
+
     return out;
   }
 
@@ -233,6 +230,7 @@ public:
            col_end == other.col_end;
   }
 
+private:
   // String conversion operator
 };
 //! A class representing a token for sammine-lang, includes TokenType, lexeme

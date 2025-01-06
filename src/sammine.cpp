@@ -15,19 +15,19 @@ int main(int argc, char *argv[]) {
 
   std::map<compiler_option_enum, std::string> compiler_options;
 
-  auto &group_input = program.add_mutually_exclusive_group(true);
-  group_input.add_argument("-f", "--file")
+  auto &gi = program.add_mutually_exclusive_group(true);
+  gi.add_argument("-f", "--file")
       .help("An input file for compiler to scan over.");
-  group_input.add_argument("-s", "--str")
+  gi.add_argument("-s", "--str")
       .help("An input string for compiler to scan over.");
 
-  auto &group_diagnostics = program.add_group("diagnostics");
-  group_diagnostics
+  auto &g_diag = program.add_group("diagnostics");
+  g_diag
       .add_argument("", "--llvm-ir") // TODO: Somehow make the internal compiler
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
       .help("sammine compiler spits out LLVM-IR to stdout");
-  group_diagnostics.add_argument("", "--diagnostics")
+  g_diag.add_argument("", "--diagnostics")
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
       .help(
