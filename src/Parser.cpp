@@ -203,6 +203,13 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     auto binOpToken = tokStream->consume();
 
     auto RHS = ParsePrimaryExpr();
+
+    // We're committed here, so whether RHS is commited error or non-committed
+    // error, we really should always return non-committed.
+    //
+    // If it is commited, we don't release any more report, just return RHS like
+    // normal
+    // If it is commited, we add a report. Depend on programmer.
     if (!RHS) {
       return RHS;
     }
