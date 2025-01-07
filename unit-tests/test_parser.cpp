@@ -8,10 +8,8 @@
 #include "AstNameVisitor.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "Utilities.h"
 #include "tl/expected.hpp"
 #include <catch2/catch_test_macros.hpp>
-#include <iostream>
 
 using namespace sammine_lang;
 
@@ -34,7 +32,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.ParseVarDef();
 
-    REQUIRE(pg.reporter.reports.empty());
+    REQUIRE(!pg.hasErrors());
     auto nameVisitor = sammine_lang::AST::AstNameVisitor();
     programAST.value()->accept_vis(&nameVisitor);
 
@@ -117,7 +115,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(pg.reporter.reports == decltype(pg.reporter.reports)());
+    REQUIRE(!pg.hasErrors());
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto func_def = static_cast<AST::FuncDefAST *>(
@@ -137,7 +135,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(pg.reporter.reports == decltype(pg.reporter.reports)());
+    REQUIRE(!pg.hasErrors());
 
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
@@ -178,5 +176,5 @@ TEST_CASE("VALID GRAMMAR", "[Parser]") {
   REQUIRE(lex.getTokenStream()->hasErrors() == false);
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
-  REQUIRE(pg.reporter.reports == decltype(pg.reporter.reports)());
+  REQUIRE(!pg.hasErrors());
 }

@@ -7,6 +7,7 @@
 #include "LLVMRes.h"
 #include "Lexer.h"
 #include "Parser.h"
+#include "Utilities.h"
 #include <memory>
 #include <string>
 namespace sammine_lang {
@@ -22,6 +23,8 @@ class Compiler {
   std::map<compiler_option_enum, std::string> &compiler_options;
   std::shared_ptr<LLVMRes> resPtr;
   std::string file_name, input;
+  sammine_util::Reporter reporter;
+  size_t report_width = 2;
   bool error;
 
   void lex();

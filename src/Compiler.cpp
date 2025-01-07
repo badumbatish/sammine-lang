@@ -38,9 +38,12 @@ Compiler::Compiler(
                "[Error during compiler initial phase]\n");
     fmt::print(stderr, fg(fmt::terminal_color::bright_red),
                "[Both the file name and the string input is empty]\n");
-    set_error();
+
+    std::abort();
   }
   this->resPtr = std::make_shared<LLVMRes>();
+
+  this->reporter = sammine_util::Reporter(input);
 }
 
 void Compiler::lex() {
@@ -76,7 +79,7 @@ void Compiler::parse() {
   if (result.has_value())
     programAST = std::move(result.value());
 
-  sammine_util::Reporter::report_and_abort(psr.reporter.reports, input);
+  reporter.report_and_abort(psr.reports, report_width);
 }
 
 void Compiler::scopecheck() {

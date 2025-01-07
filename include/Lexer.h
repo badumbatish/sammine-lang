@@ -164,47 +164,26 @@ static const std::map<TokenType, std::string> TokenMap = {
 //! .
 class Location {
 public:
-  size_t line_start, line_end;
-  size_t col_start, col_end;
   size_t source_start; // True location in original source code string
   size_t source_end;
 
   // Default constructor
-  Location()
-      : line_start(0), line_end(0), col_start(0), col_end(0), source_start(0),
-        source_end(0) {}
+  Location() : source_start(0), source_end(0) {}
 
-  Location(size_t line_start, size_t line_end, size_t col_start, size_t col_end,
-           size_t source_start, size_t source_end)
-      : line_start(line_start), line_end(line_end), col_start(col_start),
-        col_end(col_end), source_start(source_start), source_end(source_end) {}
+  Location(size_t source_start, size_t source_end)
+      : source_start(source_start), source_end(source_end) {}
   // Advance column position
-  inline void advance() {
-    col_end++;
-    source_end++;
-  }
+  inline void advance() { source_end++; }
 
   // Move column position backwards
-  inline void devance() {
-    if (col_end == 0)
-      col_end--;
-    source_end--;
-  }
+  inline void devance() { source_end--; }
 
   // Handle newline
-  inline void newLine() {
-    line_end++;
-    col_end = 0;
-  }
+  inline void newLine() { advance(); }
 
   // Combine two locations (union of spans)
   Location operator|(const Location &other) const {
     Location result;
-    result.line_start = std::min(line_start, other.line_start);
-    result.line_end = std::max(line_end, other.line_end);
-    result.col_start =
-        (line_start < other.line_start) ? col_start : other.col_start;
-    result.col_end = (line_end > other.line_end) ? col_end : other.col_end;
     result.source_start = std::min(source_start, other.source_start);
     result.source_end = std::max(source_end, other.source_end);
     return result;
@@ -212,22 +191,18 @@ public:
 
   // Stream output operator
   friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
-    out << loc.line_start << ":" << loc.col_start;
-    out << "-" << loc.line_end << ":" << loc.col_end;
+    out << loc.source_start << ":" << loc.source_end;
 
     return out;
   }
 
   std::string to_string() {
-    return fmt::format("{}:{}-{}:{}", line_start, col_start, line_end, col_end);
+    return fmt::format("{}:{}", source_start, source_end);
   }
 
   // Equality operator
   bool operator==(const Location &other) const {
-    return source_start == other.source_start &&
-           source_end == other.source_end && line_start == other.line_start &&
-           line_end == other.line_end && col_start == other.col_start &&
-           col_end == other.col_end;
+    return source_start == other.source_start && source_end == other.source_end;
   }
 
 private:

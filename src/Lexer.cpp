@@ -13,9 +13,7 @@ std::shared_ptr<Token> Lexer::peek() { return tokStream->peek(); }
 std::shared_ptr<Token> Lexer::consume() { return tokStream->consume(); }
 
 void Lexer::updateLocation() {
-  location =
-      Location(location.line_end, location.line_end, location.col_end,
-               location.col_end, location.source_end, location.source_end);
+  location = Location(location.source_end, location.source_end);
 }
 Lexer::Lexer(const std::string &input) : Lexer() {
   size_t i = 0;
