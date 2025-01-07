@@ -125,7 +125,7 @@ public:
       fmt::print(stderr, fg(get_color_from(report_kind)), "-----{}\n",
                  report_msg);
       for (auto i = line_start; i <= line_end; i++) {
-        fmt::print(stderr, fg(LINE_COLOR), "{}:", i);
+        fmt::print(stderr, fg(LINE_COLOR), "{}:", i + 1);
         fmt::print(stderr, fg(get_color_from(report_kind)), "{}\n",
                    diagnostic_data[i].second);
       }

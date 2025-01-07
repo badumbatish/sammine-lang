@@ -123,9 +123,6 @@ size_t Lexer::handleNumber(size_t i, const std::string &input) {
 
 size_t Lexer::handleSpaces(size_t i, const std::string &input) {
   while (isspace(input[i])) {
-    if (input[i] == '\n') {
-      location.newLine();
-    }
     i = advance(i);
   }
 
