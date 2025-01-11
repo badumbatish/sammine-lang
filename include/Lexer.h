@@ -219,9 +219,7 @@ public:
   std::string lexeme;
   Location location;
   Token(TokenType type, std::string lexeme, Location location)
-      : type(type), lexeme(std::move(lexeme)), location(location) {
-    this->location.source_start = this->location.source_end - lexeme.size();
-  };
+      : type(type), lexeme(std::move(lexeme)), location(location) {}
 };
 
 //! A helper class for Lexer to simplify the process of getting a token.

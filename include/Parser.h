@@ -5,7 +5,8 @@
 #include "tl/expected.hpp"
 namespace sammine_lang {
 enum ParserError {
-  COMMITTED,
+  COMMITTED_NO_MORE_ERROR,
+  COMMITTED_EMIT_MORE_ERROR,
   NONCOMMITTED,
 };
 class Parser {
@@ -98,5 +99,6 @@ public:
     return reports.has_error();
   }
   void log_error(const std::string &message);
+  void log_error(Location location, const std::string &message);
 };
 } // namespace sammine_lang

@@ -72,7 +72,7 @@ auto Parser::ParseFuncDef()
       sammine_util::abort("abort extern");
       auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
                            "Failed to parse a prototype of a function");
-      return tl::make_unexpected(ParserError::COMMITTED);
+      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
     }
 
     auto semi_colon = expect(TokenType::TokSemiColon);
@@ -90,14 +90,14 @@ auto Parser::ParseFuncDef()
   if (!prototype) {
     auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
                          "Failed to parse a prototype of a function");
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
   auto block = ParseBlock();
   if (!block) {
     auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
                          "Failed to parse a block of a function definition");
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
   return std::make_unique<AST::FuncDefAST>(std::move(prototype.value()),
@@ -117,19 +117,19 @@ auto Parser::ParseVarDef()
   if (!typedVar) {
     auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
                          "Failed to parse typed variable");
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
   auto assign = expect(TokenType::TokASSIGN, true, TokSemiColon,
                        "Failed to match assign token `=`");
   if (!assign)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   auto expr = ParseExpr();
   if (!expr) {
     auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
                          "Failed to parse expression");
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
   auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon,
@@ -148,10 +148,10 @@ auto Parser::ParseTypedVar()
     return tl::make_unexpected(ParserError::NONCOMMITTED);
   auto colon = expect(TokenType::TokColon);
   if (!colon)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   auto type = expect(TokenType::TokID);
   if (!type)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   auto typedVar = std::make_unique<AST::TypedVarAST>();
 
@@ -174,7 +174,8 @@ auto Parser::ParsePrimaryExpr()
     auto result = fn(this);
     if (result) {
       return result;
-    } else if (!result && result.error() == ParserError::COMMITTED) {
+    } else if (!result &&
+               result.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
       sammine_util::abort("Failed to parse one of primary expr");
       return result;
     }
@@ -242,7 +243,7 @@ auto Parser::ParseCallExpr()
     return std::make_unique<AST::VariableExprAST>(id->lexeme);
   }
 
-  return tl::make_unexpected(ParserError::COMMITTED);
+  return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 }
 
 auto Parser::ParseIfExpr()
@@ -255,12 +256,12 @@ auto Parser::ParseIfExpr()
   auto cond = ParseExpr();
 
   if (!cond)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   auto then_block = ParseBlock();
 
   if (!then_block)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   auto else_tok = expect(TokenType::TokElse);
   if (!else_tok) {
@@ -270,7 +271,7 @@ auto Parser::ParseIfExpr()
   }
   auto else_block = ParseBlock();
   if (!else_block)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   return std::make_unique<AST::IfExprAST>(std::move(cond.value()),
                                           std::move(then_block.value()),
@@ -343,7 +344,7 @@ auto Parser::ParseBlock()
 
   auto leftCurly = expect(TokLeftCurly);
   if (!leftCurly)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   // TODO : Cannot just parse a return stmt.
   // TODO : We need to also parse other statement as well
 
@@ -352,13 +353,13 @@ auto Parser::ParseBlock()
     auto a = ParseExpr();
     if (!a && a.error() == ParserError::NONCOMMITTED) {
     }
-    if (!a && a.error() == ParserError::COMMITTED)
+    if (!a && a.error() == ParserError::COMMITTED_NO_MORE_ERROR)
       return tl::make_unexpected(a.error());
     else if (a) {
       blockAST->Statements.push_back(std::move(a.value()));
       auto semi = expect(TokenType::TokSemiColon);
       if (!semi)
-        return tl::make_unexpected(ParserError::COMMITTED);
+        return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
       continue;
     }
@@ -368,7 +369,7 @@ auto Parser::ParseBlock()
 
       break;
     }
-    if (!b && b.error() == ParserError::COMMITTED) {
+    if (!b && b.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
       return tl::make_unexpected(b.error());
     }
     blockAST->Statements.push_back(std::move(b.value()));
@@ -377,7 +378,7 @@ auto Parser::ParseBlock()
   auto rightCurly = expect(TokRightCurly);
 
   if (!rightCurly)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   return blockAST;
 }
@@ -415,7 +416,7 @@ auto Parser::ParseParams()
   if (rightParen == nullptr) {
     log_error(
         "Failed to find right parenthesis after processing [typed variables]");
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
   return vec;
@@ -441,11 +442,11 @@ auto Parser::ParseArguments()
 
     expr = ParseExpr();
     if (!expr)
-      return tl::make_unexpected(ParserError::COMMITTED);
+      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
   auto rightParen = expect(TokRightParen);
   if (!rightParen)
-    return tl::make_unexpected(ParserError::COMMITTED);
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
   return vec;
 }
@@ -469,5 +470,8 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
 
 auto Parser::log_error(const std::string &message) -> void {
   reports.add_error(tokStream->currentLocation(), message);
+}
+void Parser::log_error(Location location, const std::string &message) {
+  reports.add_error(location, message);
 }
 } // namespace sammine_lang
