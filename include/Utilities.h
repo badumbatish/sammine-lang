@@ -100,37 +100,51 @@ class Reporter {
     }
   }
 
+  std::pair<size_t, size_t> get_lines_indices(size_t start, size_t end) const {
+
+    // INFO: Helper function
+    auto get_line_ite = [this](size_t source_index) -> size_t {
+      auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
+
+      return std::next(std::ranges::lower_bound(
+                 diagnostic_data,
+                 std::make_pair(source_index, std::string_view("")), cmp)) -
+             diagnostic_data.begin();
+    };
+
+    return {get_line_ite(start), get_line_ite(end)};
+  }
+
 public:
   void report_and_abort(const Reports &reports, size_t depth) const {
+
+    bool begin = true;
     for (auto &[loc, report_msg, report_kind] : reports) {
       auto [start, end] = loc;
 
-      auto get_line_ite = [this](size_t source_index) -> size_t {
-        auto cmp = [](const auto &a, const auto &b) {
-          return a.first < b.first;
-        };
+      // INFO: Where the lines start, the lines end, initially
+      auto [line_start, line_end] = get_lines_indices(start, end);
 
-        return std::next(std::ranges::lower_bound(
-                   diagnostic_data,
-                   std::make_pair(source_index, std::string_view("")), cmp)) -
-               diagnostic_data.begin();
-      };
-      auto line_start = get_line_ite(start), line_end = get_line_ite(end);
+      // INFO: Get
       line_start = line_start > depth ? line_start - depth : 0;
       line_end = line_end + depth <= diagnostic_data.size() - 1
                      ? line_end + depth
                      : diagnostic_data.size() - 1;
 
       /*fmt::println("Start: {}, end : {}", line_start, line_end);*/
+      if (begin) {
+        begin = false;
+      } else {
+        for (size_t i = 1; i <= 2; i++)
+          fmt::print(stderr, fg(LINE_COLOR), "    |\n");
+      }
       fmt::print(stderr, fg(get_color_from(report_kind)), "-----{}\n",
                  report_msg);
       for (auto i = line_start; i <= line_end; i++) {
-        fmt::print(stderr, fg(LINE_COLOR), "{}:", i + 1);
+        fmt::print(stderr, fg(LINE_COLOR), "{:>4}|", i + 1);
         fmt::print(stderr, fg(get_color_from(report_kind)), "{}\n",
                    diagnostic_data[i].second);
       }
-
-      fmt::println("");
     }
 
     if (reports.has_error() || reports.has_warn()) {
