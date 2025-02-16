@@ -43,32 +43,14 @@ Compiler::Compiler(
   }
   this->resPtr = std::make_shared<LLVMRes>();
 
-  this->reporter = sammine_util::Reporter(input);
+  this->reporter = sammine_util::Reporter(input, report_width);
 }
 
 void Compiler::lex() {
   log_diagnostics("Start lexing stage...");
   Lexer lxr = Lexer(input);
-  if (lxr.getTokenStream()->hasErrors()) {
-    set_error();
-    fmt::print(stderr, fg(fmt::terminal_color::bright_red),
-               "[Error during lexing phase]\n");
-    auto stream = lxr.getTokenStream();
-    for (auto i : stream->ErrStream) {
-      fmt::print(
-          stderr, "{}:{}: Encountered invalid token : {}\n", file_name,
-          i->location.to_string(),
-          input.substr(i->location.source_start,
-                       i->location.source_end - i->location.source_start));
-    }
-  }
-
+  reporter.report_and_abort(lxr.get_reports());
   tokStream = lxr.getTokenStream();
-  /*while (!tokStream->isEnd()) {*/
-  /*  auto x = tokStream->peek();*/
-  /*  std::cout << x->location << std::endl;*/
-  /*  tokStream->consume();*/
-  /*}*/
 }
 
 void Compiler::parse() {
@@ -79,7 +61,7 @@ void Compiler::parse() {
   if (result.has_value())
     programAST = std::move(result.value());
 
-  reporter.report_and_abort(psr.reports, report_width);
+  reporter.report_and_abort(psr.reports);
 }
 
 void Compiler::scopecheck() {

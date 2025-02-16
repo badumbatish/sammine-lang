@@ -1,5 +1,4 @@
 #pragma once
-#include "Lexer.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include <__algorithm/ranges_lower_bound.h>
@@ -8,10 +7,9 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
-#include <iterator>
 #include <string>
-#include <string_view>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 namespace sammine_util {
@@ -20,14 +18,65 @@ inline size_t unique_ast_id = 0;
 auto abort(const std::string &message = "<NO MESSAGE>") -> void;
 auto abort_on(bool abort_if_true, const std::string &message = "<NO MESSAGE>")
     -> void;
+//! A class representing a location for sammine-lang, this is helpful in
+//! debugging
 
+//! .
+//! .
+class Location {
+public:
+  size_t source_start; // True location in original source code string
+  size_t source_end;
+
+  // Default constructor
+  Location() : source_start(0), source_end(0) {}
+
+  Location(size_t source_start, size_t source_end)
+      : source_start(source_start), source_end(source_end) {}
+  // Advance column position
+  inline void advance() { source_end++; }
+
+  // Move column position backwards
+  inline void devance() { source_end--; }
+
+  // Handle newline
+  inline void newLine() { advance(); }
+
+  // Combine two locations (union of spans)
+  Location operator|(const Location &other) const {
+    Location result;
+    result.source_start = std::min(source_start, other.source_start);
+    result.source_end = std::max(source_end, other.source_end);
+    return result;
+  }
+
+  operator std::pair<size_t, size_t>() const {
+    return std::make_pair(source_start, source_end);
+  }
+
+  // Stream output operator
+  friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
+    out << loc.source_start << ":" << loc.source_end;
+
+    return out;
+  }
+
+  std::string to_string() {
+    return fmt::format("{}:{}", source_start, source_end);
+  }
+
+  // Equality operator
+  bool operator==(const Location &other) const {
+    return source_start == other.source_start && source_end == other.source_end;
+  }
+};
 class Reports {
 public:
   enum ReportKind {
     error,
     warn,
   };
-  using Report = std::tuple<sammine_lang::Location, std::string, ReportKind>;
+  using Report = std::tuple<Location, std::string, ReportKind>;
 
   using iterator = std::vector<Report>::iterator;
   using const_iterator = std::vector<Report>::const_iterator;
@@ -40,21 +89,22 @@ public:
   const_iterator cbegin() const { return reports.cbegin(); }
   const_iterator cend() const { return reports.cend(); }
 
-  void add_error(sammine_lang::Location loc, std::string msg) {
+  void add_error(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::error});
     _has_error = true;
   }
-  void add_warn(sammine_lang::Location loc, std::string msg) {
+  void add_warn(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::warn});
     _has_warn = true;
   }
-  void add_diagnostics(sammine_lang::Location loc, std::string msg) {
+  void add_diagnostics(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::warn});
     _has_warn = true;
   }
 
   bool has_error() const { return this->_has_error; }
   bool has_warn() const { return this->_has_warn; }
+  bool has_message() const { return !reports.empty(); }
 
 private:
   std::vector<Report> reports;
@@ -62,7 +112,8 @@ private:
   bool _has_warn;
 };
 class Reporter {
-
+  using ReportKind = Reports::ReportKind;
+  using IndexPair = std::pair<size_t, size_t>;
   static std::vector<std::pair<std::size_t, std::string_view>>
   get_diagnostic_data(std::string_view str) {
     decltype(get_diagnostic_data(str)) result;
@@ -88,76 +139,38 @@ class Reporter {
       fmt::terminal_color::bright_magenta;
   std::string input;
   std::vector<std::pair<std::size_t, std::string_view>> diagnostic_data;
+  size_t depth;
+  fmt::terminal_color get_color_from(ReportKind report_kind) const;
 
-  fmt::terminal_color get_color_from(Reports::ReportKind report_kind) const {
-    switch (report_kind) {
-    case Reports::error:
-      return fmt::terminal_color::bright_red;
-      break;
-    case Reports::warn:
-      return fmt::terminal_color::bright_yellow;
-      break;
-    }
+  std::pair<size_t, size_t> get_lines_indices(IndexPair) const;
+  std::pair<size_t, size_t>
+  get_lines_indices_with_depth(std::pair<size_t, size_t> index_pair) const;
+
+  void report(std::pair<size_t, size_t> index_pair,
+              const std::string &report_msg,
+              const ReportKind report_kind) const;
+
+  template <typename S, typename... Args,
+            FMT_ENABLE_IF(fmt::detail::is_string<S>::value)>
+  void report(const fmt::terminal_color ts, const S &format_str,
+              Args &...args) const {
+    fmt::print(stderr, fg(LINE_COLOR), format_str,
+               std::forward<Args>(args)...); // Print green color code
   }
 
-  std::pair<size_t, size_t> get_lines_indices(size_t start, size_t end) const {
-
-    // INFO: Helper function
-    auto get_line_ite = [this](size_t source_index) -> size_t {
-      auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
-
-      return std::next(std::ranges::lower_bound(
-                 diagnostic_data,
-                 std::make_pair(source_index, std::string_view("")), cmp)) -
-             diagnostic_data.begin();
-    };
-
-    return {get_line_ite(start), get_line_ite(end)};
+  template <typename S, typename... Args,
+            FMT_ENABLE_IF(fmt::detail::is_string<S>::value)>
+  void report(const ReportKind report_kind, const S &format_str,
+              Args &...args) const {
+    fmt::print(stderr, fg(get_color_from(report_kind)), format_str,
+               std::forward<Args>(args)...); // Print green color code
   }
 
 public:
-  void report_and_abort(const Reports &reports, size_t depth) const {
-
-    bool begin = true;
-    for (auto &[loc, report_msg, report_kind] : reports) {
-      auto [start, end] = loc;
-
-      // INFO: Where the lines start, the lines end, initially
-      auto [line_start, line_end] = get_lines_indices(start, end);
-
-      // INFO: Get
-      line_start = line_start > depth ? line_start - depth : 0;
-      line_end = line_end + depth <= diagnostic_data.size() - 1
-                     ? line_end + depth
-                     : diagnostic_data.size() - 1;
-
-      /*fmt::println("Start: {}, end : {}", line_start, line_end);*/
-      if (begin) {
-        begin = false;
-      } else {
-        for (size_t i = 1; i <= 2; i++)
-          fmt::print(stderr, fg(LINE_COLOR), "    |\n");
-      }
-      fmt::print(stderr, fg(get_color_from(report_kind)), "-----{}\n",
-                 report_msg);
-      for (auto i = line_start; i <= line_end; i++) {
-        fmt::print(stderr, fg(LINE_COLOR), "{:>4}|", i + 1);
-        fmt::print(stderr, fg(get_color_from(report_kind)), "{}\n",
-                   diagnostic_data[i].second);
-      }
-    }
-
-    if (reports.has_error() || reports.has_warn()) {
-
-      fmt::print(stderr, fg(LINE_COLOR),
-                 "\nDid something seems wrong? Report it via "
-                 "[XXYYZZ]\n");
-    }
-    if (reports.has_error())
-      std::exit(1);
-  }
+  void report_and_abort(const Reports &reports) const;
   Reporter() {}
-  Reporter(std::string input)
-      : input(input), diagnostic_data(get_diagnostic_data(this->input)) {}
+  Reporter(std::string input, size_t depth)
+      : input(input), diagnostic_data(get_diagnostic_data(this->input)),
+        depth(depth) {}
 };
 } // namespace sammine_util

@@ -83,7 +83,7 @@ public:
 
 class AstBase : public Visitable {
 public:
-  Location location;
+  sammine_util::Location location;
   llvm::Value *val;
 };
 } // namespace AST

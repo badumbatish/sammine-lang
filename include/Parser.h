@@ -99,6 +99,6 @@ public:
     return reports.has_error();
   }
   void log_error(const std::string &message);
-  void log_error(Location location, const std::string &message);
+  void log_error(sammine_util::Location location, const std::string &message);
 };
 } // namespace sammine_lang

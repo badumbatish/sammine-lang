@@ -6,6 +6,7 @@ target_include_directories(project_options INTERFACE
 target_link_libraries(project_options INTERFACE 
   LLVMSupport
   ${llvm_libs}
+  fmt::fmt
 )
 
 # Function to add a library with common settings

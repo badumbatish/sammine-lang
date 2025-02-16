@@ -3,9 +3,11 @@
 //
 
 #pragma once
+
+#include "Utilities.h"
+#include "fmt/format.h"
 #include <algorithm>
 #include <cassert>
-#include <fmt/format.h>
 #include <map>
 
 //! \file Lexer.h
@@ -157,63 +159,14 @@ static const std::map<TokenType, std::string> TokenMap = {
     {TokINVALID, "UNRECOGNIZED"},
 };
 
-//! A class representing a location for sammine-lang, this is helpful in
-//! debugging
-
-//! .
-//! .
-class Location {
-public:
-  size_t source_start; // True location in original source code string
-  size_t source_end;
-
-  // Default constructor
-  Location() : source_start(0), source_end(0) {}
-
-  Location(size_t source_start, size_t source_end)
-      : source_start(source_start), source_end(source_end) {}
-  // Advance column position
-  inline void advance() { source_end++; }
-
-  // Move column position backwards
-  inline void devance() { source_end--; }
-
-  // Handle newline
-  inline void newLine() { advance(); }
-
-  // Combine two locations (union of spans)
-  Location operator|(const Location &other) const {
-    Location result;
-    result.source_start = std::min(source_start, other.source_start);
-    result.source_end = std::max(source_end, other.source_end);
-    return result;
-  }
-
-  // Stream output operator
-  friend std::ostream &operator<<(std::ostream &out, const Location &loc) {
-    out << loc.source_start << ":" << loc.source_end;
-
-    return out;
-  }
-
-  std::string to_string() {
-    return fmt::format("{}:{}", source_start, source_end);
-  }
-
-  // Equality operator
-  bool operator==(const Location &other) const {
-    return source_start == other.source_start && source_end == other.source_end;
-  }
-
-private:
-  // String conversion operator
-};
 //! A class representing a token for sammine-lang, includes TokenType, lexeme
 //! and position pair as its members.
 
 //! .
 //! .
 class Token {
+  using Location = sammine_util::Location;
+
 public:
   TokenType type;
   std::string lexeme;
@@ -274,7 +227,7 @@ public:
     return token;
   }
 
-  Location currentLocation() {
+  sammine_util::Location currentLocation() {
     if (!TokStream.empty()) {
       return TokStream[current_index]->location;
     }
@@ -287,9 +240,11 @@ public:
 //! Not sure what to put in here
 class Lexer {
 private:
-  Location location;
+  sammine_util::Location location;
   std::shared_ptr<TokenStream> tokStream;
 
+  sammine_util::Reports reports;
+  [[nodiscard]]
   size_t handleNumber(size_t i, const std::string &input);
   size_t handleSpaces(size_t i, const std::string &input);
   size_t handleID(size_t i, const std::string &input);
@@ -329,5 +284,8 @@ public:
   size_t advance(size_t i);
 
   size_t devance(size_t i);
+
+  sammine_util::Reports get_reports() const { return reports; };
+  bool hasErrors() { return !reports.has_message(); }
 };
 } // namespace sammine_lang

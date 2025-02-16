@@ -13,7 +13,7 @@ std::shared_ptr<Token> Lexer::peek() { return tokStream->peek(); }
 std::shared_ptr<Token> Lexer::consume() { return tokStream->consume(); }
 
 void Lexer::updateLocation() {
-  location = Location(location.source_end, location.source_end);
+  location = sammine_util::Location(location.source_end, location.source_end);
 }
 Lexer::Lexer(const std::string &input) : Lexer() {
   size_t i = 0;
@@ -131,6 +131,7 @@ size_t Lexer::handleSpaces(size_t i, const std::string &input) {
 
 size_t Lexer::handleInvalid(size_t i, const std::string &input) {
   tokStream->push_back(Token(TokINVALID, input.substr(i, 1), location));
+  reports.add_error(location, "Encountered invalid token");
   i = advance(i);
   return i;
 }

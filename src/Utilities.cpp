@@ -1,7 +1,7 @@
 #include "Utilities.h"
+#include "FileRAII.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
-#include "fmt/format.h"
 #include <cpptrace/cpptrace.hpp>
 #include <cpptrace/from_current.hpp>
 #include <cstdlib>
@@ -33,5 +33,80 @@ auto abort_on(bool abort_if_true, const std::string &message) -> void {
     abort(message);
   }
 }
+Reporter::IndexPair Reporter::get_lines_indices(IndexPair index_pair) const {
+  auto [start, end] = index_pair;
+  // INFO: Helper function
+  auto get_line_ite = [this](size_t source_index) -> size_t {
+    auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
+
+    return std::next(std::ranges::lower_bound(
+               diagnostic_data,
+               std::make_pair(source_index, std::string_view("")), cmp)) -
+           diagnostic_data.begin();
+  };
+
+  return {get_line_ite(start), get_line_ite(end)};
+}
+
+Reporter::IndexPair
+Reporter::get_lines_indices_with_depth(IndexPair index_pair) const {
+  auto [line_start, line_end] = index_pair;
+  line_start = line_start > depth ? line_start - depth : 0;
+  line_end = line_end + depth <= diagnostic_data.size() - 1
+                 ? line_end + depth
+                 : diagnostic_data.size() - 1;
+
+  return {line_start, line_end};
+}
+
+void Reporter::report(IndexPair index_pair, const std::string &report_msg,
+                      const ReportKind report_kind) const {
+
+  auto [og_start, og_end] = get_lines_indices(index_pair);
+  auto [new_start, new_end] = get_lines_indices_with_depth({og_start, og_end});
+
+  bool same_line = og_start == og_end;
+  report(report_kind, "-----{}\n", report_msg);
+  for (auto i = new_start + 1; i <= new_end + 1; i++) {
+    report(LINE_COLOR, "{:>4}|", i);
+    report(report_kind, "{}\n", diagnostic_data[i].second);
+
+    if (same_line && i == og_start + 1) {
+      report(LINE_COLOR, "    |");
+      report(report_kind, "^^^^^^^^^^^^^^^^^\n");
+    }
+  }
+}
+
+void Reporter::report_and_abort(const Reports &reports) const {
+
+  bool begin = true;
+  for (auto &[loc, report_msg, report_kind] : reports) {
+
+    for (size_t i = 1; i <= 2 && !begin; i++)
+      report(LINE_COLOR, "    |\n");
+
+    begin = false;
+    report(loc, report_msg, report_kind);
+  }
+
+  if (reports.has_message())
+    report(LINE_COLOR, "\nDid something seems wrong? Report it via "
+                       "[XXYYZZ]\n");
+
+  if (reports.has_error())
+    std::exit(1);
+}
+fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) const {
+  switch (report_kind) {
+  case Reports::error:
+    return fmt::terminal_color::bright_red;
+    break;
+  case Reports::warn:
+    return fmt::terminal_color::bright_yellow;
+    break;
+  }
+}
+
 size_t get_unique_ast_id() { return unique_ast_id; }
 } // namespace sammine_util
