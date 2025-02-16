@@ -131,6 +131,7 @@ class Reporter {
       // Add the substring excluding the newline character
       result.push_back({start, str.substr(start, end - start)});
       start = end + 1;
+      assert(start != 0);
     }
 
     return result;
@@ -142,10 +143,18 @@ class Reporter {
   size_t depth;
   fmt::terminal_color get_color_from(ReportKind report_kind) const;
 
-  std::pair<size_t, size_t> get_lines_indices(IndexPair) const;
-  std::pair<size_t, size_t>
+  // INFO: Given the source start and source end, get the line index of them.
+  IndexPair get_lines_indices(IndexPair) const;
+
+  // INFO: Given the line index start and end, get the line index of them,
+  // modified to accompany for depth.
+  IndexPair
   get_lines_indices_with_depth(std::pair<size_t, size_t> index_pair) const;
 
+  // INFO: Given the source start and source end and knowing that they fit on a
+  // singular line, recalibrate source start and end so that they start indexing
+  // from 0 at the singular line.
+  IndexPair get_start_end_of_singular_line_token(IndexPair) const;
   void report(std::pair<size_t, size_t> index_pair,
               const std::string &report_msg,
               const ReportKind report_kind) const;
@@ -171,6 +180,11 @@ public:
   Reporter() {}
   Reporter(std::string input, size_t depth)
       : input(input), diagnostic_data(get_diagnostic_data(this->input)),
-        depth(depth) {}
+        depth(depth) {
+    size_t i = 0;
+    for (auto [a, b] : diagnostic_data) {
+      std::cout << i++ << " " << a << " " << b << std::endl;
+    }
+  }
 };
 } // namespace sammine_util

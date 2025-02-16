@@ -2,6 +2,8 @@
 #include "FileRAII.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
+#include <cassert>
+#include <cctype>
 #include <cpptrace/cpptrace.hpp>
 #include <cpptrace/from_current.hpp>
 #include <cstdlib>
@@ -71,9 +73,16 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
     report(LINE_COLOR, "{:>4}|", i);
     report(report_kind, "{}\n", diagnostic_data[i].second);
 
-    if (same_line && i == og_start + 1) {
+    if (same_line && i == og_start - 1) {
       report(LINE_COLOR, "    |");
-      report(report_kind, "^^^^^^^^^^^^^^^^^\n");
+      for (auto ch : diagnostic_data[i].second) {
+        if (isspace(ch))
+          report(report_kind, "{}", ch);
+        else
+          report(report_kind, "^");
+      }
+
+      report(report_kind, "\n");
     }
   }
 }
