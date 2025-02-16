@@ -41,13 +41,14 @@ Reporter::IndexPair Reporter::get_lines_indices(IndexPair index_pair) const {
   auto get_line_ite = [this](size_t source_index) -> size_t {
     auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
 
-    return std::next(std::ranges::lower_bound(
-               diagnostic_data,
-               std::make_pair(source_index, std::string_view("")), cmp)) -
-           diagnostic_data.begin();
+    auto idx = std::ranges::lower_bound(
+                   diagnostic_data,
+                   std::make_pair(source_index, std::string_view("")), cmp) -
+               diagnostic_data.begin();
+    return idx + (idx == 0);
   };
 
-  return {get_line_ite(start), get_line_ite(end)};
+  return {get_line_ite(start) - 1, get_line_ite(end) - 1};
 }
 
 Reporter::IndexPair
@@ -69,11 +70,11 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
 
   bool same_line = og_start == og_end;
   report(report_kind, "-----{}\n", report_msg);
-  for (auto i = new_start + 1; i <= new_end + 1; i++) {
+  for (auto i = new_start; i <= new_end; i++) {
     report(LINE_COLOR, "{:>4}|", i);
     report(report_kind, "{}\n", diagnostic_data[i].second);
 
-    if (same_line && i == og_start - 1) {
+    if (same_line && i == og_start) {
       report(LINE_COLOR, "    |");
       for (auto ch : diagnostic_data[i].second) {
         if (isspace(ch))

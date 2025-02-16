@@ -173,6 +173,8 @@ public:
   Location location;
   Token(TokenType type, std::string lexeme, Location location)
       : type(type), lexeme(std::move(lexeme)), location(location) {}
+
+  operator Location() { return location; }
 };
 
 //! A helper class for Lexer to simplify the process of getting a token.
