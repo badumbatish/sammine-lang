@@ -30,9 +30,10 @@ auto abort(const std::string &message) -> void {
 }
 
 auto abort_on(bool abort_if_true, const std::string &message) -> void {
-  if (abort_if_true)
+  if (abort_if_true) {
     abort(message);
-  std::abort();
+    std::abort();
+  }
 }
 Reporter::IndexPair Reporter::get_lines_indices(IndexPair index_pair) const {
   auto [start, end] = index_pair;

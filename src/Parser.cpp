@@ -59,12 +59,11 @@ auto Parser::ParseDefinition()
       pe = result.error();
   }
 
-  auto result =
-      expect(TokenType::TokINVALID, true, TokEOF,
-             (pe == NONCOMMITTED | pe == ParserError::COMMITTED_NO_MORE_ERROR)
-                 ? ""
-                 : "Failed to parse any meaningful definitions");
-  return tl::make_unexpected(ParserError::NONCOMMITTED);
+  auto result = expect(TokenType::TokINVALID, true, TokEOF,
+                       pe == ParserError::COMMITTED_NO_MORE_ERROR
+                           ? ""
+                           : "Failed to parse any meaningful definitions");
+  return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
 }
 
 auto Parser::ParseFuncDef()
@@ -111,8 +110,8 @@ auto Parser::ParseFuncDef()
     sammine_util::abort(
         "Parsing a block should handle its own closing curly block");
   }
-
-  sammine_util::abort_on(!block);
+  if (!block)
+    sammine_util::abort();
 
   return std::make_unique<AST::FuncDefAST>(std::move(prototype.value()),
                                            std::move(block.value()));
@@ -244,7 +243,8 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     if (!RHS && RHS.error() == COMMITTED_NO_MORE_ERROR) {
       return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
     }
-    sammine_util::abort_on(!RHS);
+    if (!RHS)
+      sammine_util::abort();
     int NextPrec = GetTokPrecedence(tokStream->peek()->type);
     if (TokPrec < NextPrec) {
       RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS.value()));

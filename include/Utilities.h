@@ -18,7 +18,6 @@ inline size_t unique_ast_id = 0;
 
 [[noreturn]]
 auto abort(const std::string &message = "<NO MESSAGE>") -> void;
-[[noreturn]]
 auto abort_on(bool abort_if_true, const std::string &message = "<NO MESSAGE>")
     -> void;
 //! A class representing a location for sammine-lang, this is helpful in
@@ -111,8 +110,8 @@ public:
 
 private:
   std::vector<Report> reports;
-  bool _has_error;
-  bool _has_warn;
+  bool _has_error = false;
+  bool _has_warn = false;
 };
 class Reporter {
   using ReportKind = Reports::ReportKind;

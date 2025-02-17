@@ -184,8 +184,7 @@ TEST_CASE("Complex combination", "[Lexer]") {
   }
 
   SECTION("Function calls") {
-    sammine_lang::Lexer lex(
-        sammine_util::get_string_from_file("artifacts/fn_def_1.txt"));
+    sammine_lang::Lexer lex("fn f(x:f64) -> f64 { }");
 
     auto tokStream = lex.getTokenStream();
 

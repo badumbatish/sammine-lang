@@ -4,6 +4,7 @@
 
 #pragma once
 #include <fstream>
+#include <iostream>
 #include <string>
 
 //! \file FileRAII.h
@@ -16,9 +17,7 @@ public:
   // Constructor opens the file
   explicit FileRAII(const std::string &filename)
       : file(filename), is_opened(true) {
-    if (!file.is_open()) {
-      is_opened = false;
-    }
+    is_opened = file.is_open();
 
     str = std::string((std::istreambuf_iterator<char>(file)),
                       (std::istreambuf_iterator<char>()));
