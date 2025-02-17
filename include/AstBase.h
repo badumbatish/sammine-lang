@@ -5,6 +5,7 @@
 #pragma once
 #include "AstDecl.h"
 #include "Lexer.h"
+#include "Utilities.h"
 namespace llvm {
 class Value;
 
@@ -16,7 +17,7 @@ namespace AST {
 class Visitable;
 class ASTVisitor;
 
-class ASTVisitor {
+class ASTVisitor : public sammine_util::Reportee {
 public:
   virtual void visit(ProgramAST *ast);
   virtual void preorder_walk(ProgramAST *ast) = 0;

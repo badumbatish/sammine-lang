@@ -117,6 +117,9 @@ fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) const {
   case Reportee::warn:
     return fmt::terminal_color::bright_yellow;
     break;
+  case Reportee::diag:
+    return fmt::terminal_color::bright_green;
+    break;
   }
 }
 

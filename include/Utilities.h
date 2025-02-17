@@ -81,6 +81,7 @@ public:
   enum ReportKind {
     error,
     warn,
+    diag,
   };
   using Report = std::tuple<Location, std::string, ReportKind>;
 
@@ -104,8 +105,8 @@ public:
     _has_warn = true;
   }
   void add_diagnostics(Location loc, std::string msg) {
-    reports.push_back({loc, msg, ReportKind::warn});
-    _has_warn = true;
+    reports.push_back({loc, msg, ReportKind::diag});
+    _has_diag = true;
   }
 
   [[nodiscard]]
@@ -125,10 +126,16 @@ public:
     return !reports.empty();
   }
 
+  [[nodiscard]]
+  bool has_diagnostics() const {
+    return this->_has_diag;
+  }
+
 private:
   std::vector<Report> reports;
   bool _has_error = false;
   bool _has_warn = false;
+  bool _has_diag = false;
 };
 
 class Reporter {
