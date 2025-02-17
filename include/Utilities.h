@@ -181,10 +181,10 @@ public:
   Reporter(std::string input, size_t depth)
       : input(input), diagnostic_data(get_diagnostic_data(this->input)),
         depth(depth) {
-    size_t i = 0;
-    for (auto [a, b] : diagnostic_data) {
-      std::cout << i++ << " " << a << " " << b << std::endl;
-    }
+    /*size_t i = 0;*/
+    /*for (auto [a, b] : diagnostic_data) {*/
+    /*  std::cout << i++ << " " << a << " " << b << std::endl;*/
+    /*}*/
   }
 };
 } // namespace sammine_util

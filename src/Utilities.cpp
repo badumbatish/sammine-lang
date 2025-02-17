@@ -69,7 +69,8 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
   auto [new_start, new_end] = get_lines_indices_with_depth({og_start, og_end});
 
   bool same_line = og_start == og_end;
-  report(report_kind, "-----{}\n", report_msg);
+  report(LINE_COLOR, "    |");
+  report(report_kind, "{}\n", report_msg);
   for (auto i = new_start; i <= new_end; i++) {
     report(LINE_COLOR, "{:>4}|", i);
     report(report_kind, "{}\n", diagnostic_data[i].second);
@@ -101,8 +102,9 @@ void Reporter::report_and_abort(const Reports &reports) const {
   }
 
   if (reports.has_message())
-    report(LINE_COLOR, "\nDid something seems wrong? Report it via "
-                       "[XXYYZZ]\n");
+    report(LINE_COLOR,
+           "\nDid something seems wrong? Report it via "
+           "[https://github.com/badumbatish/sammine-lang/issues]\n");
 
   if (reports.has_error())
     std::exit(1);

@@ -50,14 +50,20 @@ auto Parser::ParseDefinition()
       {&Parser::ParseFuncDef, false},
   };
 
+  ParserError pe = NONCOMMITTED;
   for (auto [fn, required] : ParseFunctions) {
     auto result = fn(this);
     if (result)
       return result;
+    else if (!result)
+      pe = result.error();
   }
 
-  auto result = expect(TokenType::TokINVALID, true, TokEOF,
-                       "Failed to parse any meaningful definitions");
+  auto result =
+      expect(TokenType::TokINVALID, true, TokEOF,
+             (pe == NONCOMMITTED | pe == ParserError::COMMITTED_NO_MORE_ERROR)
+                 ? ""
+                 : "Failed to parse any meaningful definitions");
   return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
 
@@ -94,11 +100,19 @@ auto Parser::ParseFuncDef()
   }
 
   auto block = ParseBlock();
-  if (!block) {
-    auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
-                         "Failed to parse a block of a function definition");
+  if (!block && block.error() == COMMITTED_NO_MORE_ERROR) {
+    /*auto result = expect(TokenType::TokINVALID, true, TokRightCurly,*/
+    /*                     "Failed to parse a block of a function
+     * definition");*/
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
+
+  if (!block && block.error() == COMMITTED_EMIT_MORE_ERROR) {
+    sammine_util::abort(
+        "Parsing a block should handle its own closing curly block");
+  }
+
+  sammine_util::abort_on(!block);
 
   return std::make_unique<AST::FuncDefAST>(std::move(prototype.value()),
                                            std::move(block.value()));
@@ -190,7 +204,15 @@ auto Parser::ParseExpr()
     return LHS;
   }
 
-  return ParseBinaryExpr(0, std::move(LHS.value()));
+  auto next = ParseBinaryExpr(0, std::move(LHS.value()));
+  if (!next && next.error() == COMMITTED_NO_MORE_ERROR) {
+    auto result = expect(TokSemiColon, true, TokSemiColon, "");
+    return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
+  }
+  if (!next && next.error() == COMMITTED_EMIT_MORE_ERROR)
+    sammine_util::abort("ParseExpr should not handle error");
+
+  return next;
 }
 
 auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
@@ -208,13 +230,21 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     // We're committed here, so whether RHS is commited error or non-committed
     // error, we really should always return non-committed.
     //
-    // If it is commited, we don't release any more report, just return RHS like
-    // normal
-    // If it is commited, we add a report. Depend on programmer.
-    if (!RHS) {
-      return RHS;
+    // If it is commited, we don't release any more report, just return RHS
+    // like normal If it is commited, we add a report. Depend on programmer.
+    if (!RHS && (RHS.error() == COMMITTED_EMIT_MORE_ERROR ||
+                 RHS.error() == NONCOMMITTED)) {
+      reports.add_error(
+          *binOpToken,
+          fmt::format("Failed to parse the right-hand side of token `{}` in "
+                      "binary expression",
+                      binOpToken->lexeme));
+      return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
     }
-
+    if (!RHS && RHS.error() == COMMITTED_NO_MORE_ERROR) {
+      return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
+    }
+    sammine_util::abort_on(!RHS);
     int NextPrec = GetTokPrecedence(tokStream->peek()->type);
     if (TokPrec < NextPrec) {
       RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS.value()));
@@ -351,11 +381,10 @@ auto Parser::ParseBlock()
   auto blockAST = std::make_unique<AST::BlockAST>();
   while (true) {
     auto a = ParseExpr();
-    if (!a && a.error() == ParserError::NONCOMMITTED) {
-    }
+
     if (!a && a.error() == ParserError::COMMITTED_NO_MORE_ERROR)
       return tl::make_unexpected(a.error());
-    else if (a) {
+    if (a) {
       blockAST->Statements.push_back(std::move(a.value()));
       auto semi = expect(TokenType::TokSemiColon);
       if (!semi)
@@ -375,7 +404,7 @@ auto Parser::ParseBlock()
     blockAST->Statements.push_back(std::move(b.value()));
   }
 
-  auto rightCurly = expect(TokRightCurly);
+  auto rightCurly = expect(TokRightCurly, true, TokEOF, "");
 
   if (!rightCurly)
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
@@ -383,8 +412,8 @@ auto Parser::ParseBlock()
   return blockAST;
 }
 
-// Parsing of parameters in a function call, we use leftParen and rightParen as
-// appropriate stopping point
+// Parsing of parameters in a function call, we use leftParen and rightParen
+// as appropriate stopping point
 auto Parser::ParseParams()
     -> tl::expected<std::vector<std::unique_ptr<AST::TypedVarAST>>,
                     ParserError> {
@@ -414,8 +443,8 @@ auto Parser::ParseParams()
   }
   auto rightParen = expect(TokRightParen);
   if (rightParen == nullptr) {
-    log_error(
-        "Failed to find right parenthesis after processing [typed variables]");
+    log_error("Failed to find right parenthesis after processing [typed "
+              "variables]");
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
@@ -459,10 +488,10 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
     return tokStream->consume();
   } else {
     // TODO: Add error reporting after this point.
-    if (exhausts) {
+    if (!message.empty())
       log_error(message);
+    if (exhausts)
       tokStream->exhaust_until(until);
-    }
 
     return nullptr;
   }

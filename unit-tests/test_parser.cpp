@@ -20,7 +20,7 @@ TEST_CASE("Empty program parsing", "[Parser]") {
 
   auto programAST = pg.Parse();
 
-  REQUIRE(programAST.value()->DefinitionVec.empty() == true);
+  REQUIRE(pg.has_no_errors());
 }
 
 TEST_CASE("Variable definition parsing", "[Parser]") {
@@ -32,7 +32,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.ParseVarDef();
 
-    REQUIRE(!pg.hasErrors());
+    REQUIRE(pg.has_no_errors());
     auto nameVisitor = sammine_lang::AST::AstNameVisitor();
     programAST.value()->accept_vis(&nameVisitor);
 
@@ -54,7 +54,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.ParseVarDef();
 
-    REQUIRE(!pg.hasErrors());
+    REQUIRE(pg.has_no_errors());
 
     auto nameVisitor = sammine_lang::AST::AstNameVisitor();
     programAST.value()->accept_vis(&nameVisitor);
@@ -77,7 +77,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     auto programAST = pg.ParseVarDef();
 
-    REQUIRE(!pg.hasErrors());
+    REQUIRE(pg.has_no_errors());
 
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
@@ -115,7 +115,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(!pg.hasErrors());
+    REQUIRE(pg.has_no_errors());
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
     auto func_def = static_cast<AST::FuncDefAST *>(
@@ -135,7 +135,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
 
     auto programAST = pg.Parse();
-    REQUIRE(!pg.hasErrors());
+    REQUIRE(pg.has_no_errors());
 
     REQUIRE(programAST.value()->DefinitionVec.size() == 1);
 
@@ -158,7 +158,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
     auto pg = Parser(lex.getTokenStream());
     auto programAST = pg.Parse();
 
-    REQUIRE(pg.hasErrors() == false);
+    REQUIRE(pg.has_no_errors());
   }
 }
 
@@ -167,7 +167,7 @@ TEST_CASE("FAILED TO PARSE", "[Parser]") {
   REQUIRE(lex.getTokenStream()->hasErrors() == false);
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
-  REQUIRE(pg.hasErrors() == true);
+  REQUIRE(pg.has_errors());
 }
 
 TEST_CASE("VALID GRAMMAR", "[Parser]") {
@@ -176,5 +176,5 @@ TEST_CASE("VALID GRAMMAR", "[Parser]") {
   REQUIRE(lex.getTokenStream()->hasErrors() == false);
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
-  REQUIRE(!pg.hasErrors());
+  REQUIRE(pg.has_no_errors());
 }

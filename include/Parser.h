@@ -95,9 +95,10 @@ public:
   [[nodiscard]]
   auto Parse() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
   [[nodiscard]]
-  auto hasErrors() -> bool {
+  auto has_errors() -> bool {
     return reports.has_error();
   }
+  auto has_no_errors() -> bool { return !reports.has_error(); }
   void log_error(const std::string &message);
   void log_error(sammine_util::Location location, const std::string &message);
 };
