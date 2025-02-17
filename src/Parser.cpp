@@ -166,11 +166,7 @@ auto Parser::ParseTypedVar()
   if (!type)
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 
-  auto typedVar = std::make_unique<AST::TypedVarAST>();
-
-  typedVar->name = name->lexeme;
-  typedVar->type = type->lexeme;
-  return typedVar;
+  return std::make_unique<AST::TypedVarAST>(name, type);
 }
 auto Parser::ParsePrimaryExpr()
     -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
@@ -233,7 +229,7 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     // like normal If it is commited, we add a report. Depend on programmer.
     if (!RHS && (RHS.error() == COMMITTED_EMIT_MORE_ERROR ||
                  RHS.error() == NONCOMMITTED)) {
-      reports.add_error(
+      add_error(
           *binOpToken,
           fmt::format("Failed to parse the right-hand side of token `{}` in "
                       "binary expression",
@@ -267,10 +263,9 @@ auto Parser::ParseCallExpr()
 
   auto args = ParseArguments();
   if (args)
-    return std::make_unique<AST::CallExprAST>(id->lexeme,
-                                              std::move(args.value()));
+    return std::make_unique<AST::CallExprAST>(id, std::move(args.value()));
   else {
-    return std::make_unique<AST::VariableExprAST>(id->lexeme);
+    return std::make_unique<AST::VariableExprAST>(id);
   }
 
   return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
@@ -313,36 +308,29 @@ auto Parser::ParseElseExpr()
 }
 auto Parser::ParseNumberExpr()
     -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  auto numberExpr = std::make_unique<AST::NumberExprAST>();
 
-  auto numberToken = expect(TokenType::TokNum);
-
-  if (numberToken == nullptr) {
+  if (auto numberToken = expect(TokenType::TokNum))
+    return std::make_unique<AST::NumberExprAST>(numberToken);
+  else
     return tl::make_unexpected(ParserError::NONCOMMITTED);
-  } else {
-    numberExpr->number = numberToken->lexeme;
-    return numberExpr;
-  }
 }
 
 auto Parser::ParseBoolExpr()
     -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
 
   if (auto true_tok = expect(TokenType::TokTrue)) {
-    return std::make_unique<AST::BoolExprAST>(true);
+    return std::make_unique<AST::BoolExprAST>(true, true_tok->location);
   }
 
   if (auto false_tok = expect(TokenType::TokFalse)) {
-    return std::make_unique<AST::BoolExprAST>(false);
+    return std::make_unique<AST::BoolExprAST>(false, false_tok->location);
   }
 
   return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
 auto Parser::ParseVariableExpr()
     -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  auto name = expect(TokenType::TokID);
-
-  if (name)
+  if (auto name = expect(TokenType::TokID))
     return std::make_unique<AST::VariableExprAST>(name);
   return tl::make_unexpected(ParserError::NONCOMMITTED);
 }
@@ -435,7 +423,8 @@ auto Parser::ParseParams()
     // Report error if we find comma but cannot find typeVar
     typeVar = ParseTypedVar();
     if (!typeVar) {
-      log_error("Failed to find typed variable after comma");
+      add_error(tokStream->currentLocation(),
+                "Failed to find typed variable after comma");
       return tl::make_unexpected(typeVar.error());
     } else {
       vec.push_back(std::move(typeVar.value()));
@@ -443,7 +432,8 @@ auto Parser::ParseParams()
   }
   auto rightParen = expect(TokRightParen);
   if (rightParen == nullptr) {
-    log_error("Failed to find right parenthesis after processing [typed "
+    add_error(tokStream->currentLocation(),
+              "Failed to find right parenthesis after processing [typed "
               "variables]");
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
@@ -489,7 +479,7 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
   } else {
     // TODO: Add error reporting after this point.
     if (!message.empty())
-      log_error(message);
+      add_error(tokStream->currentLocation(), message);
     if (exhausts)
       tokStream->exhaust_until(until);
 
@@ -497,11 +487,4 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
   }
 }
 
-auto Parser::log_error(const std::string &message) -> void {
-  reports.add_error(tokStream->currentLocation(), message);
-}
-void Parser::log_error(sammine_util::Location location,
-                       const std::string &message) {
-  reports.add_error(location, message);
-}
 } // namespace sammine_lang

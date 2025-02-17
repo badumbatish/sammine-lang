@@ -52,6 +52,10 @@ public:
     return result;
   }
 
+  void operator|=(const Location &other) {
+    source_start = std::min(source_start, other.source_start);
+    source_end = std::max(source_end, other.source_end);
+  }
   operator std::pair<size_t, size_t>() const {
     return std::make_pair(source_start, source_end);
   }
@@ -72,7 +76,7 @@ public:
     return source_start == other.source_start && source_end == other.source_end;
   }
 };
-class Reports {
+class Reportee {
 public:
   enum ReportKind {
     error,
@@ -104,17 +108,31 @@ public:
     _has_warn = true;
   }
 
-  bool has_error() const { return this->_has_error; }
-  bool has_warn() const { return this->_has_warn; }
-  bool has_message() const { return !reports.empty(); }
+  [[nodiscard]]
+  bool has_errors() const {
+    return this->_has_error;
+  }
+  [[nodiscard]]
+  bool has_no_errors() const {
+    return !this->_has_error;
+  }
+  [[nodiscard]]
+  bool has_warn() const {
+    return this->_has_warn;
+  }
+  [[nodiscard]]
+  bool has_message() const {
+    return !reports.empty();
+  }
 
 private:
   std::vector<Report> reports;
   bool _has_error = false;
   bool _has_warn = false;
 };
+
 class Reporter {
-  using ReportKind = Reports::ReportKind;
+  using ReportKind = Reportee::ReportKind;
   using IndexPair = std::pair<size_t, size_t>;
   static std::vector<std::pair<std::size_t, std::string_view>>
   get_diagnostic_data(std::string_view str) {
@@ -178,7 +196,7 @@ class Reporter {
   }
 
 public:
-  void report_and_abort(const Reports &reports) const;
+  void report_and_abort(const Reportee &reports) const;
   Reporter() {}
   Reporter(std::string input, size_t depth)
       : input(input), diagnostic_data(get_diagnostic_data(this->input)),

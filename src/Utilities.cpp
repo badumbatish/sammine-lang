@@ -18,7 +18,7 @@ auto get_string_from_file(const std::string &file_name) -> std::string {
 
   return input;
 }
-auto abort(const std::string &message) -> void {
+inline auto abort(const std::string &message) -> void {
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
              "[Internal Compiler Error] : {}\n", message);
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
@@ -29,7 +29,7 @@ auto abort(const std::string &message) -> void {
   std::abort();
 }
 
-auto abort_on(bool abort_if_true, const std::string &message) -> void {
+inline auto abort_on(bool abort_if_true, const std::string &message) -> void {
   if (abort_if_true) {
     abort(message);
     std::abort();
@@ -89,7 +89,7 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
   }
 }
 
-void Reporter::report_and_abort(const Reports &reports) const {
+void Reporter::report_and_abort(const Reportee &reports) const {
 
   bool begin = true;
   for (auto &[loc, report_msg, report_kind] : reports) {
@@ -106,15 +106,15 @@ void Reporter::report_and_abort(const Reports &reports) const {
            "\nDid something seems wrong? Report it via "
            "[https://github.com/badumbatish/sammine-lang/issues]\n");
 
-  if (reports.has_error())
+  if (reports.has_errors())
     std::exit(1);
 }
 fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) const {
   switch (report_kind) {
-  case Reports::error:
+  case Reportee::error:
     return fmt::terminal_color::bright_red;
     break;
-  case Reports::warn:
+  case Reportee::warn:
     return fmt::terminal_color::bright_yellow;
     break;
   }

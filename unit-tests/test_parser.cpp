@@ -164,7 +164,7 @@ TEST_CASE("Function declaration parsing", "[Parser]") {
 
 TEST_CASE("FAILED TO PARSE", "[Parser]") {
   auto lex = Lexer("a a a a a");
-  REQUIRE(lex.getTokenStream()->hasErrors() == false);
+  REQUIRE(lex.has_no_errors());
   auto pg = Parser(lex.getTokenStream());
   auto programAST = pg.Parse();
   REQUIRE(pg.has_errors());

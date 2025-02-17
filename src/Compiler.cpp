@@ -49,7 +49,7 @@ Compiler::Compiler(
 void Compiler::lex() {
   log_diagnostics("Start lexing stage...");
   Lexer lxr = Lexer(input);
-  reporter.report_and_abort(lxr.get_reports());
+  reporter.report_and_abort(lxr);
   tokStream = lxr.getTokenStream();
 }
 
@@ -61,7 +61,7 @@ void Compiler::parse() {
   if (result.has_value())
     programAST = std::move(result.value());
 
-  reporter.report_and_abort(psr.reports);
+  reporter.report_and_abort(psr);
 }
 
 void Compiler::scopecheck() {

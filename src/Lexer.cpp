@@ -131,7 +131,7 @@ size_t Lexer::handleSpaces(size_t i, const std::string &input) {
 
 size_t Lexer::handleInvalid(size_t i, const std::string &input) {
   tokStream->push_back(Token(TokINVALID, input.substr(i, 1), location));
-  reports.add_error(location, "Encountered invalid token");
+  add_error(location, "Encountered invalid token");
   i = advance(i);
   return i;
 }

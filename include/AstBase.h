@@ -84,7 +84,38 @@ public:
 class AstBase : public Visitable {
 public:
   sammine_util::Location location;
+  bool first_location = true;
   llvm::Value *val;
+  AstBase *join_location(AstBase *ast) {
+    if (!ast)
+      sammine_util::abort(fmt::format("ast cannot be nullptr"));
+    else {
+      if (first_location) {
+        this->location = ast->location;
+        first_location = false;
+      } else {
+        this->location |= ast->location;
+      }
+    }
+
+    return this;
+  }
+
+  AstBase *join_location(std::shared_ptr<Token> tok) {
+
+    if (!tok)
+      sammine_util::abort(fmt::format("tok cannot be nullptr"));
+    else {
+      if (first_location) {
+        this->location = tok->location;
+        first_location = false;
+      } else {
+        this->location |= tok->location;
+      }
+    }
+
+    return this;
+  }
 };
 } // namespace AST
 } // namespace sammine_lang

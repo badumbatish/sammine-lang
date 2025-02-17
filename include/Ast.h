@@ -2,6 +2,7 @@
 #include "AstBase.h"
 #include "AstDecl.h"
 #include "Lexer.h"
+#include "Utilities.h"
 #include <cstddef>
 #include <memory>
 #include <string>
@@ -76,8 +77,9 @@ public:
   std::unique_ptr<PrototypeAST> Prototype;
 
   ExternAST(std::unique_ptr<PrototypeAST> Prototype)
-      : Prototype(std::move(Prototype)) {}
-
+      : Prototype(std::move(Prototype)) {
+    this->join_location(this->Prototype.get());
+  }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
 
   virtual std::string getTreeName() override { return "ExternAST"; }
@@ -88,27 +90,8 @@ public:
     visitor->postorder_walk(this);
   }
 };
-class FuncDefAST : public DefinitionAST {
-public:
-  std::unique_ptr<PrototypeAST> Prototype;
-  std::unique_ptr<BlockAST> Block;
-
-  FuncDefAST(std::unique_ptr<PrototypeAST> Prototype,
-             std::unique_ptr<BlockAST> Block)
-      : Prototype(std::move(Prototype)), Block(std::move(Block)) {}
-
-  virtual std::string getTreeName() override { return "FuncDefAST"; }
-  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
-  virtual void walk_with_preorder(ASTVisitor *visitor) override {
-    visitor->preorder_walk(this);
-  }
-  virtual void walk_with_postorder(ASTVisitor *visitor) override {
-    visitor->postorder_walk(this);
-  }
-};
 
 //! \brief An AST to simulate a { } code block
-
 //!
 //!
 class BlockAST : public AstBase {
@@ -126,9 +109,54 @@ public:
   }
 };
 
+class FuncDefAST : public DefinitionAST {
+public:
+  std::unique_ptr<PrototypeAST> Prototype;
+  std::unique_ptr<BlockAST> Block;
+
+  FuncDefAST(std::unique_ptr<PrototypeAST> Prototype,
+             std::unique_ptr<BlockAST> Block)
+      : Prototype(std::move(Prototype)), Block(std::move(Block)) {
+    this->join_location(this->Prototype.get())
+        ->join_location(this->Block.get());
+  }
+
+  virtual std::string getTreeName() override { return "FuncDefAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+};
+
 class ExprAST : public AstBase {
 public:
   inline static int personal_id_counter = 0;
+};
+
+class TypedVarAST : public AstBase {
+public:
+  std::string name;
+  std::string type;
+
+  explicit TypedVarAST(std::shared_ptr<Token> name,
+                       std::shared_ptr<Token> type) {
+    assert(name);
+    assert(type);
+    this->join_location(name)->join_location(type);
+    this->name = name->lexeme;
+    this->type = type->lexeme;
+  }
+  virtual std::string getTreeName() override { return "TypedVarAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
 };
 
 //! \brief A variable definition: "var x = expression;"
@@ -141,7 +169,9 @@ public:
                      std::unique_ptr<ExprAST> Expression)
       : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)) {
 
-        };
+    this->join_location(this->TypedVar.get())
+        ->join_location(this->Expression.get());
+  };
 
   virtual std::string getTreeName() override { return "VarDefAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -156,6 +186,11 @@ class NumberExprAST : public ExprAST {
 public:
   std::string number;
 
+  explicit NumberExprAST(std::shared_ptr<Token> t) {
+    assert(t);
+    join_location(t);
+    number = t->lexeme;
+  }
   virtual std::string getTreeName() override { return "NumberExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
@@ -169,7 +204,9 @@ public:
 class BoolExprAST : public ExprAST {
 public:
   bool b;
-  BoolExprAST(bool b) : b(b) {}
+  BoolExprAST(bool b, sammine_util::Location loc) : b(b) {
+    this->location = loc;
+  }
   virtual std::string getTreeName() override { return "BoolExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
@@ -185,7 +222,11 @@ public:
   std::unique_ptr<ExprAST> LHS, RHS;
   BinaryExprAST(std::shared_ptr<Token> op, std::unique_ptr<ExprAST> LHS,
                 std::unique_ptr<ExprAST> RHS)
-      : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+      : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {
+    this->join_location(this->Op)
+        ->join_location(this->LHS.get())
+        ->join_location(this->RHS.get());
+  }
 
   virtual std::string getTreeName() override { return "BinaryExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -202,9 +243,16 @@ class CallExprAST : public ExprAST {
 public:
   std::string functionName;
   std::vector<std::unique_ptr<AST::ExprAST>> arguments;
-  CallExprAST(std::string functionName,
-              std::vector<std::unique_ptr<AST::ExprAST>> arguments)
-      : functionName(functionName), arguments(std::move(arguments)) {}
+  CallExprAST(std::shared_ptr<Token> functionName,
+              std::vector<std::unique_ptr<AST::ExprAST>> arguments) {
+    assert(functionName);
+    join_location(functionName);
+    this->functionName = functionName->lexeme;
+
+    for (auto &arg : arguments)
+      this->join_location(arg.get());
+    this->arguments = std::move(arguments);
+  }
 
   virtual std::string getTreeName() override { return "CallExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -224,7 +272,11 @@ public:
                      std::unique_ptr<BlockAST> thenBlockAST,
                      std::unique_ptr<BlockAST> elseBlockAST)
       : bool_expr(std::move(bool_expr)), thenBlockAST(std::move(thenBlockAST)),
-        elseBlockAST(std::move(elseBlockAST)) {}
+        elseBlockAST(std::move(elseBlockAST)) {
+    this->join_location(this->bool_expr.get())
+        ->join_location(this->thenBlockAST.get())
+        ->join_location(this->elseBlockAST.get());
+  }
 
   virtual std::string getTreeName() override { return "IfExpr"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -238,24 +290,13 @@ public:
 class VariableExprAST : public ExprAST {
 public:
   std::string variableName;
-  VariableExprAST(std::shared_ptr<Token> var) : variableName(var->lexeme) {};
-  VariableExprAST(std::string variableName) : variableName(variableName) {};
+  VariableExprAST(std::shared_ptr<Token> var) {
+    assert(var);
+    join_location(var);
+    variableName = var->lexeme;
+  };
 
   virtual std::string getTreeName() override { return "VariableExprAST"; }
-  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
-  virtual void walk_with_preorder(ASTVisitor *visitor) override {
-    visitor->preorder_walk(this);
-  }
-  virtual void walk_with_postorder(ASTVisitor *visitor) override {
-    visitor->postorder_walk(this);
-  }
-};
-
-class TypedVarAST : public AstBase {
-public:
-  std::string name;
-  std::string type;
-  virtual std::string getTreeName() override { return "TypedVarAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
     visitor->preorder_walk(this);

@@ -240,12 +240,11 @@ public:
 
 //! Not sure what to put in here
 //! Not sure what to put in here
-class Lexer {
+class Lexer : public sammine_util::Reportee {
 private:
   sammine_util::Location location;
   std::shared_ptr<TokenStream> tokStream;
 
-  sammine_util::Reports reports;
   [[nodiscard]]
   size_t handleNumber(size_t i, const std::string &input);
   size_t handleSpaces(size_t i, const std::string &input);
@@ -286,8 +285,5 @@ public:
   size_t advance(size_t i);
 
   size_t devance(size_t i);
-
-  sammine_util::Reports get_reports() const { return reports; };
-  bool hasErrors() { return !reports.has_message(); }
 };
 } // namespace sammine_lang

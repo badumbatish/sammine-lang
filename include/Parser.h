@@ -9,7 +9,7 @@ enum ParserError {
   COMMITTED_EMIT_MORE_ERROR,
   NONCOMMITTED,
 };
-class Parser {
+class Parser : public sammine_util::Reportee {
 public:
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]]
@@ -86,7 +86,6 @@ public:
               TokenType until = TokenType::TokEOF,
               const std::string &message = "") -> std::shared_ptr<Token>;
 
-  sammine_util::Reports reports;
   [[nodiscard]]
   Parser() {}
   [[nodiscard]]
@@ -94,12 +93,5 @@ public:
       : tokStream(tokStream) {}
   [[nodiscard]]
   auto Parse() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
-  [[nodiscard]]
-  auto has_errors() -> bool {
-    return reports.has_error();
-  }
-  auto has_no_errors() -> bool { return !reports.has_error(); }
-  void log_error(const std::string &message);
-  void log_error(sammine_util::Location location, const std::string &message);
 };
 } // namespace sammine_lang
