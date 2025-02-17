@@ -14,6 +14,7 @@
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
 #include <random>
+#include <utility>
 namespace sammine_lang::AST {
 using llvm::BasicBlock;
 
@@ -53,8 +54,10 @@ void CgVisitor::visit(PrototypeAST *ast) {
 }
 void CgVisitor::visit(CallExprAST *ast) {
   llvm::Function *callee = resPtr->Module->getFunction(ast->functionName);
-  if (!callee)
+  if (!callee) {
     sammine_util::abort("Unknown function called");
+    return;
+  }
 
   if (ast->arguments.size() != callee->arg_size())
     sammine_util::abort("Incorrect number of arguments passed");
@@ -71,8 +74,10 @@ void CgVisitor::visit(CallExprAST *ast) {
 void CgVisitor::visit(BinaryExprAST *ast) {
   if (ast->Op->type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
-    if (!LHSE)
+    if (!LHSE) {
       sammine_util::abort("Left hand side of assignment must be a variable");
+      return;
+    }
 
     ast->RHS->accept_vis(this);
     auto R = ast->RHS->val;
@@ -179,8 +184,10 @@ void CgVisitor::visit(NumberExprAST *ast) {
 }
 void CgVisitor::visit(VariableExprAST *ast) {
   auto *Alloca = resPtr->NamedValues[ast->variableName];
-  if (!Alloca)
+  if (!Alloca) {
     sammine_util::abort("Unknown variable name");
+    return;
+  }
 
   ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(), Alloca,
                                          ast->variableName);

@@ -138,7 +138,6 @@ size_t Lexer::handleInvalid(size_t i, const std::string &input) {
 
 size_t Lexer::handleOperators(size_t i, const std::string &input) {
   size_t i_0 = 0;
-  i_0 = i;
 
   static std::vector<LexFunction> MatchFunctions = {
       &Lexer::handleOperatorsADD,      &Lexer::handleOperatorsSUB,
@@ -447,7 +446,6 @@ size_t Lexer::handleOperatorsNot(size_t i, const std::string &input) {
 
 size_t Lexer::handleUtility(size_t i, const std::string &input) {
   size_t i_0 = 0;
-  i_0 = i;
 
   static std::vector<LexFunction> MatchFunctions = {
       &Lexer::handleUtilityPAREN,   &Lexer::handleUtilityCURLY,

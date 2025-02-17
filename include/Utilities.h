@@ -15,7 +15,10 @@
 namespace sammine_util {
 auto get_string_from_file(std::string file_name) -> std::string;
 inline size_t unique_ast_id = 0;
+
+[[noreturn]]
 auto abort(const std::string &message = "<NO MESSAGE>") -> void;
+[[noreturn]]
 auto abort_on(bool abort_if_true, const std::string &message = "<NO MESSAGE>")
     -> void;
 //! A class representing a location for sammine-lang, this is helpful in

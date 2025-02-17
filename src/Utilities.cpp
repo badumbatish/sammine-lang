@@ -18,7 +18,6 @@ auto get_string_from_file(std::string file_name) -> std::string {
 
   return input;
 }
-
 auto abort(const std::string &message) -> void {
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
              "[Internal Compiler Error] : {}\n", message);
@@ -31,9 +30,9 @@ auto abort(const std::string &message) -> void {
 }
 
 auto abort_on(bool abort_if_true, const std::string &message) -> void {
-  if (abort_if_true) {
+  if (abort_if_true)
     abort(message);
-  }
+  std::abort();
 }
 Reporter::IndexPair Reporter::get_lines_indices(IndexPair index_pair) const {
   auto [start, end] = index_pair;
