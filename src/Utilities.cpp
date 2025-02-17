@@ -8,7 +8,7 @@
 #include <cpptrace/from_current.hpp>
 #include <cstdlib>
 namespace sammine_util {
-auto get_string_from_file(std::string file_name) -> std::string {
+auto get_string_from_file(const std::string &file_name) -> std::string {
   auto file = FileRAII(file_name);
 
   std::string error_msg =

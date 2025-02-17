@@ -13,7 +13,7 @@
 #include <vector>
 
 namespace sammine_util {
-auto get_string_from_file(std::string file_name) -> std::string;
+auto get_string_from_file(const std::string &file_name) -> std::string;
 inline size_t unique_ast_id = 0;
 
 [[noreturn]]
