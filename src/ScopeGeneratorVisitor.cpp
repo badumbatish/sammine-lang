@@ -9,6 +9,19 @@ void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(VarDefAST *ast) {
 
   std::cerr << "Scope checking VarDefAST\n";
+
+  std::cerr << "Scope checking TypedVarAST\n";
+  auto &scope = this->scope_stack.top();
+
+  auto var_name = ast->TypedVar->name;
+  std::cerr << "Var name is " << var_name << "\n";
+  if (scope.queryName(var_name) == LexicalScope::nameNotFound) {
+    std::cerr << "Registed the name " << var_name << "\n";
+    scope.registerName(var_name);
+  } else if (scope.queryName(var_name) == LexicalScope::nameFound) {
+    sammine_util::abort(fmt::format(
+        "The name {} for definition has been used before", var_name));
+  }
 }
 void ScopeGeneratorVisitor::preorder_walk(ExternAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(FuncDefAST *ast) {
@@ -33,20 +46,7 @@ void ScopeGeneratorVisitor::preorder_walk(BoolExprAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(VariableExprAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(BlockAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(IfExprAST *ast) {}
-void ScopeGeneratorVisitor::preorder_walk(TypedVarAST *ast) {
-  std::cerr << "Scope checking TypedVarAST\n";
-  auto &scope = this->scope_stack.top();
-
-  auto var_name = ast->name;
-  std::cerr << "Var name is " << var_name << "\n";
-  if (scope.queryName(var_name) == LexicalScope::nameNotFound) {
-    std::cerr << "Registed the name " << var_name << "\n";
-    scope.registerName(var_name);
-  } else if (scope.queryName(var_name) == LexicalScope::nameFound) {
-    sammine_util::abort(fmt::format(
-        "The name {} for definition has been used before", var_name));
-  }
-}
+void ScopeGeneratorVisitor::preorder_walk(TypedVarAST *ast) {}
 
 // post order
 void ScopeGeneratorVisitor::postorder_walk(ProgramAST *ast) {}

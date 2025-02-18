@@ -83,21 +83,25 @@ public:
 };
 
 class AstBase : public Visitable {
-public:
-  sammine_util::Location location;
+  void change_location(sammine_util::Location loc) {
+    if (first_location) {
+      this->location = loc;
+      first_location = false;
+    } else
+      this->location |= loc;
+  }
+
   bool first_location = true;
+
+  sammine_util::Location location;
+
+public:
   llvm::Value *val;
   AstBase *join_location(AstBase *ast) {
     if (!ast)
       sammine_util::abort(fmt::format("ast cannot be nullptr"));
-    else {
-      if (first_location) {
-        this->location = ast->location;
-        first_location = false;
-      } else {
-        this->location |= ast->location;
-      }
-    }
+    else
+      change_location(ast->location);
 
     return this;
   }
@@ -106,14 +110,8 @@ public:
 
     if (!tok)
       sammine_util::abort(fmt::format("tok cannot be nullptr"));
-    else {
-      if (first_location) {
-        this->location = tok->location;
-        first_location = false;
-      } else {
-        this->location |= tok->location;
-      }
-    }
+    else
+      change_location(tok->location);
 
     return this;
   }
