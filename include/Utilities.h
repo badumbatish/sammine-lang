@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <ranges>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -35,6 +36,7 @@ public:
 
   Location(size_t source_start, size_t source_end)
       : source_start(source_start), source_end(source_end) {}
+
   // Advance column position
   inline void advance() { source_end++; }
 

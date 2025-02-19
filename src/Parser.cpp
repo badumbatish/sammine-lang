@@ -346,15 +346,14 @@ auto Parser::ParsePrototype()
     return tl::make_unexpected(params.error());
   auto arrow = expect(TokArrow);
   if (!arrow)
-    return std::make_unique<AST::PrototypeAST>(id->lexeme, "",
-                                               std::move(params.value()));
+    return std::make_unique<AST::PrototypeAST>(id, std::move(params.value()));
   ;
 
   auto returnType = expect(TokID);
 
-  return std::make_unique<AST::PrototypeAST>(
-      id->lexeme, returnType ? returnType->lexeme : "",
-      std::move(params.value()));
+  // TODO: make sure we handle a return type here
+  return std::make_unique<AST::PrototypeAST>(id, returnType,
+                                             std::move(params.value()));
 }
 
 auto Parser::ParseBlock()

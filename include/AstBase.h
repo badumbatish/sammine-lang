@@ -93,6 +93,7 @@ class AstBase : public Visitable {
 
   bool first_location = true;
 
+protected:
   sammine_util::Location location;
 
 public:
@@ -115,6 +116,13 @@ public:
 
     return this;
   }
+  AstBase *join_location(sammine_util::Location location) {
+
+    change_location(location);
+
+    return this;
+  }
+  sammine_util::Location get_location() { return this->location; }
 };
 } // namespace AST
 } // namespace sammine_lang

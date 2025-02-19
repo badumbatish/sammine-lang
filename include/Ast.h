@@ -3,6 +3,7 @@
 #include "AstDecl.h"
 #include "Lexer.h"
 #include "Utilities.h"
+#include <cassert>
 #include <cstddef>
 #include <memory>
 #include <string>
@@ -44,6 +45,29 @@ public:
 
 class DefinitionAST : public AstBase {};
 
+class TypedVarAST : public AstBase {
+public:
+  std::string name;
+  std::string type;
+
+  explicit TypedVarAST(std::shared_ptr<Token> name,
+                       std::shared_ptr<Token> type) {
+    assert(name);
+    assert(type);
+    this->join_location(name)->join_location(type);
+    this->name = name->lexeme;
+    this->type = type->lexeme;
+  }
+  virtual std::string getTreeName() override { return "TypedVarAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+};
+
 //! \brief A prototype to present "func func_name(...) -> type;"
 
 //!
@@ -55,11 +79,37 @@ public:
   std::string returnType;
   std::vector<std::unique_ptr<AST::TypedVarAST>> parameterVectors;
 
-  PrototypeAST(std::string functionName, std::string returnType,
-               std::vector<std::unique_ptr<AST::TypedVarAST>> parameterVectors)
-      : functionName(functionName), returnType(std::move(returnType)),
-        parameterVectors(std::move(parameterVectors)) {}
+  explicit PrototypeAST(
+      std::shared_ptr<Token> functionName, std::shared_ptr<Token> returnType,
+      std::vector<std::unique_ptr<AST::TypedVarAST>> parameterVectors) {
+    assert(functionName);
+    assert(returnType);
+    this->functionName = functionName->lexeme;
+    this->returnType = returnType->lexeme;
+    this->join_location(functionName)->join_location(returnType);
 
+    this->parameterVectors = std::move(parameterVectors);
+
+    for (size_t i = 0; i < this->parameterVectors.size(); i++)
+      assert(this->parameterVectors[i]);
+    for (size_t i = 0; i < this->parameterVectors.size(); i++)
+      this->join_location(this->parameterVectors[i]->get_location());
+  }
+
+  explicit PrototypeAST(
+      std::shared_ptr<Token> functionName,
+      std::vector<std::unique_ptr<AST::TypedVarAST>> parameterVectors) {
+    assert(functionName);
+    this->functionName = functionName->lexeme;
+    this->join_location(functionName);
+
+    this->parameterVectors = std::move(parameterVectors);
+
+    for (size_t i = 0; i < this->parameterVectors.size(); i++)
+      assert(this->parameterVectors[i]);
+    for (size_t i = 0; i < this->parameterVectors.size(); i++)
+      this->join_location(this->parameterVectors[i]->get_location());
+  }
   virtual std::string getTreeName() override { return "PrototypeAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
@@ -134,29 +184,6 @@ public:
 class ExprAST : public AstBase {
 public:
   inline static int personal_id_counter = 0;
-};
-
-class TypedVarAST : public AstBase {
-public:
-  std::string name;
-  std::string type;
-
-  explicit TypedVarAST(std::shared_ptr<Token> name,
-                       std::shared_ptr<Token> type) {
-    assert(name);
-    assert(type);
-    this->join_location(name)->join_location(type);
-    this->name = name->lexeme;
-    this->type = type->lexeme;
-  }
-  virtual std::string getTreeName() override { return "TypedVarAST"; }
-  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
-  virtual void walk_with_preorder(ASTVisitor *visitor) override {
-    visitor->preorder_walk(this);
-  }
-  virtual void walk_with_postorder(ASTVisitor *visitor) override {
-    visitor->postorder_walk(this);
-  }
 };
 
 //! \brief A variable definition: "var x = expression;"
