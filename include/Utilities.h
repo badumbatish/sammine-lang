@@ -10,6 +10,7 @@
 #include <iostream>
 #include <ranges>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -184,6 +185,11 @@ private:
     fmt::print(stderr, fg(ts), format_str, std::forward<T>(args)...);
   }
   template <typename... T>
+  void report(fmt::color ts, fmt::format_string<T...> format_str,
+              T &&...args) const {
+    fmt::print(stderr, fg(ts), format_str, std::forward<T>(args)...);
+  }
+  template <typename... T>
   void report(const ReportKind report_kind, fmt::format_string<T...> format_str,
               T &&...args) const {
     fmt::print(stderr, fg(get_color_from(report_kind)), format_str,
@@ -195,6 +201,9 @@ private:
 
   void report_singular_line(ReportKind report_kind, const std::string &msg,
                             size_t col_start, size_t col_end) const;
+
+  void print_data_singular_line(std::string_view msg, size_t col_start,
+                                size_t col_end) const;
 
 public:
   void report_and_abort(const Reportee &reports) const;

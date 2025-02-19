@@ -1,5 +1,6 @@
 #include "Utilities.h"
 #include "FileRAII.h"
+#include "fmt/base.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include <cassert>
@@ -179,6 +180,19 @@ void Reporter::report_singular_line(ReportKind report_kind,
   report(report_kind, "{}", msg);
   report(report_kind, "\n");
 }
+void Reporter::print_data_singular_line(std::string_view msg, size_t col_start,
+                                        size_t col_end) const {
+
+  assert(msg.size() > col_end);
+  for (size_t j = 0; j < col_start; j++)
+    report(fmt::terminal_color::white, "{}", msg[j]);
+  for (size_t j = col_start; j < col_end; j++)
+    report(fmt::color::floral_white, "{}", msg[j]);
+  for (size_t j = col_end; j < msg.size(); j++)
+    report(fmt::terminal_color::white, "{}", msg[j]);
+
+  report(fmt::terminal_color::white, "\n");
+}
 void Reporter::report(std::pair<size_t, size_t> index_pair,
                       const std::string &format_str,
                       const ReportKind report_kind) const {
@@ -197,11 +211,13 @@ void Reporter::report(std::pair<size_t, size_t> index_pair,
   for (auto i = new_start; i <= new_end; i++) {
     report(LINE_COLOR, "{:>4}|", i + 1);
     std::string_view str = diagnostic_data[i].second;
-    report(fmt::terminal_color::white, "{}\n", str);
 
     if (locator.is_on_singular_line(i)) {
+      print_data_singular_line(str, col_start, col_end);
       indicate_singular_line(report_kind, col_start, col_end);
       report_singular_line(report_kind, format_str, col_start, col_end);
+    } else {
+      report(fmt::terminal_color::white, "{}\n", str);
     }
   }
 }
