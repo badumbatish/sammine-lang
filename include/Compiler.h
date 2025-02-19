@@ -24,7 +24,7 @@ class Compiler {
   std::shared_ptr<LLVMRes> resPtr;
   std::string file_name, input;
   sammine_util::Reporter reporter;
-  size_t report_width = 2;
+  size_t context_radius = 2;
   bool error;
 
   void lex();

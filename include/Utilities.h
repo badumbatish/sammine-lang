@@ -101,28 +101,28 @@ public:
 
   void add_error(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::error});
-    _has_error = true;
+    error_count++;
   }
   void add_warn(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::warn});
-    _has_warn = true;
+    warn_count++;
   }
   void add_diagnostics(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::diag});
-    _has_diag = true;
+    diag_count++;
   }
 
   [[nodiscard]]
   bool has_errors() const {
-    return this->_has_error;
+    return error_count > 0;
   }
   [[nodiscard]]
   bool has_no_errors() const {
-    return !this->_has_error;
+    return error_count == 0;
   }
   [[nodiscard]]
   bool has_warn() const {
-    return this->_has_warn;
+    return warn_count > 0;
   }
   [[nodiscard]]
   bool has_message() const {
@@ -131,62 +131,48 @@ public:
 
   [[nodiscard]]
   bool has_diagnostics() const {
-    return this->_has_diag;
+    return diag_count > 0;
+  }
+
+  [[nodiscard]]
+  size_t get_error_count() const {
+    return error_count;
+  }
+
+  [[nodiscard]]
+  size_t get_warn_count() const {
+    return warn_count;
+  }
+  [[nodiscard]]
+  size_t get_diagnostic_count() const {
+    return diag_count;
   }
 
 private:
   std::vector<Report> reports;
-  bool _has_error = false;
-  bool _has_warn = false;
-  bool _has_diag = false;
+  size_t error_count = 0;
+  size_t warn_count = 0;
+  size_t diag_count = 0;
 };
 
 class Reporter {
+public:
   using ReportKind = Reportee::ReportKind;
   using IndexPair = std::pair<size_t, size_t>;
-  static std::vector<std::pair<std::size_t, std::string_view>>
-  get_diagnostic_data(std::string_view str) {
-    decltype(get_diagnostic_data(str)) result;
-    size_t start = 0;
+  using DiagnosticData = std::vector<std::pair<std::size_t, std::string_view>>;
 
-    while (start < str.size()) {
-      size_t end = str.find('\n', start);
-
-      if (end == std::string_view::npos) {
-        // Add the last substring if no more newlines are found
-        result.push_back({start, str.substr(start)});
-        break;
-      }
-
-      // Add the substring excluding the newline character
-      result.push_back({start, str.substr(start, end - start)});
-      start = end + 1;
-      assert(start != 0);
-    }
-
-    return result;
-  }
+private:
+  static DiagnosticData get_diagnostic_data(std::string_view str);
   inline static fmt::terminal_color LINE_COLOR =
       fmt::terminal_color::bright_magenta;
+
+  inline static fmt::terminal_color MSG_COLOR =
+      fmt::terminal_color::bright_blue;
   std::string file_name;
   std::string input;
   std::vector<std::pair<std::size_t, std::string_view>> diagnostic_data;
-  size_t depth;
+  size_t context_radius;
   fmt::terminal_color get_color_from(ReportKind report_kind) const;
-
-  // INFO: Given the source start and source end, get the line index of them.
-  IndexPair get_lines_indices(IndexPair) const;
-
-  // INFO: Given the line index start and end, get the line index of them,
-  // modified to accompany for depth.
-  IndexPair
-  get_lines_indices_with_depth(std::pair<size_t, size_t> index_pair) const;
-
-  // INFO: Given the source start and source end and knowing that they fit on a
-  // singular line, recalibrate source start and end so that they start indexing
-  // from 0 at the singular line.
-  std::tuple<size_t, size_t, size_t>
-      get_start_end_of_singular_line_token(IndexPair) const;
 
   void report(std::pair<size_t, size_t> index_pair,
               const std::string &format_str,
@@ -195,7 +181,7 @@ class Reporter {
   template <typename... T>
   void report(fmt::terminal_color ts, fmt::format_string<T...> format_str,
               T &&...args) const {
-    fmt::print(stderr, fg(LINE_COLOR), format_str, std::forward<T>(args)...);
+    fmt::print(stderr, fg(ts), format_str, std::forward<T>(args)...);
   }
   template <typename... T>
   void report(const ReportKind report_kind, fmt::format_string<T...> format_str,
@@ -204,16 +190,18 @@ class Reporter {
                std::forward<T>(args)...);
   }
 
+  void indicate_singular_line(ReportKind report_kind, size_t col_start,
+                              size_t col_end) const;
+
+  void report_singular_line(ReportKind report_kind, const std::string &msg,
+                            size_t col_start, size_t col_end) const;
+
 public:
   void report_and_abort(const Reportee &reports) const;
   Reporter() {}
-  Reporter(std::string file_name, std::string input, size_t depth)
+  Reporter(std::string file_name, std::string input, size_t context_radius)
       : file_name(file_name), input(input),
-        diagnostic_data(get_diagnostic_data(this->input)), depth(depth) {
-    /*size_t i = 0;*/
-    /*for (auto [a, b] : diagnostic_data) {*/
-    /*  std::cout << i++ << " " << a << " " << b << std::endl;*/
-    /*}*/
-  }
+        diagnostic_data(get_diagnostic_data(this->input)),
+        context_radius(context_radius) {}
 };
 } // namespace sammine_util

@@ -43,7 +43,7 @@ Compiler::Compiler(
   }
   this->resPtr = std::make_shared<LLVMRes>();
 
-  this->reporter = sammine_util::Reporter(file_name, input, report_width);
+  this->reporter = sammine_util::Reporter(file_name, input, context_radius);
 }
 
 void Compiler::lex() {

@@ -36,97 +36,172 @@ inline auto abort_on(bool abort_if_true, const std::string &message) -> void {
     std::abort();
   }
 }
-Reporter::IndexPair Reporter::get_lines_indices(IndexPair index_pair) const {
-  auto [start, end] = index_pair;
-  // INFO: Helper function
-  auto get_line_ite = [this](size_t source_index) -> size_t {
-    auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
 
-    auto idx = std::ranges::lower_bound(
-                   diagnostic_data,
-                   std::make_pair(source_index, std::string_view("")), cmp) -
-               diagnostic_data.begin();
-    return idx + (idx == 0);
-  };
+namespace {
+using IndexPair = Reporter::IndexPair;
+using DiagnosticData = Reporter::DiagnosticData;
+class Locator {
+  IndexPair source_start_end;
+  size_t context_radius;
+  const Reporter::DiagnosticData &data;
 
-  return {get_line_ite(start) - 1, get_line_ite(end) - 1};
+public:
+  Locator(IndexPair source_start_end, size_t context_radius,
+          const Reporter::DiagnosticData &data)
+      : source_start_end(source_start_end), context_radius(context_radius),
+        data(data) {}
+
+  // INFO: Given the source start and source end, get the line index of them.
+  IndexPair get_lines_indices() const {
+    auto [start, end] = source_start_end;
+    // INFO: Helper function
+    auto get_line_ite = [this](size_t source_index) -> size_t {
+      auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
+
+      auto idx =
+          std::ranges::lower_bound(
+              data, std::make_pair(source_index, std::string_view("")), cmp) -
+          data.begin();
+      return idx + (idx == 0);
+    };
+
+    return {get_line_ite(start) - 1, get_line_ite(end) - 1};
+  }
+
+  // INFO: Given the line index start and end, get the line index of them,
+  // modified to accompany for context radius.
+  IndexPair get_lines_indices_with_radius() const {
+    auto [line_start, line_end] = get_lines_indices();
+    line_start = line_start > context_radius ? line_start - context_radius : 0;
+    line_end = line_end + context_radius <= data.size() - 1
+                   ? line_end + context_radius
+                   : data.size() - 1;
+
+    return {line_start, line_end};
+  }
+
+  // INFO: Given the source start and source end and knowing that they fit on a
+  // singular line, recalibrate source start and end so that they start indexing
+  // from 0 at the singular line.
+  std::tuple<size_t, size_t, size_t>
+  get_start_end_of_singular_line_token() const {
+
+    auto [start, end] = source_start_end;
+    // INFO: Helper function
+    auto get_line_ite = [this](size_t source_index) -> size_t {
+      auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
+
+      auto idx =
+          std::ranges::lower_bound(
+              data, std::make_pair(source_index, std::string_view("")), cmp) -
+          data.begin();
+      return idx + (idx == 0);
+    };
+
+    auto num_row = get_line_ite(start) - 1;
+    auto num_col = start - data[num_row].first;
+
+    return {num_row, num_col, num_col + end - start};
+  }
+
+  IndexPair get_row_col() const {
+    auto [start, end] = source_start_end;
+    // INFO: Helper function
+    auto get_line_ite = [this](size_t source_index) -> size_t {
+      auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
+
+      auto idx =
+          std::ranges::lower_bound(
+              data, std::make_pair(source_index, std::string_view("")), cmp) -
+          data.begin();
+      return idx + (idx == 0);
+    };
+
+    auto num_row = get_line_ite(start) - 1;
+    auto num_col = start - data[num_row].first;
+
+    return {num_row, num_col};
+  }
+
+  bool is_on_singular_line(size_t i) {
+    auto [og_start, og_end] = this->get_lines_indices();
+    return og_start == og_end && i == og_start;
+  }
+  bool is_on_singular_line() {
+    auto [og_start, og_end] = this->get_lines_indices();
+    return og_start == og_end;
+  }
+};
+} // namespace
+
+DiagnosticData Reporter::get_diagnostic_data(std::string_view str) {
+  DiagnosticData result;
+  size_t start = 0;
+
+  while (start < str.size()) {
+    size_t end = str.find('\n', start);
+
+    if (end == std::string_view::npos) {
+      // Add the last substring if no more newlines are found
+      result.push_back({start, str.substr(start)});
+      break;
+    }
+
+    // Add the substring excluding the newline character
+    result.push_back({start, str.substr(start, end - start)});
+    start = end + 1;
+    assert(start != 0);
+  }
+
+  return result;
+}
+void Reporter::indicate_singular_line(ReportKind report_kind, size_t col_start,
+                                      size_t col_end) const {
+
+  report(LINE_COLOR, "    |");
+  size_t j = 0;
+  for (; j < col_start; j++)
+    report(report_kind, " ");
+
+  for (; j < col_end; j++)
+    report(report_kind, "^");
+  report(report_kind, "\n");
 }
 
-Reporter::IndexPair
-Reporter::get_lines_indices_with_depth(IndexPair index_pair) const {
-  auto [line_start, line_end] = index_pair;
-  line_start = line_start > depth ? line_start - depth : 0;
-  line_end = line_end + depth <= diagnostic_data.size() - 1
-                 ? line_end + depth
-                 : diagnostic_data.size() - 1;
+void Reporter::report_singular_line(ReportKind report_kind,
+                                    const std::string &msg, size_t col_start,
+                                    size_t col_end) const {
+  report(LINE_COLOR, "    |");
+  size_t j = 0;
+  for (; j < col_start; j++)
+    report(report_kind, " ");
 
-  return {line_start, line_end};
+  report(report_kind, "{}", msg);
+  report(report_kind, "\n");
 }
-
-std::tuple<size_t, size_t, size_t>
-Reporter::get_start_end_of_singular_line_token(
-    Reporter::IndexPair index_pair) const {
-
-  auto [start, end] = index_pair;
-  // INFO: Helper function
-  auto get_line_ite = [this](size_t source_index) -> size_t {
-    auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
-
-    auto idx = std::ranges::lower_bound(
-                   diagnostic_data,
-                   std::make_pair(source_index, std::string_view("")), cmp) -
-               diagnostic_data.begin();
-    return idx + (idx == 0);
-  };
-
-  auto num_row = get_line_ite(start) - 1;
-  auto num_col = start - diagnostic_data[num_row].first;
-
-  return {num_row, num_col, num_col + end - start};
-}
-
 void Reporter::report(std::pair<size_t, size_t> index_pair,
                       const std::string &format_str,
                       const ReportKind report_kind) const {
-
-  auto [og_start, og_end] = get_lines_indices(index_pair);
-  auto [new_start, new_end] = get_lines_indices_with_depth({og_start, og_end});
+  Locator locator(index_pair, context_radius, diagnostic_data);
+  auto [new_start, new_end] = locator.get_lines_indices_with_radius();
   auto [row_num, col_start, col_end] =
-      get_start_end_of_singular_line_token(index_pair);
+      locator.get_start_end_of_singular_line_token();
 
-  bool same_line = og_start == og_end;
   report(LINE_COLOR, "    |");
-  auto true_row = row_num + 1;
-  report(report_kind, "At {}:{}:{}\n", file_name, true_row, col_start);
-  report(LINE_COLOR, "    |");
-  report(report_kind, "{}\n", format_str);
+  report(fmt::terminal_color::bright_blue, "At {}:{}:{}\n", file_name,
+         row_num + 1, col_start);
+  if (!locator.is_on_singular_line()) {
+    report(LINE_COLOR, "    |");
+    report(MSG_COLOR, "{}\n", format_str);
+  }
   for (auto i = new_start; i <= new_end; i++) {
-    true_row = i + 1;
-    report(LINE_COLOR, "{:>4}|", true_row);
-    report(report_kind, "{}\n", diagnostic_data[i].second);
+    report(LINE_COLOR, "{:>4}|", i + 1);
+    std::string_view str = diagnostic_data[i].second;
+    report(fmt::terminal_color::white, "{}\n", str);
 
-    if (same_line && i == og_start) {
-      report(LINE_COLOR, "    |");
-
-      /*std::string_view str = diagnostic_data[i].second;*/
-
-      size_t j = 0;
-      for (; j < col_start; j++)
-        report(report_kind, " ");
-
-      for (; j < col_end; j++)
-        report(report_kind, "^");
-
-      for (; j < col_end; j++)
-        report(report_kind, " ");
-      /*for (auto ch : str) {*/
-      /*  start_printing = start_printing || !isspace(ch);*/
-      /*  if (!start_printing)*/
-      /*    report(report_kind, "{}", ch);*/
-      /*  else*/
-      /*}*/
-
-      report(report_kind, "\n");
+    if (locator.is_on_singular_line(i)) {
+      indicate_singular_line(report_kind, col_start, col_end);
+      report_singular_line(report_kind, format_str, col_start, col_end);
     }
   }
 }
@@ -136,20 +211,20 @@ void Reporter::report_and_abort(const Reportee &reports) const {
   bool begin = true;
   for (const auto &[loc, report_msg, report_kind] : reports) {
 
-    for (size_t i = 1; i <= 2 && !begin; i++)
-      report(LINE_COLOR, "    |\n");
+    for (size_t i = 1; i <= 1 && !begin; i++)
+      report(LINE_COLOR, "----|\n");
 
     begin = false;
     report(loc, report_msg, report_kind);
   }
 
   if (reports.has_message()) {
-    report(LINE_COLOR,
+    report(fmt::terminal_color::bright_green,
            "\n# Did something seems wrong? Report it via "
            "[https://github.com/badumbatish/sammine-lang/issues]\n");
-    report(LINE_COLOR,
-           "# Give us a screenshot of the error as well as your source code "
-           "surrounding the error\n");
+    report(fmt::terminal_color::bright_green,
+           "# Give us a screenshot of the error as well as your contextual "
+           "source code\n");
   }
   if (reports.has_errors())
     std::exit(1);
