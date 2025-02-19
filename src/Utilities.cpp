@@ -83,7 +83,9 @@ Reporter::get_start_end_of_singular_line_token(
 
   return {num_row, num_col, num_col + end - start};
 }
-void Reporter::report(IndexPair index_pair, const std::string &report_msg,
+
+void Reporter::report(std::pair<size_t, size_t> index_pair,
+                      const std::string &format_str,
                       const ReportKind report_kind) const {
 
   auto [og_start, og_end] = get_lines_indices(index_pair);
@@ -96,7 +98,7 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
   auto true_row = row_num + 1;
   report(report_kind, "At {}:{}:{}\n", file_name, true_row, col_start);
   report(LINE_COLOR, "    |");
-  report(report_kind, "{}\n", report_msg);
+  report(report_kind, "{}\n", format_str);
   for (auto i = new_start; i <= new_end; i++) {
     true_row = i + 1;
     report(LINE_COLOR, "{:>4}|", true_row);
@@ -122,7 +124,7 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
 void Reporter::report_and_abort(const Reportee &reports) const {
 
   bool begin = true;
-  for (auto &[loc, report_msg, report_kind] : reports) {
+  for (const auto &[loc, report_msg, report_kind] : reports) {
 
     for (size_t i = 1; i <= 2 && !begin; i++)
       report(LINE_COLOR, "    |\n");

@@ -1,4 +1,5 @@
 #pragma once
+#include "fmt/base.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include <__algorithm/ranges_lower_bound.h>
@@ -186,24 +187,22 @@ class Reporter {
   // from 0 at the singular line.
   std::tuple<size_t, size_t, size_t>
       get_start_end_of_singular_line_token(IndexPair) const;
+
   void report(std::pair<size_t, size_t> index_pair,
-              const std::string &report_msg,
+              const std::string &format_str,
               const ReportKind report_kind) const;
 
-  template <typename S, typename... Args,
-            FMT_ENABLE_IF(fmt::detail::is_string<S>::value)>
-  void report(const fmt::terminal_color ts, const S &format_str,
-              Args &...args) const {
+  template <typename... T>
+  void report(fmt::terminal_color ts, fmt::format_string<T...> format_str,
+              T &&...args) const {
     fmt::print(stderr, fg(LINE_COLOR), format_str,
-               std::forward<Args>(args)...); // Print green color code
+               std::forward<T>(args)...); // Print green color code
   }
-
-  template <typename S, typename... Args,
-            FMT_ENABLE_IF(fmt::detail::is_string<S>::value)>
-  void report(const ReportKind report_kind, const S &format_str,
-              Args &...args) const {
+  template <typename... T>
+  void report(const ReportKind report_kind, fmt::format_string<T...> format_str,
+              T &&...args) const {
     fmt::print(stderr, fg(get_color_from(report_kind)), format_str,
-               std::forward<Args>(args)...); // Print green color code
+               std::forward<T>(args)...); // Print green color code
   }
 
 public:
