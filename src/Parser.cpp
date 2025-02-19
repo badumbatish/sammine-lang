@@ -148,8 +148,8 @@ auto Parser::ParseVarDef()
   auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon,
                           "Failed to match semicolon token `;`");
 
-  auto varDef = std::make_unique<AST::VarDefAST>(std::move(typedVar.value()),
-                                                 std::move(expr.value()));
+  auto varDef = std::make_unique<AST::VarDefAST>(
+      let, std::move(typedVar.value()), std::move(expr.value()));
 
   return varDef;
 }

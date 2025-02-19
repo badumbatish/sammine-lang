@@ -197,11 +197,13 @@ public:
   std::unique_ptr<TypedVarAST> TypedVar;
   std::unique_ptr<ExprAST> Expression;
 
-  explicit VarDefAST(std::unique_ptr<TypedVarAST> TypedVar,
+  explicit VarDefAST(std::shared_ptr<Token> let,
+                     std::unique_ptr<TypedVarAST> TypedVar,
                      std::unique_ptr<ExprAST> Expression)
       : TypedVar(std::move(TypedVar)), Expression(std::move(Expression)) {
 
-    this->join_location(this->TypedVar.get())
+    this->join_location(let)
+        ->join_location(this->TypedVar.get())
         ->join_location(this->Expression.get());
   };
 

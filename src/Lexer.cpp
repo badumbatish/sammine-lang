@@ -30,6 +30,7 @@ Lexer::Lexer(const std::string &input) : Lexer() {
 
     i = handleSpaces(i, input);
 
+    updateLocation();
     for (auto fn : MatchFunctions) {
       i_0 = i;
       i = fn(this, i, input);
@@ -498,6 +499,7 @@ size_t Lexer::handleUtilityCOMMENT(size_t i, const std::string &input) {
     while (i < input.length() && input[i] != '\n') {
       i = advance(i);
     }
+    i = advance(i);
   }
   return i;
 }

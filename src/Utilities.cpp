@@ -7,6 +7,7 @@
 #include <cpptrace/cpptrace.hpp>
 #include <cpptrace/from_current.hpp>
 #include <cstdlib>
+#include <string_view>
 namespace sammine_util {
 auto get_string_from_file(const std::string &file_name) -> std::string {
   auto file = FileRAII(file_name);
@@ -107,14 +108,23 @@ void Reporter::report(std::pair<size_t, size_t> index_pair,
     if (same_line && i == og_start) {
       report(LINE_COLOR, "    |");
 
-      bool start_printing = false;
-      for (auto ch : diagnostic_data[i].second) {
-        start_printing = start_printing || !isspace(ch);
-        if (!start_printing)
-          report(report_kind, "{}", ch);
-        else
-          report(report_kind, "~");
-      }
+      /*std::string_view str = diagnostic_data[i].second;*/
+
+      size_t j = 0;
+      for (; j < col_start; j++)
+        report(report_kind, " ");
+
+      for (; j < col_end; j++)
+        report(report_kind, "^");
+
+      for (; j < col_end; j++)
+        report(report_kind, " ");
+      /*for (auto ch : str) {*/
+      /*  start_printing = start_printing || !isspace(ch);*/
+      /*  if (!start_printing)*/
+      /*    report(report_kind, "{}", ch);*/
+      /*  else*/
+      /*}*/
 
       report(report_kind, "\n");
     }
