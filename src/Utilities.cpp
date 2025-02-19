@@ -93,11 +93,13 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
 
   bool same_line = og_start == og_end;
   report(LINE_COLOR, "    |");
-  report(report_kind, "At {}:{}:{}\n", file_name, row_num, col_start);
+  auto true_row = row_num + 1;
+  report(report_kind, "At {}:{}:{}\n", file_name, true_row, col_start);
   report(LINE_COLOR, "    |");
   report(report_kind, "{}\n", report_msg);
   for (auto i = new_start; i <= new_end; i++) {
-    report(LINE_COLOR, "{:>4}|", i);
+    true_row = i + 1;
+    report(LINE_COLOR, "{:>4}|", true_row);
     report(report_kind, "{}\n", diagnostic_data[i].second);
 
     if (same_line && i == og_start) {
