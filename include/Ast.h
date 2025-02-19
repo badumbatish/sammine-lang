@@ -58,6 +58,11 @@ public:
     this->name = name->lexeme;
     this->type = type->lexeme;
   }
+  explicit TypedVarAST(std::shared_ptr<Token> name) {
+    assert(name);
+    this->join_location(name);
+    this->name = name->lexeme;
+  }
   virtual std::string getTreeName() override { return "TypedVarAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {

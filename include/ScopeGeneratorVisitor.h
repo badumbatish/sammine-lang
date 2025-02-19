@@ -1,6 +1,7 @@
 #pragma once
 #include "Ast.h"
 #include "AstBase.h"
+#include "Utilities.h"
 #include "tl/expected.hpp"
 #include <memory>
 
@@ -8,6 +9,7 @@
 #include <set>
 #include <stack>
 #include <string>
+#include <unordered_map>
 
 namespace sammine_lang::AST {
 
@@ -16,6 +18,7 @@ namespace sammine_lang::AST {
 class LexicalScope {
   std::shared_ptr<LexicalScope> parent_scope;
   std::set<std::string> symbols;
+  std::unordered_map<std::string, sammine_util::Location> symbols_to_loc;
 
 public:
   explicit LexicalScope() {}
@@ -26,12 +29,19 @@ public:
     nameFound,
     nameNotFound,
   };
-  void registerName(std::string name) { symbols.insert(name); }
+  void registerNameLocation(const std::string &name, sammine_util::Location l) {
+    symbols.insert(name);
+    symbols_to_loc[name] = l;
+  }
   NameQueryResult queryName(std::string name) const {
     return symbols.contains(name) ? nameFound : nameNotFound;
   }
 
-  NameQueryResult recursiveQueryName(std::string name) const {
+  sammine_util::Location get_location(const std::string &name) {
+    return symbols_to_loc.at(name);
+  }
+
+  NameQueryResult recursiveQueryName(const std::string &name) const {
     if (symbols.find(name) != symbols.end())
       return nameFound;
     else if (parent_scope == nullptr)

@@ -43,7 +43,7 @@ Compiler::Compiler(
   }
   this->resPtr = std::make_shared<LLVMRes>();
 
-  this->reporter = sammine_util::Reporter(input, report_width);
+  this->reporter = sammine_util::Reporter(file_name, input, report_width);
 }
 
 void Compiler::lex() {
@@ -69,12 +69,12 @@ void Compiler::scopecheck() {
   auto sc = sammine_lang::AST::ScopeGeneratorVisitor();
 
   programAST->accept_vis(&sc);
+  reporter.report_and_abort(sc);
 }
 void Compiler::codegen() {
   log_diagnostics("Start codegen stage...");
-  auto cg = std::make_shared<sammine_lang::AST::CgVisitor>(resPtr);
-  assert(cg != nullptr);
-  programAST->accept_vis(cg.get());
+  auto cg = sammine_lang::AST::CgVisitor(resPtr);
+  programAST->accept_vis(&cg);
 
   // TODO : Check for codegen error
   //

@@ -20,7 +20,7 @@ enum class compiler_option_enum {
 class Compiler {
   std::shared_ptr<TokenStream> tokStream;
   std::shared_ptr<AST::ProgramAST> programAST;
-  std::map<compiler_option_enum, std::string> &compiler_options;
+  std::map<compiler_option_enum, std::string> compiler_options;
   std::shared_ptr<LLVMRes> resPtr;
   std::string file_name, input;
   sammine_util::Reporter reporter;

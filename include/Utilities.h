@@ -167,6 +167,7 @@ class Reporter {
   }
   inline static fmt::terminal_color LINE_COLOR =
       fmt::terminal_color::bright_magenta;
+  std::string file_name;
   std::string input;
   std::vector<std::pair<std::size_t, std::string_view>> diagnostic_data;
   size_t depth;
@@ -183,7 +184,8 @@ class Reporter {
   // INFO: Given the source start and source end and knowing that they fit on a
   // singular line, recalibrate source start and end so that they start indexing
   // from 0 at the singular line.
-  IndexPair get_start_end_of_singular_line_token(IndexPair) const;
+  std::tuple<size_t, size_t, size_t>
+      get_start_end_of_singular_line_token(IndexPair) const;
   void report(std::pair<size_t, size_t> index_pair,
               const std::string &report_msg,
               const ReportKind report_kind) const;
@@ -207,9 +209,9 @@ class Reporter {
 public:
   void report_and_abort(const Reportee &reports) const;
   Reporter() {}
-  Reporter(std::string input, size_t depth)
-      : input(input), diagnostic_data(get_diagnostic_data(this->input)),
-        depth(depth) {
+  Reporter(std::string file_name, std::string input, size_t depth)
+      : file_name(file_name), input(input),
+        diagnostic_data(get_diagnostic_data(this->input)), depth(depth) {
     /*size_t i = 0;*/
     /*for (auto [a, b] : diagnostic_data) {*/
     /*  std::cout << i++ << " " << a << " " << b << std::endl;*/

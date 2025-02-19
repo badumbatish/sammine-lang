@@ -62,13 +62,38 @@ Reporter::get_lines_indices_with_depth(IndexPair index_pair) const {
   return {line_start, line_end};
 }
 
+std::tuple<size_t, size_t, size_t>
+Reporter::get_start_end_of_singular_line_token(
+    Reporter::IndexPair index_pair) const {
+
+  auto [start, end] = index_pair;
+  // INFO: Helper function
+  auto get_line_ite = [this](size_t source_index) -> size_t {
+    auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
+
+    auto idx = std::ranges::lower_bound(
+                   diagnostic_data,
+                   std::make_pair(source_index, std::string_view("")), cmp) -
+               diagnostic_data.begin();
+    return idx + (idx == 0);
+  };
+
+  auto num_row = get_line_ite(start) - 1;
+  auto num_col = start - diagnostic_data[num_row].first;
+
+  return {num_row, num_col, num_col + end - start};
+}
 void Reporter::report(IndexPair index_pair, const std::string &report_msg,
                       const ReportKind report_kind) const {
 
   auto [og_start, og_end] = get_lines_indices(index_pair);
   auto [new_start, new_end] = get_lines_indices_with_depth({og_start, og_end});
+  auto [row_num, col_start, col_end] =
+      get_start_end_of_singular_line_token(index_pair);
 
   bool same_line = og_start == og_end;
+  report(LINE_COLOR, "    |");
+  report(report_kind, "At {}:{}:{}\n", file_name, row_num, col_start);
   report(LINE_COLOR, "    |");
   report(report_kind, "{}\n", report_msg);
   for (auto i = new_start; i <= new_end; i++) {
@@ -77,11 +102,14 @@ void Reporter::report(IndexPair index_pair, const std::string &report_msg,
 
     if (same_line && i == og_start) {
       report(LINE_COLOR, "    |");
+
+      bool start_printing = false;
       for (auto ch : diagnostic_data[i].second) {
-        if (isspace(ch))
+        start_printing = start_printing || !isspace(ch);
+        if (!start_printing)
           report(report_kind, "{}", ch);
         else
-          report(report_kind, "^");
+          report(report_kind, "~");
       }
 
       report(report_kind, "\n");
@@ -101,11 +129,14 @@ void Reporter::report_and_abort(const Reportee &reports) const {
     report(loc, report_msg, report_kind);
   }
 
-  if (reports.has_message())
+  if (reports.has_message()) {
     report(LINE_COLOR,
-           "\nDid something seems wrong? Report it via "
+           "\n# Did something seems wrong? Report it via "
            "[https://github.com/badumbatish/sammine-lang/issues]\n");
-
+    report(LINE_COLOR,
+           "# Give us a screenshot of the error as well as your source code "
+           "surrounding the error\n");
+  }
   if (reports.has_errors())
     std::exit(1);
 }

@@ -161,7 +161,7 @@ auto Parser::ParseTypedVar()
     return tl::make_unexpected(ParserError::NONCOMMITTED);
   auto colon = expect(TokenType::TokColon);
   if (!colon)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    return std::make_unique<AST::TypedVarAST>(name);
   auto type = expect(TokenType::TokID);
   if (!type)
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
