@@ -195,14 +195,13 @@ class Reporter {
   template <typename... T>
   void report(fmt::terminal_color ts, fmt::format_string<T...> format_str,
               T &&...args) const {
-    fmt::print(stderr, fg(LINE_COLOR), format_str,
-               std::forward<T>(args)...); // Print green color code
+    fmt::print(stderr, fg(LINE_COLOR), format_str, std::forward<T>(args)...);
   }
   template <typename... T>
   void report(const ReportKind report_kind, fmt::format_string<T...> format_str,
               T &&...args) const {
     fmt::print(stderr, fg(get_color_from(report_kind)), format_str,
-               std::forward<T>(args)...); // Print green color code
+               std::forward<T>(args)...);
   }
 
 public:
