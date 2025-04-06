@@ -1,20 +1,22 @@
 #pragma once
-#include "Ast.h"
+
 #include "AstBase.h"
 #include "LexicalContext.h"
-#include "Utilities.h"
+#include "Types.h"
+#include <memory>
 #include <stack>
-namespace sammine_lang::AST {
+#include <variant>
+namespace sammine_lang {
 
-// A simple scoping class, doesn't differentiate between different names, like
-// variable name, func name and all that
-class LexicalScope : public LexicalContext<sammine_util::Location> {};
+namespace AST {
 
-class ScopeGeneratorVisitor : public ASTVisitor {
+class TypingContext : public LexicalContext<Type> {};
+class BiTypeCheckerVisitor : public ASTVisitor {
+
 public:
-  std::stack<LexicalScope> scope_stack;
-  ScopeGeneratorVisitor() { scope_stack.push(LexicalScope()); }
-  LexicalScope get_scope_map();
+  std::stack<TypingContext> scope_stack;
+  BiTypeCheckerVisitor() { scope_stack.push(TypingContext()); }
+  TypingContext get_scope_map();
 
   // INFO: CheckAndReg means: Check if there's redefinition, if not, register
   // INFO: Check for castable means: Check if the name existed, if not, register
@@ -62,5 +64,5 @@ public:
   void postorder_walk(IfExprAST *ast) override;
   void postorder_walk(TypedVarAST *ast) override;
 };
-
-} // namespace sammine_lang::AST
+} // namespace AST
+} // namespace sammine_lang

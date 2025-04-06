@@ -7,6 +7,7 @@
 #include <cctype>
 #include <cpptrace/cpptrace.hpp>
 #include <cpptrace/from_current.hpp>
+#include <cstdio>
 #include <cstdlib>
 #include <string_view>
 namespace sammine_util {
@@ -151,7 +152,6 @@ DiagnosticData Reporter::get_diagnostic_data(std::string_view str) {
     // Add the substring excluding the newline character
     result.push_back({start, str.substr(start, end - start)});
     start = end + 1;
-    assert(start != 0);
   }
 
   return result;
@@ -159,57 +159,57 @@ DiagnosticData Reporter::get_diagnostic_data(std::string_view str) {
 void Reporter::indicate_singular_line(ReportKind report_kind, size_t col_start,
                                       size_t col_end) const {
 
-  report(LINE_COLOR, "    |");
+  print_fmt(LINE_COLOR, "    |");
   size_t j = 0;
   for (; j < col_start; j++)
-    report(report_kind, " ");
+    print_fmt(report_kind, " ");
 
   for (; j < col_end; j++)
-    report(report_kind, "^");
-  report(report_kind, "\n");
+    print_fmt(report_kind, "^");
+  print_fmt(report_kind, "\n");
 }
 
 void Reporter::report_singular_line(ReportKind report_kind,
                                     const std::string &msg, size_t col_start,
                                     size_t col_end) const {
-  report(LINE_COLOR, "    |");
+  print_fmt(LINE_COLOR, "    |");
   size_t j = 0;
   for (; j < col_start; j++)
-    report(report_kind, " ");
+    print_fmt(report_kind, " ");
 
-  report(report_kind, "{}", msg);
-  report(report_kind, "\n");
+  print_fmt(report_kind, "{}", msg);
+  print_fmt(report_kind, "\n");
 }
 void Reporter::print_data_singular_line(std::string_view msg, size_t col_start,
                                         size_t col_end) const {
 
   assert(msg.size() > col_end);
   for (size_t j = 0; j < col_start; j++)
-    report(fmt::terminal_color::white, "{}", msg[j]);
+    fmt::print(stderr, "{}", msg[j]);
   for (size_t j = col_start; j < col_end; j++)
-    report(fmt::color::floral_white, "{}", msg[j]);
+    fmt::print(stderr, fmt::emphasis::bold, "{}", msg[j]);
   for (size_t j = col_end; j < msg.size(); j++)
-    report(fmt::terminal_color::white, "{}", msg[j]);
+    fmt::print(stderr, "{}", msg[j]);
 
-  report(fmt::terminal_color::white, "\n");
+  print_fmt(fmt::terminal_color::white, "\n");
 }
-void Reporter::report(std::pair<size_t, size_t> index_pair,
-                      const std::string &format_str,
-                      const ReportKind report_kind) const {
+void Reporter::report_single_msg(std::pair<size_t, size_t> index_pair,
+                                 const std::string &format_str,
+                                 const ReportKind report_kind) const {
   Locator locator(index_pair, context_radius, diagnostic_data);
   auto [new_start, new_end] = locator.get_lines_indices_with_radius();
   auto [row_num, col_start, col_end] =
       locator.get_start_end_of_singular_line_token();
 
-  report(LINE_COLOR, "    |");
-  report(fmt::terminal_color::bright_blue, "At {}:{}:{}\n", file_name,
-         row_num + 1, col_start);
+  print_fmt(LINE_COLOR, "    |");
+  print_fmt(fmt::terminal_color::bright_blue, "At {}:{}:{}\n", file_name,
+            row_num + 1, col_start);
   if (!locator.is_on_singular_line()) {
-    report(LINE_COLOR, "    |");
-    report(MSG_COLOR, "{}\n", format_str);
+    print_fmt(LINE_COLOR, "    |");
+    fmt::print(stderr, "{}\n", format_str);
   }
   for (auto i = new_start; i <= new_end; i++) {
-    report(LINE_COLOR, "{:>4}|", i + 1);
+    print_fmt(LINE_COLOR, "{:>4}|", i + 1);
     std::string_view str = diagnostic_data[i].second;
 
     if (locator.is_on_singular_line(i)) {
@@ -217,7 +217,7 @@ void Reporter::report(std::pair<size_t, size_t> index_pair,
       indicate_singular_line(report_kind, col_start, col_end);
       report_singular_line(report_kind, format_str, col_start, col_end);
     } else {
-      report(fmt::terminal_color::white, "{}\n", str);
+      print_fmt(fmt::terminal_color::white, "{}\n", str);
     }
   }
 }
@@ -228,24 +228,24 @@ void Reporter::report_and_abort(const Reportee &reports) const {
   for (const auto &[loc, report_msg, report_kind] : reports) {
 
     for (size_t i = 1; i <= 1 && !begin; i++)
-      report(LINE_COLOR, "----|\n");
+      print_fmt(LINE_COLOR, "----|\n");
 
     begin = false;
-    report(loc, report_msg, report_kind);
+    report_single_msg(loc, report_msg, report_kind);
   }
 
   if (reports.has_message()) {
-    report(fmt::terminal_color::bright_green,
-           "\n# Did something seems wrong? Report it via "
-           "[https://github.com/badumbatish/sammine-lang/issues]\n");
-    report(fmt::terminal_color::bright_green,
-           "# Give us a screenshot of the error as well as your contextual "
-           "source code\n");
+    print_fmt(fmt::terminal_color::bright_green,
+              "\n# Did something seems wrong? Report it via "
+              "[https://github.com/badumbatish/sammine-lang/issues]\n");
+    print_fmt(fmt::terminal_color::bright_green,
+              "# Give us a screenshot of the error as well as your contextual "
+              "source code\n");
   }
   if (reports.has_errors())
     std::exit(1);
 }
-fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) const {
+fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) {
   switch (report_kind) {
   case Reportee::error:
     return fmt::terminal_color::bright_red;

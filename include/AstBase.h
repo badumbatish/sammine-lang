@@ -82,6 +82,12 @@ public:
   virtual std::string getTreeName() = 0;
 };
 
+enum Typo {
+  Int64,
+  Flt64,
+  Bool,
+  Unit,
+};
 class AstBase : public Visitable {
   void change_location(sammine_util::Location loc) {
     if (first_location) {
@@ -95,6 +101,7 @@ class AstBase : public Visitable {
 
 protected:
   sammine_util::Location location;
+  Typo type = Unit;
 
 public:
   llvm::Value *val;

@@ -1,6 +1,7 @@
 #pragma once
 #include "AstBase.h"
 #include "AstDecl.h"
+#include "BiTypeChecker.h"
 #include "Lexer.h"
 #include "Utilities.h"
 #include <cassert>
@@ -10,6 +11,7 @@
 #include <vector>
 
 namespace sammine_lang {
+
 namespace AST {
 
 using Identifier = std::string;
@@ -224,6 +226,10 @@ public:
     assert(t);
     join_location(t);
     number = t->lexeme;
+    if (number.find('.') == number.npos)
+      type = Int64;
+    else
+      type = Flt64;
   }
   virtual std::string getTreeName() override { return "NumberExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -240,6 +246,7 @@ public:
   bool b;
   BoolExprAST(bool b, sammine_util::Location loc) : b(b) {
     this->location = loc;
+    this->type = Bool;
   }
   virtual std::string getTreeName() override { return "BoolExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }

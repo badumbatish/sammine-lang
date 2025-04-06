@@ -30,7 +30,8 @@ auto abort_on(bool abort_if_true, const std::string &message = "<NO MESSAGE>")
 //! .
 class Location {
 public:
-  size_t source_start; // True location in original source code string
+  // True location in original source code string
+  size_t source_start;
   size_t source_end;
 
   // Default constructor
@@ -43,12 +44,15 @@ public:
   inline void advance() { source_end++; }
 
   // Move column position backwards
-  inline void devance() { source_end--; }
+  inline void devance() {
+    source_end--;
+    assert(source_end >= source_start);
+  }
 
   // Handle newline
   inline void newLine() { advance(); }
 
-  // Combine two locations (union of spans)
+  // Combine two locations
   Location operator|(const Location &other) const {
     Location result;
     result.source_start = std::min(source_start, other.source_start);
@@ -69,10 +73,6 @@ public:
     out << loc.source_start << ":" << loc.source_end;
 
     return out;
-  }
-
-  std::string to_string() {
-    return fmt::format("{}:{}", source_start, source_end);
   }
 
   // Equality operator
@@ -173,25 +173,25 @@ private:
   std::string input;
   std::vector<std::pair<std::size_t, std::string_view>> diagnostic_data;
   size_t context_radius;
-  fmt::terminal_color get_color_from(ReportKind report_kind) const;
+  static fmt::terminal_color get_color_from(ReportKind report_kind);
 
-  void report(std::pair<size_t, size_t> index_pair,
-              const std::string &format_str,
-              const ReportKind report_kind) const;
+  void report_single_msg(std::pair<size_t, size_t> index_pair,
+                         const std::string &format_str,
+                         const ReportKind report_kind) const;
 
   template <typename... T>
-  void report(fmt::terminal_color ts, fmt::format_string<T...> format_str,
-              T &&...args) const {
+  static void print_fmt(fmt::terminal_color ts,
+                        fmt::format_string<T...> format_str, T &&...args) {
     fmt::print(stderr, fg(ts), format_str, std::forward<T>(args)...);
   }
   template <typename... T>
-  void report(fmt::color ts, fmt::format_string<T...> format_str,
-              T &&...args) const {
+  static void print_fmt(fmt::color ts, fmt::format_string<T...> format_str,
+                        T &&...args) {
     fmt::print(stderr, fg(ts), format_str, std::forward<T>(args)...);
   }
   template <typename... T>
-  void report(const ReportKind report_kind, fmt::format_string<T...> format_str,
-              T &&...args) const {
+  static void print_fmt(const ReportKind report_kind,
+                        fmt::format_string<T...> format_str, T &&...args) {
     fmt::print(stderr, fg(get_color_from(report_kind)), format_str,
                std::forward<T>(args)...);
   }

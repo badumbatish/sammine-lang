@@ -171,6 +171,7 @@ public:
   TokenType type;
   std::string lexeme;
   Location location;
+  Token() = delete;
   Token(TokenType type, std::string lexeme, Location location)
       : type(type), lexeme(std::move(lexeme)), location(location) {}
 

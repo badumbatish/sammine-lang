@@ -1,5 +1,4 @@
 #pragma once
-#include "Ast.h"
 #include <memory>
 #include <string>
 namespace sammine_lang {
