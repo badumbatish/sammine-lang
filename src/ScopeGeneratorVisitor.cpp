@@ -12,13 +12,13 @@ void ScopeGeneratorVisitor::preorder_walk(VarDefAST *ast) {
 
   auto var_name = ast->TypedVar->name;
   if (scope.queryName(var_name) == LexicalScope::nameNotFound) {
-    scope.registerNameLocation(var_name, ast->TypedVar->get_location());
+    scope.registerNameT(var_name, ast->TypedVar->get_location());
   } else if (scope.queryName(var_name) == LexicalScope::nameFound) {
     add_error(ast->get_location(),
               fmt::format("[SCOPE1]: The name `{}` has been introduced before",
                           var_name));
     add_error(
-        scope.get_location(var_name),
+        scope.get_from_name(var_name),
         fmt::format("[SCOPE1]: Most recently defined `{}` is here", var_name));
   }
 }
@@ -31,17 +31,17 @@ void ScopeGeneratorVisitor::preorder_walk(PrototypeAST *ast) {
 
   auto var_name = ast->functionName;
   if (scope.queryName(var_name) == LexicalScope::nameNotFound) {
-    scope.registerNameLocation(var_name, ast->get_location());
+    scope.registerNameT(var_name, ast->get_location());
   } else if (scope.queryName(var_name) == LexicalScope::nameFound) {
     add_error(ast->get_location(),
               fmt::format("[SCOPE1]: The name `{}` has been introduced before",
                           var_name));
     add_error(
-        scope.get_location(var_name),
+        scope.get_from_name(var_name),
         fmt::format("[SCOPE1]: Most recently defined `{}` is here", var_name));
   }
   for (auto &param : ast->parameterVectors) {
-    scope.registerNameLocation(param->name, param->get_location());
+    scope.registerNameT(param->name, param->get_location());
   }
 }
 void ScopeGeneratorVisitor::preorder_walk(CallExprAST *ast) {}

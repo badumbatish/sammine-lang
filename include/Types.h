@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <unordered_map>
 #include <vector>
 enum class TypeKind {
   I64_t,
@@ -18,7 +19,7 @@ struct FunctionType {
 
   bool operator==(const FunctionType &t) const;
 
-  bool operator<<(const FunctionType &t) const;
+  bool operator<(const FunctionType &t) const;
 
   FunctionType(const std::vector<Type> &total_types);
 };
@@ -32,23 +33,11 @@ struct Type {
   static Type F64_t() { return Type{TypeKind::F64_t, {}}; }
   static Type Bool() { return Type{TypeKind::Bool, {}}; }
   static Type Unit() { return Type{TypeKind::Unit, {}}; }
-  static Type Function(std::vector<Type> params) {
-    return Type{TypeKind::Function, FunctionType{params}};
-  }
+  static Type Function(std::vector<Type> params);
 
-  bool operator==(const Type &other) const {
-    if (this->type_kind != other.type_kind)
-      return false;
-    if (this->type_kind != TypeKind::Function)
-      return true;
+  bool operator==(const Type &other) const;
 
-    auto ftype = std::get<FunctionType>(this->type_data);
-    FunctionType other_ftype = std::get<FunctionType>(other.type_data);
-
-    return ftype == other_ftype;
-  }
-
-  bool operator!=(const Type &other) const { return !(operator==(other)); }
-  bool operator<(const Type &t) const { return false; }
-  bool operator>(const Type &t) const { return false; }
+  bool operator!=(const Type &other) const;
+  bool operator<(const Type &t) const;
+  bool operator>(const Type &t) const;
 };

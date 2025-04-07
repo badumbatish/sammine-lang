@@ -163,6 +163,10 @@ auto Parser::ParseTypedVar()
   if (!colon)
     return std::make_unique<AST::TypedVarAST>(name);
   auto type = expect(TokenType::TokID);
+
+  // TODO: Make this error more specific:
+  // `let x : ;` should let user know that we don't fuck around and correct them
+  // to `let x : f64;` or `let x : T` for some specific T
   if (!type)
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
 

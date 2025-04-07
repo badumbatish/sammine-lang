@@ -5,7 +5,7 @@
 template <class T> class LexicalContext {
   std::shared_ptr<LexicalContext> parent_scope;
   std::set<std::string> symbols;
-  std::unordered_map<std::string, T> symbols_to_loc;
+  std::unordered_map<std::string, T> symbols_to_t;
 
 public:
   explicit LexicalContext() {}
@@ -16,15 +16,15 @@ public:
     nameFound,
     nameNotFound,
   };
-  void registerNameLocation(const std::string &name, T l) {
+  void registerNameT(const std::string &name, T l) {
     symbols.insert(name);
-    symbols_to_loc[name] = l;
+    symbols_to_t[name] = l;
   }
   NameQueryResult queryName(const std::string &name) const {
     return symbols.contains(name) ? nameFound : nameNotFound;
   }
 
-  T get_location(const std::string &name) { return symbols_to_loc.at(name); }
+  T get_from_name(const std::string &name) { return symbols_to_t.at(name); }
 
   NameQueryResult recursiveQueryName(const std::string &name) const {
     if (symbols.find(name) != symbols.end())
