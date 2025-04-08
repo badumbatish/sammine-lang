@@ -2,13 +2,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-enum class TypeKind {
-  I64_t,
-  F64_t,
-  Unit,
-  Bool,
-  Function,
-};
+enum class TypeKind { I64_t, F64_t, Unit, Bool, Function, NonExistent, Error };
 
 struct Type;
 struct FunctionType;
@@ -33,6 +27,7 @@ struct Type {
   static Type F64_t() { return Type{TypeKind::F64_t, {}}; }
   static Type Bool() { return Type{TypeKind::Bool, {}}; }
   static Type Unit() { return Type{TypeKind::Unit, {}}; }
+  static Type NonExistent() { return Type{TypeKind::NonExistent, {}}; }
   static Type Function(std::vector<Type> params);
 
   bool operator==(const Type &other) const;

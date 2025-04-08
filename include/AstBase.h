@@ -5,6 +5,7 @@
 #pragma once
 #include "AstDecl.h"
 #include "Lexer.h"
+#include "Types.h"
 #include "Utilities.h"
 namespace llvm {
 class Value;
@@ -73,6 +74,37 @@ public:
 
   virtual ~ASTVisitor() = 0;
 };
+
+class ScopedASTVisitor : public ASTVisitor {
+public:
+  virtual void visit(ProgramAST *ast);
+
+  virtual void visit(VarDefAST *ast);
+
+  virtual void visit(ExternAST *ast);
+
+  virtual void visit(FuncDefAST *ast);
+
+  virtual void visit(PrototypeAST *ast);
+
+  virtual void visit(CallExprAST *ast);
+
+  virtual void visit(BinaryExprAST *ast);
+
+  virtual void visit(NumberExprAST *ast);
+
+  virtual void visit(BoolExprAST *ast);
+
+  virtual void visit(VariableExprAST *ast);
+
+  virtual void visit(BlockAST *ast);
+
+  virtual void visit(IfExprAST *ast);
+
+  virtual void visit(TypedVarAST *ast);
+  virtual ~ScopedASTVisitor() = 0;
+};
+
 class Visitable {
 public:
   virtual ~Visitable() = default;
@@ -82,12 +114,6 @@ public:
   virtual std::string getTreeName() = 0;
 };
 
-enum Typo {
-  Int64,
-  Flt64,
-  Bool,
-  Unit,
-};
 class AstBase : public Visitable {
   void change_location(sammine_util::Location loc) {
     if (first_location) {
@@ -101,10 +127,10 @@ class AstBase : public Visitable {
 
 protected:
   sammine_util::Location location;
-  Typo type = Unit;
 
 public:
   llvm::Value *val;
+  Type type = Type::NonExistent();
   AstBase *join_location(AstBase *ast) {
     if (!ast)
       sammine_util::abort(fmt::format("ast cannot be nullptr"));

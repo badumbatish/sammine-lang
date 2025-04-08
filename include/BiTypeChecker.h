@@ -13,6 +13,9 @@ namespace AST {
 
 class TypingContext : public LexicalContext<Type> {};
 class BiTypeCheckerVisitor : public ASTVisitor {
+  /// INFO: Ok let's talk about error propagation in this checker.
+  /// the synthesize will error if I cannot get something out of id_map or
+  /// typename_map (technically shouldn't happen)
 
   // We're gonna provide look up in different
 
@@ -64,19 +67,21 @@ public:
   void postorder_walk(TypedVarAST *ast) override;
 
   // INFO: This is for internal usage
-  Type infer(ProgramAST *ast);
-  Type infer(VarDefAST *ast);
-  Type infer(ExternAST *ast);
-  Type infer(FuncDefAST *ast);
-  Type infer(PrototypeAST *ast);
-  Type infer(CallExprAST *ast);
-  Type infer(BinaryExprAST *ast);
-  Type infer(NumberExprAST *ast);
-  Type infer(BoolExprAST *ast);
-  Type infer(VariableExprAST *ast);
-  Type infer(BlockAST *ast);
-  Type infer(IfExprAST *ast);
-  Type infer(TypedVarAST *ast);
+  Type synthesize(ProgramAST *ast);
+  Type synthesize(VarDefAST *ast);
+  Type synthesize(ExternAST *ast);
+  Type synthesize(FuncDefAST *ast);
+  Type synthesize(PrototypeAST *ast);
+  Type synthesize(CallExprAST *ast);
+  Type synthesize(BinaryExprAST *ast);
+  Type synthesize(NumberExprAST *ast);
+  Type synthesize(BoolExprAST *ast);
+  Type synthesize(VariableExprAST *ast);
+  Type synthesize(BlockAST *ast);
+  Type synthesize(IfExprAST *ast);
+  Type synthesize(TypedVarAST *ast);
+  Type synthesize_id(const std::string &id);
+  Type synthesize_typename(const std::string &type_name);
 
   bool check(ProgramAST *ast);
   bool check(VarDefAST *ast);
