@@ -23,9 +23,7 @@ void ScopeGeneratorVisitor::preorder_walk(VarDefAST *ast) {
   }
 }
 void ScopeGeneratorVisitor::preorder_walk(ExternAST *ast) {}
-void ScopeGeneratorVisitor::preorder_walk(FuncDefAST *ast) {
-  this->scope_stack.push(LexicalScope(this->scope_stack.top()));
-}
+void ScopeGeneratorVisitor::preorder_walk(FuncDefAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(PrototypeAST *ast) {
   auto &scope = this->scope_stack.top();
 
@@ -57,10 +55,7 @@ void ScopeGeneratorVisitor::preorder_walk(TypedVarAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(ProgramAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(VarDefAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(ExternAST *ast) {}
-void ScopeGeneratorVisitor::postorder_walk(FuncDefAST *ast) {
-  assert(!this->scope_stack.empty());
-  this->scope_stack.pop();
-}
+void ScopeGeneratorVisitor::postorder_walk(FuncDefAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(PrototypeAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(CallExprAST *ast) {
   auto &scope = this->scope_stack.top();

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Ast.h"
 #include "AstBase.h"
 #include "LexicalContext.h"
 #include "Types.h"
@@ -12,7 +11,8 @@ namespace sammine_lang {
 namespace AST {
 
 class TypingContext : public LexicalContext<Type> {};
-class BiTypeCheckerVisitor : public ASTVisitor {
+class BiTypeCheckerVisitor : public ScopedASTVisitor,
+                             public TypeCheckerVisitor {
   /// INFO: Ok let's talk about error propagation in this checker.
   /// the synthesize will error if I cannot get something out of id_map or
   /// typename_map (technically shouldn't happen)
@@ -23,79 +23,76 @@ public:
   std::stack<TypingContext> id_to_type;
   std::stack<TypingContext> typename_to_type;
 
-  void push_new_scopes() {
+  virtual void enter_new_scope() override {
     id_to_type.push(TypingContext());
     typename_to_type.push(TypingContext());
   }
-  void pop_scopes() {
+  virtual void exit_new_scope() override {
     id_to_type.pop();
     typename_to_type.pop();
   }
-  BiTypeCheckerVisitor() { this->push_new_scopes(); }
+  BiTypeCheckerVisitor() { this->enter_new_scope(); }
   TypingContext &get_id_map() { return id_to_type.top(); }
   TypingContext &get_typename_map() { return typename_to_type.top(); }
 
   // pre order
 
-  void preorder_walk(ProgramAST *ast) override;
-  void preorder_walk(VarDefAST *ast) override;
-  void preorder_walk(ExternAST *ast) override;
-  void preorder_walk(FuncDefAST *ast) override;
-  void preorder_walk(PrototypeAST *ast) override;
-  void preorder_walk(CallExprAST *ast) override;
-  void preorder_walk(BinaryExprAST *ast) override;
-  void preorder_walk(NumberExprAST *ast) override;
-  void preorder_walk(BoolExprAST *ast) override;
-  void preorder_walk(VariableExprAST *ast) override;
-  void preorder_walk(BlockAST *ast) override;
-  void preorder_walk(IfExprAST *ast) override;
-  void preorder_walk(TypedVarAST *ast) override;
+  virtual void preorder_walk(ProgramAST *ast) override;
+  virtual void preorder_walk(VarDefAST *ast) override;
+  virtual void preorder_walk(ExternAST *ast) override;
+  virtual void preorder_walk(FuncDefAST *ast) override;
+  virtual void preorder_walk(PrototypeAST *ast) override;
+  virtual void preorder_walk(CallExprAST *ast) override;
+  virtual void preorder_walk(BinaryExprAST *ast) override;
+  virtual void preorder_walk(NumberExprAST *ast) override;
+  virtual void preorder_walk(BoolExprAST *ast) override;
+  virtual void preorder_walk(VariableExprAST *ast) override;
+  virtual void preorder_walk(BlockAST *ast) override;
+  virtual void preorder_walk(IfExprAST *ast) override;
+  virtual void preorder_walk(TypedVarAST *ast) override;
 
   // post order
-  void postorder_walk(ProgramAST *ast) override;
-  void postorder_walk(VarDefAST *ast) override;
-  void postorder_walk(ExternAST *ast) override;
-  void postorder_walk(FuncDefAST *ast) override;
-  void postorder_walk(PrototypeAST *ast) override;
-  void postorder_walk(CallExprAST *ast) override;
-  void postorder_walk(BinaryExprAST *ast) override;
-  void postorder_walk(NumberExprAST *ast) override;
-  void postorder_walk(BoolExprAST *ast) override;
-  void postorder_walk(VariableExprAST *ast) override;
-  void postorder_walk(BlockAST *ast) override;
-  void postorder_walk(IfExprAST *ast) override;
-  void postorder_walk(TypedVarAST *ast) override;
+  virtual void postorder_walk(ProgramAST *ast) override;
+  virtual void postorder_walk(VarDefAST *ast) override;
+  virtual void postorder_walk(ExternAST *ast) override;
+  virtual void postorder_walk(FuncDefAST *ast) override;
+  virtual void postorder_walk(PrototypeAST *ast) override;
+  virtual void postorder_walk(CallExprAST *ast) override;
+  virtual void postorder_walk(BinaryExprAST *ast) override;
+  virtual void postorder_walk(NumberExprAST *ast) override;
+  virtual void postorder_walk(BoolExprAST *ast) override;
+  virtual void postorder_walk(VariableExprAST *ast) override;
+  virtual void postorder_walk(BlockAST *ast) override;
+  virtual void postorder_walk(IfExprAST *ast) override;
+  virtual void postorder_walk(TypedVarAST *ast) override;
 
-  // INFO: This is for internal usage
-  Type synthesize(ProgramAST *ast);
-  Type synthesize(VarDefAST *ast);
-  Type synthesize(ExternAST *ast);
-  Type synthesize(FuncDefAST *ast);
-  Type synthesize(PrototypeAST *ast);
-  Type synthesize(CallExprAST *ast);
-  Type synthesize(BinaryExprAST *ast);
-  Type synthesize(NumberExprAST *ast);
-  Type synthesize(BoolExprAST *ast);
-  Type synthesize(VariableExprAST *ast);
-  Type synthesize(BlockAST *ast);
-  Type synthesize(IfExprAST *ast);
-  Type synthesize(TypedVarAST *ast);
-  Type synthesize_id(const std::string &id);
-  Type synthesize_typename(const std::string &type_name);
+  virtual Type synthesize(ProgramAST *ast) override;
+  virtual Type synthesize(VarDefAST *ast) override;
+  virtual Type synthesize(ExternAST *ast) override;
+  virtual Type synthesize(FuncDefAST *ast) override;
+  virtual Type synthesize(PrototypeAST *ast) override;
+  virtual Type synthesize(CallExprAST *ast) override;
+  virtual Type synthesize(BinaryExprAST *ast) override;
+  virtual Type synthesize(NumberExprAST *ast) override;
+  virtual Type synthesize(BoolExprAST *ast) override;
+  virtual Type synthesize(VariableExprAST *ast) override;
+  virtual Type synthesize(BlockAST *ast) override;
+  virtual Type synthesize(IfExprAST *ast) override;
+  virtual Type synthesize(TypedVarAST *ast) override;
 
-  bool check(ProgramAST *ast);
-  bool check(VarDefAST *ast);
-  bool check(ExternAST *ast);
-  bool check(FuncDefAST *ast);
-  bool check(PrototypeAST *ast);
-  bool check(CallExprAST *ast);
-  bool check(BinaryExprAST *ast);
-  bool check(NumberExprAST *ast);
-  bool check(BoolExprAST *ast);
-  bool check(VariableExprAST *ast);
-  bool check(BlockAST *ast);
-  bool check(IfExprAST *ast);
-  bool check(TypedVarAST *ast);
+  virtual bool check(ProgramAST *ast) override;
+  virtual bool check(VarDefAST *ast) override;
+  virtual bool check(ExternAST *ast) override;
+  virtual bool check(FuncDefAST *ast) override;
+  virtual bool check(PrototypeAST *ast) override;
+  virtual bool check(CallExprAST *ast) override;
+  virtual bool check(BinaryExprAST *ast) override;
+  virtual bool check(NumberExprAST *ast) override;
+  virtual bool check(BoolExprAST *ast) override;
+  virtual bool check(VariableExprAST *ast) override;
+  virtual bool check(BlockAST *ast) override;
+  virtual bool check(IfExprAST *ast) override;
+  virtual bool check(TypedVarAST *ast) override;
 };
 } // namespace AST
 } // namespace sammine_lang

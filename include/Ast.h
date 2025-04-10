@@ -8,7 +8,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
 namespace sammine_lang {
 
 namespace AST {
@@ -42,6 +41,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 
 class DefinitionAST : public AstBase {};
@@ -71,6 +76,13 @@ public:
   }
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
+  }
+
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
   }
 };
 
@@ -124,6 +136,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 
 //! \brief A Function Definition that has the prototype and definition in terms
@@ -145,6 +163,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 
 //! \brief An AST to simulate a { } code block
@@ -162,6 +186,12 @@ public:
   }
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
   }
 };
 
@@ -184,6 +214,12 @@ public:
   }
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
   }
 };
 
@@ -216,6 +252,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 class NumberExprAST : public ExprAST {
 public:
@@ -234,6 +276,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 
 class BoolExprAST : public ExprAST {
@@ -249,6 +297,12 @@ public:
   }
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
   }
 };
 class BinaryExprAST : public ExprAST {
@@ -270,6 +324,12 @@ public:
   }
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
   }
 };
 
@@ -297,6 +357,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 
 class IfExprAST : public ExprAST {
@@ -321,6 +387,12 @@ public:
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
   }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
+  }
 };
 class VariableExprAST : public ExprAST {
 public:
@@ -338,6 +410,12 @@ public:
   }
   virtual void walk_with_postorder(ASTVisitor *visitor) override {
     visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+  virtual bool accept_check(TypeCheckerVisitor *visitor) override {
+    return visitor->check(this);
   }
 };
 

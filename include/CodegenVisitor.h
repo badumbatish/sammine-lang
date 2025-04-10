@@ -19,49 +19,49 @@ public:
   llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,
                                            const std::string &VarName);
   // visit
-  void visit(ProgramAST *ast) override;
-  void visit(VarDefAST *ast) override;
-  void visit(FuncDefAST *ast) override;
-  void visit(ExternAST *ast) override;
-  void visit(PrototypeAST *ast) override;
-  void visit(CallExprAST *ast) override;
-  void visit(BinaryExprAST *ast) override;
-  void visit(NumberExprAST *ast) override;
-  void visit(BoolExprAST *ast) override;
-  void visit(VariableExprAST *ast) override;
-  void visit(BlockAST *ast) override;
-  void visit(IfExprAST *ast) override;
-  void visit(TypedVarAST *ast) override;
+  virtual void visit(ProgramAST *ast) override;
+  virtual void visit(VarDefAST *ast) override;
+  virtual void visit(FuncDefAST *ast) override;
+  virtual void visit(ExternAST *ast) override;
+  virtual void visit(PrototypeAST *ast) override;
+  virtual void visit(CallExprAST *ast) override;
+  virtual void visit(BinaryExprAST *ast) override;
+  virtual void visit(NumberExprAST *ast) override;
+  virtual void visit(BoolExprAST *ast) override;
+  virtual void visit(VariableExprAST *ast) override;
+  virtual void visit(BlockAST *ast) override;
+  virtual void visit(IfExprAST *ast) override;
+  virtual void visit(TypedVarAST *ast) override;
   // pre order
   // TODO: Implement these
-  void preorder_walk(ProgramAST *ast) override {}
-  void preorder_walk(VarDefAST *ast) override {}
-  void preorder_walk(ExternAST *ast) override {}
-  void preorder_walk(FuncDefAST *ast) override {}
-  void preorder_walk(PrototypeAST *ast) override {}
-  void preorder_walk(CallExprAST *ast) override {}
-  void preorder_walk(BinaryExprAST *ast) override {}
-  void preorder_walk(NumberExprAST *ast) override {}
-  void preorder_walk(BoolExprAST *ast) override {}
-  void preorder_walk(VariableExprAST *ast) override {}
-  void preorder_walk(BlockAST *ast) override {}
-  void preorder_walk(IfExprAST *ast) override {}
-  void preorder_walk(TypedVarAST *ast) override {}
+  virtual void preorder_walk(ProgramAST *ast) override {}
+  virtual void preorder_walk(VarDefAST *ast) override {}
+  virtual void preorder_walk(ExternAST *ast) override {}
+  virtual void preorder_walk(FuncDefAST *ast) override {}
+  virtual void preorder_walk(PrototypeAST *ast) override {}
+  virtual void preorder_walk(CallExprAST *ast) override {}
+  virtual void preorder_walk(BinaryExprAST *ast) override {}
+  virtual void preorder_walk(NumberExprAST *ast) override {}
+  virtual void preorder_walk(BoolExprAST *ast) override {}
+  virtual void preorder_walk(VariableExprAST *ast) override {}
+  virtual void preorder_walk(BlockAST *ast) override {}
+  virtual void preorder_walk(IfExprAST *ast) override {}
+  virtual void preorder_walk(TypedVarAST *ast) override {}
 
   // post order
   // TODO: Implement these?
-  void postorder_walk(ProgramAST *ast) override {}
-  void postorder_walk(VarDefAST *ast) override {}
-  void postorder_walk(ExternAST *ast) override {}
-  void postorder_walk(FuncDefAST *ast) override {}
-  void postorder_walk(PrototypeAST *ast) override {}
-  void postorder_walk(CallExprAST *ast) override {}
-  void postorder_walk(BinaryExprAST *ast) override {}
-  void postorder_walk(NumberExprAST *ast) override {}
-  void postorder_walk(BoolExprAST *ast) override {}
-  void postorder_walk(VariableExprAST *ast) override {}
-  void postorder_walk(BlockAST *ast) override {}
-  void postorder_walk(IfExprAST *ast) override {}
-  void postorder_walk(TypedVarAST *ast) override {}
+  virtual void postorder_walk(ProgramAST *ast) override {}
+  virtual void postorder_walk(VarDefAST *ast) override {}
+  virtual void postorder_walk(ExternAST *ast) override {}
+  virtual void postorder_walk(FuncDefAST *ast) override {}
+  virtual void postorder_walk(PrototypeAST *ast) override {}
+  virtual void postorder_walk(CallExprAST *ast) override {}
+  virtual void postorder_walk(BinaryExprAST *ast) override {}
+  virtual void postorder_walk(NumberExprAST *ast) override {}
+  virtual void postorder_walk(BoolExprAST *ast) override {}
+  virtual void postorder_walk(VariableExprAST *ast) override {}
+  virtual void postorder_walk(BlockAST *ast) override {}
+  virtual void postorder_walk(IfExprAST *ast) override {}
+  virtual void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST

@@ -16,6 +16,12 @@ void BiTypeCheckerVisitor::preorder_walk(VarDefAST *ast) {
   /*auto type_name = ast->TypedVar->type;*/
   /**/
   /*auto &expr = ast->Expression;*/
+
+  // Case 1: let x = a //
+  // Case 2: let x : f64_t = a //
+  //
+  //
+  // Case 1
 }
 void BiTypeCheckerVisitor::preorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(FuncDefAST *ast) {}
@@ -48,66 +54,40 @@ Type BiTypeCheckerVisitor::synthesize(ProgramAST *ast) {
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
-  if (ast->type == Type::NonExistent())
-    return ast->type = this->synthesize(ast->TypedVar.get());
-  return ast->type;
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(ExternAST *ast) {
-  if (ast->type == Type::NonExistent())
-    return ast->type = this->synthesize(ast->Prototype.get());
-  return ast->type;
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(FuncDefAST *ast) {
-  if (ast->type == Type::NonExistent())
-    return ast->type = this->synthesize(ast->Prototype.get());
-  return ast->type;
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
-  if (ast->type != Type::NonExistent())
-    return ast->type;
-  std::vector<Type> types;
-  for (auto &param : ast->parameterVectors) {
-    types.push_back(this->synthesize(param.get()));
-  }
-  types.push_back(this->synthesize_typename(ast->returnType));
-
-  return ast->type = Type::Function(types);
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
-  // INFO: Look up the call expr in the id map, and get out the type
-  return synthesize_id(ast->functionName);
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
-  return Type::I64_t();
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
-  if (ast->number.find(".") == std::string::npos)
-    return Type::I64_t();
-  return Type::F64_t();
+  return Type::NonExistent();
 }
-Type BiTypeCheckerVisitor::synthesize(BoolExprAST *ast) { return Type::Bool(); }
+Type BiTypeCheckerVisitor::synthesize(BoolExprAST *ast) {
+  return Type::NonExistent();
+}
 Type BiTypeCheckerVisitor::synthesize(VariableExprAST *ast) {
-  return synthesize_id(ast->variableName);
+  return Type::NonExistent();
 }
-Type BiTypeCheckerVisitor::synthesize(BlockAST *ast) { return Type::I64_t(); }
+Type BiTypeCheckerVisitor::synthesize(BlockAST *ast) {
+  return Type::NonExistent();
+}
 Type BiTypeCheckerVisitor::synthesize(IfExprAST *ast) {
-  auto a = this->synthesize(ast->thenBlockAST.get());
-  auto b = this->synthesize(ast->elseBlockAST.get());
-
-  // TODO: something is not good here, we didn't check if a and b can converge.
-  // TODO: Make a join function
-  return a;
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(TypedVarAST *ast) {
-  return synthesize_typename(ast->type);
-}
-Type BiTypeCheckerVisitor::synthesize_id(const std::string &id) {
-  if (this->get_id_map().queryName(id) == TypingContext::nameNotFound) {
-  }
-  return this->get_id_map().get_from_name(id);
-}
-Type BiTypeCheckerVisitor::synthesize_typename(const std::string &type_name) {
-  return this->get_typename_map().get_from_name(type_name);
+  return Type::NonExistent();
 }
 
 bool BiTypeCheckerVisitor::check(ProgramAST *ast) { return false; }
@@ -123,4 +103,5 @@ bool BiTypeCheckerVisitor::check(VariableExprAST *ast) { return false; }
 bool BiTypeCheckerVisitor::check(BlockAST *ast) { return false; }
 bool BiTypeCheckerVisitor::check(IfExprAST *ast) { return false; }
 bool BiTypeCheckerVisitor::check(TypedVarAST *ast) { return false; }
+
 } // namespace sammine_lang::AST

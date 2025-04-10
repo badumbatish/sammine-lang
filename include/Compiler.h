@@ -30,6 +30,7 @@ class Compiler {
   void lex();
   void parse();
   void scopecheck();
+  void typecheck();
   void codegen();
   void produce_executable();
   void set_error() { error = true; }

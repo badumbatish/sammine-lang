@@ -3,6 +3,7 @@
 //
 
 #include "Compiler.h"
+#include "BiTypeChecker.h"
 #include "CodegenVisitor.h"
 #include "ScopeGeneratorVisitor.h"
 #include "Utilities.h"
@@ -80,6 +81,7 @@ void Compiler::codegen() {
   //
 }
 
+void Compiler::typecheck() {}
 void Compiler::produce_executable() {
 
   log_diagnostics("Start producing executable/object file stage");

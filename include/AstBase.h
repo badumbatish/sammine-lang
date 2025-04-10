@@ -77,6 +77,9 @@ public:
 
 class ScopedASTVisitor : public ASTVisitor {
 public:
+  virtual void enter_new_scope() = 0;
+  virtual void exit_new_scope() = 0;
+
   virtual void visit(ProgramAST *ast);
 
   virtual void visit(VarDefAST *ast);
@@ -105,12 +108,47 @@ public:
   virtual ~ScopedASTVisitor() = 0;
 };
 
+class TypeCheckerVisitor {
+public:
+  virtual Type synthesize(ProgramAST *ast) = 0;
+  virtual Type synthesize(VarDefAST *ast) = 0;
+  virtual Type synthesize(ExternAST *ast) = 0;
+  virtual Type synthesize(FuncDefAST *ast) = 0;
+  virtual Type synthesize(PrototypeAST *ast) = 0;
+  virtual Type synthesize(CallExprAST *ast) = 0;
+  virtual Type synthesize(BinaryExprAST *ast) = 0;
+  virtual Type synthesize(NumberExprAST *ast) = 0;
+  virtual Type synthesize(BoolExprAST *ast) = 0;
+  virtual Type synthesize(VariableExprAST *ast) = 0;
+  virtual Type synthesize(BlockAST *ast) = 0;
+  virtual Type synthesize(IfExprAST *ast) = 0;
+  virtual Type synthesize(TypedVarAST *ast) = 0;
+
+  virtual bool check(ProgramAST *ast) = 0;
+  virtual bool check(VarDefAST *ast) = 0;
+  virtual bool check(ExternAST *ast) = 0;
+  virtual bool check(FuncDefAST *ast) = 0;
+  virtual bool check(PrototypeAST *ast) = 0;
+  virtual bool check(CallExprAST *ast) = 0;
+  virtual bool check(BinaryExprAST *ast) = 0;
+  virtual bool check(NumberExprAST *ast) = 0;
+  virtual bool check(BoolExprAST *ast) = 0;
+  virtual bool check(VariableExprAST *ast) = 0;
+  virtual bool check(BlockAST *ast) = 0;
+  virtual bool check(IfExprAST *ast) = 0;
+  virtual bool check(TypedVarAST *ast) = 0;
+
+  virtual ~TypeCheckerVisitor() = 0;
+};
+
 class Visitable {
 public:
   virtual ~Visitable() = default;
   virtual void accept_vis(ASTVisitor *visitor) = 0;
   virtual void walk_with_preorder(ASTVisitor *visitor) = 0;
   virtual void walk_with_postorder(ASTVisitor *visitor) = 0;
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) = 0;
+  virtual bool accept_check(TypeCheckerVisitor *visitor) = 0;
   virtual std::string getTreeName() = 0;
 };
 
