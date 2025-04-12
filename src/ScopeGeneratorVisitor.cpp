@@ -11,31 +11,35 @@ void ScopeGeneratorVisitor::preorder_walk(VarDefAST *ast) {
   auto &scope = this->scope_stack.top();
 
   auto var_name = ast->TypedVar->name;
-  if (scope.queryName(var_name) == LexicalScope::nameNotFound) {
+  if (scope.recursiveQueryName(var_name) == LexicalScope::nameNotFound) {
     scope.registerNameT(var_name, ast->TypedVar->get_location());
-  } else if (scope.queryName(var_name) == LexicalScope::nameFound) {
+  } else if (scope.recursiveQueryName(var_name) == LexicalScope::nameFound) {
     add_error(ast->get_location(),
               fmt::format("[SCOPE1]: The name `{}` has been introduced before",
                           var_name));
     add_error(
-        scope.get_from_name(var_name),
+        scope.recursive_get_from_name(var_name),
         fmt::format("[SCOPE1]: Most recently defined `{}` is here", var_name));
   }
 }
 void ScopeGeneratorVisitor::preorder_walk(ExternAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(FuncDefAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(PrototypeAST *ast) {
+  // get previous scope and register the function name
+
   auto &scope = this->scope_stack.top();
+  auto &parent_scope = *this->scope_stack.top().parent_scope;
 
   auto var_name = ast->functionName;
-  if (scope.queryName(var_name) == LexicalScope::nameNotFound) {
-    scope.registerNameT(var_name, ast->get_location());
-  } else if (scope.queryName(var_name) == LexicalScope::nameFound) {
+  if (parent_scope.recursiveQueryName(var_name) == LexicalScope::nameNotFound) {
+    parent_scope.registerNameT(var_name, ast->get_location());
+  } else if (parent_scope.recursiveQueryName(var_name) ==
+             LexicalScope::nameFound) {
     add_error(ast->get_location(),
               fmt::format("[SCOPE1]: The name `{}` has been introduced before",
                           var_name));
     add_error(
-        scope.get_from_name(var_name),
+        parent_scope.recursive_get_from_name(var_name),
         fmt::format("[SCOPE1]: Most recently defined `{}` is here", var_name));
   }
   for (auto &param : ast->parameterVectors) {

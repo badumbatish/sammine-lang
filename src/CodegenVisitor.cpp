@@ -144,8 +144,6 @@ void CgVisitor::visit(IfExprAST *ast) {
 
   resPtr->Builder->CreateCondBr(ast->bool_expr->val, ThenBB, ElseBB);
 
-  std::cerr << "Hi from if expr codegen" << std::endl;
-
   resPtr->Builder->SetInsertPoint(ThenBB);
 
   ast->thenBlockAST->accept_vis(this);

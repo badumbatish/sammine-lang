@@ -79,7 +79,7 @@ void Compiler::codegen() {
 
 void Compiler::typecheck() {
   auto tc = sammine_lang::AST::BiTypeCheckerVisitor();
-  programAST->accept_vis(&tc);
+  /*programAST->accept_vis(&tc);*/
 }
 void Compiler::produce_executable() {
 

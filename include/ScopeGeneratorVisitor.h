@@ -3,12 +3,15 @@
 #include "AstBase.h"
 #include "LexicalContext.h"
 #include "Utilities.h"
+#include <memory>
 #include <stack>
 namespace sammine_lang::AST {
 
 // A simple scoping class, doesn't differentiate between different names, like
 // variable name, func name and all that
-class LexicalScope : public LexicalContext<sammine_util::Location> {};
+class LexicalScope : public LexicalContext<sammine_util::Location> {
+  using LexicalContext::LexicalContext;
+};
 
 class ScopeGeneratorVisitor : public ScopedASTVisitor {
 public:
@@ -19,8 +22,10 @@ public:
   // INFO: CheckAndReg means: Check if there's redefinition, if not, register
   // INFO: Check for castable means: Check if the name existed, if not, register
 
-  void enter_new_scope() override { scope_stack.push(LexicalScope()); }
-  void exit_new_scope() override { this->scope_stack.pop(); }
+  virtual void enter_new_scope() override {
+    scope_stack.push(LexicalScope(&scope_stack.top()));
+  }
+  virtual void exit_new_scope() override { this->scope_stack.pop(); }
 
   // pre order
 

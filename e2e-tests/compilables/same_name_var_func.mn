@@ -1,0 +1,8 @@
+# RUN: ! %sammine_exe% --file %s  
+fn f() {
+
+}
+
+fn ab() {
+    let f = 0;
+}

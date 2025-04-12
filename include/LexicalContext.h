@@ -1,16 +1,20 @@
 #pragma once
 // A simple scoping class, doesn't differentiate between different names, like
 // variable name, func name and all that
+#include "Utilities.h"
+#include <functional>
+#include <memory>
+#include <ostream>
 #include <set>
 template <class T> class LexicalContext {
-  std::shared_ptr<LexicalContext> parent_scope;
   std::set<std::string> symbols;
   std::unordered_map<std::string, T> symbols_to_t;
 
 public:
+  LexicalContext *parent_scope;
+
   explicit LexicalContext() {}
-  LexicalContext(std::shared_ptr<LexicalContext> parent_scope)
-      : parent_scope(parent_scope) {}
+  LexicalContext(LexicalContext *parent_scope) : parent_scope(parent_scope) {}
 
   enum NameQueryResult {
     nameFound,
@@ -23,14 +27,23 @@ public:
   NameQueryResult queryName(const std::string &name) const {
     return symbols.contains(name) ? nameFound : nameNotFound;
   }
-
   T get_from_name(const std::string &name) { return symbols_to_t.at(name); }
+
+  T recursive_get_from_name(const std::string &name) {
+    if (symbols.find(name) != symbols.end())
+      return symbols_to_t[name];
+    else if (parent_scope == nullptr) {
+      sammine_util::abort(fmt::format("name {} not found", name));
+    } else
+      return parent_scope->recursive_get_from_name(name);
+  }
 
   NameQueryResult recursiveQueryName(const std::string &name) const {
     if (symbols.find(name) != symbols.end())
       return nameFound;
-    else if (parent_scope == nullptr)
+    else if (parent_scope == nullptr) {
       return nameNotFound;
-    return parent_scope->recursiveQueryName(name);
+    } else
+      return parent_scope->recursiveQueryName(name);
   }
 }; // namespace sammine_lang::AST
