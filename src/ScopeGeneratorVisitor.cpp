@@ -2,7 +2,6 @@
 #include "Ast.h"
 #include "Utilities.h"
 #include "fmt/format.h"
-#include <iostream>
 namespace sammine_lang::AST {
 // pre order
 void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {}
