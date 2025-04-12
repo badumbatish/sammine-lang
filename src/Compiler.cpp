@@ -48,14 +48,12 @@ Compiler::Compiler(
 }
 
 void Compiler::lex() {
-  log_diagnostics("Start lexing stage...");
   Lexer lxr = Lexer(input);
   reporter.report_and_abort(lxr);
   tokStream = lxr.getTokenStream();
 }
 
 void Compiler::parse() {
-  log_diagnostics("Start parser stage...");
   Parser psr = Parser(tokStream);
 
   auto result = psr.Parse();
@@ -66,14 +64,12 @@ void Compiler::parse() {
 }
 
 void Compiler::scopecheck() {
-  log_diagnostics("Start scope checking stage...");
   auto sc = sammine_lang::AST::ScopeGeneratorVisitor();
 
   programAST->accept_vis(&sc);
   reporter.report_and_abort(sc);
 }
 void Compiler::codegen() {
-  log_diagnostics("Start codegen stage...");
   auto cg = sammine_lang::AST::CgVisitor(resPtr);
   programAST->accept_vis(&cg);
 
@@ -81,10 +77,12 @@ void Compiler::codegen() {
   //
 }
 
-void Compiler::typecheck() {}
+void Compiler::typecheck() {
+  auto tc = sammine_lang::AST::BiTypeCheckerVisitor();
+  programAST->accept_vis(&tc);
+}
 void Compiler::produce_executable() {
 
-  log_diagnostics("Start producing executable/object file stage");
   if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
     force_log_diagnostics("Logging pre optimization llvm IR");
     resPtr->Module->print(llvm::errs(), nullptr);
@@ -118,13 +116,15 @@ void Compiler::start() {
       {&Compiler::lex, "lexing"},
       {&Compiler::parse, "parsing"},
       {&Compiler::scopecheck, "scope check"},
+      {&Compiler::typecheck, "type check"},
       {&Compiler::codegen, "codegen"},
-      {&Compiler::produce_executable, "produce_executable"},
+      {&Compiler::produce_executable, "produce executable"},
   };
 
   std::string prev = "";
   for (auto stage : CompilerStages) {
     if (!error) {
+      log_diagnostics(fmt::format("Start {} stage...", stage.second));
       stage.first(this);
       prev = stage.second;
     } else {

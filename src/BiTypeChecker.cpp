@@ -22,6 +22,9 @@ void BiTypeCheckerVisitor::preorder_walk(VarDefAST *ast) {
   //
   //
   // Case 1
+  if (ast->TypedVar->accept_synthesis(this) == Type::NonExistent()) {
+  }
+  sammine_util::abort("Yes, failing right now");
 }
 void BiTypeCheckerVisitor::preorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(FuncDefAST *ast) {}

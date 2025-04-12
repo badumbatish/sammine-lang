@@ -3,9 +3,7 @@
 #include "AstBase.h"
 #include "LexicalContext.h"
 #include "Types.h"
-#include <memory>
 #include <stack>
-#include <variant>
 namespace sammine_lang {
 
 namespace AST {
@@ -32,8 +30,13 @@ public:
     typename_to_type.pop();
   }
   BiTypeCheckerVisitor() { this->enter_new_scope(); }
-  TypingContext &get_id_map() { return id_to_type.top(); }
-  TypingContext &get_typename_map() { return typename_to_type.top(); }
+
+  Type get_id_type(const std::string &str) {
+    return id_to_type.top().get_from_name(str);
+  }
+  Type get_typename_type(const std::string &str) {
+    return typename_to_type.top().get_from_name(str);
+  }
 
   // pre order
 

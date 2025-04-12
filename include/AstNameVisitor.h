@@ -12,59 +12,59 @@ public:
   AstNameVisitor() {}
 
   // pre order
-  void preorder_walk(ProgramAST *ast) override {
+  virtual void preorder_walk(ProgramAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(VarDefAST *ast) override {
+  virtual void preorder_walk(VarDefAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(ExternAST *ast) override {
+  virtual void preorder_walk(ExternAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(FuncDefAST *ast) override {
+  virtual void preorder_walk(FuncDefAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(PrototypeAST *ast) override {
+  virtual void preorder_walk(PrototypeAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(CallExprAST *ast) override {
+  virtual void preorder_walk(CallExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(BinaryExprAST *ast) override {
+  virtual void preorder_walk(BinaryExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(NumberExprAST *ast) override {
+  virtual void preorder_walk(NumberExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(BoolExprAST *ast) override {
+  virtual void preorder_walk(BoolExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(VariableExprAST *ast) override {
+  virtual void preorder_walk(VariableExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(BlockAST *ast) override {
+  virtual void preorder_walk(BlockAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(IfExprAST *ast) override {
+  virtual void preorder_walk(IfExprAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
-  void preorder_walk(TypedVarAST *ast) override {
+  virtual void preorder_walk(TypedVarAST *ast) override {
     PreOrderNames.push_back(ast->getTreeName());
   }
 
   // post order
-  void postorder_walk(ProgramAST *ast) override {}
-  void postorder_walk(VarDefAST *ast) override {}
-  void postorder_walk(ExternAST *ast) override {}
-  void postorder_walk(FuncDefAST *ast) override {}
-  void postorder_walk(PrototypeAST *ast) override {}
-  void postorder_walk(CallExprAST *ast) override {}
-  void postorder_walk(BinaryExprAST *ast) override {}
-  void postorder_walk(NumberExprAST *ast) override {}
-  void postorder_walk(BoolExprAST *ast) override {}
-  void postorder_walk(VariableExprAST *ast) override {}
-  void postorder_walk(BlockAST *ast) override {}
-  void postorder_walk(IfExprAST *ast) override {}
-  void postorder_walk(TypedVarAST *ast) override {}
+  virtual void postorder_walk(ProgramAST *ast) override {}
+  virtual void postorder_walk(VarDefAST *ast) override {}
+  virtual void postorder_walk(ExternAST *ast) override {}
+  virtual void postorder_walk(FuncDefAST *ast) override {}
+  virtual void postorder_walk(PrototypeAST *ast) override {}
+  virtual void postorder_walk(CallExprAST *ast) override {}
+  virtual void postorder_walk(BinaryExprAST *ast) override {}
+  virtual void postorder_walk(NumberExprAST *ast) override {}
+  virtual void postorder_walk(BoolExprAST *ast) override {}
+  virtual void postorder_walk(VariableExprAST *ast) override {}
+  virtual void postorder_walk(BlockAST *ast) override {}
+  virtual void postorder_walk(IfExprAST *ast) override {}
+  virtual void postorder_walk(TypedVarAST *ast) override {}
 };
 } // namespace sammine_lang::AST
