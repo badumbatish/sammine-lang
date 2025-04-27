@@ -20,7 +20,7 @@ class BiTypeCheckerVisitor : public ScopedASTVisitor,
 public:
   std::stack<TypingContext> id_to_type;
   std::stack<TypingContext> typename_to_type;
-
+  TypeMapOrdering type_map_ordering;
   virtual void enter_new_scope() override {
     id_to_type.push(TypingContext());
     typename_to_type.push(TypingContext());
@@ -31,11 +31,20 @@ public:
   }
   BiTypeCheckerVisitor() { this->enter_new_scope(); }
 
-  Type get_id_type(const std::string &str) {
-    return id_to_type.top().get_from_name(str);
+  std::optional<Type> get_id_type(const std::string &str) {
+
+    auto &id_name_top = id_to_type.top();
+    if (id_name_top.queryName(str) == TypingContext::nameNotFound) {
+      return std::nullopt;
+    }
+    return id_name_top.get_from_name(str);
   }
-  Type get_typename_type(const std::string &str) {
-    return typename_to_type.top().get_from_name(str);
+  std::optional<Type> get_typename_type(const std::string &str) {
+    auto &typename_top = typename_to_type.top();
+    if (typename_top.queryName(str) == TypingContext::nameNotFound) {
+      return std::nullopt;
+    }
+    return typename_top.get_from_name(str);
   }
 
   // pre order
