@@ -39,7 +39,6 @@ public:
   std::unique_ptr<llvm::LLVMContext> Context;
   std::unique_ptr<llvm::IRBuilder<>> Builder;
   std::unique_ptr<llvm::Module> Module;
-  std::map<std::string, llvm::AllocaInst *> NamedValues;
 
   std::unique_ptr<llvm::FunctionPassManager> FnPass;
   std::unique_ptr<llvm::LoopAnalysisManager> LpAnalysis;
@@ -49,8 +48,6 @@ public:
   std::unique_ptr<llvm::PassInstrumentationCallbacks> PassCallbacks;
   std::unique_ptr<llvm::StandardInstrumentations> StdIns;
   std::unique_ptr<SammineJIT> sammineJIT;
-  std::map<std::string, std::shared_ptr<sammine_lang::AST::PrototypeAST>>
-      FnProto;
 
   llvm::PassBuilder PB;
   std::unique_ptr<llvm::TargetMachine> target_machine;

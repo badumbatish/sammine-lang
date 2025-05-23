@@ -6,6 +6,10 @@
 #include <memory>
 #include <ostream>
 #include <set>
+enum NameQueryResult {
+  nameFound,
+  nameNotFound,
+};
 template <class T> class LexicalContext {
   std::set<std::string> symbols;
   std::unordered_map<std::string, T> symbols_to_t;
@@ -17,10 +21,6 @@ public:
   LexicalContext(LexicalContext *parent_scope)
       : symbols(), symbols_to_t(), parent_scope(parent_scope) {}
 
-  enum NameQueryResult {
-    nameFound,
-    nameNotFound,
-  };
   void registerNameT(const std::string &name, T l) {
     symbols.insert(name);
     symbols_to_t[name] = l;

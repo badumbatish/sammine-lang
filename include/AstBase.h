@@ -5,8 +5,10 @@
 #pragma once
 #include "AstDecl.h"
 #include "Lexer.h"
+#include "LexicalContext.h"
 #include "Types.h"
 #include "Utilities.h"
+#include <stack>
 namespace llvm {
 class Value;
 
@@ -75,6 +77,42 @@ public:
   virtual ~ASTVisitor() = 0;
 };
 
+template <class T> class LexicalStack : public std::stack<LexicalContext<T>> {
+public:
+  void push_context() {
+    if (this->empty())
+      this->push(LexicalContext<T>());
+    else
+      this->push(LexicalContext<T>(&this->top()));
+  }
+  void pop_context() {
+    if (this->empty()) {
+      sammine_util::abort("ICE: You are popping an empty lexical stack");
+    } else {
+      this->pop();
+    }
+  }
+
+  void registerNameT(const std::string &name, T l) {
+    return this->top().registerNameT(name, l);
+  }
+  NameQueryResult recursiveQueryName(const std::string &name) const {
+    return this->top().recursiveQueryName(name);
+  }
+
+  T get_from_name(const std::string &name) {
+    return this->top().get_from_name(name);
+  }
+  NameQueryResult queryName(const std::string &name) const {
+    return this->top().queryName(name);
+  }
+
+  T recursive_get_from_name(const std::string &name) {
+    return this->top().recursive_get_from_name(name);
+  }
+
+  LexicalContext<T> *parent_scope() { return this->top().parent_scope; }
+};
 class ScopedASTVisitor : public ASTVisitor {
 public:
   virtual void enter_new_scope() = 0;

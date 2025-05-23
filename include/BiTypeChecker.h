@@ -18,12 +18,12 @@ class BiTypeCheckerVisitor : public ScopedASTVisitor,
   // We're gonna provide look up in different
 
 public:
-  std::stack<TypingContext> id_to_type;
-  std::stack<TypingContext> typename_to_type;
+  LexicalStack<Type> id_to_type;
+  LexicalStack<Type> typename_to_type;
   TypeMapOrdering type_map_ordering;
   virtual void enter_new_scope() override {
-    id_to_type.push(TypingContext());
-    typename_to_type.push(TypingContext());
+    id_to_type.push_context();
+    typename_to_type.push_context();
   }
   virtual void exit_new_scope() override {
     id_to_type.pop();
@@ -34,14 +34,14 @@ public:
   std::optional<Type> get_id_type(const std::string &str) {
 
     auto &id_name_top = id_to_type.top();
-    if (id_name_top.queryName(str) == TypingContext::nameNotFound) {
+    if (id_name_top.queryName(str) == nameNotFound) {
       return std::nullopt;
     }
     return id_name_top.get_from_name(str);
   }
   std::optional<Type> get_typename_type(const std::string &str) {
     auto &typename_top = typename_to_type.top();
-    if (typename_top.queryName(str) == TypingContext::nameNotFound) {
+    if (typename_top.queryName(str) == nameNotFound) {
       return std::nullopt;
     }
     return typename_top.get_from_name(str);

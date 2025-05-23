@@ -28,12 +28,69 @@ CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
   return TmpB.CreateAlloca(llvm::Type::getDoubleTy(*resPtr->Context), nullptr,
                            VarName);
 }
-void CgVisitor::visit(ProgramAST *ast) {
-  for (auto &def : ast->DefinitionVec)
-    def->accept_vis(this);
+void CgVisitor::preorder_walk(ProgramAST *ast) {}
+
+void CgVisitor::preorder_walk(VarDefAST *ast) {}
+void CgVisitor::preorder_walk(ExternAST *ast) {}
+
+void CgVisitor::postorder_walk(ExternAST *ast) {
+  // Figure this out
+  // resPtr->FnProto[ast->Prototype->functionName] = std::move(ast->Prototype);
 }
-void CgVisitor::visit(VarDefAST *ast) {}
-void CgVisitor::visit(PrototypeAST *ast) {
+void CgVisitor::preorder_walk(FuncDefAST *ast) {
+  auto name = ast->Prototype->functionName;
+  assert(resPtr);
+  assert(resPtr->Module);
+  assert(resPtr->Context);
+  llvm::Function *Function = resPtr->Module->getFunction(name);
+
+  if (!Function) {
+    ast->Prototype->accept_vis(this);
+    Function = ast->Prototype->function;
+  }
+
+  if (!Function) {
+    // TODO: Please add better error handling
+    assert(false);
+    sammine_util::abort("This should not happen");
+  }
+
+  assert(Function);
+  llvm::BasicBlock *mainblock =
+      llvm::BasicBlock::Create(*resPtr->Context, "entry", Function);
+
+  resPtr->Builder->SetInsertPoint(mainblock);
+
+  // TODO: figure this out NamedValues.clear();
+  for (auto &Arg : Function->args()) {
+    llvm::AllocaInst *Alloca =
+        CreateEntryBlockAlloca(Function, std::string(Arg.getName()));
+    resPtr->Builder->CreateStore(&Arg, Alloca);
+
+    // TODO: Figure this out: resPtr->NamedValues[std::string(Arg.getName())] =
+    // Alloca;
+  }
+
+  ast->Block->accept_vis(this);
+
+  // TODO: A function should return the last expression (only float for now)
+  resPtr->Builder->CreateRet(
+      llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(1.0)));
+  // Validate the generated code, checking for consistency.
+  auto not_verified = verifyFunction(*Function, &llvm::errs());
+  // if (llvm::Value *RetVal = ast->Block->val) {
+  //   // Finish off the function.
+  // }
+
+  // Error reading body, remove function.
+  if (not_verified) {
+    sammine_util::abort("ICE: Abort from creating a function");
+    Function->eraseFromParent();
+  }
+  return;
+}
+void CgVisitor::preorder_walk(PrototypeAST *ast) {
+
   std::vector<llvm::Type *> Doubles(
       ast->parameterVectors.size(),
       llvm::Type::getDoubleTy(*(resPtr->Context)));
@@ -52,7 +109,8 @@ void CgVisitor::visit(PrototypeAST *ast) {
   }
   ast->function = F;
 }
-void CgVisitor::visit(CallExprAST *ast) {
+void CgVisitor::preorder_walk(CallExprAST *ast) {
+
   llvm::Function *callee = resPtr->Module->getFunction(ast->functionName);
   if (!callee) {
     sammine_util::abort("Unknown function called");
@@ -71,7 +129,7 @@ void CgVisitor::visit(CallExprAST *ast) {
 
   ast->val = resPtr->Builder->CreateCall(callee, ArgsVector, "calltmp");
 }
-void CgVisitor::visit(BinaryExprAST *ast) {
+void CgVisitor::preorder_walk(BinaryExprAST *ast) {
   if (ast->Op->type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
@@ -85,11 +143,12 @@ void CgVisitor::visit(BinaryExprAST *ast) {
     if (!R)
       sammine_util::abort("Failed to codegen RHS for tok assign");
 
-    auto *Var = resPtr->NamedValues[LHSE->variableName];
-    if (!Var)
-      sammine_util::abort("Unknown variable in LHS of tok assign");
-
-    resPtr->Builder->CreateStore(R, Var);
+    // TODO : Figure this out
+    // auto *Var = resPtr->NamedValues[LHSE->variableName];
+    // if (!Var)
+    //   sammine_util::abort("Unknown variable in LHS of tok assign");
+    //
+    // resPtr->Builder->CreateStore(R, Var);
     ast->val = R;
     return;
   }
@@ -117,7 +176,11 @@ void CgVisitor::visit(BinaryExprAST *ast) {
         L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
   }
 }
-void CgVisitor::visit(BoolExprAST *ast) {
+void CgVisitor::preorder_walk(NumberExprAST *ast) {
+  ast->val = llvm::ConstantFP::get(*resPtr->Context,
+                                   llvm::APFloat(std::stod(ast->number)));
+}
+void CgVisitor::preorder_walk(BoolExprAST *ast) {
   if (ast->b)
     ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                      llvm::APFloat(std::stod("1.0")));
@@ -125,7 +188,19 @@ void CgVisitor::visit(BoolExprAST *ast) {
     ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                      llvm::APFloat(std::stod("0.0")));
 }
-void CgVisitor::visit(IfExprAST *ast) {
+void CgVisitor::preorder_walk(VariableExprAST *ast) {
+  // TODO: Figure this out
+  // auto *Alloca = resPtr->NamedValues[ast->variableName];
+  // if (!Alloca) {
+  //   sammine_util::abort("Unknown variable name");
+  //   return;
+  // }
+  //
+  // ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(), Alloca,
+  //                                        ast->variableName);
+}
+void CgVisitor::preorder_walk(BlockAST *ast) {}
+void CgVisitor::preorder_walk(IfExprAST *ast) {
   ast->bool_expr->accept_vis(this);
   if (!ast->bool_expr->val) {
     sammine_util::abort("Failed to codegen condition of if-expr");
@@ -136,8 +211,8 @@ void CgVisitor::visit(IfExprAST *ast) {
 
   llvm::Function *function = resPtr->Builder->GetInsertBlock()->getParent();
 
-  // Create blocks for the then and else cases.  Insert the 'then' block at the
-  // end of the function.
+  // Create blocks for the then and else cases.  Insert the 'then' block at
+  // the end of the function.
   BasicBlock *ThenBB = BasicBlock::Create(*resPtr->Context, "then", function);
   BasicBlock *ElseBB = BasicBlock::Create(*resPtr->Context, "else");
   BasicBlock *MergeBB = BasicBlock::Create(*resPtr->Context, "ifcont");
@@ -176,82 +251,6 @@ void CgVisitor::visit(IfExprAST *ast) {
   PN->addIncoming(ast->elseBlockAST->val, ElseBB);
   ast->val = PN;
 }
-void CgVisitor::visit(NumberExprAST *ast) {
-  ast->val = llvm::ConstantFP::get(*resPtr->Context,
-                                   llvm::APFloat(std::stod(ast->number)));
-}
-void CgVisitor::visit(VariableExprAST *ast) {
-  auto *Alloca = resPtr->NamedValues[ast->variableName];
-  if (!Alloca) {
-    sammine_util::abort("Unknown variable name");
-    return;
-  }
-
-  ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(), Alloca,
-                                         ast->variableName);
-}
-void CgVisitor::visit(ExternAST *ast) {
-
-  ast->Prototype->accept_vis(this);
-
-  resPtr->FnProto[ast->Prototype->functionName] = std::move(ast->Prototype);
-}
-void CgVisitor::visit(FuncDefAST *ast) {
-  auto name = ast->Prototype->functionName;
-  assert(resPtr);
-  assert(resPtr->Module);
-  assert(resPtr->Context);
-  llvm::Function *Function = resPtr->Module->getFunction(name);
-
-  if (!Function) {
-    ast->Prototype->accept_vis(this);
-    Function = ast->Prototype->function;
-  }
-
-  if (!Function) {
-    // TODO: Please add better error handling
-    assert(false);
-    sammine_util::abort("This should not happen");
-  }
-
-  assert(Function);
-  llvm::BasicBlock *mainblock =
-      llvm::BasicBlock::Create(*resPtr->Context, "entry", Function);
-
-  resPtr->Builder->SetInsertPoint(mainblock);
-
-  resPtr->NamedValues.clear();
-  for (auto &Arg : Function->args()) {
-    llvm::AllocaInst *Alloca =
-        CreateEntryBlockAlloca(Function, std::string(Arg.getName()));
-    resPtr->Builder->CreateStore(&Arg, Alloca);
-    resPtr->NamedValues[std::string(Arg.getName())] = Alloca;
-  }
-
-  ast->Block->accept_vis(this);
-
-  // TODO: A function should return the last expression (only float for now)
-  resPtr->Builder->CreateRet(
-      llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(1.0)));
-  // Validate the generated code, checking for consistency.
-  auto not_verified = verifyFunction(*Function, &llvm::errs());
-  // if (llvm::Value *RetVal = ast->Block->val) {
-  //   // Finish off the function.
-  // }
-
-  // Error reading body, remove function.
-  if (not_verified) {
-    sammine_util::abort("ICE: Abort from creating a function");
-    Function->eraseFromParent();
-  }
-  return;
-}
-
-void CgVisitor::visit(BlockAST *ast) {
-  for (auto &statement : ast->Statements) {
-    statement->accept_vis(this);
-  }
-}
-void CgVisitor::visit(TypedVarAST *ast) {};
+void CgVisitor::preorder_walk(TypedVarAST *ast) {}
 
 } // namespace sammine_lang::AST

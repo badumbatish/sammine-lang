@@ -15,17 +15,14 @@ class LexicalScope : public LexicalContext<sammine_util::Location> {
 
 class ScopeGeneratorVisitor : public ScopedASTVisitor {
 public:
-  std::stack<LexicalScope> scope_stack;
-  ScopeGeneratorVisitor() { scope_stack.push(LexicalScope()); }
-  LexicalScope get_scope_map();
+  LexicalStack<sammine_util::Location> scope_stack;
+  ScopeGeneratorVisitor() { scope_stack.push_context(); }
 
   // INFO: CheckAndReg means: Check if there's redefinition, if not, register
   // INFO: Check for castable means: Check if the name existed, if not, register
 
-  virtual void enter_new_scope() override {
-    scope_stack.push(LexicalScope(&scope_stack.top()));
-  }
-  virtual void exit_new_scope() override { this->scope_stack.pop(); }
+  virtual void enter_new_scope() override { this->scope_stack.push_context(); }
+  virtual void exit_new_scope() override { this->scope_stack.pop_context(); }
 
   // pre order
 
