@@ -11,7 +11,7 @@ endif()
 add_subdirectory(externals/)
 
 # LLVM-STUFF
-find_package(ZSTD REQUIRED)
+# find_package(ZSTD REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})

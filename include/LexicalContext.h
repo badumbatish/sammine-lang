@@ -13,8 +13,9 @@ template <class T> class LexicalContext {
 public:
   LexicalContext *parent_scope;
 
-  explicit LexicalContext() {}
-  LexicalContext(LexicalContext *parent_scope) : parent_scope(parent_scope) {}
+  explicit LexicalContext() : symbols(), symbols_to_t(), parent_scope() {}
+  LexicalContext(LexicalContext *parent_scope)
+      : symbols(), symbols_to_t(), parent_scope(parent_scope) {}
 
   enum NameQueryResult {
     nameFound,

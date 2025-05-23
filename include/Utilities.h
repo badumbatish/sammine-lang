@@ -2,7 +2,6 @@
 #include "fmt/base.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
-#include <__algorithm/ranges_lower_bound.h>
 #include <algorithm>
 #include <cassert>
 #include <cstddef>

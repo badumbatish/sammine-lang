@@ -19,11 +19,15 @@ for configuration. We need [llvm](https://github.com/Shuriken-Group/setup_llvm_t
 Run
 
 ```bash
+cmake --build build -j 
+```
+
+and 
+
+```bash
 cmake --build build -j --target unit-tests e2e-tests
 ```
 in the project root folder to cycle through the development process.
-
-
 
 
 Run

@@ -21,7 +21,7 @@ auto get_string_from_file(const std::string &file_name) -> std::string {
 
   return input;
 }
-inline auto abort(const std::string &message) -> void {
+auto abort(const std::string &message) -> void {
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
              "[Internal Compiler Error] : {}\n", message);
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
@@ -32,7 +32,7 @@ inline auto abort(const std::string &message) -> void {
   std::abort();
 }
 
-inline auto abort_on(bool abort_if_true, const std::string &message) -> void {
+auto abort_on(bool abort_if_true, const std::string &message) -> void {
   if (abort_if_true) {
     abort(message);
     std::abort();
@@ -257,6 +257,7 @@ fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) {
     return fmt::terminal_color::bright_green;
     break;
   }
+  abort("fail to get color");
 }
 
 size_t get_unique_ast_id() { return unique_ast_id; }

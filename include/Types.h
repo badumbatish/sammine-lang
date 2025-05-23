@@ -1,8 +1,10 @@
 #pragma once
 #include <map>
 #include <memory>
+#include <optional>
 #include <span>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 enum class TypeKind { I64_t, F64_t, Unit, Bool, Function, NonExistent, Error };
 
