@@ -14,12 +14,18 @@
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
 #include <random>
+#include <ranges>
 #include <utility>
 namespace sammine_lang::AST {
 using llvm::BasicBlock;
 
 /// CreateEntryBlockAlloca - Create an alloca instruction in the entry block of
 /// the function.  This is used for mutable variables etc.
+///
+/// from the llvm blog:
+/// mem2reg only looks for alloca instructions in the entry block of the
+/// function. Being in the entry block guarantees that the alloca is only
+/// executed once, which makes analysis simpler.
 llvm::AllocaInst *
 CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
                                   const std::string &VarName) {
@@ -28,56 +34,68 @@ CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
   return TmpB.CreateAlloca(llvm::Type::getDoubleTy(*resPtr->Context), nullptr,
                            VarName);
 }
+
+llvm::Function *CgVisitor::getCurrentFunction() { return this->current_func; }
+
+void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
+
+  sammine_util::abort_on(ptr == nullptr,
+                         "A shared ptr cannot be null at this point in "
+                         "codegen, something is wrong with your parsing.");
+
+  this->current_func = ptr->function;
+}
+void CgVisitor::visit(FuncDefAST *ast) {
+
+  this->enter_new_scope();
+  ast->Prototype->accept_vis(this);
+  ast->walk_with_preorder(this);
+  ast->Block->accept_vis(this);
+  ast->walk_with_postorder(this);
+  this->exit_new_scope();
+}
 void CgVisitor::preorder_walk(ProgramAST *ast) {}
 
-void CgVisitor::preorder_walk(VarDefAST *ast) {}
-void CgVisitor::preorder_walk(ExternAST *ast) {}
-
-void CgVisitor::postorder_walk(ExternAST *ast) {
-  // Figure this out
-  // resPtr->FnProto[ast->Prototype->functionName] = std::move(ast->Prototype);
+void CgVisitor::preorder_walk(VarDefAST *ast) {
+  auto var_name = ast->TypedVar->name;
+  auto alloca = this->CreateEntryBlockAlloca(getCurrentFunction(), var_name);
+  this->namedValues.top()[var_name] = alloca;
 }
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
-  assert(resPtr);
-  assert(resPtr->Module);
-  assert(resPtr->Context);
-  llvm::Function *Function = resPtr->Module->getFunction(name);
+  sammine_util::abort_on(!resPtr);
+  sammine_util::abort_on(!resPtr->Module);
+  sammine_util::abort_on(!resPtr->Context);
 
-  if (!Function) {
-    ast->Prototype->accept_vis(this);
-    Function = ast->Prototype->function;
-  }
-
-  if (!Function) {
-    // TODO: Please add better error handling
-    assert(false);
-    sammine_util::abort("This should not happen");
-  }
+  auto *Function = this->getCurrentFunction();
 
   assert(Function);
   llvm::BasicBlock *mainblock =
-      llvm::BasicBlock::Create(*resPtr->Context, "entry", Function);
+      llvm::BasicBlock::Create(*(resPtr->Context), "entry", Function);
 
   resPtr->Builder->SetInsertPoint(mainblock);
 
   // TODO: figure this out NamedValues.clear();
+  //
+  // INFO:: Copy all the arguments to the entry block
   for (auto &Arg : Function->args()) {
     llvm::AllocaInst *Alloca =
         CreateEntryBlockAlloca(Function, std::string(Arg.getName()));
     resPtr->Builder->CreateStore(&Arg, Alloca);
 
-    // TODO: Figure this out: resPtr->NamedValues[std::string(Arg.getName())] =
-    // Alloca;
+    this->namedValues.top()[std::string(Arg.getName())] = Alloca;
   }
 
   ast->Block->accept_vis(this);
 
+  return;
+}
+void CgVisitor::postorder_walk(FuncDefAST *ast) {
   // TODO: A function should return the last expression (only float for now)
   resPtr->Builder->CreateRet(
       llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(1.0)));
   // Validate the generated code, checking for consistency.
-  auto not_verified = verifyFunction(*Function, &llvm::errs());
+  auto not_verified = verifyFunction(*getCurrentFunction(), &llvm::errs());
   // if (llvm::Value *RetVal = ast->Block->val) {
   //   // Finish off the function.
   // }
@@ -85,12 +103,13 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
   // Error reading body, remove function.
   if (not_verified) {
     sammine_util::abort("ICE: Abort from creating a function");
-    Function->eraseFromParent();
+    getCurrentFunction()->eraseFromParent();
   }
-  return;
 }
-void CgVisitor::preorder_walk(PrototypeAST *ast) {
 
+/// INFO: Register the function with its arguments, put it in the module
+/// this comes before visiting a function
+void CgVisitor::preorder_walk(PrototypeAST *ast) {
   std::vector<llvm::Type *> Doubles(
       ast->parameterVectors.size(),
       llvm::Type::getDoubleTy(*(resPtr->Context)));
@@ -108,6 +127,8 @@ void CgVisitor::preorder_walk(PrototypeAST *ast) {
     arg.setName(typed_var->name);
   }
   ast->function = F;
+  current_func = F;
+  assert(F);
 }
 void CgVisitor::preorder_walk(CallExprAST *ast) {
 

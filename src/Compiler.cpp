@@ -44,6 +44,7 @@ Compiler::Compiler(
   }
   this->resPtr = std::make_shared<LLVMRes>();
 
+  *this->resPtr;
   this->reporter = sammine_util::Reporter(file_name, input, context_radius);
 }
 
