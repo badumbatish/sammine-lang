@@ -1,4 +1,5 @@
 #pragma once
+#include "Utilities.h"
 #include <map>
 #include <memory>
 #include <optional>
@@ -51,6 +52,29 @@ struct Type {
   bool operator!=(const Type &other) const;
   bool operator<(const Type &t) const;
   bool operator>(const Type &t) const;
+
+  std::string to_string() {
+    switch (type_kind) {
+    case TypeKind::I64_t:
+      return "i64_t";
+    case TypeKind::F64_t:
+      return "f64_t";
+    case TypeKind::Unit:
+      return "Unit";
+    case TypeKind::Bool:
+      return "bool";
+    case TypeKind::Function:
+      return "Func (todo)";
+    case TypeKind::NonExistent:
+      return "NonExistent";
+    case TypeKind::Error:
+      return "Error";
+      break;
+    }
+    sammine_util::abort("Reaching the end of switch case and still cant "
+                        "convert to string, blame Jasmine (badumbatish)!!!!!");
+    return "";
+  }
 };
 
 struct TypeMapOrdering {

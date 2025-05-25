@@ -61,7 +61,7 @@ Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
   if (ast->type != Type::NonExistent())
     return ast->type;
 
-  if (ast->TypedVar->type.empty()) {
+  if (ast->TypedVar->type_lexeme.empty()) {
 
     ast->type = ast->Expression->accept_synthesis(this);
     if (ast->type == Type::Error())
@@ -69,7 +69,7 @@ Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
 
     return ast->type;
   }
-  auto get_type_opt = this->get_typename_type(ast->TypedVar->type);
+  auto get_type_opt = this->get_typename_type(ast->TypedVar->type_lexeme);
 
   if (get_type_opt == std::nullopt) {
     sammine_util::abort("Failed to synthesize the expression's type");

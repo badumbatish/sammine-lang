@@ -15,6 +15,7 @@ enum class compiler_option_enum {
   FILE,
   STR,
   LLVM_IR,
+  AST_IR,
   DIAGNOSTIC,
 };
 class Compiler {
@@ -31,6 +32,7 @@ class Compiler {
   void parse();
   void scopecheck();
   void typecheck();
+  void dump_ast();
   void codegen();
   void produce_executable();
   void set_error() { error = true; }

@@ -44,7 +44,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
     REQUIRE(varDef->TypedVar->name == "b");
-    REQUIRE(varDef->TypedVar->type == "blablabla");
+    REQUIRE(varDef->TypedVar->type_lexeme == "blablabla");
   }
 
   SECTION("Variable definition with binary expression") {
@@ -67,7 +67,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
     REQUIRE(varDef->TypedVar->name == "b");
-    REQUIRE(varDef->TypedVar->type == "blablabla");
+    REQUIRE(varDef->TypedVar->type_lexeme == "blablabla");
   }
 
   SECTION("Variable definition with call expression") {
@@ -82,7 +82,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
     REQUIRE(varDef->TypedVar->name == "b");
-    REQUIRE(varDef->TypedVar->type == "blablabla");
+    REQUIRE(varDef->TypedVar->type_lexeme == "blablabla");
 
     auto expr =
         static_cast<sammine_lang::AST::CallExprAST *>(varDef->Expression.get());
@@ -100,7 +100,7 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
     REQUIRE(varDef->TypedVar->name == "b");
-    REQUIRE(varDef->TypedVar->type == "blablabla");
+    REQUIRE(varDef->TypedVar->type_lexeme == "blablabla");
   }
 }
 

@@ -85,9 +85,6 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
 
     this->namedValues.top()[std::string(Arg.getName())] = Alloca;
   }
-
-  ast->Block->accept_vis(this);
-
   return;
 }
 void CgVisitor::postorder_walk(FuncDefAST *ast) {
@@ -154,7 +151,9 @@ void CgVisitor::preorder_walk(BinaryExprAST *ast) {
   if (ast->Op->type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
-      sammine_util::abort("Left hand side of assignment must be a variable");
+      sammine_util::abort(
+          "Left hand side of assignment must be a variable, current LHS cannot "
+          "be statically cast to VarExprAST");
       return;
     }
 
@@ -165,12 +164,13 @@ void CgVisitor::preorder_walk(BinaryExprAST *ast) {
       sammine_util::abort("Failed to codegen RHS for tok assign");
 
     // TODO : Figure this out
-    // auto *Var = resPtr->NamedValues[LHSE->variableName];
-    // if (!Var)
-    //   sammine_util::abort("Unknown variable in LHS of tok assign");
-    //
-    // resPtr->Builder->CreateStore(R, Var);
+    auto *Var = this->namedValues.top()[LHSE->variableName];
+    if (!Var)
+      sammine_util::abort("Unknown variable in LHS of tok assign");
+
+    resPtr->Builder->CreateStore(R, Var);
     ast->val = R;
+
     return;
   }
   ast->LHS->accept_vis(this);

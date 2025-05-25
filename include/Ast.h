@@ -29,8 +29,9 @@ class NumberExprAST;
 class VariableExprAST;
 
 class BlockAST;
+class Printable {};
 
-class ProgramAST : public AstBase {
+class ProgramAST : public AstBase, Printable {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
   virtual std::string getTreeName() override { return "ProgramAST"; }
@@ -49,12 +50,12 @@ public:
   }
 };
 
-class DefinitionAST : public AstBase {};
+class DefinitionAST : public AstBase, Printable {};
 
-class TypedVarAST : public AstBase {
+class TypedVarAST : public AstBase, Printable {
 public:
   std::string name;
-  std::string type;
+  std::string type_lexeme;
 
   explicit TypedVarAST(std::shared_ptr<Token> name,
                        std::shared_ptr<Token> type) {
@@ -62,7 +63,7 @@ public:
     assert(type);
     this->join_location(name)->join_location(type);
     this->name = name->lexeme;
-    this->type = type->lexeme;
+    this->type_lexeme = type->lexeme;
   }
   explicit TypedVarAST(std::shared_ptr<Token> name) {
     assert(name);
@@ -90,7 +91,7 @@ public:
 
 //!
 //!
-class PrototypeAST : public AstBase {
+class PrototypeAST : public AstBase, Printable {
 public:
   llvm::Function *function;
   std::string functionName;
@@ -174,7 +175,7 @@ public:
 //! \brief An AST to simulate a { } code block
 //!
 //!
-class BlockAST : public AstBase {
+class BlockAST : public AstBase, Printable {
 
 public:
   std::vector<std::unique_ptr<ExprAST>> Statements;
@@ -223,7 +224,7 @@ public:
   }
 };
 
-class ExprAST : public AstBase {
+class ExprAST : public AstBase, Printable {
 public:
   inline static int personal_id_counter = 0;
 };

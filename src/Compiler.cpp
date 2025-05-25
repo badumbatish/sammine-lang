@@ -3,6 +3,7 @@
 //
 
 #include "Compiler.h"
+#include "AstPrinterVisitor.h"
 #include "BiTypeChecker.h"
 #include "CodegenVisitor.h"
 #include "ScopeGeneratorVisitor.h"
@@ -65,23 +66,30 @@ void Compiler::parse() {
 }
 
 void Compiler::scopecheck() {
-  auto sc = sammine_lang::AST::ScopeGeneratorVisitor();
+  auto vs = sammine_lang::AST::ScopeGeneratorVisitor();
 
-  programAST->accept_vis(&sc);
-  reporter.report_and_abort(sc);
+  programAST->accept_vis(&vs);
+  reporter.report_and_abort(vs);
+}
+
+void Compiler::typecheck() {
+  auto vs = sammine_lang::AST::BiTypeCheckerVisitor();
+  /*programAST->accept_vis(&tc);*/
+}
+
+void Compiler::dump_ast() {
+  if (compiler_options[compiler_option_enum::AST_IR] == "true") {
+    auto vs = AST::AstPrinterVisitor();
+    programAST->accept_vis(&vs);
+  }
 }
 void Compiler::codegen() {
   auto cg = sammine_lang::AST::CgVisitor(resPtr);
   programAST->accept_vis(&cg);
 
-  // TODO : Check for codegen error
-  //
+  reporter.report_and_abort(cg);
 }
 
-void Compiler::typecheck() {
-  auto tc = sammine_lang::AST::BiTypeCheckerVisitor();
-  /*programAST->accept_vis(&tc);*/
-}
 void Compiler::produce_executable() {
 
   if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
@@ -118,6 +126,7 @@ void Compiler::start() {
       {&Compiler::parse, "parsing"},
       {&Compiler::scopecheck, "scope check"},
       {&Compiler::typecheck, "type check"},
+      {&Compiler::dump_ast, "ast-ir optional dump"},
       {&Compiler::codegen, "codegen"},
       {&Compiler::produce_executable, "produce executable"},
   };

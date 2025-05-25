@@ -21,12 +21,17 @@ int main(int argc, char *argv[]) {
   gi.add_argument("-s", "--str")
       .help("An input string for compiler to scan over.");
 
-  auto &g_diag = program.add_group("diagnostics");
+  auto &g_diag = program.add_group("Diagnostics");
   g_diag
       .add_argument("", "--llvm-ir") // TODO: Somehow make the internal compiler
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
       .help("sammine compiler spits out LLVM-IR to stdout");
+  g_diag
+      .add_argument("", "--ast-ir") // TODO: Somehow make the internal compiler
+      .default_value(std::string("false"))
+      .implicit_value(std::string("true"))
+      .help("sammine compiler spits out the internal AST to stdout");
   g_diag.add_argument("", "--diagnostics")
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
@@ -39,6 +44,7 @@ int main(int argc, char *argv[]) {
     compiler_options[compiler_option_enum::STR] =
         program.present("-s") ? program.get("-s") : "";
     compiler_options[compiler_option_enum::LLVM_IR] = program.get("--llvm-ir");
+    compiler_options[compiler_option_enum::AST_IR] = program.get("--ast-ir");
     compiler_options[compiler_option_enum::DIAGNOSTIC] =
         program.get("--diagnostics");
 
