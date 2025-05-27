@@ -168,12 +168,12 @@ class Token {
   using Location = sammine_util::Location;
 
 public:
-  TokenType type;
+  TokenType tok_type;
   std::string lexeme;
   Location location;
   Token() = delete;
   Token(TokenType type, std::string lexeme, Location location)
-      : type(type), lexeme(std::move(lexeme)), location(location) {}
+      : tok_type(type), lexeme(std::move(lexeme)), location(location) {}
 
   operator Location() { return location; }
 };
@@ -193,7 +193,7 @@ public:
   TokenStream() : TokStream(), current_index(0), error(false) {}
 
   void push_back(const std::shared_ptr<Token> &token) {
-    if (token->type == TokINVALID) {
+    if (token->tok_type == TokINVALID) {
       error = true;
       ErrStream.push_back(token);
     } else {
@@ -213,7 +213,7 @@ public:
       return TokStream.back();
     }
     while (!isEnd()) {
-      if (TokStream[current_index]->type == tokType)
+      if (TokStream[current_index]->tok_type == tokType)
         return TokStream[current_index];
       else
         current_index++;

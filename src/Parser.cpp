@@ -217,7 +217,7 @@ auto Parser::ParseExpr()
 auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
   while (true) {
-    int TokPrec = GetTokPrecedence(tokStream->peek()->type);
+    int TokPrec = GetTokPrecedence(tokStream->peek()->tok_type);
 
     if (TokPrec < prededence)
       return LHS;
@@ -245,7 +245,7 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     }
     if (!RHS)
       sammine_util::abort();
-    int NextPrec = GetTokPrecedence(tokStream->peek()->type);
+    int NextPrec = GetTokPrecedence(tokStream->peek()->tok_type);
     if (TokPrec < NextPrec) {
       RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS.value()));
       if (!RHS) {
@@ -476,7 +476,7 @@ auto Parser::ParseArguments()
 auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
                     const std::string &message) -> std::shared_ptr<Token> {
   auto currentToken = tokStream->peek();
-  auto result = !tokStream->isEnd() && currentToken->type == tokType;
+  auto result = !tokStream->isEnd() && currentToken->tok_type == tokType;
   if (result) {
     return tokStream->consume();
   } else {

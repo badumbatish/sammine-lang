@@ -40,9 +40,9 @@ llvm::Function *CgVisitor::getCurrentFunction() { return this->current_func; }
 
 void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
 
-  sammine_util::abort_on(ptr == nullptr,
-                         "A shared ptr cannot be null at this point in "
-                         "codegen, something is wrong with your parsing.");
+  sammine_util::abort_if_not(ptr,
+                             "A shared ptr cannot be null at this point in "
+                             "codegen, something is wrong with your parsing.");
 
   this->current_func = ptr->function;
 }
@@ -73,9 +73,9 @@ void CgVisitor::postorder_walk(VarDefAST *ast) {
 }
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
-  sammine_util::abort_on(!resPtr);
-  sammine_util::abort_on(!resPtr->Module);
-  sammine_util::abort_on(!resPtr->Context);
+  sammine_util::abort_if_not(resPtr);
+  sammine_util::abort_if_not(resPtr->Module);
+  sammine_util::abort_if_not(resPtr->Context);
 
   auto *Function = this->getCurrentFunction();
 
@@ -160,8 +160,7 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
 void CgVisitor::preorder_walk(BinaryExprAST *ast) {}
 
 void CgVisitor::postorder_walk(BinaryExprAST *ast) {
-  std::cout << "visiting\n";
-  if (ast->Op->type == TokenType::TokASSIGN) {
+  if (ast->Op->tok_type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
       sammine_util::abort(
@@ -185,25 +184,23 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
 
     return;
   }
-  std::cout << "visiting after\n";
   auto L = ast->LHS->val;
   auto R = ast->RHS->val;
   L->print(llvm::errs());
 
-  if (ast->Op->type == TokenType::TokADD) {
+  if (ast->Op->tok_type == TokenType::TokADD) {
     ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
-    ast->val->print(llvm::errs());
   }
-  if (ast->Op->type == TokenType::TokSUB) {
+  if (ast->Op->tok_type == TokenType::TokSUB) {
     ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
   }
-  if (ast->Op->type == TokenType::TokMUL) {
+  if (ast->Op->tok_type == TokenType::TokMUL) {
     ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
   }
-  if (ast->Op->type == TokenType::TokDIV) {
+  if (ast->Op->tok_type == TokenType::TokDIV) {
     ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
   }
-  if (ast->Op->type == TokenType::TokLESS) {
+  if (ast->Op->tok_type == TokenType::TokLESS) {
     /*auto cmp_int = resPtr->Builder->CreateFCmpULT(L, R, "less_cmp_expr");*/
     ast->val = resPtr->Builder->CreateUIToFP(
         L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
@@ -211,7 +208,6 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
 }
 
 void CgVisitor::preorder_walk(NumberExprAST *ast) {
-  std::cout << "Visiting number\n" << std::endl;
   ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                    llvm::APFloat(std::stod(ast->number)));
   if (ast->val == nullptr)
@@ -227,15 +223,12 @@ void CgVisitor::preorder_walk(BoolExprAST *ast) {
 }
 void CgVisitor::preorder_walk(VariableExprAST *ast) {
   // TODO: Figure this out
-  // auto *Alloca = resPtr->NamedValues[ast->variableName];
-  // if (!Alloca) {
-  //   sammine_util::abort("Unknown variable name");
-  //   return;
-  // }
-  //
-  // ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(),
-  // Alloca,
-  //                                        ast->variableName);
+  auto *alloca = this->namedValues.top()[ast->variableName];
+
+  sammine_util::abort_if_not(alloca, "Unknown variable name");
+
+  ast->val = resPtr->Builder->CreateLoad(alloca->getAllocatedType(), alloca,
+                                         ast->variableName);
 }
 void CgVisitor::preorder_walk(BlockAST *ast) {}
 void CgVisitor::preorder_walk(IfExprAST *ast) {
