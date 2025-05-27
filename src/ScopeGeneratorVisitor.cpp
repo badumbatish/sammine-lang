@@ -16,7 +16,7 @@ void ScopeGeneratorVisitor::preorder_walk(VarDefAST *ast) {
                           var_name));
     add_error(
         this->scope_stack.recursive_get_from_name(var_name),
-        fmt::format("[SCOPE1]: Most recently defined `{}` is here", var_name));
+        fmt::format("[SCOPE1]: The firstly defined `{}` is here", var_name));
   }
 }
 void ScopeGeneratorVisitor::preorder_walk(ExternAST *ast) {}

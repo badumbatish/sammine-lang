@@ -54,12 +54,12 @@ public:
   // post order
   // TODO: Implement these?
   virtual void postorder_walk(ProgramAST *ast) override {}
-  virtual void postorder_walk(VarDefAST *ast) override {}
+  virtual void postorder_walk(VarDefAST *ast) override;
   virtual void postorder_walk(ExternAST *ast) override {}
   virtual void postorder_walk(FuncDefAST *ast) override;
   virtual void postorder_walk(PrototypeAST *ast) override {}
   virtual void postorder_walk(CallExprAST *ast) override {}
-  virtual void postorder_walk(BinaryExprAST *ast) override {}
+  virtual void postorder_walk(BinaryExprAST *ast) override;
   virtual void postorder_walk(NumberExprAST *ast) override {}
   virtual void postorder_walk(BoolExprAST *ast) override {}
   virtual void postorder_walk(VariableExprAST *ast) override {}

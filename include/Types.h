@@ -66,7 +66,7 @@ struct Type {
     case TypeKind::Function:
       return "Func (todo)";
     case TypeKind::NonExistent:
-      return "NonExistent";
+      return "???";
     case TypeKind::Error:
       return "Error";
       break;

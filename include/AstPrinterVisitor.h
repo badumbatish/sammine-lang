@@ -7,15 +7,18 @@
 namespace sammine_lang::AST {
 class AstPrinterVisitor : public ScopedASTVisitor {
   size_t tab_counter = 0;
-
-  std::string tabs();
-  void generic_preprint(const std::string &tree_name, Type t);
+  std::string rep = "";
+  std::string current_tabs = "";
+  std::string &tabs();
+  void generic_preprintln(const std::string &tree_name);
+  void generic_preprint(const std::string &tree_name);
   void generic_postprint();
 
 public:
-  virtual void enter_new_scope() override { tab_counter++; }
-  virtual void exit_new_scope() override { tab_counter--; }
+  virtual void enter_new_scope() override { current_tabs += "  "; }
+  virtual void exit_new_scope() override { current_tabs += "  "; }
 
+  virtual void visit(PrototypeAST *ast) override;
   // pre order
   virtual void preorder_walk(ProgramAST *ast) override;
   virtual void preorder_walk(VarDefAST *ast) override;

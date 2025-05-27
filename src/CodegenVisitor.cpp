@@ -6,6 +6,7 @@
 #include "Ast.h"
 #include "Lexer.h"
 #include "Utilities.h"
+#include "fmt/format.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
@@ -60,6 +61,15 @@ void CgVisitor::preorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
   auto alloca = this->CreateEntryBlockAlloca(getCurrentFunction(), var_name);
   this->namedValues.top()[var_name] = alloca;
+}
+void CgVisitor::postorder_walk(VarDefAST *ast) {
+  auto var_name = ast->TypedVar->name;
+  auto alloca = this->namedValues.top()[var_name];
+  if (ast->Expression == nullptr) {
+    sammine_util::abort("is this legal?");
+  } else {
+    resPtr->Builder->CreateStore(ast->Expression->val, alloca);
+  }
 }
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
@@ -147,7 +157,10 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
 
   ast->val = resPtr->Builder->CreateCall(callee, ArgsVector, "calltmp");
 }
-void CgVisitor::preorder_walk(BinaryExprAST *ast) {
+void CgVisitor::preorder_walk(BinaryExprAST *ast) {}
+
+void CgVisitor::postorder_walk(BinaryExprAST *ast) {
+  std::cout << "visiting\n";
   if (ast->Op->type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
@@ -157,7 +170,6 @@ void CgVisitor::preorder_walk(BinaryExprAST *ast) {
       return;
     }
 
-    ast->RHS->accept_vis(this);
     auto R = ast->RHS->val;
 
     if (!R)
@@ -173,14 +185,14 @@ void CgVisitor::preorder_walk(BinaryExprAST *ast) {
 
     return;
   }
-  ast->LHS->accept_vis(this);
-  ast->RHS->accept_vis(this);
-
+  std::cout << "visiting after\n";
   auto L = ast->LHS->val;
   auto R = ast->RHS->val;
+  L->print(llvm::errs());
 
   if (ast->Op->type == TokenType::TokADD) {
     ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
+    ast->val->print(llvm::errs());
   }
   if (ast->Op->type == TokenType::TokSUB) {
     ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
@@ -197,9 +209,13 @@ void CgVisitor::preorder_walk(BinaryExprAST *ast) {
         L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
   }
 }
+
 void CgVisitor::preorder_walk(NumberExprAST *ast) {
+  std::cout << "Visiting number\n" << std::endl;
   ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                    llvm::APFloat(std::stod(ast->number)));
+  if (ast->val == nullptr)
+    sammine_util::abort("cannot generate number");
 }
 void CgVisitor::preorder_walk(BoolExprAST *ast) {
   if (ast->b)
@@ -217,7 +233,8 @@ void CgVisitor::preorder_walk(VariableExprAST *ast) {
   //   return;
   // }
   //
-  // ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(), Alloca,
+  // ast->val = resPtr->Builder->CreateLoad(Alloca->getAllocatedType(),
+  // Alloca,
   //                                        ast->variableName);
 }
 void CgVisitor::preorder_walk(BlockAST *ast) {}
