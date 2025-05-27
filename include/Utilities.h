@@ -7,7 +7,6 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
-#include <ranges>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -18,10 +17,27 @@ namespace sammine_util {
 auto get_string_from_file(const std::string &file_name) -> std::string;
 inline size_t unique_ast_id = 0;
 
+template <typename T>
+concept explicitly_bool_like = requires(T t) {
+  { static_cast<bool>(t) } -> std::same_as<bool>;
+};
 [[noreturn]]
 auto abort(const std::string &message = "<NO MESSAGE>") -> void;
-auto abort_on(bool abort_if_true, const std::string &message = "<NO MESSAGE>")
-    -> void;
+template <explicitly_bool_like T>
+void abort_on(const T &condition, const std::string &message = "<NO MESSAGE>") {
+  if (static_cast<bool>(condition)) {
+    abort(message);
+  }
+}
+
+template <explicitly_bool_like T>
+void abort_if_not(const T &condition,
+                  const std::string &message = "<NO MESSAGE>") {
+  if (!static_cast<bool>(condition)) {
+    abort(message);
+  }
+}
+
 //! A class representing a location for sammine-lang, this is helpful in
 //! debugging
 

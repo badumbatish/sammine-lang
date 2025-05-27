@@ -66,7 +66,7 @@ void CgVisitor::postorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
   auto alloca = this->namedValues.top()[var_name];
   if (ast->Expression == nullptr) {
-    sammine_util::abort("is this legal?");
+    sammine_util::abort_if_not(ast->Expression, "is this legal?");
   } else {
     resPtr->Builder->CreateStore(ast->Expression->val, alloca);
   }

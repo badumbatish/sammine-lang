@@ -9,6 +9,7 @@
 #include <cpptrace/from_current.hpp>
 #include <cstdio>
 #include <cstdlib>
+#include <llvm/Support/ConvertUTF.h>
 #include <string_view>
 namespace sammine_util {
 auto get_string_from_file(const std::string &file_name) -> std::string {
@@ -30,13 +31,6 @@ auto abort(const std::string &message) -> void {
   auto trace = cpptrace::generate_trace();
   trace.print_with_snippets();
   std::abort();
-}
-
-auto abort_on(bool abort_if_true, const std::string &message) -> void {
-  if (abort_if_true) {
-    abort(message);
-    std::abort();
-  }
 }
 
 namespace {
