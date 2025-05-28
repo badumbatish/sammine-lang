@@ -39,10 +39,7 @@ bool Type::operator==(const Type &other) const {
   if (this->type_kind != TypeKind::Function)
     return true;
 
-  auto ftype = std::get<FunctionType>(this->type_data);
-  FunctionType other_ftype = std::get<FunctionType>(other.type_data);
-
-  return ftype == other_ftype;
+  return this->type_data == other.type_data;
 }
 
 std::vector<Type> TypeMapOrdering::visit_ancestor(const Type &t) {

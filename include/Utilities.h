@@ -221,7 +221,7 @@ private:
                                 size_t col_end) const;
 
 public:
-  void report_and_abort(const Reportee &reports) const;
+  void report(const Reportee &reports) const;
   Reporter() {}
   Reporter(std::string file_name, std::string input, size_t context_radius)
       : file_name(file_name), input(input),

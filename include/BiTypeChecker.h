@@ -18,12 +18,20 @@ class BiTypeCheckerVisitor : public ScopedASTVisitor,
   // We're gonna provide look up in different
 
 public:
+  // INFO: x, y, z
   LexicalStack<Type> id_to_type;
+
+  // INFO: i64, f64 bla bla bla
   LexicalStack<Type> typename_to_type;
   TypeMapOrdering type_map_ordering;
   virtual void enter_new_scope() override {
     id_to_type.push_context();
     typename_to_type.push_context();
+
+    typename_to_type.registerNameT("i64", Type::I64_t());
+    typename_to_type.registerNameT("f64", Type::F64_t());
+    typename_to_type.registerNameT("bool", Type::Bool());
+    typename_to_type.registerNameT("unit", Type::Unit());
   }
   virtual void exit_new_scope() override {
     id_to_type.pop();
@@ -91,20 +99,6 @@ public:
   virtual Type synthesize(BlockAST *ast) override;
   virtual Type synthesize(IfExprAST *ast) override;
   virtual Type synthesize(TypedVarAST *ast) override;
-
-  virtual bool check(ProgramAST *ast) override;
-  virtual bool check(VarDefAST *ast) override;
-  virtual bool check(ExternAST *ast) override;
-  virtual bool check(FuncDefAST *ast) override;
-  virtual bool check(PrototypeAST *ast) override;
-  virtual bool check(CallExprAST *ast) override;
-  virtual bool check(BinaryExprAST *ast) override;
-  virtual bool check(NumberExprAST *ast) override;
-  virtual bool check(BoolExprAST *ast) override;
-  virtual bool check(VariableExprAST *ast) override;
-  virtual bool check(BlockAST *ast) override;
-  virtual bool check(IfExprAST *ast) override;
-  virtual bool check(TypedVarAST *ast) override;
 };
 } // namespace AST
 } // namespace sammine_lang

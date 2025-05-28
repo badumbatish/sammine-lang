@@ -6,7 +6,6 @@
 
 namespace sammine_lang::AST {
 class AstPrinterVisitor : public ScopedASTVisitor {
-  size_t tab_counter = 0;
   std::string rep = "";
   std::string current_tabs = "";
   std::string &tabs();

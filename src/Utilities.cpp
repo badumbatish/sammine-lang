@@ -216,7 +216,7 @@ void Reporter::report_single_msg(std::pair<size_t, size_t> index_pair,
   }
 }
 
-void Reporter::report_and_abort(const Reportee &reports) const {
+void Reporter::report(const Reportee &reports) const {
 
   bool begin = true;
   for (const auto &[loc, report_msg, report_kind] : reports) {
@@ -235,9 +235,10 @@ void Reporter::report_and_abort(const Reportee &reports) const {
     print_fmt(fmt::terminal_color::bright_green,
               "# Give us a screenshot of the error as well as your contextual "
               "source code\n");
+    print_fmt(fmt::terminal_color::bright_green,
+              "----------------------------------------------------------------"
+              "----------\n");
   }
-  if (reports.has_errors())
-    std::exit(1);
 }
 fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) {
   switch (report_kind) {

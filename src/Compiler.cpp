@@ -50,48 +50,73 @@ Compiler::Compiler(
 }
 
 void Compiler::lex() {
+  log_diagnostics(fmt::format("Start lexing stage..."));
   Lexer lxr = Lexer(input);
-  reporter.report_and_abort(lxr);
+  reporter.report(lxr);
   tokStream = lxr.getTokenStream();
 }
 
 void Compiler::parse() {
+  log_diagnostics(fmt::format("Start parsing stage..."));
   Parser psr = Parser(tokStream);
 
   auto result = psr.Parse();
   if (result.has_value())
     programAST = std::move(result.value());
 
-  reporter.report_and_abort(psr);
+  reporter.report(psr);
+
+  this->error = psr.has_errors();
 }
 
 void Compiler::scopecheck() {
+  if (this->error) {
+    return;
+  }
+  log_diagnostics(fmt::format("Start scope checking stage..."));
   auto vs = sammine_lang::AST::ScopeGeneratorVisitor();
 
   programAST->accept_vis(&vs);
-  reporter.report_and_abort(vs);
+  reporter.report(vs);
+  this->error = vs.has_errors();
 }
 
 void Compiler::typecheck() {
+  if (this->error) {
+    return;
+  }
+  log_diagnostics(fmt::format("Start bi-direcitonal type checking stage..."));
   auto vs = sammine_lang::AST::BiTypeCheckerVisitor();
-  /*programAST->accept_vis(&tc);*/
+  programAST->accept_vis(&vs);
+  reporter.report(vs);
+  this->error = vs.has_errors();
 }
 
 void Compiler::dump_ast() {
   if (compiler_options[compiler_option_enum::AST_IR] == "true") {
+    log_diagnostics(fmt::format("Start dumping ast-ir stage..."));
     auto vs = AST::AstPrinterVisitor();
     programAST->accept_vis(&vs);
   }
 }
 void Compiler::codegen() {
-  auto cg = sammine_lang::AST::CgVisitor(resPtr);
-  programAST->accept_vis(&cg);
+  if (this->error) {
+    std::exit(1);
+  }
+  log_diagnostics(fmt::format("Start code-gen stage..."));
+  auto vs = sammine_lang::AST::CgVisitor(resPtr);
+  programAST->accept_vis(&vs);
 
-  reporter.report_and_abort(cg);
+  reporter.report(vs);
+  this->error = vs.has_errors();
 }
 
 void Compiler::produce_executable() {
+  if (this->error) {
+    std::exit(1);
+  }
 
+  log_diagnostics(fmt::format("Start executable/lib stage..."));
   if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
     force_log_diagnostics("Logging pre optimization llvm IR");
     resPtr->Module->print(llvm::errs(), nullptr);
@@ -117,31 +142,25 @@ void Compiler::produce_executable() {
     force_log_diagnostics("Logging post optimization llvm IR");
     resPtr->Module->print(llvm::errs(), nullptr);
   }
-  set_error();
 }
 void Compiler::start() {
   using CompilerStage = std::function<void(Compiler *)>;
-  std::vector<std::pair<CompilerStage, std::string>> CompilerStages = {
-      {&Compiler::lex, "lexing"},
-      {&Compiler::parse, "parsing"},
-      {&Compiler::scopecheck, "scope check"},
-      {&Compiler::typecheck, "type check"},
-      {&Compiler::dump_ast, "ast-ir optional dump"},
-      {&Compiler::codegen, "codegen"},
-      {&Compiler::produce_executable, "produce executable"},
+  std::vector<CompilerStage> CompilerStages = {
+      {&Compiler::lex},
+      {&Compiler::parse},
+      {&Compiler::scopecheck},
+      {&Compiler::typecheck},
+      {&Compiler::dump_ast},
+      {&Compiler::codegen},
+      {&Compiler::produce_executable},
   };
 
+  // no error, proceed with current stage
+  // error, skip current stage and go next
+  // error, compiler-ending stage
   std::string prev = "";
   for (auto stage : CompilerStages) {
-    if (!error) {
-      log_diagnostics(fmt::format("Start {} stage...", stage.second));
-      stage.first(this);
-      prev = stage.second;
-    } else {
-      std::cerr << std::endl
-                << "Sammine-lang compiler done processing" << std::endl;
-      break;
-    }
+    stage(this);
   }
 }
 

@@ -18,6 +18,7 @@ class Function;
 namespace sammine_lang {
 namespace AST {
 class Visitable;
+class AstBase;
 class ASTVisitor;
 
 class ASTVisitor : public sammine_util::Reportee {
@@ -162,20 +163,6 @@ public:
   virtual Type synthesize(IfExprAST *ast) = 0;
   virtual Type synthesize(TypedVarAST *ast) = 0;
 
-  virtual bool check(ProgramAST *ast) = 0;
-  virtual bool check(VarDefAST *ast) = 0;
-  virtual bool check(ExternAST *ast) = 0;
-  virtual bool check(FuncDefAST *ast) = 0;
-  virtual bool check(PrototypeAST *ast) = 0;
-  virtual bool check(CallExprAST *ast) = 0;
-  virtual bool check(BinaryExprAST *ast) = 0;
-  virtual bool check(NumberExprAST *ast) = 0;
-  virtual bool check(BoolExprAST *ast) = 0;
-  virtual bool check(VariableExprAST *ast) = 0;
-  virtual bool check(BlockAST *ast) = 0;
-  virtual bool check(IfExprAST *ast) = 0;
-  virtual bool check(TypedVarAST *ast) = 0;
-
   virtual ~TypeCheckerVisitor() = 0;
 };
 
@@ -186,7 +173,6 @@ public:
   virtual void walk_with_preorder(ASTVisitor *visitor) = 0;
   virtual void walk_with_postorder(ASTVisitor *visitor) = 0;
   virtual Type accept_synthesis(TypeCheckerVisitor *visitor) = 0;
-  virtual bool accept_check(TypeCheckerVisitor *visitor) = 0;
   virtual std::string getTreeName() = 0;
 };
 
@@ -232,6 +218,10 @@ public:
     return this;
   }
   sammine_util::Location get_location() { return this->location; }
+  bool synthesized() const { return this->type.synthesized(); }
+
+  bool checked() const { return this->type.checked(); }
+  void set_checked() { this->type.is_checked = true; }
 };
 } // namespace AST
 } // namespace sammine_lang

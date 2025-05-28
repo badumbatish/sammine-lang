@@ -67,8 +67,8 @@ void AstPrinterVisitor::preorder_walk(IfExprAST *ast) {
 }
 void AstPrinterVisitor::preorder_walk(TypedVarAST *ast) {
   generic_preprint(ast->getTreeName());
-  this->rep += fmt::format("(name, type_lxm): (\"{}\", \"{}\")", ast->name,
-                           ast->type_lexeme);
+  this->rep += fmt::format("(name, type_lxm, type): (\"{}\", \"{}\", {})",
+                           ast->name, ast->type_lexeme, ast->type.to_string());
 }
 
 // post order
