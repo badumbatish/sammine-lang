@@ -213,14 +213,29 @@ private:
   void indicate_singular_line(ReportKind report_kind, size_t col_start,
                               size_t col_end) const;
 
-  void report_singular_line(ReportKind report_kind, const std::string &msg,
-                            size_t col_start, size_t col_end) const;
+  static void report_singular_line(ReportKind report_kind,
+                                   const std::string &msg, size_t col_start,
+                                   size_t col_end);
 
   void print_data_singular_line(std::string_view msg, size_t col_start,
                                 size_t col_end) const;
 
 public:
   void report(const Reportee &reports) const;
+  void immediate_error(const std::string &str, Location l = Location(-1, -1)) {
+    if (l.source_start < -1 && l.source_end == -1) {
+      report_singular_line(ReportKind::error, str, 0, 0);
+    } else {
+      report_single_msg(l, str, ReportKind::error);
+    }
+  }
+  void immediate_diag(const std::string &str, Location l = Location(-1, -1)) {
+    if (l.source_start < -1 && l.source_end == -1) {
+      report_singular_line(ReportKind::diag, str, 0, 0);
+    } else {
+      report_single_msg(l, str, ReportKind::diag);
+    }
+  }
   Reporter() {}
   Reporter(std::string file_name, std::string input, size_t context_radius)
       : file_name(file_name), input(input),

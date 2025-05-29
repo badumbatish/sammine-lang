@@ -3,6 +3,7 @@
 #include "Lexer.h"
 #include "Utilities.h"
 #include "tl/expected.hpp"
+#include <optional>
 namespace sammine_lang {
 enum ParserError {
   COMMITTED_NO_MORE_ERROR,
@@ -10,14 +11,21 @@ enum ParserError {
   NONCOMMITTED,
 };
 class Parser : public sammine_util::Reportee {
-private:
-  void report(const std::string &msg) {
-    if (show_diagnostics)
-      std::cout << msg << std::endl;
+  void error(const std::string &msg,
+             sammine_util::Location loc = sammine_util::Location(-1, -1)) {
+    if (reporter.has_value()) {
+      reporter->get().immediate_error(msg, loc);
+    }
+  }
+  void diag(const std::string &msg,
+            sammine_util::Location loc = sammine_util::Location(-1, -1)) {
+    if (reporter.has_value()) {
+      reporter->get().immediate_diag(msg, loc);
+    }
   }
 
 public:
-  bool show_diagnostics;
+  std::optional<std::reference_wrapper<sammine_util::Reporter>> reporter;
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]]
   auto ParseProgram()
@@ -96,11 +104,14 @@ public:
               const std::string &message = "") -> std::shared_ptr<Token>;
 
   [[nodiscard]]
-  Parser(bool diagnostics = false)
-      : show_diagnostics(diagnostics) {}
+  Parser(std::optional<std::reference_wrapper<sammine_util::Reporter>>
+             reporter = std::nullopt)
+      : reporter(reporter) {}
   [[nodiscard]]
-  Parser(std::shared_ptr<TokenStream> tokStream, bool diagnostics = false)
-      : show_diagnostics(diagnostics), tokStream(tokStream) {}
+  Parser(std::shared_ptr<TokenStream> tokStream,
+         std::optional<std::reference_wrapper<sammine_util::Reporter>>
+             reporter = std::nullopt)
+      : reporter(reporter), tokStream(tokStream) {}
   [[nodiscard]]
 
   [[nodiscard]]

@@ -236,11 +236,10 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     // like normal If it is commited, we add a report. Depend on programmer.
     if (!RHS && (RHS.error() == COMMITTED_EMIT_MORE_ERROR ||
                  RHS.error() == NONCOMMITTED)) {
-      add_error(
-          *binOpToken,
-          fmt::format("Failed to parse the right-hand side of token `{}` in "
-                      "binary expression",
-                      binOpToken->lexeme));
+      error(fmt::format("Failed to parse the right-hand side of token `{}` in "
+                        "binary expression",
+                        binOpToken->lexeme),
+            *binOpToken);
       return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
     }
     if (!RHS && RHS.error() == COMMITTED_NO_MORE_ERROR) {
@@ -272,24 +271,24 @@ auto Parser::ParseReturnExpr()
   if (!expr) {
     switch (expr.error()) {
     case ParserError::NONCOMMITTED: {
-      add_error(return_tok->location,
-                "Unable to parse an expr after return statement");
+      error("Unable to parse an expr after return statement",
+            return_tok->location);
       return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
     }
     case ParserError::COMMITTED_NO_MORE_ERROR: {
       return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
     }
     case ParserError::COMMITTED_EMIT_MORE_ERROR: {
-      add_error(return_tok->location,
-                "Unable to parse an expr after return statement");
+      error("Unable to parse an expr after return statement",
+            return_tok->location);
       return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
     }
     }
   }
   auto semi = expect(TokenType::TokSemiColon);
   if (!semi) {
-    add_error(return_tok->location,
-              "Missing the semicolon for the return statement");
+    error("Missing the semicolon for the return statement",
+          return_tok->location);
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
   return std::make_unique<AST::ReturnExprAST>(return_tok,
@@ -479,8 +478,8 @@ auto Parser::ParseParams()
     // Report error if we find comma but cannot find typeVar
     typeVar = ParseTypedVar();
     if (!typeVar) {
-      add_error(tokStream->currentLocation(),
-                "Failed to find typed variable after comma");
+      this->error("Failed to find typed variable after comma",
+                  tokStream->currentLocation());
       return tl::make_unexpected(typeVar.error());
     } else {
       vec.push_back(std::move(typeVar.value()));
@@ -488,9 +487,9 @@ auto Parser::ParseParams()
   }
   auto rightParen = expect(TokRightParen);
   if (rightParen == nullptr) {
-    add_error(tokStream->currentLocation(),
-              "Failed to find right parenthesis after processing [typed "
-              "variables]");
+    this->error("Failed to find right parenthesis after processing [typed "
+                "variables]",
+                tokStream->currentLocation());
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
   }
 
@@ -535,7 +534,7 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
   } else {
     // TODO: Add error reporting after this point.
     if (!message.empty())
-      add_error(tokStream->currentLocation(), message);
+      this->error(message, tokStream->currentLocation());
     if (exhausts)
       tokStream->exhaust_until(until);
 

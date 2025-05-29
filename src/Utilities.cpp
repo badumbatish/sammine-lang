@@ -165,7 +165,7 @@ void Reporter::indicate_singular_line(ReportKind report_kind, size_t col_start,
 
 void Reporter::report_singular_line(ReportKind report_kind,
                                     const std::string &msg, size_t col_start,
-                                    size_t col_end) const {
+                                    size_t col_end) {
   print_fmt(LINE_COLOR, "    |");
   size_t j = 0;
   for (; j < col_start; j++)

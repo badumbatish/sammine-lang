@@ -58,9 +58,7 @@ void Compiler::lex() {
 
 void Compiler::parse() {
   log_diagnostics(fmt::format("Start parsing stage..."));
-  Parser psr = Parser(
-      tokStream,
-      this->compiler_options[compiler_option_enum::PARSE_DIAG] == "true");
+  Parser psr = Parser(tokStream, reporter);
 
   auto result = psr.Parse();
   if (result.has_value())
