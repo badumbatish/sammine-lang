@@ -43,6 +43,7 @@ public:
   virtual void preorder_walk(ExternAST *ast) override {}
   virtual void preorder_walk(PrototypeAST *ast) override;
   virtual void preorder_walk(CallExprAST *ast) override;
+  virtual void preorder_walk(ReturnExprAST *ast) override {}
   virtual void preorder_walk(BinaryExprAST *ast) override;
   virtual void preorder_walk(NumberExprAST *ast) override;
   virtual void preorder_walk(BoolExprAST *ast) override;
@@ -59,6 +60,7 @@ public:
   virtual void postorder_walk(FuncDefAST *ast) override;
   virtual void postorder_walk(PrototypeAST *ast) override {}
   virtual void postorder_walk(CallExprAST *ast) override {}
+  virtual void postorder_walk(ReturnExprAST *ast) override;
   virtual void postorder_walk(BinaryExprAST *ast) override;
   virtual void postorder_walk(NumberExprAST *ast) override {}
   virtual void postorder_walk(BoolExprAST *ast) override {}

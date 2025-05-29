@@ -11,11 +11,12 @@
 
 namespace sammine_lang {
 
-static std::map<TokenType, int> binopPrecedence = {{TokenType::TokASSIGN, 2},
-                                                   {TokenType::TokLESS, 10},
-                                                   {TokenType::TokADD, 20},
-                                                   {TokenType::TokSUB, 20},
-                                                   {TokenType::TokMUL, 40}};
+static std::map<TokenType, int> binopPrecedence = {
+    {TokenType::TokASSIGN, 2}, {TokenType::TokLESS, 10},
+    {TokenType::TokEQUAL, 10}, {TokenType::TokADD, 20},
+    {TokenType::TokSUB, 20},   {TokenType::TokMUL, 40},
+    {TokenType::TokOR, 60},
+};
 
 int GetTokPrecedence(TokenType tokType) {
   int TokPrec = binopPrecedence[tokType];
@@ -177,19 +178,22 @@ auto Parser::ParsePrimaryExpr()
   using ParseFunction =
       std::function<tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>(
           Parser *)>;
-  std::vector<ParseFunction> ParseFunctions = {
-      &Parser::ParseCallExpr,     &Parser::ParseIfExpr,
-      &Parser::ParseNumberExpr,   &Parser::ParseBoolExpr,
-      &Parser::ParseVariableExpr,
+  std::vector<std::pair<ParseFunction, std::string>> ParseFunctions = {
+      {&Parser::ParseCallExpr, "CallExpr"},
+      {&Parser::ParseIfExpr, "IfExpr"},
+      {&Parser::ParseNumberExpr, "NumberExpr"},
+      {&Parser::ParseBoolExpr, "BoolExpr"},
+      {&Parser::ParseVariableExpr, "VariableExpr"},
   };
 
   for (auto fn : ParseFunctions) {
-    auto result = fn(this);
+    auto result = fn.first(this);
     if (result) {
       return result;
     } else if (!result &&
                result.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
-      sammine_util::abort("Failed to parse one of primary expr");
+      sammine_util::abort(
+          fmt::format("Failed to parse one of primary expr: {}", fn.second));
       return result;
     }
   }
@@ -223,7 +227,6 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
       return LHS;
 
     auto binOpToken = tokStream->consume();
-
     auto RHS = ParsePrimaryExpr();
 
     // We're committed here, so whether RHS is commited error or non-committed
@@ -256,6 +259,41 @@ auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
     LHS = std::make_unique<AST::BinaryExprAST>(binOpToken, std::move(LHS),
                                                std::move(RHS.value()));
   }
+}
+auto Parser::ParseReturnExpr()
+    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+  auto return_tok = expect(TokenType::TokReturn);
+  if (!return_tok)
+    return tl::make_unexpected(ParserError::NONCOMMITTED);
+  if (expect(TokenType::TokSemiColon)) {
+    return std::make_unique<AST::ReturnExprAST>(return_tok, nullptr);
+  }
+  auto expr = ParseExpr();
+  if (!expr) {
+    switch (expr.error()) {
+    case ParserError::NONCOMMITTED: {
+      add_error(return_tok->location,
+                "Unable to parse an expr after return statement");
+      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    }
+    case ParserError::COMMITTED_NO_MORE_ERROR: {
+      return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
+    }
+    case ParserError::COMMITTED_EMIT_MORE_ERROR: {
+      add_error(return_tok->location,
+                "Unable to parse an expr after return statement");
+      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    }
+    }
+  }
+  auto semi = expect(TokenType::TokSemiColon);
+  if (!semi) {
+    add_error(return_tok->location,
+              "Missing the semicolon for the return statement");
+    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  }
+  return std::make_unique<AST::ReturnExprAST>(return_tok,
+                                              std::move(expr.value()));
 }
 
 auto Parser::ParseCallExpr()
@@ -354,8 +392,6 @@ auto Parser::ParsePrototype()
   ;
 
   auto returnType = expect(TokID);
-
-  // TODO: make sure we handle a return type here
   return std::make_unique<AST::PrototypeAST>(id, returnType,
                                              std::move(params.value()));
 }
@@ -385,17 +421,34 @@ auto Parser::ParseBlock()
     }
 
     auto b = ParseVarDef();
-    if (!b && b.error() == ParserError::NONCOMMITTED) {
-
-      break;
-    }
     if (!b && b.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
       return tl::make_unexpected(b.error());
     }
-    blockAST->Statements.push_back(std::move(b.value()));
+    sammine_util::abort_on(!b &&
+                           b.error() == ParserError::COMMITTED_EMIT_MORE_ERROR);
+    if (b.has_value()) {
+      blockAST->Statements.push_back(std::move(b.value()));
+      continue;
+    }
+
+    auto rt = ParseReturnExpr();
+    if (!rt && rt.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
+      return tl::make_unexpected(rt.error());
+    }
+    sammine_util::abort_on(!rt && rt.error() ==
+                                      ParserError::COMMITTED_EMIT_MORE_ERROR);
+
+    if (rt.has_value()) {
+      blockAST->Statements.push_back(std::move(rt.value()));
+    } else if (!rt && rt.error() == ParserError::NONCOMMITTED) {
+      break;
+    } else {
+      sammine_util::abort();
+    }
   }
 
-  auto rightCurly = expect(TokRightCurly, true, TokEOF, "");
+  auto rightCurly = expect(TokRightCurly, true, TokEOF,
+                           "Failed to parse right curly of block.");
 
   if (!rightCurly)
     return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);

@@ -46,6 +46,12 @@ void ASTVisitor::visit(CallExprAST *ast) {
   }
   ast->walk_with_postorder(this);
 }
+void ASTVisitor::visit(ReturnExprAST *ast) {
+  ast->walk_with_preorder(this);
+  if (!ast->is_unit)
+    ast->return_expr->accept_vis(this);
+  ast->walk_with_postorder(this);
+}
 
 void ASTVisitor::visit(BinaryExprAST *ast) {
   ast->walk_with_preorder(this);

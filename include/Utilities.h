@@ -46,8 +46,7 @@ void abort_if_not(const T &condition,
 class Location {
 public:
   // True location in original source code string
-  size_t source_start;
-  size_t source_end;
+  int64_t source_start, source_end;
 
   // Default constructor
   Location() : source_start(0), source_end(0) {}

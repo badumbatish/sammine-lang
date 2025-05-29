@@ -47,6 +47,10 @@ public:
   virtual void preorder_walk(CallExprAST *ast) = 0;
   virtual void postorder_walk(CallExprAST *ast) = 0;
 
+  virtual void visit(ReturnExprAST *ast);
+  virtual void preorder_walk(ReturnExprAST *ast) = 0;
+  virtual void postorder_walk(ReturnExprAST *ast) = 0;
+
   virtual void visit(BinaryExprAST *ast);
   virtual void preorder_walk(BinaryExprAST *ast) = 0;
   virtual void postorder_walk(BinaryExprAST *ast) = 0;
@@ -155,6 +159,7 @@ public:
   virtual Type synthesize(FuncDefAST *ast) = 0;
   virtual Type synthesize(PrototypeAST *ast) = 0;
   virtual Type synthesize(CallExprAST *ast) = 0;
+  virtual Type synthesize(ReturnExprAST *ast) = 0;
   virtual Type synthesize(BinaryExprAST *ast) = 0;
   virtual Type synthesize(NumberExprAST *ast) = 0;
   virtual Type synthesize(BoolExprAST *ast) = 0;

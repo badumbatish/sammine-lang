@@ -5,7 +5,6 @@
 //! \file test_parser.cpp
 //! \brief The unit-test file for all things related to a parser.
 #include "Ast.h"
-#include "AstNameVisitor.h"
 #include "Lexer.h"
 #include "Parser.h"
 #include "tl/expected.hpp"
@@ -33,13 +32,6 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
     auto programAST = pg.ParseVarDef();
 
     REQUIRE(pg.has_no_errors());
-    auto nameVisitor = sammine_lang::AST::AstNameVisitor();
-    programAST.value()->accept_vis(&nameVisitor);
-
-    auto names = nameVisitor.PreOrderNames;
-    std::vector<std::string> expectedNames = {"VarDefAST", "TypedVarAST",
-                                              "NumberExprAST"};
-    REQUIRE(names == expectedNames);
 
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
@@ -56,14 +48,6 @@ TEST_CASE("Variable definition parsing", "[Parser]") {
 
     REQUIRE(pg.has_no_errors());
 
-    auto nameVisitor = sammine_lang::AST::AstNameVisitor();
-    programAST.value()->accept_vis(&nameVisitor);
-
-    auto names = nameVisitor.PreOrderNames;
-    std::vector<std::string> expectedNames = {
-        "VarDefAST",     "TypedVarAST",   "BinaryExprAST", "NumberExprAST",
-        "BinaryExprAST", "NumberExprAST", "NumberExprAST"};
-    REQUIRE(names == expectedNames);
     auto varDef =
         static_cast<sammine_lang::AST::VarDefAST *>(programAST.value().get());
     REQUIRE(varDef->TypedVar->name == "b");

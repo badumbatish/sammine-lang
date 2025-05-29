@@ -100,4 +100,6 @@ struct TypeMapOrdering {
   std::map<Type, Type> type_map;
   std::vector<Type> visit_ancestor(const Type &t);
   std::optional<Type> lowest_common_type(const Type &a, const Type &b);
+
+  bool compatible_to_from(const Type &a, const Type &b);
 };

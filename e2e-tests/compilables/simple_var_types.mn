@@ -1,4 +1,6 @@
 # RUN: %sammine_exe% --file %s  
 fn f() {
     let x = 2;
+
+    return;
 }

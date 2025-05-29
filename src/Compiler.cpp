@@ -3,7 +3,7 @@
 //
 
 #include "Compiler.h"
-#include "AstPrinterVisitor.h"
+#include "Ast.h"
 #include "BiTypeChecker.h"
 #include "CodegenVisitor.h"
 #include "ScopeGeneratorVisitor.h"
@@ -58,7 +58,9 @@ void Compiler::lex() {
 
 void Compiler::parse() {
   log_diagnostics(fmt::format("Start parsing stage..."));
-  Parser psr = Parser(tokStream);
+  Parser psr = Parser(
+      tokStream,
+      this->compiler_options[compiler_option_enum::PARSE_DIAG] == "true");
 
   auto result = psr.Parse();
   if (result.has_value())
@@ -95,8 +97,7 @@ void Compiler::typecheck() {
 void Compiler::dump_ast() {
   if (compiler_options[compiler_option_enum::AST_IR] == "true") {
     log_diagnostics(fmt::format("Start dumping ast-ir stage..."));
-    auto vs = AST::AstPrinterVisitor();
-    programAST->accept_vis(&vs);
+    AST::ASTPrinter::print(programAST.get());
   }
 }
 void Compiler::codegen() {

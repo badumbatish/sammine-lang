@@ -42,6 +42,7 @@ void ScopeGeneratorVisitor::preorder_walk(PrototypeAST *ast) {
   }
 }
 void ScopeGeneratorVisitor::preorder_walk(CallExprAST *ast) {}
+void ScopeGeneratorVisitor::preorder_walk(ReturnExprAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(BinaryExprAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(NumberExprAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(BoolExprAST *ast) {}
@@ -65,6 +66,8 @@ void ScopeGeneratorVisitor::postorder_walk(CallExprAST *ast) {
         var_name));
   }
 }
+
+void ScopeGeneratorVisitor::postorder_walk(ReturnExprAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(BinaryExprAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(NumberExprAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(BoolExprAST *ast) {}

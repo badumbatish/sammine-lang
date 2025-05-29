@@ -27,16 +27,20 @@ int main(int argc, char *argv[]) {
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
       .help("sammine compiler spits out LLVM-IR to stdout");
-  g_diag
-      .add_argument("", "--ast-ir") // TODO: Somehow make the internal compiler
+  g_diag.add_argument("", "--ast-ir")
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
       .help("sammine compiler spits out the internal AST to stdout");
+  g_diag.add_argument("", "--parser-diagnostics")
+      .default_value(std::string("false"))
+      .implicit_value(std::string("true"))
+      .help("sammine compiler spits out diagnostics related to the parsing "
+            "stage");
   g_diag.add_argument("", "--diagnostics")
       .default_value(std::string("false"))
       .implicit_value(std::string("true"))
-      .help(
-          "sammine compiler spits out diagnostics for sammine-lang developers");
+      .help("sammine compiler spits out stage-wise diagnostics for "
+            "sammine-lang developers");
   try {
     program.parse_args(argc, argv); // Example: ./main -abc 1.95 2.47
     compiler_options[compiler_option_enum::FILE] =
@@ -45,6 +49,8 @@ int main(int argc, char *argv[]) {
         program.present("-s") ? program.get("-s") : "";
     compiler_options[compiler_option_enum::LLVM_IR] = program.get("--llvm-ir");
     compiler_options[compiler_option_enum::AST_IR] = program.get("--ast-ir");
+    compiler_options[compiler_option_enum::PARSE_DIAG] =
+        program.get("--parser-diagnostics");
     compiler_options[compiler_option_enum::DIAGNOSTIC] =
         program.get("--diagnostics");
 

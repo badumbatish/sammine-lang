@@ -24,6 +24,7 @@ class TypedVarAST;
 
 class ExprAST;
 class CallExprAST;
+class ReturnExprAST;
 class BinaryExprAST;
 class NumberExprAST;
 class VariableExprAST;
@@ -303,7 +304,33 @@ public:
     return visitor->synthesize(this);
   }
 };
-
+class ReturnExprAST : public ExprAST {
+public:
+  std::unique_ptr<ExprAST> return_expr;
+  bool is_unit = false;
+  ReturnExprAST(std::shared_ptr<Token> return_tok,
+                std::unique_ptr<ExprAST> return_expr)
+      : return_expr(std::move(return_expr)) {
+    if (return_expr == nullptr) {
+      is_unit = true;
+      this->join_location(return_tok);
+    } else {
+      is_unit = false;
+      this->join_location(return_tok)->join_location(this->return_expr.get());
+    }
+  }
+  virtual std::string getTreeName() override { return "ReturnExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+};
 class CallExprAST : public ExprAST {
 
 public:
@@ -381,5 +408,8 @@ public:
   }
 };
 
+struct ASTPrinter {
+  static void print(AstBase *t);
+};
 } // namespace AST
 } // namespace sammine_lang

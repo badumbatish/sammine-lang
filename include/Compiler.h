@@ -16,6 +16,7 @@ enum class compiler_option_enum {
   STR,
   LLVM_IR,
   AST_IR,
+  PARSE_DIAG,
   DIAGNOSTIC,
 };
 class Compiler {

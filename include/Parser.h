@@ -10,7 +10,14 @@ enum ParserError {
   NONCOMMITTED,
 };
 class Parser : public sammine_util::Reportee {
+private:
+  void report(const std::string &msg) {
+    if (show_diagnostics)
+      std::cout << msg << std::endl;
+  }
+
 public:
+  bool show_diagnostics;
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]]
   auto ParseProgram()
@@ -51,6 +58,8 @@ public:
 
   [[nodiscard]] auto ParseCallExpr()
       -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
+  [[nodiscard]] auto ParseReturnExpr()
+      -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>;
   [[nodiscard]]
   auto ParseArguments()
       -> tl::expected<std::vector<std::unique_ptr<AST::ExprAST>>, ParserError>;
@@ -87,10 +96,13 @@ public:
               const std::string &message = "") -> std::shared_ptr<Token>;
 
   [[nodiscard]]
-  Parser() {}
+  Parser(bool diagnostics = false)
+      : show_diagnostics(diagnostics) {}
   [[nodiscard]]
-  Parser(std::shared_ptr<TokenStream> tokStream)
-      : tokStream(tokStream) {}
+  Parser(std::shared_ptr<TokenStream> tokStream, bool diagnostics = false)
+      : show_diagnostics(diagnostics), tokStream(tokStream) {}
+  [[nodiscard]]
+
   [[nodiscard]]
   auto Parse() -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError>;
 };

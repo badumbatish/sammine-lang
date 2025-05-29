@@ -99,9 +99,6 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
 }
 void CgVisitor::postorder_walk(FuncDefAST *ast) {
   // TODO: A function should return the last expression (only float for now)
-  resPtr->Builder->CreateRet(
-      llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(1.0)));
-  // Validate the generated code, checking for consistency.
   auto not_verified = verifyFunction(*getCurrentFunction(), &llvm::errs());
   // if (llvm::Value *RetVal = ast->Block->val) {
   //   // Finish off the function.
@@ -120,8 +117,13 @@ void CgVisitor::preorder_walk(PrototypeAST *ast) {
   std::vector<llvm::Type *> Doubles(
       ast->parameterVectors.size(),
       llvm::Type::getDoubleTy(*(resPtr->Context)));
-  llvm::FunctionType *FT = llvm::FunctionType::get(
-      llvm::Type::getDoubleTy(*resPtr->Context), Doubles, false);
+  llvm::FunctionType *FT;
+  if (ast->returnType == "unit")
+    FT = llvm::FunctionType::get(llvm::Type::getVoidTy(*resPtr->Context),
+                                 Doubles, false);
+  else
+    FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(*resPtr->Context),
+                                 Doubles, false);
 
   llvm::Function *F =
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
@@ -157,15 +159,24 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
 
   ast->val = resPtr->Builder->CreateCall(callee, ArgsVector, "calltmp");
 }
+
+void CgVisitor::postorder_walk(ReturnExprAST *ast) {
+
+  if (ast->is_unit)
+    resPtr->Builder->CreateRetVoid();
+  else
+    resPtr->Builder->CreateRet(ast->return_expr->val);
+}
+
 void CgVisitor::preorder_walk(BinaryExprAST *ast) {}
 
 void CgVisitor::postorder_walk(BinaryExprAST *ast) {
   if (ast->Op->tok_type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
-      sammine_util::abort(
-          "Left hand side of assignment must be a variable, current LHS cannot "
-          "be statically cast to VarExprAST");
+      sammine_util::abort("Left hand side of assignment must be a variable, "
+                          "current LHS cannot "
+                          "be statically cast to VarExprAST");
       return;
     }
 
@@ -210,8 +221,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
 void CgVisitor::preorder_walk(NumberExprAST *ast) {
   ast->val = llvm::ConstantFP::get(*resPtr->Context,
                                    llvm::APFloat(std::stod(ast->number)));
-  if (ast->val == nullptr)
-    sammine_util::abort("cannot generate number");
+  sammine_util::abort_if_not(ast->val, "cannot generate number");
 }
 void CgVisitor::preorder_walk(BoolExprAST *ast) {
   if (ast->b)

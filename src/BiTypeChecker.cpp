@@ -13,6 +13,7 @@ void BiTypeCheckerVisitor::preorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(FuncDefAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(PrototypeAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(CallExprAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(BinaryExprAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(NumberExprAST *ast) {
 
@@ -32,13 +33,14 @@ void BiTypeCheckerVisitor::postorder_walk(VarDefAST *ast) {
   if (ast->checked())
     return;
 
-  if (ast->type != ast->Expression->type) {
+  auto to = ast->accept_synthesis(this);
+  auto from = ast->Expression->accept_synthesis(this);
+  if (!type_map_ordering.compatible_to_from(to, from)) {
     this->add_error(
         ast->get_location(),
         fmt::format("Type mismatch in variable definition: Synthesized {}, "
                     "checked against {}.",
-                    ast->accept_synthesis(this).to_string(),
-                    ast->Expression->accept_synthesis(this).to_string()));
+                    to.to_string(), from.to_string()));
     ast->type = Type::Poisoned();
   }
   ast->set_checked();
@@ -47,6 +49,7 @@ void BiTypeCheckerVisitor::postorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(NumberExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BoolExprAST *ast) {}
@@ -75,6 +78,11 @@ Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
+  return Type::NonExistent();
+}
+
+Type BiTypeCheckerVisitor::synthesize(ReturnExprAST *ast) {
+  // TODO: make sure it returns the right type and all that
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {

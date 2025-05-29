@@ -74,3 +74,12 @@ std::optional<Type> TypeMapOrdering::lowest_common_type(const Type &a,
   }
   return std::nullopt;
 }
+
+bool TypeMapOrdering::compatible_to_from(const Type &a, const Type &b) {
+
+  if (a.type_kind == TypeKind::NonExistent &&
+      b.type_kind != TypeKind::NonExistent) {
+    return true;
+  }
+  return a == b;
+}

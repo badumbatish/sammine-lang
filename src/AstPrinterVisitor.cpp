@@ -1,9 +1,61 @@
-#include "AstPrinterVisitor.h"
 #include "Ast.h"
 #include "fmt/base.h"
 #include "fmt/format.h"
 #include <cstdio>
 namespace sammine_lang::AST {
+
+class AstPrinterVisitor : public ScopedASTVisitor {
+  std::string rep = "";
+  std::string current_tabs = "";
+  std::string &tabs();
+  void generic_preprintln(const std::string &tree_name);
+  void generic_preprint(const std::string &tree_name);
+  void generic_postprint();
+
+public:
+  virtual void enter_new_scope() override { current_tabs += "  "; }
+  virtual void exit_new_scope() override { current_tabs += "  "; }
+
+  virtual void visit(PrototypeAST *ast) override;
+  // pre order
+  virtual void preorder_walk(ProgramAST *ast) override;
+  virtual void preorder_walk(VarDefAST *ast) override;
+  virtual void preorder_walk(ExternAST *ast) override;
+  virtual void preorder_walk(FuncDefAST *ast) override;
+  virtual void preorder_walk(PrototypeAST *ast) override;
+  virtual void preorder_walk(CallExprAST *ast) override;
+  virtual void preorder_walk(ReturnExprAST *ast) override;
+  virtual void preorder_walk(BinaryExprAST *ast) override;
+  virtual void preorder_walk(NumberExprAST *ast) override;
+  virtual void preorder_walk(BoolExprAST *ast) override;
+  virtual void preorder_walk(VariableExprAST *ast) override;
+  virtual void preorder_walk(BlockAST *ast) override;
+  virtual void preorder_walk(IfExprAST *ast) override;
+  virtual void preorder_walk(TypedVarAST *ast) override;
+
+  // post order
+  virtual void postorder_walk(ProgramAST *ast) override;
+  virtual void postorder_walk(VarDefAST *ast) override;
+  virtual void postorder_walk(ExternAST *ast) override;
+  virtual void postorder_walk(FuncDefAST *ast) override;
+  virtual void postorder_walk(PrototypeAST *ast) override;
+  virtual void postorder_walk(CallExprAST *ast) override;
+  virtual void postorder_walk(ReturnExprAST *ast) override;
+  virtual void postorder_walk(BinaryExprAST *ast) override;
+  virtual void postorder_walk(NumberExprAST *ast) override;
+  virtual void postorder_walk(BoolExprAST *ast) override;
+  virtual void postorder_walk(VariableExprAST *ast) override;
+  virtual void postorder_walk(BlockAST *ast) override;
+  virtual void postorder_walk(IfExprAST *ast) override;
+  virtual void postorder_walk(TypedVarAST *ast) override;
+
+  friend Printable;
+};
+
+void ASTPrinter::print(AstBase *ast) {
+  auto vs = AstPrinterVisitor();
+  ast->accept_vis(&vs);
+}
 std::string &AstPrinterVisitor::tabs() { return this->current_tabs; }
 
 void AstPrinterVisitor::visit(PrototypeAST *ast) {
@@ -43,6 +95,9 @@ void AstPrinterVisitor::preorder_walk(PrototypeAST *ast) {
   this->rep += fmt::format("{} fn_sig: {} ", tabs(), ast->type.to_string());
 }
 void AstPrinterVisitor::preorder_walk(CallExprAST *ast) {
+  generic_preprintln(ast->getTreeName());
+}
+void AstPrinterVisitor::preorder_walk(ReturnExprAST *ast) {
   generic_preprintln(ast->getTreeName());
 }
 void AstPrinterVisitor::preorder_walk(BinaryExprAST *ast) {
@@ -93,6 +148,9 @@ void AstPrinterVisitor::postorder_walk(PrototypeAST *ast) {
   generic_postprint();
 }
 void AstPrinterVisitor::postorder_walk(CallExprAST *ast) {
+  generic_postprint();
+}
+void AstPrinterVisitor::postorder_walk(ReturnExprAST *ast) {
   generic_postprint();
 }
 void AstPrinterVisitor::postorder_walk(BinaryExprAST *ast) {
