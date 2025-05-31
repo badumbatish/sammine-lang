@@ -214,7 +214,7 @@ public:
     }
     while (!isEnd()) {
       if (TokStream[current_index]->tok_type == tokType)
-        return TokStream[current_index];
+        return TokStream[current_index++];
       else
         current_index++;
     }

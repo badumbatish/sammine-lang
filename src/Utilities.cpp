@@ -38,11 +38,11 @@ using IndexPair = Reporter::IndexPair;
 using DiagnosticData = Reporter::DiagnosticData;
 class Locator {
   IndexPair source_start_end;
-  size_t context_radius;
+  int64_t context_radius;
   const Reporter::DiagnosticData &data;
 
 public:
-  Locator(IndexPair source_start_end, size_t context_radius,
+  Locator(IndexPair source_start_end, int64_t context_radius,
           const Reporter::DiagnosticData &data)
       : source_start_end(source_start_end), context_radius(context_radius),
         data(data) {}
@@ -51,7 +51,7 @@ public:
   IndexPair get_lines_indices() const {
     auto [start, end] = source_start_end;
     // INFO: Helper function
-    auto get_line_ite = [this](size_t source_index) -> size_t {
+    auto get_line_ite = [this](int64_t source_index) -> int64_t {
       auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
 
       auto idx =
@@ -69,7 +69,7 @@ public:
   IndexPair get_lines_indices_with_radius() const {
     auto [line_start, line_end] = get_lines_indices();
     line_start = line_start > context_radius ? line_start - context_radius : 0;
-    line_end = line_end + context_radius <= data.size() - 1
+    line_end = line_end + context_radius <= int64_t(data.size()) - 1
                    ? line_end + context_radius
                    : data.size() - 1;
 
@@ -79,12 +79,12 @@ public:
   // INFO: Given the source start and source end and knowing that they fit on a
   // singular line, recalibrate source start and end so that they start indexing
   // from 0 at the singular line.
-  std::tuple<size_t, size_t, size_t>
+  std::tuple<int64_t, int64_t, int64_t>
   get_start_end_of_singular_line_token() const {
 
     auto [start, end] = source_start_end;
     // INFO: Helper function
-    auto get_line_ite = [this](size_t source_index) -> size_t {
+    auto get_line_ite = [this](int64_t source_index) -> int64_t {
       auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
 
       auto idx =
@@ -103,7 +103,7 @@ public:
   IndexPair get_row_col() const {
     auto [start, end] = source_start_end;
     // INFO: Helper function
-    auto get_line_ite = [this](size_t source_index) -> size_t {
+    auto get_line_ite = [this](int64_t source_index) -> int64_t {
       auto cmp = [](const auto &a, const auto &b) { return a.first < b.first; };
 
       auto idx =
@@ -119,7 +119,7 @@ public:
     return {num_row, num_col};
   }
 
-  bool is_on_singular_line(size_t i) {
+  bool is_on_singular_line(int64_t i) {
     auto [og_start, og_end] = this->get_lines_indices();
     return og_start == og_end && i == og_start;
   }
@@ -150,11 +150,11 @@ DiagnosticData Reporter::get_diagnostic_data(std::string_view str) {
 
   return result;
 }
-void Reporter::indicate_singular_line(ReportKind report_kind, size_t col_start,
-                                      size_t col_end) const {
+void Reporter::indicate_singular_line(ReportKind report_kind, int64_t col_start,
+                                      int64_t col_end) const {
 
   print_fmt(LINE_COLOR, "    |");
-  size_t j = 0;
+  int64_t j = 0;
   for (; j < col_start; j++)
     print_fmt(report_kind, " ");
 
@@ -164,30 +164,29 @@ void Reporter::indicate_singular_line(ReportKind report_kind, size_t col_start,
 }
 
 void Reporter::report_singular_line(ReportKind report_kind,
-                                    const std::string &msg, size_t col_start,
-                                    size_t col_end) {
+                                    const std::string &msg, int64_t col_start,
+                                    int64_t col_end) {
   print_fmt(LINE_COLOR, "    |");
-  size_t j = 0;
+  int64_t j = 0;
   for (; j < col_start; j++)
     print_fmt(report_kind, " ");
 
   print_fmt(report_kind, "{}", msg);
   print_fmt(report_kind, "\n");
 }
-void Reporter::print_data_singular_line(std::string_view msg, size_t col_start,
-                                        size_t col_end) const {
+void Reporter::print_data_singular_line(std::string_view msg, int64_t col_start,
+                                        int64_t col_end) const {
 
-  assert(msg.size() > col_end);
-  for (size_t j = 0; j < col_start; j++)
+  for (int64_t j = 0; j < col_start; j++)
     fmt::print(stderr, "{}", msg[j]);
-  for (size_t j = col_start; j < col_end; j++)
+  for (int64_t j = col_start; j < col_end; j++)
     fmt::print(stderr, fmt::emphasis::bold, "{}", msg[j]);
   for (size_t j = col_end; j < msg.size(); j++)
     fmt::print(stderr, "{}", msg[j]);
 
   print_fmt(fmt::terminal_color::white, "\n");
 }
-void Reporter::report_single_msg(std::pair<size_t, size_t> index_pair,
+void Reporter::report_single_msg(std::pair<int64_t, int64_t> index_pair,
                                  const std::string &format_str,
                                  const ReportKind report_kind) const {
   Locator locator(index_pair, context_radius, diagnostic_data);
@@ -221,7 +220,7 @@ void Reporter::report(const Reportee &reports) const {
   bool begin = true;
   for (const auto &[loc, report_msg, report_kind] : reports) {
 
-    for (size_t i = 1; i <= 1 && !begin; i++)
+    for (int64_t i = 1; i <= 1 && !begin; i++)
       print_fmt(LINE_COLOR, "----|\n");
 
     begin = false;
@@ -255,5 +254,5 @@ fmt::terminal_color Reporter::get_color_from(ReportKind report_kind) {
   abort("fail to get color");
 }
 
-size_t get_unique_ast_id() { return unique_ast_id; }
+int64_t get_unique_ast_id() { return unique_ast_id; }
 } // namespace sammine_util

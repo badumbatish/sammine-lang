@@ -3,14 +3,13 @@
 #include "Ast.h"
 #include "Lexer.h"
 #include "Utilities.h"
-#include "tl/expected.hpp"
 #include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <memory>
-
+#include <utility>
 namespace sammine_lang {
-
+using namespace AST;
 static std::map<TokenType, int> binopPrecedence = {
     {TokenType::TokASSIGN, 2}, {TokenType::TokLESS, 10},
     {TokenType::TokEQUAL, 10}, {TokenType::TokADD, 20},
@@ -25,159 +24,218 @@ int GetTokPrecedence(TokenType tokType) {
   return TokPrec;
 }
 
-auto Parser::Parse()
-    -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
-  return ParseProgram();
-}
+auto Parser::Parse() -> u<ProgramAST> { return ParseProgram(); }
 
-auto Parser::ParseProgram()
-    -> tl::expected<std::unique_ptr<AST::ProgramAST>, ParserError> {
-  auto programAST = std::make_unique<AST::ProgramAST>();
+auto Parser::ParseProgram() -> u<ProgramAST> {
+  auto programAST = std::make_unique<ProgramAST>();
   while (!tokStream->isEnd()) {
-    auto def_result = ParseDefinition();
-    if (def_result) {
-      programAST->DefinitionVec.push_back(std::move(def_result.value()));
+    auto [def, result] = ParseDefinition();
+    switch (result) {
+    case SUCCESS:
+      programAST->DefinitionVec.push_back(std::move(def));
+      break;
+    case COMMITTED_EMIT_MORE_ERROR: {
+      this->error("Failed to parse a definition");
+      programAST->DefinitionVec.push_back(std::move(def));
+      return programAST;
+    }
+    case COMMITTED_NO_MORE_ERROR: {
+      programAST->DefinitionVec.push_back(std::move(def));
+      return programAST;
+    }
+    case NONCOMMITTED: {
+      return programAST;
+    }
     }
   }
 
   return programAST;
 }
 
-auto Parser::ParseDefinition()
-    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
-  using ParseFunction = std::function<
-      tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError>(Parser *)>;
+auto Parser::ParseDefinition() -> p<DefinitionAST> {
+  using ParseFunction = std::function<p<DefinitionAST>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
       {&Parser::ParseFuncDef, false},
   };
 
-  ParserError pe = NONCOMMITTED;
   for (auto [fn, required] : ParseFunctions) {
-    auto result = fn(this);
-    if (result)
-      return result;
-    else if (!result)
-      pe = result.error();
+    auto [def, result] = fn(this);
+    switch (result) {
+    case SUCCESS:
+      return make_pair(std::move(def), result);
+    case COMMITTED_EMIT_MORE_ERROR: {
+      this->error("Failed to parse an extern/function definition");
+      def->pe = true;
+      return std::make_pair(std::move(def), COMMITTED_NO_MORE_ERROR);
+    }
+    case COMMITTED_NO_MORE_ERROR: {
+      def->pe = true;
+      return std::make_pair(std::move(def), COMMITTED_NO_MORE_ERROR);
+    }
+    case NONCOMMITTED: {
+      return {nullptr, NONCOMMITTED};
+    }
+    }
   }
-
-  auto result = expect(TokenType::TokINVALID, true, TokEOF,
-                       pe == ParserError::COMMITTED_NO_MORE_ERROR
-                           ? ""
-                           : "Failed to parse any meaningful definitions");
-  return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
+  sammine_util::abort("Should not happen in ParseDefinition()");
 }
 
-auto Parser::ParseFuncDef()
-    -> tl::expected<std::unique_ptr<AST::DefinitionAST>, ParserError> {
+auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   // this is for extern
   auto extern_fn = expect(TokenType::TokExtern);
   if (extern_fn) {
 
-    auto prototype = ParsePrototype();
-    if (!prototype) {
-      sammine_util::abort("abort extern");
-      auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
-                           "Failed to parse a prototype of a function");
-      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    auto [prototype, result] = ParsePrototype();
+    switch (result) {
+    case SUCCESS: {
+      auto semi_colon = expect(TokenType::TokSemiColon);
+      if (!expect(TokSemiColon))
+        this->error("Need semicolon when parsing extern");
+      return std::make_pair(std::make_unique<ExternAST>(std::move(prototype)),
+                            SUCCESS);
     }
-
-    auto semi_colon = expect(TokenType::TokSemiColon);
-    if (!semi_colon)
-      sammine_util::abort("Need semicolon when parsing extern");
-    return std::make_unique<AST::ExternAST>(std::move(prototype.value()));
+    case COMMITTED_EMIT_MORE_ERROR:
+    case NONCOMMITTED:
+      this->error("Failed to parse a prototype of a function");
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      auto result = expect(TokenType::TokSemiColon);
+      return std::make_pair(std::make_unique<ExternAST>(std::move(prototype)),
+                            COMMITTED_NO_MORE_ERROR);
+    }
   }
 
   // this is for fn
   auto fn = expect(TokenType::TokFunc);
-  if (!fn)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
-
-  auto prototype = ParsePrototype();
-  if (!prototype) {
-    auto result = expect(TokenType::TokINVALID, true, TokRightCurly,
-                         "Failed to parse a prototype of a function");
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  if (!fn) {
+    return std::make_pair(std::make_unique<FuncDefAST>(nullptr, nullptr),
+                          COMMITTED_EMIT_MORE_ERROR);
   }
 
-  auto block = ParseBlock();
-  if (!block && block.error() == COMMITTED_NO_MORE_ERROR) {
-    /*auto result = expect(TokenType::TokINVALID, true, TokRightCurly,*/
-    /*                     "Failed to parse a block of a function
-     * definition");*/
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  auto [prototype, proto_result] = ParsePrototype();
+  switch (proto_result) {
+  case SUCCESS:
+    break;
+
+  case COMMITTED_EMIT_MORE_ERROR:
+  case NONCOMMITTED:
+    this->error("Failed to parse a prototype of a function");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    auto proto_result = expect(TokenType::TokRightCurly, /*exhausts=*/true);
+    return std::make_pair(
+        std::make_unique<FuncDefAST>(std::move(prototype), nullptr),
+        COMMITTED_NO_MORE_ERROR);
+  }
+  auto [block, result] = ParseBlock();
+  switch (result) {
+  case SUCCESS:
+    return std::make_pair(
+        std::make_unique<FuncDefAST>(std::move(prototype), std::move(block)),
+        SUCCESS);
+  case NONCOMMITTED:
+    [[fallthrough]];
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse a block of a function definition");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    auto result = expect(TokenType::TokRightCurly, /*exhausts=*/true);
+    return std::make_pair(
+        std::make_unique<FuncDefAST>(std::move(prototype), std::move(block)),
+        COMMITTED_NO_MORE_ERROR);
   }
 
-  if (!block && block.error() == COMMITTED_EMIT_MORE_ERROR) {
-    sammine_util::abort(
-        "Parsing a block should handle its own closing curly block");
-  }
-  if (!block)
-    sammine_util::abort();
-
-  return std::make_unique<AST::FuncDefAST>(std::move(prototype.value()),
-                                           std::move(block.value()));
+  sammine_util::abort("Should not happen");
 }
 
 //! Parsing implementation for a variable decl/def
 
 //! Accepts a let, continue parsing inside and (enable error reporting if
 //! possible). If a `let` is not found then return a nullptr.
-auto Parser::ParseVarDef()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseVarDef() -> p<ExprAST> {
   auto let = expect(TokenType::TokLet);
   if (!let)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
-  auto typedVar = ParseTypedVar();
-  if (!typedVar) {
-    auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
-                         "Failed to parse typed variable");
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    return std::make_pair(
+        std::make_unique<VarDefAST>(nullptr, nullptr, nullptr), NONCOMMITTED);
+  auto [typedVar, tv_result] = ParseTypedVar();
+  switch (tv_result) {
+  case SUCCESS: {
+    auto assign_tok = expect(TokenType::TokASSIGN, true, TokSemiColon);
+    if (!assign_tok) {
+      this->error("Failed to match assig token `=`");
+      return std::make_pair(
+          std::make_unique<VarDefAST>(let, std::move(typedVar), nullptr),
+          COMMITTED_NO_MORE_ERROR);
+    }
+    auto [expr, result] = ParseExpr();
+    switch (result) {
+    case SUCCESS: {
+
+      auto semicolon = expect(TokenType::TokSemiColon, true);
+      if (semicolon)
+        return std::make_pair(std::make_unique<VarDefAST>(
+                                  let, std::move(typedVar), std::move(expr)),
+                              SUCCESS);
+
+      this->error("Failed to parse semicolon after expression in a variable "
+                  "definintion");
+      return std::make_pair(std::make_unique<VarDefAST>(
+                                let, std::move(typedVar), std::move(expr)),
+                            COMMITTED_NO_MORE_ERROR);
+    }
+
+    case COMMITTED_NO_MORE_ERROR:
+      [[fallthrough]];
+    case COMMITTED_EMIT_MORE_ERROR:
+      [[fallthrough]];
+    case NONCOMMITTED:
+      this->error("Failed to parse expr for variable definition");
+      return std::make_pair(std::make_unique<VarDefAST>(
+                                let, std::move(typedVar), std::move(expr)),
+                            COMMITTED_NO_MORE_ERROR);
+      break;
+    }
+
+    sammine_util::abort("Should not happen");
   }
-
-  auto assign = expect(TokenType::TokASSIGN, true, TokSemiColon,
-                       "Failed to match assign token `=`");
-  if (!assign)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-
-  auto expr = ParseExpr();
-  if (!expr) {
-    auto result = expect(TokenType::TokINVALID, true, TokSemiColon,
-                         "Failed to parse expression");
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  case NONCOMMITTED:
+    [[fallthrough]];
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse typed variable, already consume `let` token");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return std::make_pair(
+        std::make_unique<VarDefAST>(let, std::move(typedVar), nullptr),
+        COMMITTED_NO_MORE_ERROR);
   }
-
-  auto semicolon = expect(TokenType::TokSemiColon, true, TokSemiColon,
-                          "Failed to match semicolon token `;`");
-
-  auto varDef = std::make_unique<AST::VarDefAST>(
-      let, std::move(typedVar.value()), std::move(expr.value()));
-
-  return varDef;
+  sammine_util::abort("Should not happen");
 }
 
-auto Parser::ParseTypedVar()
-    -> tl::expected<std::unique_ptr<AST::TypedVarAST>, ParserError> {
+auto Parser::ParseTypedVar() -> p<TypedVarAST> {
   auto name = expect(TokenType::TokID);
-  if (!name)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+  if (!name) {
+    return std::make_pair(std::make_unique<TypedVarAST>(nullptr, nullptr),
+                          NONCOMMITTED);
+  }
+
   auto colon = expect(TokenType::TokColon);
   if (!colon)
-    return std::make_unique<AST::TypedVarAST>(name);
+    return std::make_pair(std::make_unique<TypedVarAST>(name), SUCCESS);
   auto type = expect(TokenType::TokID);
 
   // TODO: Make this error more specific:
-  // `let x : ;` should let user know that we don't fuck around and correct them
-  // to `let x : f64;` or `let x : T` for some specific T
-  if (!type)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  // `let x : ;` should let user know that we don't fuck around and correct
+  // them to `let x : f64;` or `let x : T` for some specific T
+  if (!type) {
+    this->error("Expected type name after token `:`", colon->location);
+    return std::make_pair(std::make_unique<TypedVarAST>(name, type),
+                          COMMITTED_NO_MORE_ERROR);
+  }
 
-  return std::make_unique<AST::TypedVarAST>(name, type);
+  return std::make_pair(std::make_unique<TypedVarAST>(name, type), SUCCESS);
 }
-auto Parser::ParsePrimaryExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  using ParseFunction =
-      std::function<tl::expected<std::unique_ptr<AST::ExprAST>, ParserError>(
-          Parser *)>;
+auto Parser::ParsePrimaryExpr() -> p<ExprAST> {
+  using ParseFunction = std::function<p<ExprAST>(Parser *)>;
   std::vector<std::pair<ParseFunction, std::string>> ParseFunctions = {
       {&Parser::ParseCallExpr, "CallExpr"},
       {&Parser::ParseIfExpr, "IfExpr"},
@@ -186,343 +244,504 @@ auto Parser::ParsePrimaryExpr()
       {&Parser::ParseVariableExpr, "VariableExpr"},
   };
 
-  for (auto fn : ParseFunctions) {
-    auto result = fn.first(this);
-    if (result) {
-      return result;
-    } else if (!result &&
-               result.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
-      sammine_util::abort(
-          fmt::format("Failed to parse one of primary expr: {}", fn.second));
-      return result;
+  for (auto [fn, fn_name] : ParseFunctions) {
+
+    auto [expr, result] = fn(this);
+    switch (result) {
+    case SUCCESS:
+      return std::make_pair(std::move(expr), SUCCESS);
+    case COMMITTED_NO_MORE_ERROR:
+      return std::make_pair(std::move(expr), COMMITTED_NO_MORE_ERROR);
+    case COMMITTED_EMIT_MORE_ERROR:
+      this->error("Failed to parse " + fn_name, expr->get_location());
+      return {std::move(expr), COMMITTED_NO_MORE_ERROR};
+    case NONCOMMITTED:
+      break;
     }
-  }
 
-  return tl::make_unexpected(ParserError::NONCOMMITTED);
+    if (fn_name == ParseFunctions.back().second) {
+      return {nullptr, NONCOMMITTED};
+    } else
+      continue;
+  }
+  sammine_util::abort("Should not happen in ParsePrimaryExpr");
 }
-auto Parser::ParseExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  auto LHS = ParsePrimaryExpr();
-  if (!LHS) {
-    return LHS;
+auto Parser::ParseExpr() -> p<ExprAST> {
+  auto [LHS, left_result] = ParsePrimaryExpr();
+  switch (left_result) {
+  case SUCCESS:
+    break;
+  case NONCOMMITTED:
+    return {std::move(LHS), NONCOMMITTED};
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse a primary expression");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::move(LHS), COMMITTED_NO_MORE_ERROR};
   }
 
-  auto next = ParseBinaryExpr(0, std::move(LHS.value()));
-  if (!next && next.error() == COMMITTED_NO_MORE_ERROR) {
-    auto result = expect(TokSemiColon, true, TokSemiColon, "");
-    return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
+  auto [next, right_result] = ParseBinaryExpr(0, std::move(LHS));
+  switch (right_result) {
+  case SUCCESS:
+    return {std::move(next), SUCCESS};
+  case NONCOMMITTED:
+    return {std::move(next), SUCCESS};
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse the continuation of binary expression");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::move(next), COMMITTED_NO_MORE_ERROR};
   }
-  if (!next && next.error() == COMMITTED_EMIT_MORE_ERROR)
-    sammine_util::abort("ParseExpr should not handle error");
-
-  return next;
+  sammine_util::abort("should not happen in ParseExpr, call Jasmine");
 }
 
-auto Parser::ParseBinaryExpr(int prededence, std::unique_ptr<AST::ExprAST> LHS)
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  while (true) {
-    int TokPrec = GetTokPrecedence(tokStream->peek()->tok_type);
+auto Parser::ParseBinaryExpr(int prededence, u<ExprAST> LHS) -> p<ExprAST> {
+  while (!tokStream->isEnd()) {
+    auto tok = tokStream->peek()->tok_type;
+    int TokPrec = GetTokPrecedence(tok);
 
     if (TokPrec < prededence)
-      return LHS;
+      return {std::move(LHS), SUCCESS};
 
     auto binOpToken = tokStream->consume();
-    auto RHS = ParsePrimaryExpr();
+    auto [RHS, right_result] = ParsePrimaryExpr();
 
     // We're committed here, so whether RHS is commited error or non-committed
     // error, we really should always return non-committed.
     //
     // If it is commited, we don't release any more report, just return RHS
     // like normal If it is commited, we add a report. Depend on programmer.
-    if (!RHS && (RHS.error() == COMMITTED_EMIT_MORE_ERROR ||
-                 RHS.error() == NONCOMMITTED)) {
-      error(fmt::format("Failed to parse the right-hand side of token `{}` in "
-                        "binary expression",
-                        binOpToken->lexeme),
-            *binOpToken);
-      return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
+    switch (right_result) {
+    case SUCCESS:
+      break;
+    case COMMITTED_EMIT_MORE_ERROR:
+      [[fallthrough]];
+    case NONCOMMITTED:
+      this->error(
+          fmt::format(
+              "Failed to parse the right handside of binary "
+              "expression, with token `{}` despite stronger binding power",
+              binOpToken->lexeme),
+          binOpToken->location);
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      return {std::make_unique<BinaryExprAST>(binOpToken, std::move(LHS),
+                                              std::move(RHS)),
+              COMMITTED_NO_MORE_ERROR};
     }
-    if (!RHS && RHS.error() == COMMITTED_NO_MORE_ERROR) {
-      return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
-    }
-    if (!RHS)
-      sammine_util::abort();
-    int NextPrec = GetTokPrecedence(tokStream->peek()->tok_type);
-    if (TokPrec < NextPrec) {
-      RHS = ParseBinaryExpr(TokPrec + 1, std::move(RHS.value()));
-      if (!RHS) {
-        return RHS;
-      }
-    }
-
-    LHS = std::make_unique<AST::BinaryExprAST>(binOpToken, std::move(LHS),
-                                               std::move(RHS.value()));
   }
+  sammine_util::abort("cannot reach this");
 }
-auto Parser::ParseReturnExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseReturnExpr() -> p<ExprAST> {
   auto return_tok = expect(TokenType::TokReturn);
   if (!return_tok)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+    return {std::make_unique<ReturnExprAST>(nullptr, nullptr), NONCOMMITTED};
   if (expect(TokenType::TokSemiColon)) {
-    return std::make_unique<AST::ReturnExprAST>(return_tok, nullptr);
+    return {std::make_unique<ReturnExprAST>(return_tok, nullptr), SUCCESS};
   }
-  auto expr = ParseExpr();
-  if (!expr) {
-    switch (expr.error()) {
-    case ParserError::NONCOMMITTED: {
-      error("Unable to parse an expr after return statement",
-            return_tok->location);
-      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-    }
-    case ParserError::COMMITTED_NO_MORE_ERROR: {
-      return tl::make_unexpected(COMMITTED_NO_MORE_ERROR);
-    }
-    case ParserError::COMMITTED_EMIT_MORE_ERROR: {
-      error("Unable to parse an expr after return statement",
-            return_tok->location);
-      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-    }
-    }
+  auto [expr, result] = ParseExpr();
+  switch (result) {
+  case SUCCESS:
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
+            COMMITTED_NO_MORE_ERROR};
+  case COMMITTED_EMIT_MORE_ERROR:
+    [[fallthrough]];
+  case NONCOMMITTED:
+    this->error("Unable to parse an expression after return statement");
+    return {std::make_unique<ReturnExprAST>(return_tok, nullptr),
+            COMMITTED_NO_MORE_ERROR};
   }
   auto semi = expect(TokenType::TokSemiColon);
   if (!semi) {
-    error("Missing the semicolon for the return statement",
-          return_tok->location);
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    this->error("Missing the semicolon for the return statement",
+                return_tok->location);
+    return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
+            COMMITTED_NO_MORE_ERROR};
   }
-  return std::make_unique<AST::ReturnExprAST>(return_tok,
-                                              std::move(expr.value()));
+  return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
+          SUCCESS};
 }
 
-auto Parser::ParseCallExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseCallExpr() -> p<ExprAST> {
 
   auto id = expect(TokenType::TokID);
-  if (id == nullptr)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+  if (!id)
+    return {std::make_unique<CallExprAST>(nullptr), NONCOMMITTED};
 
-  auto args = ParseArguments();
-  if (args)
-    return std::make_unique<AST::CallExprAST>(id, std::move(args.value()));
-  else {
-    return std::make_unique<AST::VariableExprAST>(id);
+  auto [args, result] = ParseArguments();
+  switch (result) {
+  case SUCCESS:
+    return {std::make_unique<CallExprAST>(id, std::move(args)), SUCCESS};
+  case NONCOMMITTED:
+    return {std::make_unique<VariableExprAST>(id), SUCCESS};
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse arguments for call expression rule",
+                id->location);
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::make_unique<CallExprAST>(id, std::move(args)),
+            COMMITTED_NO_MORE_ERROR};
   }
-
-  return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  sammine_util::abort("Should not happen");
 }
 
-auto Parser::ParseIfExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseIfExpr() -> p<ExprAST> {
   auto if_tok = expect(TokenType::TokIf);
 
   if (!if_tok)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+    return {std::make_unique<IfExprAST>(nullptr, nullptr, nullptr),
+            NONCOMMITTED};
 
-  auto cond = ParseExpr();
+  auto [cond, cond_result] = ParseExpr();
 
-  if (!cond)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  switch (cond_result) {
+  case SUCCESS:
+    break;
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::make_unique<IfExprAST>(std::move(cond), nullptr, nullptr),
+            COMMITTED_NO_MORE_ERROR};
+  case COMMITTED_EMIT_MORE_ERROR:
+    [[fallthrough]];
+  case NONCOMMITTED:
+    this->error(
+        "Failed to parse the predicate of if expression after the token `if`",
+        if_tok->location);
+    return {std::make_unique<IfExprAST>(std::move(cond), nullptr, nullptr),
+            COMMITTED_NO_MORE_ERROR};
+  }
 
-  auto then_block = ParseBlock();
-
-  if (!then_block)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  auto [then_block, then_result] = ParseBlock();
+  switch (then_result) {
+  case SUCCESS:
+    break;
+  case COMMITTED_EMIT_MORE_ERROR:
+    [[fallthrough]];
+  case NONCOMMITTED:
+    this->error("Failed to parse the `then block` after the predicate",
+                cond->get_location());
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::make_unique<IfExprAST>(std::move(cond), std::move(then_block),
+                                        nullptr),
+            COMMITTED_NO_MORE_ERROR};
+  }
 
   auto else_tok = expect(TokenType::TokElse);
   if (!else_tok) {
-    return std::make_unique<AST::IfExprAST>(std::move(cond.value()),
-                                            std::move(then_block.value()),
-                                            std::make_unique<AST::BlockAST>());
+    return {std::make_unique<IfExprAST>(std::move(cond), std::move(then_block),
+                                        std::make_unique<BlockAST>()),
+            SUCCESS};
   }
-  auto else_block = ParseBlock();
-  if (!else_block)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  auto [else_block, else_result] = ParseBlock();
 
-  return std::make_unique<AST::IfExprAST>(std::move(cond.value()),
-                                          std::move(then_block.value()),
-                                          std::move(else_block.value()));
+  switch (else_result) {
+  case SUCCESS:
+    return {std::make_unique<IfExprAST>(std::move(cond), std::move(then_block),
+                                        std::move(else_block)),
+            SUCCESS};
+  case COMMITTED_EMIT_MORE_ERROR:
+    [[fallthrough]];
+  case NONCOMMITTED:
+    this->error("Failed to parse the `else block` after the `else` token",
+                else_tok->location);
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {std::make_unique<IfExprAST>(std::move(cond), std::move(then_block),
+                                        std::move(else_block)),
+            COMMITTED_NO_MORE_ERROR};
+  }
+  sammine_util::abort("Should not happen");
 }
-auto Parser::ParseElseExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  return nullptr;
-}
-auto Parser::ParseNumberExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseNumberExpr() -> p<ExprAST> {
 
   if (auto numberToken = expect(TokenType::TokNum))
-    return std::make_unique<AST::NumberExprAST>(numberToken);
+    return {std::make_unique<NumberExprAST>(numberToken), SUCCESS};
   else
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+    return {nullptr, NONCOMMITTED};
 }
 
-auto Parser::ParseBoolExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
+auto Parser::ParseBoolExpr() -> p<ExprAST> {
 
   if (auto true_tok = expect(TokenType::TokTrue)) {
-    return std::make_unique<AST::BoolExprAST>(true, true_tok->location);
+    return {std::make_unique<BoolExprAST>(true, true_tok->location), SUCCESS};
   }
 
   if (auto false_tok = expect(TokenType::TokFalse)) {
-    return std::make_unique<AST::BoolExprAST>(false, false_tok->location);
+    return {std::make_unique<BoolExprAST>(false, false_tok->location), SUCCESS};
   }
 
-  return tl::make_unexpected(ParserError::NONCOMMITTED);
+  return {nullptr, NONCOMMITTED};
 }
-auto Parser::ParseVariableExpr()
-    -> tl::expected<std::unique_ptr<AST::ExprAST>, ParserError> {
-  if (auto name = expect(TokenType::TokID))
-    return std::make_unique<AST::VariableExprAST>(name);
-  return tl::make_unexpected(ParserError::NONCOMMITTED);
+auto Parser::ParseVariableExpr() -> p<ExprAST> {
+  if (auto name = expect(TokenType::TokID)) {
+    return {std::make_unique<VariableExprAST>(name), SUCCESS};
+  }
+  return {nullptr, NONCOMMITTED};
 }
 
-auto Parser::ParsePrototype()
-    -> tl::expected<std::unique_ptr<AST::PrototypeAST>, ParserError> {
+auto Parser::ParsePrototype() -> p<PrototypeAST> {
   auto id = expect(TokID);
   if (!id)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+    return {nullptr, NONCOMMITTED};
 
-  auto params = ParseParams();
-  if (!params)
-    return tl::make_unexpected(params.error());
+  auto [params, result] = ParseParams();
+  switch (result) {
+  case SUCCESS:
+    break;
+  case COMMITTED_EMIT_MORE_ERROR:
+    [[fallthrough]];
+  case NONCOMMITTED:
+    this->error(
+        fmt::format("Failed to parse the parameters in a function's prototype "
+                    "after identifier `{}`",
+                    id->lexeme),
+        id->location);
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    return {nullptr, COMMITTED_NO_MORE_ERROR};
+  }
   auto arrow = expect(TokArrow);
   if (!arrow)
-    return std::make_unique<AST::PrototypeAST>(id, std::move(params.value()));
-  ;
+    return {std::make_unique<PrototypeAST>(id, std::move(params)), SUCCESS};
 
-  auto returnType = expect(TokID);
-  return std::make_unique<AST::PrototypeAST>(id, returnType,
-                                             std::move(params.value()));
+  if (auto returnType = expect(TokID))
+    return {std::make_unique<PrototypeAST>(id, returnType, std::move(params)),
+            SUCCESS};
+  else {
+    this->error("Failed to parse the return type after the token `->`",
+                arrow->location);
+    return {std::make_unique<PrototypeAST>(id, returnType, std::move(params)),
+            COMMITTED_EMIT_MORE_ERROR};
+  }
 }
 
-auto Parser::ParseBlock()
-    -> tl::expected<std::unique_ptr<AST::BlockAST>, ParserError> {
-
+auto Parser::ParseBlock() -> p<BlockAST> {
+  bool error = false;
   auto leftCurly = expect(TokLeftCurly);
   if (!leftCurly)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-  // TODO : Cannot just parse a return stmt.
-  // TODO : We need to also parse other statement as well
+    return {nullptr, NONCOMMITTED};
 
-  auto blockAST = std::make_unique<AST::BlockAST>();
-  while (true) {
-    auto a = ParseExpr();
-
-    if (!a && a.error() == ParserError::COMMITTED_NO_MORE_ERROR)
-      return tl::make_unexpected(a.error());
-    if (a) {
-      blockAST->Statements.push_back(std::move(a.value()));
-      auto semi = expect(TokenType::TokSemiColon);
+  auto blockAST = std::make_unique<BlockAST>();
+  while (!tokStream->isEnd()) {
+    auto [a, a_result] = ParseExpr();
+    switch (a_result) {
+    case SUCCESS: {
+      auto semi = expect(TokenType::TokSemiColon, /*exhausts=*/true);
       if (!semi)
-        return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-
+        this->error("Failed to parse a semicolon after an expression for a "
+                    "statement in a block");
+      blockAST->Statements.push_back(std::move(a));
       continue;
     }
-
-    auto b = ParseVarDef();
-    if (!b && b.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
-      return tl::make_unexpected(b.error());
-    }
-    sammine_util::abort_on(!b &&
-                           b.error() == ParserError::COMMITTED_EMIT_MORE_ERROR);
-    if (b.has_value()) {
-      blockAST->Statements.push_back(std::move(b.value()));
-      continue;
-    }
-
-    auto rt = ParseReturnExpr();
-    if (!rt && rt.error() == ParserError::COMMITTED_NO_MORE_ERROR) {
-      return tl::make_unexpected(rt.error());
-    }
-    sammine_util::abort_on(!rt && rt.error() ==
-                                      ParserError::COMMITTED_EMIT_MORE_ERROR);
-
-    if (rt.has_value()) {
-      blockAST->Statements.push_back(std::move(rt.value()));
-    } else if (!rt && rt.error() == ParserError::NONCOMMITTED) {
+    case NONCOMMITTED:
       break;
-    } else {
-      sammine_util::abort();
+    case COMMITTED_EMIT_MORE_ERROR:
+      this->error("Failed to parse a statement in a block");
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      if (a)
+        blockAST->Statements.push_back(std::move(a));
+      auto semi = expect(TokenType::TokSemiColon, /*exhausts=*/true);
+      error = true;
+      semi = expect(TokSemiColon);
+      continue;
     }
+
+    auto [b, b_result] = ParseVarDef();
+
+    switch (b_result) {
+    case SUCCESS: {
+      blockAST->Statements.push_back(std::move(b));
+      continue;
+    }
+    case NONCOMMITTED:
+      break;
+    case COMMITTED_EMIT_MORE_ERROR:
+      this->error("Failed to parse a variable definition in a block");
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      if (b)
+        blockAST->Statements.push_back(std::move(b));
+      error = true;
+      continue;
+    }
+
+    auto [rt, rt_result] = ParseReturnExpr();
+    switch (rt_result) {
+    case SUCCESS:
+      blockAST->Statements.push_back(std::move(rt));
+    case NONCOMMITTED:
+      break;
+    case COMMITTED_EMIT_MORE_ERROR:
+      this->error("Failed to parse a return expression in a block");
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      blockAST->Statements.push_back(std::move(rt));
+      error = true;
+      continue;
+    }
+    break;
   }
 
   auto rightCurly = expect(TokRightCurly, true, TokEOF,
                            "Failed to parse right curly of block.");
 
   if (!rightCurly)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-
-  return blockAST;
+    return {std::move(blockAST), COMMITTED_NO_MORE_ERROR};
+  if (error)
+    return {std::move(blockAST), COMMITTED_NO_MORE_ERROR};
+  else
+    return {std::move(blockAST), SUCCESS};
 }
 
 // Parsing of parameters in a function call, we use leftParen and rightParen
 // as appropriate stopping point
 auto Parser::ParseParams()
-    -> tl::expected<std::vector<std::unique_ptr<AST::TypedVarAST>>,
-                    ParserError> {
+    -> std::pair<std::vector<u<TypedVarAST>>, ParserError> {
   auto leftParen = expect(TokLeftParen);
   if (leftParen == nullptr)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+    return {std::vector<u<TypedVarAST>>(), NONCOMMITTED};
 
   // COMMITMENT POINT
-  auto vec = std::vector<std::unique_ptr<AST::TypedVarAST>>();
-  auto typeVar = ParseTypedVar();
-  if (typeVar) {
-    vec.push_back(std::move(typeVar.value()));
+  bool error = false;
+  auto [tv, tv_result] = ParseTypedVar();
+
+  std::vector<u<TypedVarAST>> vec;
+  switch (tv_result) {
+  case SUCCESS:
+    vec.push_back(std::move(tv));
+    break;
+  case NONCOMMITTED: {
+    auto rightParen = expect(TokRightParen, true);
+    if (!rightParen) {
+      this->error(
+          "Failed to parse the right parenthesis of list of parameters");
+      return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+    }
+    if (error)
+      return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+    return {std::move(vec), SUCCESS};
   }
-  while (true) {
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse a typed variable as a parameter");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    vec.push_back(std::move(tv));
+    break;
+  }
+  while (!tokStream->isEnd()) {
     auto comma = expect(TokComma);
     if (comma == nullptr)
       break;
 
     // Report error if we find comma but cannot find typeVar
-    typeVar = ParseTypedVar();
-    if (!typeVar) {
-      this->error("Failed to find typed variable after comma",
-                  tokStream->currentLocation());
-      return tl::make_unexpected(typeVar.error());
-    } else {
-      vec.push_back(std::move(typeVar.value()));
+    auto [nvt, nvt_result] = ParseTypedVar();
+    switch (nvt_result) {
+    case SUCCESS:
+      vec.push_back(std::move(nvt));
+      break;
+    case NONCOMMITTED: {
+      auto rightParen = expect(TokRightParen, true);
+      if (!rightParen) {
+        this->error("Failed to parse the right parenthesis of list of "
+                    "follow-up parameters");
+        return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+      }
+      if (error)
+        return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+
+      return {std::move(vec), SUCCESS};
+    }
+    case COMMITTED_EMIT_MORE_ERROR:
+      this->error("Failed to parse a follow-up parameters");
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      vec.push_back(std::move(nvt));
+      auto temp = expect(TokComma, true, TokComma);
+      error = true;
+      continue;
     }
   }
-  auto rightParen = expect(TokRightParen);
-  if (rightParen == nullptr) {
-    this->error("Failed to find right parenthesis after processing [typed "
-                "variables]",
-                tokStream->currentLocation());
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+  auto rightParen = expect(TokRightParen, true);
+  if (!rightParen) {
+    this->error("Failed to parse the right parenthesis of list of parameters");
+    return {std::move(vec), COMMITTED_NO_MORE_ERROR};
   }
+  if (error)
+    return {std::move(vec), COMMITTED_NO_MORE_ERROR};
 
-  return vec;
+  return {std::move(vec), SUCCESS};
 }
 
 auto Parser::ParseArguments()
-    -> tl::expected<std::vector<std::unique_ptr<AST::ExprAST>>, ParserError> {
+    -> std::pair<std::vector<u<ExprAST>>, ParserError> {
   auto leftParen = expect(TokLeftParen);
-  if (leftParen == nullptr)
-    return tl::make_unexpected(ParserError::NONCOMMITTED);
+  bool error = false;
+  if (!leftParen)
+    return {std::vector<u<ExprAST>>(), NONCOMMITTED};
 
-  auto vec = std::vector<std::unique_ptr<AST::ExprAST>>();
+  auto vec = std::vector<u<ExprAST>>();
 
-  auto expr = ParseExpr();
-  if (expr) {
-    vec.push_back(std::move(expr.value()));
+  auto [first_expr, first_result] = ParseExpr();
+  switch (first_result) {
+  case SUCCESS:
+    vec.push_back(std::move(first_expr));
+    break;
+  case NONCOMMITTED:
+    break;
+  case COMMITTED_EMIT_MORE_ERROR:
+    this->error("Failed to parse an argument");
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    vec.push_back(std::move(first_expr));
+    auto temp = expect(TokComma, true, TokComma);
+    error = true;
+    break;
   }
-  while (true) {
+  while (!tokStream->isEnd()) {
     /*auto typeVar = ParseTypedVar();*/
     auto comma = expect(TokComma);
     if (comma == nullptr)
       break;
 
-    expr = ParseExpr();
-    if (!expr)
-      return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
-  }
-  auto rightParen = expect(TokRightParen);
-  if (!rightParen)
-    return tl::make_unexpected(ParserError::COMMITTED_NO_MORE_ERROR);
+    auto [expr, expr_result] = ParseExpr();
+    switch (expr_result) {
+    case SUCCESS:
+      vec.push_back(std::move(expr));
+      break;
+    case NONCOMMITTED: {
+      auto rightParen = expect(TokRightParen, true);
+      if (!rightParen) {
+        this->error("Failed to parse the right parenthesis of list of "
+                    "follow-up arguments");
+        return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+      }
+      if (error)
+        return {std::move(vec), COMMITTED_NO_MORE_ERROR};
 
-  return vec;
+      return {std::move(vec), SUCCESS};
+    }
+    case COMMITTED_EMIT_MORE_ERROR:
+      this->error("Failed to parse a follow-up argument");
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
+      vec.push_back(std::move(first_expr));
+      auto temp = expect(TokComma, true, TokComma);
+      error = true;
+      continue;
+    }
+  }
+  auto rightParen = expect(TokRightParen, true);
+  if (!rightParen) {
+    this->error("Failed to parse the right parenthesis of list of arguments");
+    return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+  }
+  if (error)
+    return {std::move(vec), COMMITTED_NO_MORE_ERROR};
+
+  return {std::move(vec), SUCCESS};
 }
 
 auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
@@ -533,8 +752,11 @@ auto Parser::expect(TokenType tokType, bool exhausts, TokenType until,
     return tokStream->consume();
   } else {
     // TODO: Add error reporting after this point.
-    if (!message.empty())
+    if (!message.empty() && tokStream->peek()->tok_type != TokEOF) {
       this->error(message, tokStream->currentLocation());
+    } else if (!message.empty()) {
+      this->error(message);
+    }
     if (exhausts)
       tokStream->exhaust_until(until);
 

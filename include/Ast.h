@@ -57,16 +57,16 @@ public:
 
   explicit TypedVarAST(std::shared_ptr<Token> name,
                        std::shared_ptr<Token> type) {
-    assert(name);
-    assert(type);
     this->join_location(name)->join_location(type);
-    this->name = name->lexeme;
-    this->type_lexeme = type->lexeme;
+    if (name)
+      this->name = name->lexeme;
+    if (type)
+      this->type_lexeme = type->lexeme;
   }
   explicit TypedVarAST(std::shared_ptr<Token> name) {
-    assert(name);
     this->join_location(name);
-    this->name = name->lexeme;
+    if (name)
+      this->name = name->lexeme;
   }
   virtual std::string getTreeName() override { return "TypedVarAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
@@ -336,14 +336,16 @@ class CallExprAST : public ExprAST {
 public:
   std::string functionName;
   std::vector<std::unique_ptr<AST::ExprAST>> arguments;
-  CallExprAST(std::shared_ptr<Token> functionName,
-              std::vector<std::unique_ptr<AST::ExprAST>> arguments) {
-    assert(functionName);
+  explicit CallExprAST(
+      std::shared_ptr<Token> functionName,
+      std::vector<std::unique_ptr<AST::ExprAST>> arguments = {}) {
     join_location(functionName);
-    this->functionName = functionName->lexeme;
+    if (functionName)
+      this->functionName = functionName->lexeme;
 
     for (auto &arg : arguments)
-      this->join_location(arg.get());
+      if (arg)
+        this->join_location(arg.get());
     this->arguments = std::move(arguments);
   }
 
@@ -390,9 +392,9 @@ class VariableExprAST : public ExprAST {
 public:
   std::string variableName;
   VariableExprAST(std::shared_ptr<Token> var) {
-    assert(var);
     join_location(var);
-    variableName = var->lexeme;
+    if (var)
+      variableName = var->lexeme;
   };
 
   virtual std::string getTreeName() override { return "VariableExprAST"; }
@@ -407,7 +409,6 @@ public:
     return visitor->synthesize(this);
   }
 };
-
 struct ASTPrinter {
   static void print(AstBase *t);
 };

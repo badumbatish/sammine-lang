@@ -36,6 +36,11 @@ int main(int argc, char *argv[]) {
       .implicit_value(std::string("true"))
       .help("sammine compiler spits out stage-wise diagnostics for "
             "sammine-lang developers");
+
+  if (argc < 1) {
+    std::cerr << program;
+    return 1;
+  }
   try {
     program.parse_args(argc, argv); // Example: ./main -abc 1.95 2.47
     compiler_options[compiler_option_enum::FILE] =

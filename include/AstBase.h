@@ -196,11 +196,13 @@ protected:
   sammine_util::Location location;
 
 public:
+  // INFO: Parser error
+  bool pe = false;
   llvm::Value *val;
   Type type = Type::NonExistent();
   AstBase *join_location(AstBase *ast) {
     if (!ast)
-      sammine_util::abort(fmt::format("ast cannot be nullptr"));
+      pe = true;
     else
       change_location(ast->location);
 
@@ -210,16 +212,17 @@ public:
   AstBase *join_location(std::shared_ptr<Token> tok) {
 
     if (!tok)
-      sammine_util::abort(fmt::format("tok cannot be nullptr"));
+      pe = true;
     else
       change_location(tok->location);
 
     return this;
   }
   AstBase *join_location(sammine_util::Location location) {
+    if (location.source_start <= 0 && location.source_end <= 0)
+      return this;
 
     change_location(location);
-
     return this;
   }
   sammine_util::Location get_location() { return this->location; }

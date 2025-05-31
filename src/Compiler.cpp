@@ -13,6 +13,7 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Support/CodeGen.h"
 #include "llvm/Support/raw_ostream.h"
+#include <cstdlib>
 #include <memory>
 #include <system_error>
 namespace sammine_lang {
@@ -61,10 +62,7 @@ void Compiler::parse() {
   Parser psr = Parser(tokStream, reporter);
 
   auto result = psr.Parse();
-  if (result.has_value())
-    programAST = std::move(result.value());
-
-  reporter.report(psr);
+  programAST = std::move(result);
 
   this->error = psr.has_errors();
 }
@@ -96,6 +94,10 @@ void Compiler::dump_ast() {
   if (compiler_options[compiler_option_enum::AST_IR] == "true") {
     log_diagnostics(fmt::format("Start dumping ast-ir stage..."));
     AST::ASTPrinter::print(programAST.get());
+  }
+  if (this->error) {
+    log_diagnostics("There were errors in previous stages. Aborting now");
+    std::exit(1);
   }
 }
 void Compiler::codegen() {
