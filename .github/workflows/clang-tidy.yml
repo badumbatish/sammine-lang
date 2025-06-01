@@ -1,3 +1,4 @@
+
 # .github/workflows/clang-tidy.yml
 name: "clang-tidy CI"
 
@@ -10,42 +11,51 @@ on:
     branches:
       - main
 
-
 jobs:
   tidy-check:
     runs-on: ubuntu-latest
 
     steps:
       # 1st Check the code
-      - name: Checkout Repository
-        use: actions/checkout@v3
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Invoking the action 
+        uses: Shuriken-Group/setup_llvm_tools@v0.0.0
+        with:
+          download_path: "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
+          destination: "/usr/local"
 
       # 2nd install needed tool
-      - name: Install LLVM/Clang
+      - name: Install LLVM/Clang, Catch2, & libtinfo5
         run: |
           sudo apt update
-          sudo apt install -y clang-tidy 
+          sudo apt install -y clang-tidy catch2 llvm llvm-dev
+          sudo apt install -y lld 
+          wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
+          sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
 
       - name: Compile Code
         working-directory: ${{ github.workspace }}
         run: |
           mkdir -p build
-          cd build
           cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build Code
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ github.workspace }}
         run: |
-          cmake --build . -j4 
+          cmake --build build -j4 
 
       # 5. Run clang-tidy via run-clang-tidy script
       - name: Run clang-tidy
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ github.workspace }}
         run: |
           # You can adjust -j <cores> or other flags as needed
           run-clang-tidy \
             -warnings-as-errors=* \
             -use-color \
-            -p . \
+            -p build \
             -j 4 \
             "sammine-lang/(src|include).*"
+
+
