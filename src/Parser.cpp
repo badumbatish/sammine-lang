@@ -313,6 +313,8 @@ auto Parser::ParseBinaryExpr(int prededence, u<ExprAST> LHS) -> p<ExprAST> {
     // like normal If it is commited, we add a report. Depend on programmer.
     switch (right_result) {
     case SUCCESS:
+      LHS = std::make_unique<BinaryExprAST>(binOpToken, std::move(LHS),
+                                            std::move(RHS));
       break;
     case COMMITTED_EMIT_MORE_ERROR:
       [[fallthrough]];
@@ -342,7 +344,7 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
   auto [expr, result] = ParseExpr();
   switch (result) {
   case SUCCESS:
-    [[fallthrough]];
+    break;
   case COMMITTED_NO_MORE_ERROR:
     return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
             COMMITTED_NO_MORE_ERROR};
@@ -572,6 +574,7 @@ auto Parser::ParseBlock() -> p<BlockAST> {
     switch (rt_result) {
     case SUCCESS:
       blockAST->Statements.push_back(std::move(rt));
+      continue;
     case NONCOMMITTED:
       break;
     case COMMITTED_EMIT_MORE_ERROR:
@@ -586,7 +589,7 @@ auto Parser::ParseBlock() -> p<BlockAST> {
   }
 
   auto rightCurly = expect(TokRightCurly, true, TokEOF,
-                           "Failed to parse right curly of block.");
+                           "Failed to parse right curly of a statement block.");
 
   if (!rightCurly)
     return {std::move(blockAST), COMMITTED_NO_MORE_ERROR};

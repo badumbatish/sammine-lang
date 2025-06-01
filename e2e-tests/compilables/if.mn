@@ -1,8 +1,11 @@
 # RUN: %sammine_exe% --file %s  
 
 # this is a function
-fn f(x : f64) {
-  if x {
+fn f(x : i64) -> unit {
+  if x  {
+    x = 2;
   } else {
+    x = 2;
   };
+  return x;
 }

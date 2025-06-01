@@ -20,7 +20,9 @@ void BiTypeCheckerVisitor::preorder_walk(NumberExprAST *ast) {
   ast->accept_synthesis(this);
 }
 void BiTypeCheckerVisitor::preorder_walk(BoolExprAST *ast) {}
-void BiTypeCheckerVisitor::preorder_walk(VariableExprAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(VariableExprAST *ast) {
+  ast->accept_synthesis(this);
+}
 void BiTypeCheckerVisitor::preorder_walk(BlockAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(IfExprAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(TypedVarAST *ast) {
@@ -47,7 +49,19 @@ void BiTypeCheckerVisitor::postorder_walk(VarDefAST *ast) {
 }
 void BiTypeCheckerVisitor::postorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {}
-void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {
+  auto v = std::vector<Type>();
+  for (size_t i = 0; i < ast->parameterVectors.size(); i++)
+    v.push_back(ast->parameterVectors[i]->type);
+
+  if (ast->returnType.empty())
+    v.push_back(Type::Unit());
+  else
+    v.push_back(
+        get_type_from_type_lexeme(ast->returnType, ast->get_location()));
+
+  ast->type = Type::Function(std::move(v));
+}
 void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {}
@@ -64,7 +78,6 @@ Type BiTypeCheckerVisitor::synthesize(ProgramAST *ast) {
 Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
   if (ast->synthesized())
     return ast->type;
-
   return ast->type = ast->TypedVar->accept_synthesis(this);
 }
 
@@ -94,10 +107,10 @@ Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
 
   sammine_util::abort_on(ast->number.empty(),
                          "NumberExprAST should have a number lexeme");
-  if (ast->number.find('.') != std::string::npos)
-    ast->type = Type::F64_t();
-  else
+  if (ast->number.find('.') == std::string::npos)
     ast->type = Type::I64_t();
+  else
+    ast->type = Type::F64_t();
 
   return ast->type;
 }
@@ -105,7 +118,7 @@ Type BiTypeCheckerVisitor::synthesize(BoolExprAST *ast) {
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(VariableExprAST *ast) {
-  return Type::NonExistent();
+  return ast->type = id_to_type.get_from_name(ast->variableName);
 }
 Type BiTypeCheckerVisitor::synthesize(BlockAST *ast) {
   return Type::NonExistent();
@@ -116,21 +129,11 @@ Type BiTypeCheckerVisitor::synthesize(IfExprAST *ast) {
 Type BiTypeCheckerVisitor::synthesize(TypedVarAST *ast) {
   if (ast->synthesized())
     return ast->type;
+  auto ast_type =
+      get_type_from_type_lexeme(ast->type_lexeme, ast->get_location());
 
-  if (ast->type_lexeme.empty()) {
-    ast->type = Type::NonExistent();
-    return ast->type;
-  }
-  auto get_type_opt = this->get_typename_type(ast->type_lexeme);
-
-  if (!get_type_opt.has_value()) {
-    this->add_error(ast->get_location(),
-                    fmt::format("Type '{}' not found in the current scope.",
-                                ast->type_lexeme));
-    ast->type = Type::Poisoned();
-  } else
-    ast->type = get_type_opt.value();
-  return ast->type;
+  id_to_type.registerNameT(ast->name, ast_type);
+  return ast->type = ast_type;
 }
 
 } // namespace sammine_lang::AST
