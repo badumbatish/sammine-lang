@@ -10,15 +10,13 @@ on:
     branches:
       - main
 
-
 jobs:
   tidy-check:
     runs-on: ubuntu-latest
 
     steps:
       # 1st Check the code
-      - name: Checkout Repository
-        use: actions/checkout@v3
+      - use: actions/checkout@v3
 
       # 2nd install needed tool
       - name: Install LLVM/Clang
