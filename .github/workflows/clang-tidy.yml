@@ -16,7 +16,7 @@ jobs:
 
     steps:
       # 1st Check the code
-      - use: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       # 2nd install needed tool
       - name: Install LLVM/Clang
