@@ -12,6 +12,18 @@ add_subdirectory(externals/)
 
 # LLVM-STUFF
 # find_package(ZSTD REQUIRED)
+
+# Check to see if were on a apple
+if(APPLE AND NOT DEFINED LLVM_DIR)
+  execute_process(
+    COMMAND brew --prefix llvm
+    OUTPUT_VARIABLE BREW_PREFIX_LLVM
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  # Mark the following LLVM_DIR to be where it's set on the Mac
+  set(LLVM_DIR "${BREW_PREFIX_LLVM}/lib/cmake/llvm" CACHE PATH "Path to LLVMConfig.cmake")
+endif()
+
 find_package(LLVM REQUIRED CONFIG)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
