@@ -30,7 +30,7 @@ jobs:
       - name: Install LLVM/Clang, Catch2, & libtinfo5
         run: |
           sudo apt update
-          sudo apt install -y clang-tidy catch2 llvm llvm-dev
+          sudo apt install -y clang-tidy catch2
           sudo apt install -y lld 
           wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
           sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
