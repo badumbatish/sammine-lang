@@ -8,7 +8,7 @@ How I pictured sammine-lang in my head
 
 <h2>Dev</h2>
 
-<h3>MacOS Configurations<h3>
+<h3>MacOS Configurations</h3>
 
 Install llvm & catch2
 
