@@ -1,4 +1,3 @@
-
 # .github/workflows/clang-tidy.yml
 name: "clang-tidy CI"
 
@@ -35,7 +34,7 @@ jobs:
           wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
           sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
 
-      - name: Compile Code
+      - name: CMake Configuration 
         working-directory: ${{ github.workspace }}
         run: |
           mkdir -p build
