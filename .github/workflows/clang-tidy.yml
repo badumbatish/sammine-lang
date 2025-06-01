@@ -1,3 +1,4 @@
+
 # .github/workflows/clang-tidy.yml
 name: "clang-tidy CI"
 
@@ -28,22 +29,22 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           mkdir -p build
-          cd build
           cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build Code
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ github.workspace }}
         run: |
-          cmake --build . -j4 
+          cmake --build build -j4 
 
       # 5. Run clang-tidy via run-clang-tidy script
       - name: Run clang-tidy
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ github.workspace }}
         run: |
           # You can adjust -j <cores> or other flags as needed
           run-clang-tidy \
             -warnings-as-errors=* \
             -use-color \
-            -p . \
+            -p build \
             -j 4 \
             "sammine-lang/(src|include).*"
+
