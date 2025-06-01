@@ -7,6 +7,14 @@ How I pictured sammine-lang in my head
 
 
 <h2>Dev</h2>
+
+<h3>MacOS Configurations<h3>
+
+Install llvm & catch2
+
+```bash
+brew install llvm catch2
+```
 Run
 
 ```bash
