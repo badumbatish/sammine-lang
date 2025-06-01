@@ -1,3 +1,4 @@
+
 # .github/workflows/clang-tidy.yml
 name: "clang-tidy CI"
 
@@ -16,13 +17,20 @@ jobs:
 
     steps:
       # 1st Check the code
-      - uses: actions/checkout@v3
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Invoking the action 
+        uses: Shuriken-Group/setup_llvm_tools@v0.0.0
+        with:
+          download_path: "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
+          destination: "/usr/local"
 
       # 2nd install needed tool
-      - name: Install LLVM/Clang
+      - name: Install LLVM/Clang & Catch2
         run: |
           sudo apt update
-          sudo apt install -y clang-tidy 
+          sudo apt install -y clang-tidy catch2 llvm llvm-dev
 
       - name: Compile Code
         working-directory: ${{ github.workspace }}
@@ -46,3 +54,5 @@ jobs:
             -p build \
             -j 4 \
             "sammine-lang/(src|include).*"
+
+
