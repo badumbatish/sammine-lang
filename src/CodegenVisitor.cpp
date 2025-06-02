@@ -343,8 +343,6 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
   if (!ThenBB->back().isTerminator())
     resPtr->Builder->CreateBr(MergeBB);
 
-  ThenBB = resPtr->Builder->GetInsertBlock();
-
   function->insert(function->end(), ElseBB);
   resPtr->Builder->SetInsertPoint(ElseBB);
 
@@ -353,7 +351,6 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
   if (!ElseBB->back().isTerminator())
     resPtr->Builder->CreateBr(MergeBB);
 
-  ElseBB = resPtr->Builder->GetInsertBlock();
   function->insert(function->end(), MergeBB);
   resPtr->Builder->SetInsertPoint(MergeBB);
 }
