@@ -107,7 +107,7 @@ void CgVisitor::postorder_walk(FuncDefAST *ast) {
 
   // Error reading body, remove function.
   if (not_verified) {
-    resPtr->Module->dump();
+    resPtr->Module->print(llvm::errs(), nullptr);
     sammine_util::abort("ICE: Abort from creating a function");
     getCurrentFunction()->eraseFromParent();
   }

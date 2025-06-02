@@ -35,7 +35,7 @@ public:
     case TypeKind::Unit:
       return llvm::Type::getVoidTy(*context);
     case TypeKind::Bool:
-      sammine_util::abort("Jas hasnt figure out yet how to do this");
+      return llvm::Type::getInt1Ty(*context);
     case TypeKind::Function:
       sammine_util::abort("Function is not first-class yet");
     case TypeKind::NonExistent:
