@@ -174,7 +174,12 @@ public:
   Token() = delete;
   Token(TokenType type, std::string lexeme, Location location)
       : tok_type(type), lexeme(std::move(lexeme)), location(location) {}
-
+  bool is_comparison() {
+    return tok_type == TokLESS || tok_type == TokGreaterEqual ||
+           tok_type == TokLessEqual || tok_type == TokGREATER ||
+           tok_type == TokEQUAL;
+  }
+  bool is_logical() { return tok_type == TokOR || tok_type == TokAND; }
   operator Location() { return location; }
 };
 

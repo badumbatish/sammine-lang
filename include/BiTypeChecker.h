@@ -41,11 +41,11 @@ public:
   }
   BiTypeCheckerVisitor() { this->enter_new_scope(); }
 
-  std::optional<Type> get_id_type(const std::string &str) {
+  std::optional<Type> get_type_from_id(const std::string &str) {
 
     auto &id_name_top = id_to_type.top();
     if (id_name_top.queryName(str) == nameNotFound) {
-      return std::nullopt;
+      sammine_util::abort("should not happen");
     }
     return id_name_top.get_from_name(str);
   }

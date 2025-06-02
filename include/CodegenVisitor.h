@@ -6,9 +6,13 @@
 #include "Ast.h"
 #include "AstBase.h"
 #include "LLVMRes.h"
+#include "Lexer.h"
 #include "LexicalContext.h"
+#include "Types.h"
 #include "Utilities.h"
+#include <functional>
 #include <llvm/IR/Function.h>
+#include <llvm/IR/InstrTypes.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
@@ -17,42 +21,6 @@
 #include <utility>
 #include <vector>
 namespace sammine_lang::AST {
-class BlockValues {
-  std::map<BlockAST *, std::vector<std::pair<std::string, llvm::Value *>>>
-      block_to_values;
-  std::stack<std::vector<std::pair<std::string, llvm::Value *>> *>
-      current_block_values;
-
-public:
-  void push_new_block(BlockAST *ast) {
-    current_block_values.push(&block_to_values[ast]);
-  }
-  void pop() { current_block_values.pop(); }
-
-  void register_assignment(const std::string &name, llvm::Value *val) {
-    current_block_values.top()->push_back({name, val});
-  }
-
-  std::map<std::string, std::pair<llvm::Value *, llvm::Value *>>
-  get_similarity(BlockAST *a, BlockAST *b) {
-    // INFO: get all names of *a in a set
-    // if a name in b matches, put it in
-    std::vector<std::pair<llvm::Value *, llvm::Value *>> res;
-
-    std::map<std::string, std::pair<llvm::Value *, llvm::Value *>>
-        names_to_pair_values;
-    for (auto [name, val] : block_to_values[a])
-      names_to_pair_values[name].first = val;
-
-    for (auto [name, val] : block_to_values[b]) {
-      if (names_to_pair_values.contains(name)) {
-        names_to_pair_values[name].second = val;
-      }
-    }
-
-    return names_to_pair_values;
-  }
-};
 class TypeConverter {
 
   llvm::LLVMContext *context;
@@ -90,6 +58,68 @@ public:
     }
     sammine_util::abort("Guarded by default case");
   }
+  llvm::CmpInst::Predicate get_cmp_func(Type a, Type b, TokenType tok) {
+    sammine_util::abort_if_not(a.type_kind == b.type_kind,
+                               "Two types needs to be the same");
+    using llvm::CmpInst;
+
+    switch (a.type_kind) {
+
+    case TypeKind::I64_t:
+    case TypeKind::Bool: {
+      // Signed integer comparisons
+      switch (tok) {
+      case TokenType::TokEQUAL:
+        return CmpInst::ICMP_EQ;
+      // case TokenType::TokNOTEqual:
+      //   return CmpInst::ICMP_ONE;
+      case TokenType::TokLESS:
+        return CmpInst::ICMP_SLT;
+      case TokenType::TokLessEqual:
+        return CmpInst::ICMP_SLE;
+      case TokenType::TokGREATER:
+        return CmpInst::ICMP_SGT;
+      case TokenType::TokGreaterEqual:
+        return CmpInst::ICMP_SGE;
+      default:
+
+        sammine_util::abort("Invalid token for integer comparison");
+      }
+      break;
+    }
+    case TypeKind::F64_t: {
+      // Ordered floating-point comparisons
+      switch (tok) {
+      case TokenType::TokEQUAL:
+        return CmpInst::FCMP_OEQ;
+      // case TokenType::TokNOTEqual:
+      //   return CmpInst::FCMP_ONE;
+      case TokenType::TokLESS:
+        return CmpInst::FCMP_OLT;
+      case TokenType::TokLessEqual:
+        return CmpInst::FCMP_OLE;
+      case TokenType::TokGREATER:
+        return CmpInst::FCMP_OGT;
+      case TokenType::TokGreaterEqual:
+        return CmpInst::FCMP_OGE;
+      default:
+        sammine_util::abort("Invalid token for float comparison");
+      }
+      break;
+    }
+    case TypeKind::Unit:
+      sammine_util::abort("Cannot compare values of this type");
+    case TypeKind::Function:
+      sammine_util::abort("Cannot compare values of this type");
+    case TypeKind::NonExistent:
+      sammine_util::abort("Cannot compare values of this type");
+    case TypeKind::Poisoned:
+      sammine_util::abort("Cannot compare values of this type");
+      break;
+    }
+    sammine_util::abort("End of get_cmp_func reached");
+  }
+
   TypeConverter(llvm::LLVMContext *context) : context(context) {}
 };
 class CgVisitor : public ScopedASTVisitor {
@@ -101,7 +131,6 @@ private:
   llvm::Function *current_func;
   llvm::Function *getCurrentFunction();
   void setCurrentFunction(std::shared_ptr<PrototypeAST>);
-  BlockValues bv;
 
   TypeConverter type_converter;
 

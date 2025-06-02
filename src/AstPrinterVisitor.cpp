@@ -213,18 +213,20 @@ void AstPrinterVisitor::visit(BlockAST *ast) {
 
 void AstPrinterVisitor::generic_preprintln(AstBase *ast) {
   if (ast->pe)
-    this->rep += fmt::format("{} {} \n", tabs(),
-                             ast->getTreeName() + " --- ParserError");
+    this->rep +=
+        fmt::format("{} {} \n", tabs(), ast->getTreeName() + " - ParserError");
   else
-    this->rep += fmt::format("{} {} \n", tabs(), ast->getTreeName());
+    this->rep += fmt::format("{} {} - {}\n", tabs(), ast->getTreeName(),
+                             ast->type.to_string());
   current_tabs += "  ";
 }
 void AstPrinterVisitor::generic_preprint(AstBase *ast) {
   if (ast->pe)
-    this->rep += fmt::format("{} {} \n", tabs(),
-                             ast->getTreeName() + " --- ParserError");
+    this->rep +=
+        fmt::format("{} {} :", tabs(), ast->getTreeName() + " - ParserError");
   else
-    this->rep += fmt::format("{} {} \n", tabs(), ast->getTreeName());
+    this->rep += fmt::format("{} {} - {} :", tabs(), ast->getTreeName(),
+                             ast->type.to_string());
   current_tabs += "  ";
 }
 
@@ -251,8 +253,8 @@ void AstPrinterVisitor::preorder_walk(NumberExprAST *ast) {
 }
 void AstPrinterVisitor::preorder_walk(BoolExprAST *ast) {}
 void AstPrinterVisitor::preorder_walk(VariableExprAST *ast) {
-  this->rep += fmt::format("{} (var_name, type): (\"{}\", {})", tabs(),
-                           ast->variableName, ast->type.to_string());
+  this->rep += fmt::format("(var_name, type): (\"{}\", {})", ast->variableName,
+                           ast->type.to_string());
 }
 void AstPrinterVisitor::preorder_walk(BlockAST *ast) {}
 void AstPrinterVisitor::preorder_walk(IfExprAST *ast) {}

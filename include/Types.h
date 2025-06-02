@@ -95,7 +95,7 @@ struct Type {
       return "fn: " + res;
     }
     case TypeKind::NonExistent:
-      return "???";
+      return "??";
     case TypeKind::Poisoned:
       return "Poisoned";
       break;

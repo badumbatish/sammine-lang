@@ -5,6 +5,7 @@
 #include "CodegenVisitor.h"
 #include "Ast.h"
 #include "Lexer.h"
+#include "Types.h"
 #include "Utilities.h"
 #include "fmt/format.h"
 #include "llvm/IR/Constants.h"
@@ -14,6 +15,7 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
+#include <cstdlib>
 #include <random>
 #include <ranges>
 #include <utility>
@@ -85,7 +87,6 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
 
   resPtr->Builder->SetInsertPoint(mainblock);
 
-  // TODO: figure this out NamedValues.clear();
   //
   // INFO:: Copy all the arguments to the entry block
   for (auto &Arg : Function->args()) {
@@ -106,6 +107,7 @@ void CgVisitor::postorder_walk(FuncDefAST *ast) {
 
   // Error reading body, remove function.
   if (not_verified) {
+    resPtr->Module->dump();
     sammine_util::abort("ICE: Abort from creating a function");
     getCurrentFunction()->eraseFromParent();
   }
@@ -120,7 +122,6 @@ void CgVisitor::preorder_walk(PrototypeAST *ast) {
   }
   llvm::FunctionType *FT = llvm::FunctionType::get(
       this->type_converter.get_return_type(ast->type), param_types, false);
-
   llvm::Function *F =
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
                              ast->functionName, resPtr->Module.get());
@@ -142,6 +143,9 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
     sammine_util::abort("Unknown function called");
     return;
   }
+  if (callee->getReturnType() == llvm::Type::getVoidTy(*resPtr->Context)) {
+    std::cout << "uhhh" << std::endl;
+  }
 
   if (ast->arguments.size() != callee->arg_size())
     sammine_util::abort("Incorrect number of arguments passed");
@@ -157,8 +161,8 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
 }
 
 void CgVisitor::postorder_walk(ReturnExprAST *ast) {
-
-  if (ast->is_unit)
+  // INFO: If we cannot parse return expr, treat it as unit for now
+  if (!ast->return_expr || ast->return_expr->type == Type::Unit())
     resPtr->Builder->CreateRetVoid();
   else
     resPtr->Builder->CreateRet(ast->return_expr->val);
@@ -181,7 +185,6 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     if (!R)
       sammine_util::abort("Failed to codegen RHS for tok assign");
 
-    // TODO : Figure this out
     auto *Var = this->allocaValues.top()[LHSE->variableName];
     if (!Var)
       sammine_util::abort("Unknown variable in LHS of tok assign");
@@ -189,29 +192,60 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     resPtr->Builder->CreateStore(R, Var);
     ast->val = R;
 
-    this->bv.register_assignment(LHSE->variableName, ast->val);
     return;
   }
   auto L = ast->LHS->val;
   auto R = ast->RHS->val;
 
   if (ast->Op->tok_type == TokenType::TokADD) {
-    ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
+    if (ast->LHS->type == Type::I64_t())
+      ast->val = resPtr->Builder->CreateAdd(L, R, "add_expr");
+    else if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
+    else
+      sammine_util::abort();
   }
   if (ast->Op->tok_type == TokenType::TokSUB) {
-    ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
+    if (ast->LHS->type == Type::I64_t())
+      ast->val = resPtr->Builder->CreateSub(L, R, "sub_expr");
+    else if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
+    else
+      sammine_util::abort();
   }
   if (ast->Op->tok_type == TokenType::TokMUL) {
-    ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
+    if (ast->LHS->type == Type::I64_t())
+      ast->val = resPtr->Builder->CreateMul(L, R, "mul_expr");
+    else if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
+    else
+      sammine_util::abort();
   }
   if (ast->Op->tok_type == TokenType::TokDIV) {
-    ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
+    if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
+    else
+      sammine_util::abort();
   }
-  if (ast->Op->tok_type == TokenType::TokLESS) {
+  if (ast->Op->tok_type == TokOR) {
+    ast->val = resPtr->Builder->CreateLogicalOr(ast->LHS->val, ast->RHS->val);
+  }
+  if (ast->Op->tok_type == TokAND) {
+    ast->val = resPtr->Builder->CreateLogicalAnd(ast->LHS->val, ast->RHS->val);
+  }
+  if (ast->Op->is_comparison()) {
     /*auto cmp_int = resPtr->Builder->CreateFCmpULT(L, R, "less_cmp_expr");*/
-    ast->val = resPtr->Builder->CreateUIToFP(
-        L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
+    ast->val = resPtr->Builder->CreateCmp(
+        type_converter.get_cmp_func(ast->LHS->type, ast->RHS->type,
+                                    ast->Op->tok_type),
+        L, R);
   }
+  if (!ast->val) {
+    std::cout << ast->Op->lexeme << std::endl;
+    sammine_util::abort();
+  }
+
+  return;
 }
 
 void CgVisitor::preorder_walk(NumberExprAST *ast) {
@@ -243,7 +277,6 @@ void CgVisitor::preorder_walk(BoolExprAST *ast) {
                                      llvm::APFloat(std::stod("0.0")));
 }
 void CgVisitor::preorder_walk(VariableExprAST *ast) {
-  // TODO: Figure this out
   auto *alloca = this->allocaValues.top()[ast->variableName];
 
   sammine_util::abort_if_not(alloca, "Unknown variable name");
@@ -251,8 +284,8 @@ void CgVisitor::preorder_walk(VariableExprAST *ast) {
   ast->val = resPtr->Builder->CreateLoad(alloca->getAllocatedType(), alloca,
                                          ast->variableName);
 }
-void CgVisitor::preorder_walk(BlockAST *ast) { this->bv.push_new_block(ast); }
-void CgVisitor::postorder_walk(BlockAST *ast) { this->bv.pop(); }
+void CgVisitor::preorder_walk(BlockAST *ast) {}
+void CgVisitor::postorder_walk(BlockAST *ast) {}
 void CgVisitor::preorder_walk(IfExprAST *ast) {
   ast->bool_expr->accept_vis(this);
   if (!ast->bool_expr->val) {
@@ -307,7 +340,8 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
   resPtr->Builder->SetInsertPoint(ThenBB);
 
   ast->thenBlockAST->accept_vis(this);
-  resPtr->Builder->CreateBr(MergeBB);
+  if (!ThenBB->back().isTerminator())
+    resPtr->Builder->CreateBr(MergeBB);
 
   ThenBB = resPtr->Builder->GetInsertBlock();
 
@@ -316,24 +350,12 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
 
   ast->elseBlockAST->accept_vis(this);
 
-  resPtr->Builder->CreateBr(MergeBB);
+  if (!ElseBB->back().isTerminator())
+    resPtr->Builder->CreateBr(MergeBB);
 
   ElseBB = resPtr->Builder->GetInsertBlock();
   function->insert(function->end(), MergeBB);
   resPtr->Builder->SetInsertPoint(MergeBB);
-
-  auto clashed_names =
-      this->bv.get_similarity(ast->thenBlockAST.get(), ast->elseBlockAST.get());
-
-  for (auto [name, p] : clashed_names) {
-    auto [val_then, val_else] = p;
-    resPtr->Module->print(llvm::errs(), nullptr);
-    llvm::PHINode *PN = resPtr->Builder->CreatePHI(
-        llvm::Type::getInt64Ty(*resPtr->Context), 2, "iftmp");
-    PN->addIncoming(val_then, ThenBB);
-    PN->addIncoming(val_else, ElseBB);
-    resPtr->Builder->CreateStore(PN, allocaValues.top()[name]);
-  }
 }
 void CgVisitor::preorder_walk(TypedVarAST *ast) {}
 
