@@ -307,15 +307,12 @@ public:
 class ReturnExprAST : public ExprAST {
 public:
   std::unique_ptr<ExprAST> return_expr;
-  bool is_unit = false;
   ReturnExprAST(std::shared_ptr<Token> return_tok,
                 std::unique_ptr<ExprAST> return_expr)
       : return_expr(std::move(return_expr)) {
     if (return_expr == nullptr) {
-      is_unit = true;
       this->join_location(return_tok);
     } else {
-      is_unit = false;
       this->join_location(return_tok)->join_location(this->return_expr.get());
     }
   }

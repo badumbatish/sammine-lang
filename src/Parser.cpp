@@ -14,7 +14,7 @@ static std::map<TokenType, int> binopPrecedence = {
     {TokenType::TokASSIGN, 2}, {TokenType::TokLESS, 10},
     {TokenType::TokEQUAL, 10}, {TokenType::TokADD, 20},
     {TokenType::TokSUB, 20},   {TokenType::TokMUL, 40},
-    {TokenType::TokOR, 60},
+    {TokenType::TokOR, 1},
 };
 
 int GetTokPrecedence(TokenType tokType) {
@@ -295,42 +295,45 @@ auto Parser::ParseExpr() -> p<ExprAST> {
   sammine_util::abort("should not happen in ParseExpr, call Jasmine");
 }
 
-auto Parser::ParseBinaryExpr(int prededence, u<ExprAST> LHS) -> p<ExprAST> {
+auto Parser::ParseBinaryExpr(int precedence, u<ExprAST> LHS) -> p<ExprAST> {
   while (!tokStream->isEnd()) {
     auto tok = tokStream->peek()->tok_type;
     int TokPrec = GetTokPrecedence(tok);
+    std::cout << "Current precedence: " << precedence
+              << ", token precedence: " << TokPrec << std::endl;
 
-    if (TokPrec < prededence)
+    if (TokPrec < precedence)
       return {std::move(LHS), SUCCESS};
 
-    auto binOpToken = tokStream->consume();
-    auto [RHS, right_result] = ParsePrimaryExpr();
+    auto binOpToken = tokStream->consume(); // Consume the operator
 
-    // We're committed here, so whether RHS is commited error or non-committed
-    // error, we really should always return non-committed.
-    //
-    // If it is commited, we don't release any more report, just return RHS
-    // like normal If it is commited, we add a report. Depend on programmer.
-    switch (right_result) {
-    case SUCCESS:
-      break;
-    case COMMITTED_EMIT_MORE_ERROR:
-      [[fallthrough]];
-    case NONCOMMITTED:
-      this->error(
-          fmt::format(
-              "Failed to parse the right handside of binary "
-              "expression, with token `{}` despite stronger binding power",
-              binOpToken->lexeme),
-          binOpToken->location);
-      [[fallthrough]];
-    case COMMITTED_NO_MORE_ERROR:
-      return {std::make_unique<BinaryExprAST>(binOpToken, std::move(LHS),
-                                              std::move(RHS)),
-              COMMITTED_NO_MORE_ERROR};
+    // Parse the RHS as a primary
+    auto [RHS, right_result] = ParsePrimaryExpr();
+    if (right_result != SUCCESS) {
+      this->error("Expected right-hand side expression after binary operator",
+                  binOpToken->location);
+      return {nullptr, COMMITTED_NO_MORE_ERROR};
     }
+
+    // Look ahead: if the next operator binds more tightly, parse it first
+    auto nextTok = tokStream->peek()->tok_type;
+    int NextPrec = GetTokPrecedence(nextTok);
+    if (TokPrec < NextPrec) {
+      std::tie(RHS, right_result) =
+          ParseBinaryExpr(TokPrec + 1, std::move(RHS));
+      if (right_result != SUCCESS) {
+        this->error("Failed to parse nested right-hand binary expression",
+                    binOpToken->location);
+        return {nullptr, right_result};
+      }
+    }
+
+    // Combine LHS and RHS
+    LHS = std::make_unique<BinaryExprAST>(binOpToken, std::move(LHS),
+                                          std::move(RHS));
   }
-  sammine_util::abort("cannot reach this");
+
+  return {std::move(LHS), SUCCESS};
 }
 auto Parser::ParseReturnExpr() -> p<ExprAST> {
   auto return_tok = expect(TokenType::TokReturn);
@@ -342,7 +345,7 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
   auto [expr, result] = ParseExpr();
   switch (result) {
   case SUCCESS:
-    [[fallthrough]];
+    break;
   case COMMITTED_NO_MORE_ERROR:
     return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
             COMMITTED_NO_MORE_ERROR};
@@ -572,6 +575,7 @@ auto Parser::ParseBlock() -> p<BlockAST> {
     switch (rt_result) {
     case SUCCESS:
       blockAST->Statements.push_back(std::move(rt));
+      continue;
     case NONCOMMITTED:
       break;
     case COMMITTED_EMIT_MORE_ERROR:
@@ -586,7 +590,7 @@ auto Parser::ParseBlock() -> p<BlockAST> {
   }
 
   auto rightCurly = expect(TokRightCurly, true, TokEOF,
-                           "Failed to parse right curly of block.");
+                           "Failed to parse right curly of a statement block.");
 
   if (!rightCurly)
     return {std::move(blockAST), COMMITTED_NO_MORE_ERROR};

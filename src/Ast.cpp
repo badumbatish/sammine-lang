@@ -48,7 +48,7 @@ void ASTVisitor::visit(CallExprAST *ast) {
 }
 void ASTVisitor::visit(ReturnExprAST *ast) {
   ast->walk_with_preorder(this);
-  if (!ast->is_unit)
+  if (ast->return_expr)
     ast->return_expr->accept_vis(this);
   ast->walk_with_postorder(this);
 }
@@ -160,6 +160,9 @@ void ScopedASTVisitor::visit(VariableExprAST *ast) {
 
 void ScopedASTVisitor::visit(IfExprAST *ast) {
   ast->walk_with_preorder(this);
+  ast->bool_expr->accept_vis(this);
+  ast->thenBlockAST->accept_vis(this);
+  ast->elseBlockAST->accept_vis(this);
   ast->walk_with_postorder(this);
 }
 

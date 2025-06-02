@@ -1,6 +1,7 @@
 #pragma once
 #include "Utilities.h"
 #include <cmath>
+#include <execution>
 #include <map>
 #include <memory>
 #include <optional>
@@ -70,7 +71,7 @@ struct Type {
   bool operator<(const Type &t) const;
   bool operator>(const Type &t) const;
 
-  std::string to_string() {
+  std::string to_string() const {
     switch (type_kind) {
     case TypeKind::I64_t:
       return "i64";
@@ -80,10 +81,21 @@ struct Type {
       return "Unit";
     case TypeKind::Bool:
       return "bool";
-    case TypeKind::Function:
-      return "Func (todo)";
+    case TypeKind::Function: {
+      std::string res = "(";
+      auto param = type_data.value().get_params_types();
+      for (size_t i = 0; i < param.size(); i++) {
+        res += param[i].to_string();
+        if (i != param.size() - 1)
+          res += ", ";
+      }
+      res += ") -> ";
+      res += type_data->get_return_type().to_string();
+
+      return "fn: " + res;
+    }
     case TypeKind::NonExistent:
-      return "???";
+      return "??";
     case TypeKind::Poisoned:
       return "Poisoned";
       break;

@@ -1,5 +1,6 @@
 #include "BiTypeChecker.h"
 #include "Ast.h"
+#include "Types.h"
 #include "Utilities.h"
 #include "fmt/format.h"
 namespace sammine_lang::AST {
@@ -11,16 +12,24 @@ void BiTypeCheckerVisitor::preorder_walk(VarDefAST *ast) {
 
 void BiTypeCheckerVisitor::preorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(FuncDefAST *ast) {}
-void BiTypeCheckerVisitor::preorder_walk(PrototypeAST *ast) {}
-void BiTypeCheckerVisitor::preorder_walk(CallExprAST *ast) {}
-void BiTypeCheckerVisitor::preorder_walk(ReturnExprAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(PrototypeAST *ast) {
+  ast->accept_synthesis(this);
+}
+void BiTypeCheckerVisitor::preorder_walk(CallExprAST *ast) {
+  ast->accept_synthesis(this);
+}
+void BiTypeCheckerVisitor::preorder_walk(ReturnExprAST *ast) {
+  ast->accept_synthesis(this);
+}
 void BiTypeCheckerVisitor::preorder_walk(BinaryExprAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(NumberExprAST *ast) {
 
   ast->accept_synthesis(this);
 }
 void BiTypeCheckerVisitor::preorder_walk(BoolExprAST *ast) {}
-void BiTypeCheckerVisitor::preorder_walk(VariableExprAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(VariableExprAST *ast) {
+  ast->accept_synthesis(this);
+}
 void BiTypeCheckerVisitor::preorder_walk(BlockAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(IfExprAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(TypedVarAST *ast) {
@@ -46,11 +55,15 @@ void BiTypeCheckerVisitor::postorder_walk(VarDefAST *ast) {
   ast->set_checked();
 }
 void BiTypeCheckerVisitor::postorder_walk(ExternAST *ast) {}
-void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {
+  ast->accept_synthesis(this);
+}
 void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
-void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {
+  ast->accept_synthesis(this);
+}
 void BiTypeCheckerVisitor::postorder_walk(NumberExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BoolExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(VariableExprAST *ast) {}
@@ -64,7 +77,6 @@ Type BiTypeCheckerVisitor::synthesize(ProgramAST *ast) {
 Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
   if (ast->synthesized())
     return ast->type;
-
   return ast->type = ast->TypedVar->accept_synthesis(this);
 }
 
@@ -72,21 +84,61 @@ Type BiTypeCheckerVisitor::synthesize(ExternAST *ast) {
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(FuncDefAST *ast) {
-  return Type::NonExistent();
+  if (ast->synthesized())
+    return ast->type;
+
+  return ast->type = ast->Prototype->accept_synthesis(this);
 }
 Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
-  return Type::NonExistent();
+  auto v = std::vector<Type>();
+  for (size_t i = 0; i < ast->parameterVectors.size(); i++)
+    v.push_back(ast->parameterVectors[i]->accept_synthesis(this));
+
+  if (ast->returnType.empty())
+    v.push_back(Type::Unit());
+  else
+    v.push_back(
+        get_type_from_type_lexeme(ast->returnType, ast->get_location()));
+  ast->type = Type::Function(std::move(v));
+
+  id_to_type.registerNameT(ast->functionName, ast->type);
+
+  return ast->type;
 }
 Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
+  if (ast->synthesized())
+    return ast->type;
+  auto ty = get_type_from_id(ast->functionName);
+  switch (ty->type_kind) {
+  case TypeKind::Function:
+    return ast->type = ty->type_data.value().get_return_type();
+  case TypeKind::I64_t:
+  case TypeKind::F64_t:
+  case TypeKind::Unit:
+  case TypeKind::Bool:
+  case TypeKind::NonExistent:
+  case TypeKind::Poisoned:
+    sammine_util::abort(fmt::format("should not happen here with function {}",
+                                    ast->functionName));
+    break;
+  }
   return Type::NonExistent();
 }
 
 Type BiTypeCheckerVisitor::synthesize(ReturnExprAST *ast) {
   // TODO: make sure it returns the right type and all that
-  return Type::NonExistent();
+  return ast->type = Type::Unit();
 }
 Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
-  return Type::NonExistent();
+  if (ast->synthesized())
+    return ast->type;
+  if (!this->type_map_ordering.compatible_to_from(ast->LHS->type,
+                                                  ast->RHS->type))
+    sammine_util::abort();
+  if (ast->Op->is_comparison())
+    return ast->type = Type::Bool();
+
+  return ast->type = ast->LHS->type;
 }
 Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
   if (ast->synthesized())
@@ -94,10 +146,10 @@ Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
 
   sammine_util::abort_on(ast->number.empty(),
                          "NumberExprAST should have a number lexeme");
-  if (ast->number.find('.') != std::string::npos)
-    ast->type = Type::F64_t();
-  else
+  if (ast->number.find('.') == std::string::npos)
     ast->type = Type::I64_t();
+  else
+    ast->type = Type::F64_t();
 
   return ast->type;
 }
@@ -105,7 +157,7 @@ Type BiTypeCheckerVisitor::synthesize(BoolExprAST *ast) {
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(VariableExprAST *ast) {
-  return Type::NonExistent();
+  return ast->type = id_to_type.get_from_name(ast->variableName);
 }
 Type BiTypeCheckerVisitor::synthesize(BlockAST *ast) {
   return Type::NonExistent();
@@ -116,21 +168,11 @@ Type BiTypeCheckerVisitor::synthesize(IfExprAST *ast) {
 Type BiTypeCheckerVisitor::synthesize(TypedVarAST *ast) {
   if (ast->synthesized())
     return ast->type;
+  auto ast_type =
+      get_type_from_type_lexeme(ast->type_lexeme, ast->get_location());
 
-  if (ast->type_lexeme.empty()) {
-    ast->type = Type::NonExistent();
-    return ast->type;
-  }
-  auto get_type_opt = this->get_typename_type(ast->type_lexeme);
-
-  if (!get_type_opt.has_value()) {
-    this->add_error(ast->get_location(),
-                    fmt::format("Type '{}' not found in the current scope.",
-                                ast->type_lexeme));
-    ast->type = Type::Poisoned();
-  } else
-    ast->type = get_type_opt.value();
-  return ast->type;
+  id_to_type.registerNameT(ast->name, ast_type);
+  return ast->type = ast_type;
 }
 
 } // namespace sammine_lang::AST

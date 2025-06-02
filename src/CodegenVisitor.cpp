@@ -5,6 +5,7 @@
 #include "CodegenVisitor.h"
 #include "Ast.h"
 #include "Lexer.h"
+#include "Types.h"
 #include "Utilities.h"
 #include "fmt/format.h"
 #include "llvm/IR/Constants.h"
@@ -14,6 +15,7 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
+#include <cstdlib>
 #include <random>
 #include <ranges>
 #include <utility>
@@ -27,13 +29,12 @@ using llvm::BasicBlock;
 /// mem2reg only looks for alloca instructions in the entry block of the
 /// function. Being in the entry block guarantees that the alloca is only
 /// executed once, which makes analysis simpler.
-llvm::AllocaInst *
-CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
-                                  const std::string &VarName) {
+llvm::AllocaInst *CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
+                                                    const std::string &VarName,
+                                                    llvm::Type *type) {
   llvm::IRBuilder<> TmpB(&Function->getEntryBlock(),
                          Function->getEntryBlock().begin());
-  return TmpB.CreateAlloca(llvm::Type::getDoubleTy(*resPtr->Context), nullptr,
-                           VarName);
+  return TmpB.CreateAlloca(type, nullptr, VarName);
 }
 
 llvm::Function *CgVisitor::getCurrentFunction() { return this->current_func; }
@@ -59,12 +60,13 @@ void CgVisitor::preorder_walk(ProgramAST *ast) {}
 
 void CgVisitor::preorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
-  auto alloca = this->CreateEntryBlockAlloca(getCurrentFunction(), var_name);
-  this->namedValues.top()[var_name] = alloca;
+  auto alloca = this->CreateEntryBlockAlloca(
+      getCurrentFunction(), var_name, type_converter.get_type(ast->type));
+  this->allocaValues.top()[var_name] = alloca;
 }
 void CgVisitor::postorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
-  auto alloca = this->namedValues.top()[var_name];
+  auto alloca = this->allocaValues.top()[var_name];
   if (ast->Expression == nullptr) {
     sammine_util::abort_if_not(ast->Expression, "is this legal?");
   } else {
@@ -85,15 +87,14 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
 
   resPtr->Builder->SetInsertPoint(mainblock);
 
-  // TODO: figure this out NamedValues.clear();
   //
   // INFO:: Copy all the arguments to the entry block
   for (auto &Arg : Function->args()) {
-    llvm::AllocaInst *Alloca =
-        CreateEntryBlockAlloca(Function, std::string(Arg.getName()));
+    llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(
+        Function, std::string(Arg.getName()), Arg.getType());
     resPtr->Builder->CreateStore(&Arg, Alloca);
 
-    this->namedValues.top()[std::string(Arg.getName())] = Alloca;
+    this->allocaValues.top()[std::string(Arg.getName())] = Alloca;
   }
   return;
 }
@@ -106,6 +107,7 @@ void CgVisitor::postorder_walk(FuncDefAST *ast) {
 
   // Error reading body, remove function.
   if (not_verified) {
+    resPtr->Module->print(llvm::errs(), nullptr);
     sammine_util::abort("ICE: Abort from creating a function");
     getCurrentFunction()->eraseFromParent();
   }
@@ -114,17 +116,12 @@ void CgVisitor::postorder_walk(FuncDefAST *ast) {
 /// INFO: Register the function with its arguments, put it in the module
 /// this comes before visiting a function
 void CgVisitor::preorder_walk(PrototypeAST *ast) {
-  std::vector<llvm::Type *> Doubles(
-      ast->parameterVectors.size(),
-      llvm::Type::getDoubleTy(*(resPtr->Context)));
-  llvm::FunctionType *FT;
-  if (ast->returnType == "unit")
-    FT = llvm::FunctionType::get(llvm::Type::getVoidTy(*resPtr->Context),
-                                 Doubles, false);
-  else
-    FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(*resPtr->Context),
-                                 Doubles, false);
-
+  std::vector<llvm::Type *> param_types;
+  for (auto &p : ast->parameterVectors) {
+    param_types.push_back(type_converter.get_type(p->type));
+  }
+  llvm::FunctionType *FT = llvm::FunctionType::get(
+      this->type_converter.get_return_type(ast->type), param_types, false);
   llvm::Function *F =
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
                              ast->functionName, resPtr->Module.get());
@@ -146,6 +143,9 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
     sammine_util::abort("Unknown function called");
     return;
   }
+  if (callee->getReturnType() == llvm::Type::getVoidTy(*resPtr->Context)) {
+    std::cout << "uhhh" << std::endl;
+  }
 
   if (ast->arguments.size() != callee->arg_size())
     sammine_util::abort("Incorrect number of arguments passed");
@@ -161,8 +161,8 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
 }
 
 void CgVisitor::postorder_walk(ReturnExprAST *ast) {
-
-  if (ast->is_unit)
+  // INFO: If we cannot parse return expr, treat it as unit for now
+  if (!ast->return_expr || ast->return_expr->type == Type::Unit())
     resPtr->Builder->CreateRetVoid();
   else
     resPtr->Builder->CreateRet(ast->return_expr->val);
@@ -185,8 +185,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     if (!R)
       sammine_util::abort("Failed to codegen RHS for tok assign");
 
-    // TODO : Figure this out
-    auto *Var = this->namedValues.top()[LHSE->variableName];
+    auto *Var = this->allocaValues.top()[LHSE->variableName];
     if (!Var)
       sammine_util::abort("Unknown variable in LHS of tok assign");
 
@@ -197,30 +196,76 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
   }
   auto L = ast->LHS->val;
   auto R = ast->RHS->val;
-  L->print(llvm::errs());
 
   if (ast->Op->tok_type == TokenType::TokADD) {
-    ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
+    if (ast->LHS->type == Type::I64_t())
+      ast->val = resPtr->Builder->CreateAdd(L, R, "add_expr");
+    else if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
+    else
+      sammine_util::abort();
   }
   if (ast->Op->tok_type == TokenType::TokSUB) {
-    ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
+    if (ast->LHS->type == Type::I64_t())
+      ast->val = resPtr->Builder->CreateSub(L, R, "sub_expr");
+    else if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
+    else
+      sammine_util::abort();
   }
   if (ast->Op->tok_type == TokenType::TokMUL) {
-    ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
+    if (ast->LHS->type == Type::I64_t())
+      ast->val = resPtr->Builder->CreateMul(L, R, "mul_expr");
+    else if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
+    else
+      sammine_util::abort();
   }
   if (ast->Op->tok_type == TokenType::TokDIV) {
-    ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
+    if (ast->LHS->type == Type::F64_t())
+      ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
+    else
+      sammine_util::abort();
   }
-  if (ast->Op->tok_type == TokenType::TokLESS) {
+  if (ast->Op->tok_type == TokOR) {
+    ast->val = resPtr->Builder->CreateLogicalOr(ast->LHS->val, ast->RHS->val);
+  }
+  if (ast->Op->tok_type == TokAND) {
+    ast->val = resPtr->Builder->CreateLogicalAnd(ast->LHS->val, ast->RHS->val);
+  }
+  if (ast->Op->is_comparison()) {
     /*auto cmp_int = resPtr->Builder->CreateFCmpULT(L, R, "less_cmp_expr");*/
-    ast->val = resPtr->Builder->CreateUIToFP(
-        L, llvm::Type::getDoubleTy(*(resPtr->Context)), "bool_expr");
+    ast->val = resPtr->Builder->CreateCmp(
+        type_converter.get_cmp_func(ast->LHS->type, ast->RHS->type,
+                                    ast->Op->tok_type),
+        L, R);
   }
+  if (!ast->val) {
+    std::cout << ast->Op->lexeme << std::endl;
+    sammine_util::abort();
+  }
+
+  return;
 }
 
 void CgVisitor::preorder_walk(NumberExprAST *ast) {
-  ast->val = llvm::ConstantFP::get(*resPtr->Context,
-                                   llvm::APFloat(std::stod(ast->number)));
+  switch (ast->type.type_kind) {
+  case TypeKind::I64_t:
+    ast->val = llvm::ConstantInt::get(
+        *resPtr->Context, llvm::APInt(64, std::stoi(ast->number), true));
+    break;
+  case TypeKind::F64_t:
+    ast->val = llvm::ConstantFP::get(*resPtr->Context,
+                                     llvm::APFloat(std::stod(ast->number)));
+    break;
+  case TypeKind::Unit:
+  case TypeKind::Bool:
+  case TypeKind::Function:
+  case TypeKind::NonExistent:
+  case TypeKind::Poisoned:
+    sammine_util::abort(".....");
+    break;
+  }
   sammine_util::abort_if_not(ast->val, "cannot generate number");
 }
 void CgVisitor::preorder_walk(BoolExprAST *ast) {
@@ -232,8 +277,7 @@ void CgVisitor::preorder_walk(BoolExprAST *ast) {
                                      llvm::APFloat(std::stod("0.0")));
 }
 void CgVisitor::preorder_walk(VariableExprAST *ast) {
-  // TODO: Figure this out
-  auto *alloca = this->namedValues.top()[ast->variableName];
+  auto *alloca = this->allocaValues.top()[ast->variableName];
 
   sammine_util::abort_if_not(alloca, "Unknown variable name");
 
@@ -241,14 +285,47 @@ void CgVisitor::preorder_walk(VariableExprAST *ast) {
                                          ast->variableName);
 }
 void CgVisitor::preorder_walk(BlockAST *ast) {}
+void CgVisitor::postorder_walk(BlockAST *ast) {}
 void CgVisitor::preorder_walk(IfExprAST *ast) {
   ast->bool_expr->accept_vis(this);
   if (!ast->bool_expr->val) {
     sammine_util::abort("Failed to codegen condition of if-expr");
   }
-  ast->bool_expr->val = resPtr->Builder->CreateFCmpONE(
-      ast->bool_expr->val,
-      llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(0.0)), "ifcond");
+  switch (ast->bool_expr->type.type_kind) {
+  case TypeKind::I64_t:
+    ast->bool_expr->val = resPtr->Builder->CreateFCmpONE(
+        resPtr->Builder->CreateSIToFP(
+            ast->bool_expr->val, llvm::Type::getDoubleTy(*resPtr->Context)),
+        llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(0.0)),
+        "ifcond_i64");
+    break;
+  case TypeKind::F64_t:
+    ast->bool_expr->val = resPtr->Builder->CreateFCmpONE(
+        ast->bool_expr->val,
+        llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(0.0)),
+        "ifcond_f64");
+    break;
+  case TypeKind::NonExistent:
+    ASTPrinter::print(ast->bool_expr.get());
+    sammine_util::abort("Invalid syntax for now");
+    break;
+  case TypeKind::Poisoned:
+    sammine_util::abort("Invalid syntax for now");
+    break;
+  case TypeKind::Unit:
+    sammine_util::abort("Invalid syntax for now");
+    break;
+  case TypeKind::Bool:
+    ast->bool_expr->val = resPtr->Builder->CreateFCmpONE(
+        resPtr->Builder->CreateUIToFP(
+            ast->bool_expr->val, llvm::Type::getDoubleTy(*resPtr->Context)),
+        llvm::ConstantFP::get(*resPtr->Context, llvm::APFloat(0.0)),
+        "ifcond_bool");
+    break;
+  case TypeKind::Function:
+    sammine_util::abort("Invalid syntax for now");
+    break;
+  }
 
   llvm::Function *function = resPtr->Builder->GetInsertBlock()->getParent();
 
@@ -263,34 +340,19 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
   resPtr->Builder->SetInsertPoint(ThenBB);
 
   ast->thenBlockAST->accept_vis(this);
-  if (!ast->thenBlockAST->val) {
-    sammine_util::abort("Failed to generate then block for if-expr");
-    return;
-  }
-
-  resPtr->Builder->CreateBr(MergeBB);
-
-  ThenBB = resPtr->Builder->GetInsertBlock();
+  if (!ThenBB->back().isTerminator())
+    resPtr->Builder->CreateBr(MergeBB);
 
   function->insert(function->end(), ElseBB);
   resPtr->Builder->SetInsertPoint(ElseBB);
 
   ast->elseBlockAST->accept_vis(this);
-  if (!ast->elseBlockAST->val) {
-    return;
-  }
 
-  resPtr->Builder->CreateBr(MergeBB);
+  if (!ElseBB->back().isTerminator())
+    resPtr->Builder->CreateBr(MergeBB);
 
-  ElseBB = resPtr->Builder->GetInsertBlock();
   function->insert(function->end(), MergeBB);
   resPtr->Builder->SetInsertPoint(MergeBB);
-  llvm::PHINode *PN = resPtr->Builder->CreatePHI(
-      llvm::Type::getDoubleTy(*resPtr->Context), 2, "iftmp");
-
-  PN->addIncoming(ast->thenBlockAST->val, ThenBB);
-  PN->addIncoming(ast->elseBlockAST->val, ElseBB);
-  ast->val = PN;
 }
 void CgVisitor::preorder_walk(TypedVarAST *ast) {}
 

@@ -4,6 +4,7 @@
 #include "AstBase.h"
 #include "LexicalContext.h"
 #include "Types.h"
+#include "Utilities.h"
 #include <stack>
 namespace sammine_lang {
 
@@ -40,11 +41,11 @@ public:
   }
   BiTypeCheckerVisitor() { this->enter_new_scope(); }
 
-  std::optional<Type> get_id_type(const std::string &str) {
+  std::optional<Type> get_type_from_id(const std::string &str) {
 
     auto &id_name_top = id_to_type.top();
     if (id_name_top.queryName(str) == nameNotFound) {
-      return std::nullopt;
+      sammine_util::abort("should not happen");
     }
     return id_name_top.get_from_name(str);
   }
@@ -103,6 +104,22 @@ public:
   virtual Type synthesize(BlockAST *ast) override;
   virtual Type synthesize(IfExprAST *ast) override;
   virtual Type synthesize(TypedVarAST *ast) override;
+
+  Type get_type_from_type_lexeme(const std::string &type_lexeme,
+                                 sammine_util::Location location) {
+    if (type_lexeme.empty()) {
+      return Type::NonExistent();
+    }
+    auto get_type_opt = this->get_typename_type(type_lexeme);
+
+    if (!get_type_opt.has_value()) {
+      this->add_error(location,
+                      fmt::format("Type '{}' not found in the current scope.",
+                                  type_lexeme));
+      return Type::Poisoned();
+    } else
+      return get_type_opt.value();
+  }
 };
 } // namespace AST
 } // namespace sammine_lang
