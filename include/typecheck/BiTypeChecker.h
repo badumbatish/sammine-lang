@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Ast.h"
-#include "AstBase.h"
-#include "LexicalContext.h"
-#include "Types.h"
-#include "Utilities.h"
-#include <stack>
+#include "ast/Ast.h"
+#include "ast/AstBase.h"
+#include "typecheck/Types.h"
+#include "util/LexicalContext.h"
 namespace sammine_lang {
 
 namespace AST {

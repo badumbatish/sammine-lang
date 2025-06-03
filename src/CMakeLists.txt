@@ -15,21 +15,16 @@ function(add_project_library name)
     target_link_libraries(${name} PRIVATE project_options)
 endfunction()
 
-add_library(Utilities OBJECT ${CMAKE_CURRENT_LIST_DIR}/Utilities.cpp)
-target_link_libraries(Utilities PRIVATE project_options fmt::fmt cpptrace-lib)
 
-add_project_library(Ast)
 
-add_project_library(Lexer)
 
 add_project_library(Parser)
-add_project_library(SammineJIT)
-add_project_library(CodegenVisitor)
-add_project_library(ScopeGeneratorVisitor)
-add_project_library(BiTypeChecker)
-add_project_library(Types)
-add_project_library(AstPrinterVisitor)
-
+add_subdirectory(lex)
+add_subdirectory(ast)
+add_subdirectory(codegen)
+add_subdirectory(typecheck)
+add_subdirectory(semantics)
+add_subdirectory(util)
 add_library(Compiler OBJECT ${CMAKE_CURRENT_LIST_DIR}/Compiler.cpp)
 target_link_libraries(Compiler PRIVATE project_options fmt)
 

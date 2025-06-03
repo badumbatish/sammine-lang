@@ -52,7 +52,7 @@ jobs:
         run: |
           # You can adjust -j <cores> or other flags as needed
           run-clang-tidy \
-            -warnings-as-errors=* \
+            -warnings-as-errors=* \ # for local running, change to \*
             -use-color \
             -p build \
             -j 4 \

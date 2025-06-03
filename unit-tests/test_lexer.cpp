@@ -4,8 +4,8 @@
 
 //! \file test_lexer.cpp
 //! \brief The unit-test file for all things related to a lexer.
-#include "Lexer.h"
-#include "Utilities.h"
+#include "lex/Lexer.h"
+#include "util/Utilities.h"
 #include <catch2/catch_test_macros.hpp>
 
 //! Simple test cases for a Lexer, test for an identifier followed by a number

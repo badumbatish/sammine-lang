@@ -4,7 +4,6 @@
 
 #pragma once
 #include <fstream>
-#include <iostream>
 #include <string>
 
 //! \file FileRAII.h

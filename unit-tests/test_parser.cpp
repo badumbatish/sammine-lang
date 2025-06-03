@@ -4,10 +4,9 @@
 
 //! \file test_parser.cpp
 //! \brief The unit-test file for all things related to a parser.
-#include "Ast.h"
-#include "Lexer.h"
-#include "Parser.h"
-#include "tl/expected.hpp"
+#include "parser/Parser.h"
+#include "ast/Ast.h"
+#include "lex/Token.h"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace sammine_lang;

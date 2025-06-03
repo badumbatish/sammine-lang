@@ -1,8 +1,7 @@
 #pragma once
-#include "Ast.h"
-#include "Lexer.h"
-#include "Utilities.h"
-#include "tl/expected.hpp"
+#include "ast/Ast.h"
+#include "lex/Token.h"
+#include "util/Utilities.h"
 #include <memory>
 #include <optional>
 #include <utility>

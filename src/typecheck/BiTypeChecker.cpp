@@ -1,8 +1,8 @@
-#include "BiTypeChecker.h"
-#include "Ast.h"
-#include "Types.h"
-#include "Utilities.h"
+#include "typecheck/BiTypeChecker.h"
+#include "ast/Ast.h"
 #include "fmt/format.h"
+#include "typecheck/Types.h"
+#include "util/Utilities.h"
 namespace sammine_lang::AST {
 // pre order
 void BiTypeCheckerVisitor::preorder_walk(ProgramAST *ast) {}

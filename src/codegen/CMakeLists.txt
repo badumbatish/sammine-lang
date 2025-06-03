@@ -1,0 +1,3 @@
+
+add_project_library(SammineJIT)
+add_project_library(CodegenVisitor)
