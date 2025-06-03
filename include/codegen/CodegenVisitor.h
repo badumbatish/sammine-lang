@@ -3,14 +3,10 @@
 //
 
 #pragma once
-#include "Ast.h"
-#include "AstBase.h"
-#include "LLVMRes.h"
-#include "Lexer.h"
-#include "LexicalContext.h"
-#include "Types.h"
-#include "Utilities.h"
-#include <functional>
+#include "ast/Ast.h"
+#include "ast/AstBase.h"
+#include "codegen/LLVMRes.h"
+#include "util/LexicalContext.h"
 #include <llvm/IR/Function.h>
 #include <llvm/IR/InstrTypes.h>
 #include <llvm/IR/Instructions.h>

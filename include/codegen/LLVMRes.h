@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Ast.h"
-#include "SammineJIT.h"
-#include "Utilities.h"
+#include "ast/Ast.h"
+#include "codegen/SammineJIT.h"
 #include "iostream"
+#include "util/Utilities.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/Analysis/CGSCCPassManager.h"

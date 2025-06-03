@@ -2,7 +2,7 @@
 // Created by jjasmine on 3/8/24.
 //
 
-#include "Lexer.h"
+#include "lex/Lexer.h"
 #include "functional"
 #include <string>
 namespace sammine_lang {

@@ -1,6 +1,6 @@
-#include "ScopeGeneratorVisitor.h"
-#include "Ast.h"
-#include "Utilities.h"
+#include "semantics/ScopeGeneratorVisitor.h"
+#include "ast/Ast.h"
+#include "util/Utilities.h"
 #include "fmt/format.h"
 namespace sammine_lang::AST {
 // pre order

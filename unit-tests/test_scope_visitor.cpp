@@ -1,7 +1,6 @@
 
-#include "ScopeGeneratorVisitor.h"
-#include "Utilities.h"
-#include "tl/expected.hpp"
+#include "semantics/ScopeGeneratorVisitor.h"
+#include "util/Utilities.h"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace sammine_lang;

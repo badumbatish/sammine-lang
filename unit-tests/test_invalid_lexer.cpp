@@ -2,7 +2,7 @@
 // Created by Jasmine Tang on 4/3/24.
 //
 
-#include "Lexer.h"
+#include "lex/Lexer.h"
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("Unrecognized tokens", "[Invalid Lexer]") {

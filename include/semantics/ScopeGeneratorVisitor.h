@@ -1,20 +1,16 @@
 #pragma once
-#include "Ast.h"
-#include "AstBase.h"
-#include "LexicalContext.h"
-#include "Utilities.h"
+#include "ast/Ast.h"
+#include "ast/AstBase.h"
+#include "util/LexicalContext.h"
+#include "util/Utilities.h"
 #include <memory>
 #include <stack>
 namespace sammine_lang::AST {
 
-// A simple scoping class, doesn't differentiate between different names, like
-// variable name, func name and all that
-class LexicalScope : public LexicalContext<sammine_util::Location> {
-  using LexicalContext::LexicalContext;
-};
-
 class ScopeGeneratorVisitor : public ScopedASTVisitor {
 public:
+  // A simple scoping class, doesn't differentiate between different names, like
+  // variable name, func name and all that
   LexicalStack<sammine_util::Location> scope_stack;
   ScopeGeneratorVisitor() { scope_stack.push_context(); }
 

@@ -2,12 +2,11 @@
 // Created by Jasmine Tang on 3/27/24.
 //
 
-#include "CodegenVisitor.h"
-#include "Ast.h"
-#include "Lexer.h"
-#include "Types.h"
-#include "Utilities.h"
+#include "codegen/CodegenVisitor.h"
+#include "ast/Ast.h"
 #include "fmt/format.h"
+#include "lex/Token.h"
+#include "util/Utilities.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"

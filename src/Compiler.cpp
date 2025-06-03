@@ -3,11 +3,11 @@
 //
 
 #include "Compiler.h"
-#include "Ast.h"
-#include "BiTypeChecker.h"
-#include "CodegenVisitor.h"
-#include "ScopeGeneratorVisitor.h"
-#include "Utilities.h"
+#include "ast/Ast.h"
+#include "typecheck/BiTypeChecker.h"
+#include "codegen/CodegenVisitor.h"
+#include "semantics/ScopeGeneratorVisitor.h"
+#include "util/Utilities.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include "llvm/IR/LegacyPassManager.h"

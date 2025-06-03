@@ -1,5 +1,5 @@
-#include "Ast.h"
-#include "AstBase.h"
+#include "ast/Ast.h"
+#include "ast/AstBase.h"
 
 namespace sammine_lang::AST {
 

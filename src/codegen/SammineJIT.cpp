@@ -2,7 +2,7 @@
 // Created by Jasmine Tang on 3/29/24.
 //
 
-#include "SammineJIT.h"
+#include "codegen/SammineJIT.h"
 
 #include "llvm/ExecutionEngine/Orc/CompileUtils.h" // Provides the SimpleCompiler class.
 #include "llvm/ExecutionEngine/Orc/ExecutionUtils.h" // Provides the DynamicLibrarySearchGenerator class.

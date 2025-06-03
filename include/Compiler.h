@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "LLVMRes.h"
-#include "Lexer.h"
-#include "Parser.h"
-#include "Utilities.h"
+#include "parser/Parser.h"
+#include "codegen/LLVMRes.h"
+#include "lex/Token.h"
+#include "util/Utilities.h"
 #include <memory>
 #include <string>
 namespace sammine_lang {

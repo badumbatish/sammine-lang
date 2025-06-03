@@ -1,5 +1,5 @@
-#include "Ast.h"
-#include "AstBase.h"
+#include "ast/Ast.h"
+#include "ast/AstBase.h"
 #include "fmt/base.h"
 #include "fmt/format.h"
 #include <cstdio>

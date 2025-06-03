@@ -1,8 +1,8 @@
 #pragma once
-#include "AstBase.h"
-#include "AstDecl.h"
-#include "Lexer.h"
-#include "Utilities.h"
+#include "ast/AstBase.h"
+#include "ast/AstDecl.h"
+#include "lex/Lexer.h"
+#include "util/Utilities.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>

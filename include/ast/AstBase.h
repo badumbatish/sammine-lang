@@ -3,11 +3,11 @@
 //
 
 #pragma once
-#include "AstDecl.h"
-#include "Lexer.h"
-#include "LexicalContext.h"
-#include "Types.h"
-#include "Utilities.h"
+#include "ast/AstDecl.h"
+#include "lex/Lexer.h"
+#include "util/LexicalContext.h"
+#include "typecheck/Types.h"
+#include "util/Utilities.h"
 #include <stack>
 namespace llvm {
 class Value;

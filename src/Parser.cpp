@@ -1,11 +1,9 @@
 
-#include "Parser.h"
-#include "Ast.h"
-#include "Lexer.h"
-#include "Utilities.h"
+#include "parser/Parser.h"
+#include "ast/Ast.h"
+#include "util/Utilities.h"
 #include <cstdlib>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <utility>
 namespace sammine_lang {

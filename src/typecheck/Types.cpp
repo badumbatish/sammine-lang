@@ -1,5 +1,5 @@
-#include "Types.h"
-#include "Utilities.h"
+#include "typecheck/Types.h"
+#include "util/Utilities.h"
 #include <set>
 #include <span>
 #include <string_view>
