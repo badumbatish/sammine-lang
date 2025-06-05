@@ -4,7 +4,7 @@
 //! \file sammine.cpp
 //! \brief The main file to produce an executable that is the sammine compiler
 
-#include "Compiler.h"
+#include "compiler/Compiler.h"
 #include "fmt/color.h"
 #include <argparse/argparse.hpp>
 using sammine_lang::Compiler;

@@ -126,7 +126,6 @@ static const std::map<TokenType, std::string> TokenMap = {
 
     // TokFunction
     {TokReturn, "return"},
-    {TokMain, "main"},
     {TokFunc, "fn"},
     {TokArrow, "->"},
     {TokLet, "let"},
