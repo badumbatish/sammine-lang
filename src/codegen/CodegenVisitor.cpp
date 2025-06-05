@@ -142,9 +142,6 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
     sammine_util::abort("Unknown function called");
     return;
   }
-  if (callee->getReturnType() == llvm::Type::getVoidTy(*resPtr->Context)) {
-    std::cout << "uhhh" << std::endl;
-  }
 
   if (ast->arguments.size() != callee->arg_size())
     sammine_util::abort("Incorrect number of arguments passed");
