@@ -297,8 +297,6 @@ auto Parser::ParseBinaryExpr(int precedence, u<ExprAST> LHS) -> p<ExprAST> {
   while (!tokStream->isEnd()) {
     auto tok = tokStream->peek()->tok_type;
     int TokPrec = GetTokPrecedence(tok);
-    std::cout << "Current precedence: " << precedence
-              << ", token precedence: " << TokPrec << std::endl;
 
     if (TokPrec < precedence)
       return {std::move(LHS), SUCCESS};
