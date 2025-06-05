@@ -52,7 +52,6 @@ public:
   llvm::PassBuilder PB;
   std::unique_ptr<llvm::TargetMachine> target_machine;
   llvm::legacy::PassManager pass;
-  std::string FileName = "output.o";
   std::error_code EC;
   LLVMRes() {
     llvm::InitializeAllTargetInfos();

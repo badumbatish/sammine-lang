@@ -2,14 +2,14 @@
 // Created by Jasmine Tang on 3/27/24.
 //
 
-#include "Compiler.h"
+#include "compiler/Compiler.h"
 #include "ast/Ast.h"
-#include "typecheck/BiTypeChecker.h"
 #include "codegen/CodegenVisitor.h"
-#include "semantics/ScopeGeneratorVisitor.h"
-#include "util/Utilities.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
+#include "semantics/ScopeGeneratorVisitor.h"
+#include "typecheck/BiTypeChecker.h"
+#include "util/Utilities.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Support/CodeGen.h"
 #include "llvm/Support/raw_ostream.h"
@@ -122,12 +122,12 @@ void Compiler::produce_executable() {
     force_log_diagnostics("Logging pre optimization llvm IR");
     resPtr->Module->print(llvm::errs(), nullptr);
   }
-  llvm::raw_fd_ostream dest(llvm::raw_fd_ostream(resPtr->FileName, resPtr->EC));
+  llvm::raw_fd_ostream dest(
+      llvm::raw_fd_ostream(this->file_name + ".o", resPtr->EC));
   if (resPtr->EC) {
     llvm::errs() << "Could not open file: " << resPtr->EC.message();
     return;
   }
-
   auto FileType = llvm::CodeGenFileType::ObjectFile;
 
   if (resPtr->target_machine->addPassesToEmitFile(resPtr->pass, dest, nullptr,
@@ -142,6 +142,26 @@ void Compiler::produce_executable() {
   if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
     force_log_diagnostics("Logging post optimization llvm IR");
     resPtr->Module->print(llvm::errs(), nullptr);
+  }
+  auto try_compile_with = [](const std::string &compiler,
+                             const std::string &input_file) {
+    std::string command =
+        fmt::format("{} {}.o -o {}.exe", compiler, input_file, input_file);
+    int result = std::system(command.c_str());
+    return result == 0;
+  };
+  for (auto &def : this->programAST->DefinitionVec) {
+    if (auto func_def = static_cast<AST::FuncDefAST *>(def.get())) {
+      if (func_def->Prototype->functionName == "main") {
+        if (try_compile_with("clang++", this->file_name)) {
+
+        } else if (try_compile_with("g++", this->file_name)) {
+
+        } else {
+          sammine_util::abort("Neither clang++ nor g++ is available\n");
+        }
+      }
+    }
   }
 }
 void Compiler::start() {
