@@ -16,7 +16,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1st Check the code
       - name: Check out the code
         uses: actions/checkout@v3
 
@@ -26,7 +25,6 @@ jobs:
           download_path: "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
           destination: "/usr/local"
 
-      # 2nd install needed tool
       - name: Install LLVM/Clang, Catch2, & libtinfo5
         run: |
           sudo apt update
@@ -35,27 +33,22 @@ jobs:
           wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
           sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
 
-      - name: Compile Code
-        working-directory: ${{ github.workspace }}
+      - name: Configure codebase 
         run: |
           mkdir -p build
           cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
 
-      - name: Build Code
-        working-directory: ${{ github.workspace }}
+      - name: Build codebase
         run: |
           cmake --build build -j4 
 
-      # 5. Run clang-tidy via run-clang-tidy script
       - name: Run clang-tidy
-        working-directory: ${{ github.workspace }}
         run: |
+          # commented lines are debug tools, please dont remove
+          # pwd 
+          # ls -R
+          # ln -s ./build/compile_commands.json ./  # linking
           # You can adjust -j <cores> or other flags as needed
-          run-clang-tidy \
-            -warnings-as-errors=* \ # for local running, change to \*
-            -use-color \
-            -p build \
-            -j 4 \
-            "sammine-lang/(src|include).*"
+          run-clang-tidy -j 4 -p build -use-color -warnings-as-errors "\*" "sammine-lang\/(src|include).\*"
 
 
