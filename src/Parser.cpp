@@ -1,6 +1,7 @@
 
 #include "parser/Parser.h"
 #include "ast/Ast.h"
+#include "lex/Token.h"
 #include "util/Utilities.h"
 #include <cstdlib>
 #include <functional>
@@ -78,10 +79,24 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
   sammine_util::abort("Should not happen in ParseDefinition()");
 }
 
+auto Parser::ParseRecordDef() -> p<DefinitionAST> {
+  auto record_tok = expect(TokRecord);
+  if (!record_tok)
+    return {nullptr, NONCOMMITTED};
+  auto id = expect(TokID);
+
+  if (!id) {
+
+    this->add_error(record_tok->location,
+                    "Failed to parse an identifier after token Record");
+    return {nullptr, COMMITTED_NO_MORE_ERROR};
+  }
+  // Julius continue from here :)
+  sammine_util::abort();
+}
 auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   // this is for extern
-  auto extern_fn = expect(TokenType::TokExtern);
-  if (extern_fn) {
+  if (auto extern_fn = expect(TokenType::TokExtern)) {
 
     auto [prototype, result] = ParsePrototype();
     switch (result) {

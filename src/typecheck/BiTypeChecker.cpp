@@ -12,6 +12,7 @@ void BiTypeCheckerVisitor::preorder_walk(VarDefAST *ast) {
 
 void BiTypeCheckerVisitor::preorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(FuncDefAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(RecordDefAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(PrototypeAST *ast) {
   ast->accept_synthesis(this);
 }
@@ -55,6 +56,7 @@ void BiTypeCheckerVisitor::postorder_walk(VarDefAST *ast) {
   ast->set_checked();
 }
 void BiTypeCheckerVisitor::postorder_walk(ExternAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(RecordDefAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {
   ast->accept_synthesis(this);
 }
@@ -81,6 +83,9 @@ Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
 }
 
 Type BiTypeCheckerVisitor::synthesize(ExternAST *ast) {
+  return Type::NonExistent();
+}
+Type BiTypeCheckerVisitor::synthesize(RecordDefAST *ast) {
   return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(FuncDefAST *ast) {

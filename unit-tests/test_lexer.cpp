@@ -5,6 +5,7 @@
 //! \file test_lexer.cpp
 //! \brief The unit-test file for all things related to a lexer.
 #include "lex/Lexer.h"
+#include "lex/Token.h"
 #include "util/Utilities.h"
 #include <catch2/catch_test_macros.hpp>
 
@@ -107,7 +108,7 @@ TEST_CASE("Identifiers and keywords", "[Lexer]") {
     REQUIRE(lex.consume().get()->tok_type == sammine_lang::TokLet);
     REQUIRE(lex.consume().get()->tok_type == sammine_lang::TokIf);
     REQUIRE(lex.consume().get()->tok_type == sammine_lang::TokElse);
-    REQUIRE(lex.consume().get()->tok_type == sammine_lang::TokMain);
+    REQUIRE(lex.consume().get()->tok_type == sammine_lang::TokID);
     REQUIRE(lex.consume().get()->tok_type == sammine_lang::TokFunc);
   }
 }

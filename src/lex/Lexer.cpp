@@ -4,6 +4,7 @@
 
 #include "lex/Lexer.h"
 #include "functional"
+#include "lex/Token.h"
 #include <string>
 namespace sammine_lang {
 
@@ -62,6 +63,8 @@ size_t Lexer::handleID(size_t i, const std::string &input) {
       tokStream->push_back(Token(TokFunc, "fn", location));
     else if (IdentifierStr == "return")
       tokStream->push_back(Token(TokReturn, "return", location));
+    else if (IdentifierStr == "Record")
+      tokStream->push_back(Token(TokRecord, "Record", location));
     else if (IdentifierStr == "if")
       tokStream->push_back(Token(TokIf, "if", location));
     else if (IdentifierStr == "else")

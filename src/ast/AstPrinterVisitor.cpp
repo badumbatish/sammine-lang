@@ -25,6 +25,8 @@ public:
 
   virtual void visit(FuncDefAST *ast) override;
 
+  virtual void visit(RecordDefAST *ast) override;
+
   virtual void visit(PrototypeAST *ast) override;
 
   virtual void visit(CallExprAST *ast) override;
@@ -48,6 +50,7 @@ public:
   virtual void preorder_walk(VarDefAST *ast) override;
   virtual void preorder_walk(ExternAST *ast) override;
   virtual void preorder_walk(FuncDefAST *ast) override;
+  virtual void preorder_walk(RecordDefAST *ast) override;
   virtual void preorder_walk(PrototypeAST *ast) override;
   virtual void preorder_walk(CallExprAST *ast) override;
   virtual void preorder_walk(ReturnExprAST *ast) override;
@@ -64,6 +67,7 @@ public:
   virtual void postorder_walk(VarDefAST *ast) override;
   virtual void postorder_walk(ExternAST *ast) override;
   virtual void postorder_walk(FuncDefAST *ast) override;
+  virtual void postorder_walk(RecordDefAST *ast) override;
   virtual void postorder_walk(PrototypeAST *ast) override;
   virtual void postorder_walk(CallExprAST *ast) override;
   virtual void postorder_walk(ReturnExprAST *ast) override;
@@ -128,6 +132,12 @@ void AstPrinterVisitor::visit(FuncDefAST *ast) {
   generic_postprint();
 }
 
+void AstPrinterVisitor::visit(RecordDefAST *ast) {
+  generic_preprintln(ast);
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+  generic_postprint();
+}
 void AstPrinterVisitor::visit(PrototypeAST *ast) {
   generic_preprintln(ast);
   ast->walk_with_preorder(this);
@@ -239,6 +249,7 @@ void AstPrinterVisitor::preorder_walk(ProgramAST *ast) {}
 void AstPrinterVisitor::preorder_walk(VarDefAST *ast) {}
 void AstPrinterVisitor::preorder_walk(ExternAST *ast) {}
 void AstPrinterVisitor::preorder_walk(FuncDefAST *ast) {}
+void AstPrinterVisitor::preorder_walk(RecordDefAST *ast) {}
 void AstPrinterVisitor::preorder_walk(PrototypeAST *ast) {
 
   this->rep += fmt::format("{} fn_name: \"{}\"\n", tabs(), ast->functionName);
@@ -280,6 +291,7 @@ void AstPrinterVisitor::postorder_walk(ProgramAST *ast) {
 void AstPrinterVisitor::postorder_walk(VarDefAST *ast) {}
 void AstPrinterVisitor::postorder_walk(ExternAST *ast) {}
 void AstPrinterVisitor::postorder_walk(FuncDefAST *ast) {}
+void AstPrinterVisitor::postorder_walk(RecordDefAST *ast) {}
 void AstPrinterVisitor::postorder_walk(PrototypeAST *ast) {}
 void AstPrinterVisitor::postorder_walk(CallExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(ReturnExprAST *ast) {}

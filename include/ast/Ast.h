@@ -1,7 +1,6 @@
 #pragma once
 #include "ast/AstBase.h"
 #include "ast/AstDecl.h"
-#include "lex/Lexer.h"
 #include "util/Utilities.h"
 #include <cassert>
 #include <cstddef>
@@ -13,23 +12,6 @@ namespace sammine_lang {
 namespace AST {
 
 using Identifier = std::string;
-class ProgramAST;
-
-class DefinitionAST;
-class VarDefAST;
-class FuncDefAST;
-
-class PrototypeAST;
-class TypedVarAST;
-
-class ExprAST;
-class CallExprAST;
-class ReturnExprAST;
-class BinaryExprAST;
-class NumberExprAST;
-class VariableExprAST;
-
-class BlockAST;
 class Printable {};
 
 class ProgramAST : public AstBase, Printable {
@@ -195,6 +177,35 @@ public:
   }
 
   virtual std::string getTreeName() override { return "FuncDefAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+};
+
+// Record id { typed_var }
+class RecordDefAST : public DefinitionAST {
+public:
+  std::string record_name;
+  std::vector<std::unique_ptr<TypedVarAST>> record_members;
+  virtual std::string getTreeName() override { return "RecordDefAST"; }
+
+  explicit RecordDefAST(std::shared_ptr<Token> record_id,
+                        decltype(record_members) record_members)
+      : record_members(std::move(record_members)) {
+    if (record_id)
+      record_name = record_id->lexeme;
+
+    this->join_location(record_id);
+    for (auto &m : record_members)
+      this->join_location(m.get());
+  }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
     visitor->preorder_walk(this);

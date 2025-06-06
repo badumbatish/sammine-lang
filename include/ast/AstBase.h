@@ -5,8 +5,8 @@
 #pragma once
 #include "ast/AstDecl.h"
 #include "lex/Lexer.h"
-#include "util/LexicalContext.h"
 #include "typecheck/Types.h"
+#include "util/LexicalContext.h"
 #include "util/Utilities.h"
 #include <stack>
 namespace llvm {
@@ -38,6 +38,10 @@ public:
   virtual void visit(FuncDefAST *ast);
   virtual void preorder_walk(FuncDefAST *ast) = 0;
   virtual void postorder_walk(FuncDefAST *ast) = 0;
+
+  virtual void visit(RecordDefAST *ast);
+  virtual void preorder_walk(RecordDefAST *ast) = 0;
+  virtual void postorder_walk(RecordDefAST *ast) = 0;
 
   virtual void visit(PrototypeAST *ast);
   virtual void preorder_walk(PrototypeAST *ast) = 0;
@@ -123,31 +127,11 @@ public:
   virtual void enter_new_scope() = 0;
   virtual void exit_new_scope() = 0;
 
-  virtual void visit(ProgramAST *ast);
-
-  virtual void visit(VarDefAST *ast);
-
-  virtual void visit(ExternAST *ast);
-
+  /// Only visiting the FuncDefAST requires the use of scoping for now.
+  ///
+  /// In the future we might have to support BlockAST
   virtual void visit(FuncDefAST *ast);
 
-  virtual void visit(PrototypeAST *ast);
-
-  virtual void visit(CallExprAST *ast);
-
-  virtual void visit(BinaryExprAST *ast);
-
-  virtual void visit(NumberExprAST *ast);
-
-  virtual void visit(BoolExprAST *ast);
-
-  virtual void visit(VariableExprAST *ast);
-
-  virtual void visit(BlockAST *ast);
-
-  virtual void visit(IfExprAST *ast);
-
-  virtual void visit(TypedVarAST *ast);
   virtual ~ScopedASTVisitor() = 0;
 };
 
@@ -157,6 +141,7 @@ public:
   virtual Type synthesize(VarDefAST *ast) = 0;
   virtual Type synthesize(ExternAST *ast) = 0;
   virtual Type synthesize(FuncDefAST *ast) = 0;
+  virtual Type synthesize(RecordDefAST *ast) = 0;
   virtual Type synthesize(PrototypeAST *ast) = 0;
   virtual Type synthesize(CallExprAST *ast) = 0;
   virtual Type synthesize(ReturnExprAST *ast) = 0;
