@@ -2,7 +2,6 @@
 #include "ast/AstBase.h"
 #include "fmt/base.h"
 #include "fmt/format.h"
-#include <cstdio>
 namespace sammine_lang::AST {
 
 class AstPrinterVisitor : public ScopedASTVisitor {
@@ -34,6 +33,7 @@ public:
   virtual void visit(BinaryExprAST *ast) override;
 
   virtual void visit(NumberExprAST *ast) override;
+  virtual void visit(StringExprAST *ast) override;
 
   virtual void visit(BoolExprAST *ast) override;
 
@@ -56,6 +56,7 @@ public:
   virtual void preorder_walk(ReturnExprAST *ast) override;
   virtual void preorder_walk(BinaryExprAST *ast) override;
   virtual void preorder_walk(NumberExprAST *ast) override;
+  virtual void preorder_walk(StringExprAST *ast) override;
   virtual void preorder_walk(BoolExprAST *ast) override;
   virtual void preorder_walk(VariableExprAST *ast) override;
   virtual void preorder_walk(BlockAST *ast) override;
@@ -73,6 +74,7 @@ public:
   virtual void postorder_walk(ReturnExprAST *ast) override;
   virtual void postorder_walk(BinaryExprAST *ast) override;
   virtual void postorder_walk(NumberExprAST *ast) override;
+  virtual void postorder_walk(StringExprAST *ast) override;
   virtual void postorder_walk(BoolExprAST *ast) override;
   virtual void postorder_walk(VariableExprAST *ast) override;
   virtual void postorder_walk(BlockAST *ast) override;
@@ -151,6 +153,7 @@ void AstPrinterVisitor::visit(TypedVarAST *ast) {
   this->rep += fmt::format("{} {}: ", tabs(), ast->getTreeName());
   ast->walk_with_preorder(this);
   ast->walk_with_postorder(this);
+  generic_postprint();
 }
 
 void AstPrinterVisitor::visit(CallExprAST *ast) {
@@ -172,6 +175,12 @@ void AstPrinterVisitor::visit(BinaryExprAST *ast) {
   generic_postprint();
 }
 
+void AstPrinterVisitor::visit(StringExprAST *ast) {
+  generic_preprint(ast);
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+  generic_postprint();
+}
 void AstPrinterVisitor::visit(NumberExprAST *ast) {
   generic_preprintln(ast);
   ast->walk_with_preorder(this);
@@ -258,6 +267,9 @@ void AstPrinterVisitor::preorder_walk(PrototypeAST *ast) {
 void AstPrinterVisitor::preorder_walk(CallExprAST *ast) {}
 void AstPrinterVisitor::preorder_walk(ReturnExprAST *ast) {}
 void AstPrinterVisitor::preorder_walk(BinaryExprAST *ast) {}
+void AstPrinterVisitor::preorder_walk(StringExprAST *ast) {
+  this->rep += fmt::format("\"{}\")", ast->string_content);
+}
 void AstPrinterVisitor::preorder_walk(NumberExprAST *ast) {
   this->rep += fmt::format("(num, type): (\"{}\", {})", ast->number,
                            ast->type.to_string());
@@ -300,6 +312,7 @@ void AstPrinterVisitor::postorder_walk(BinaryExprAST *ast) {
                            ast->Op ? ast->Op->lexeme : " --- ParserError");
 }
 void AstPrinterVisitor::postorder_walk(NumberExprAST *ast) {}
+void AstPrinterVisitor::postorder_walk(StringExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(BoolExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(VariableExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(BlockAST *ast) {}

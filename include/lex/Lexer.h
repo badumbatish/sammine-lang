@@ -3,12 +3,9 @@
 //
 
 #pragma once
-#include "fmt/format.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
-#include <algorithm>
 #include <cassert>
-#include <map>
 
 //! \file Lexer.h
 //! \brief Houses declaration (and some small implementation) of TokenType,
@@ -51,6 +48,7 @@ private:
   size_t handleUtilityCOMMENT(size_t i, const std::string &input);
   size_t handleUtilityCOMMA(size_t i, const std::string &input);
   size_t handleUtilitySemiColon(size_t i, const std::string &input);
+  size_t handleUtilityDoubleQuote(size_t i, const std::string &input);
   size_t handleUtilityCOLON(size_t i, const std::string &input);
 
   void updateLocation();

@@ -74,6 +74,8 @@ public:
   [[nodiscard]]
   auto ParseNumberExpr() -> p<ExprAST>;
   [[nodiscard]]
+  auto ParseStringExpr() -> p<ExprAST>;
+  [[nodiscard]]
   auto ParseVariableExpr() -> p<ExprAST>;
   [[nodiscard]]
 

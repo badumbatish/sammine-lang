@@ -23,6 +23,9 @@ void BiTypeCheckerVisitor::preorder_walk(ReturnExprAST *ast) {
   ast->accept_synthesis(this);
 }
 void BiTypeCheckerVisitor::preorder_walk(BinaryExprAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(StringExprAST *ast) {
+  ast->accept_synthesis(this);
+}
 void BiTypeCheckerVisitor::preorder_walk(NumberExprAST *ast) {
 
   ast->accept_synthesis(this);
@@ -66,6 +69,7 @@ void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {
   ast->accept_synthesis(this);
 }
+void BiTypeCheckerVisitor::postorder_walk(StringExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(NumberExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BoolExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(VariableExprAST *ast) {}
@@ -116,7 +120,11 @@ Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   auto ty = get_type_from_id(ast->functionName);
   switch (ty->type_kind) {
   case TypeKind::Function:
-    return ast->type = ty->type_data.value().get_return_type();
+    return ast->type = std::get<FunctionType>(ty->type_data).get_return_type();
+  case TypeKind::String:
+    this->add_error(ast->get_location(),
+                    "A string cannot be in place of a call expression");
+    return Type::Poisoned();
   case TypeKind::I64_t:
   case TypeKind::F64_t:
   case TypeKind::Unit:
@@ -125,7 +133,6 @@ Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   case TypeKind::Poisoned:
     sammine_util::abort(fmt::format("should not happen here with function {}",
                                     ast->functionName));
-    break;
   }
   return Type::NonExistent();
 }
@@ -144,6 +151,9 @@ Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
     return ast->type = Type::Bool();
 
   return ast->type = ast->LHS->type;
+}
+Type BiTypeCheckerVisitor::synthesize(StringExprAST *ast) {
+  return Type::NonExistent();
 }
 Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
   if (ast->synthesized())

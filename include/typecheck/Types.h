@@ -15,6 +15,7 @@ enum class TypeKind {
   F64_t,
   Unit,
   Bool,
+  String,
   Function,
   NonExistent,
   Poisoned
@@ -37,20 +38,25 @@ public:
 
   FunctionType(const std::vector<Type> &total_types);
 };
-using TypeData = std::optional<FunctionType>;
+using TypeData = std::variant<FunctionType, std::string, std::monostate>;
 
 struct Type {
   TypeKind type_kind;
   TypeData type_data;
   bool is_checked = false;
   // Constructors
-  Type() {}
-  static Type I64_t() { return Type{TypeKind::I64_t, {}}; }
-  static Type F64_t() { return Type{TypeKind::F64_t, {}}; }
-  static Type Bool() { return Type{TypeKind::Bool, {}}; }
-  static Type Poisoned() { return Type{TypeKind::Poisoned, {}}; }
-  static Type Unit() { return Type{TypeKind::Unit, {}}; }
-  static Type NonExistent() { return Type{TypeKind::NonExistent, {}}; }
+  Type() : type_kind(TypeKind::NonExistent), type_data(std::monostate()) {}
+  static Type I64_t() { return Type{TypeKind::I64_t, std::monostate()}; }
+  static Type F64_t() { return Type{TypeKind::F64_t, std::monostate()}; }
+  static Type Bool() { return Type{TypeKind::Bool, std::monostate()}; }
+  static Type Poisoned() { return Type{TypeKind::Poisoned, std::monostate()}; }
+  static Type Unit() { return Type{TypeKind::Unit, std::monostate()}; }
+  static Type String(const std::string &str) {
+    return Type{TypeKind::String, str};
+  }
+  static Type NonExistent() {
+    return Type{TypeKind::NonExistent, std::monostate()};
+  }
   static Type Function(std::vector<Type> params);
   explicit operator bool() const {
     return this->type_kind != TypeKind::Poisoned;
@@ -83,14 +89,15 @@ struct Type {
       return "bool";
     case TypeKind::Function: {
       std::string res = "(";
-      auto param = type_data.value().get_params_types();
+      auto fn_type = std::get<FunctionType>(type_data);
+      auto param = fn_type.get_params_types();
       for (size_t i = 0; i < param.size(); i++) {
         res += param[i].to_string();
         if (i != param.size() - 1)
           res += ", ";
       }
       res += ") -> ";
-      res += type_data->get_return_type().to_string();
+      res += fn_type.get_return_type().to_string();
 
       return "fn: " + res;
     }
@@ -98,7 +105,8 @@ struct Type {
       return "??";
     case TypeKind::Poisoned:
       return "Poisoned";
-      break;
+    case TypeKind::String:
+      return fmt::format("\"{}\"", std::get<std::string>(type_data));
     }
     sammine_util::abort("Reaching the end of switch case and still cant "
                         "convert to string, blame Jasmine (badumbatish)!!!!!");
