@@ -88,14 +88,14 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
 
   auto id = expect(TokID);
   if (!id) {
-    this->add_error(id->location,
+    this->add_error(record_tok->location,
                     "Failed to parse an identifier after token Record");
     return {nullptr, COMMITTED_NO_MORE_ERROR};
   }
 
   auto left_curly = expect(TokLeftCurly);
   if (!left_curly) {
-    this->add_error(left_curly->location,
+    this->add_error(record_tok->location | id->location,
                     fmt::format("Failed to parse the left curly braces for "
                                 "record definition after identifier {}",
                                 id->lexeme));
@@ -119,7 +119,7 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
       if (!expect(TokComma)) {
         this->add_error(
             member->get_location(),
-            fmt::format("Failed to parse a Semi colon after the Identifier {}",
+            fmt::format("Failed to parse a colon after the Identifier {}",
                         member->name));
         return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
                 COMMITTED_NO_MORE_ERROR};
@@ -141,10 +141,26 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
 
   auto right_curly = expect(TokRightCurly);
   if (!right_curly) {
-    this->add_error(right_curly->location,
-                    fmt::format("Failed to parse the right curly braces at the "
-                                "end of record {} definition",
-                                record_tok->lexeme));
+    // pick the error location
+    auto err_loc = record_members.empty()
+                       ? left_curly->location
+                       : record_members.back()->get_location();
+
+    // build the message
+    auto msg = fmt::format("Failed to parse the right curly braces at end of "
+                           "record '{}' definition, "
+                           "after identifier '{}'",
+                           record_tok->lexeme, record_members.back()->name);
+
+    // In the case there's no members in the Record
+    if (record_members.empty()) {
+      msg = fmt::format("Failed to parse the right curly braces at end of "
+                        "record '{}' definition",
+                        record_tok->lexeme);
+    }
+
+    this->add_error(err_loc, msg);
+
     return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
             COMMITTED_NO_MORE_ERROR};
   }
@@ -152,6 +168,7 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
   return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
           SUCCESS};
 }
+
 auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   // this is for extern
   if (auto extern_fn = expect(TokenType::TokExtern)) {
