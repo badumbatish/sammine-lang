@@ -124,6 +124,8 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
         return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
                 COMMITTED_NO_MORE_ERROR};
       }
+
+      [[fallthrough]];
     }
 
     case NONCOMMITTED:
