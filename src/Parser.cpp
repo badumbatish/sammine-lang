@@ -55,6 +55,7 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
   using ParseFunction = std::function<p<DefinitionAST>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
       {&Parser::ParseFuncDef, false},
+      {&Parser::ParseRecordDef, false},
   };
 
   for (auto [fn, required] : ParseFunctions) {
@@ -80,19 +81,56 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
 }
 
 auto Parser::ParseRecordDef() -> p<DefinitionAST> {
-  auto record_tok = expect(TokRecord);
+  auto record_tok = expect(TokenType::TokRecord);
   if (!record_tok)
     return {nullptr, NONCOMMITTED};
-  auto id = expect(TokID);
 
+  auto id = expect(TokenType::TokID);
   if (!id) {
-
     this->add_error(record_tok->location,
                     "Failed to parse an identifier after token Record");
     return {nullptr, COMMITTED_NO_MORE_ERROR};
   }
-  // Julius continue from here :)
-  sammine_util::abort();
+
+  auto left_curly = expect(TokenType::TokLeftCurly);
+  if (!left_curly) {
+    this->add_error(record_tok->location,
+                    "Failed to parse an Left parenthesis after token Id");
+    return {nullptr, COMMITTED_NO_MORE_ERROR};
+  }
+
+  std::vector<std::unique_ptr<TypedVarAST>> record_members;
+  while (!tokStream->isEnd() &&
+         tokStream->peek()->tok_type != TokenType::TokRightCurly) {
+    auto [member, report] = ParseTypedVar();
+    if (report == SUCCESS) {
+      record_members.push_back(std::move(member));
+      if (!expect(TokenType::TokSemiColon)) {
+        this->add_error(record_tok->location,
+                        "Failed to parse an Semi colon after the Variable");
+        return {nullptr, COMMITTED_NO_MORE_ERROR};
+      }
+    }
+
+    else if (report == NONCOMMITTED) {
+      // probably end of the body
+      break;
+    } else {
+      this->add_error(record_tok->location, "Failed to parse record");
+      return {nullptr, COMMITTED_NO_MORE_ERROR};
+    }
+  }
+
+  if (!expect(TokenType::TokRightCurly)) {
+    this->add_error(record_tok->location,
+                    "Failed to parse an Semi colon after the Variable");
+    return {nullptr, COMMITTED_NO_MORE_ERROR};
+  }
+
+  auto rec = std::make_unique<RecordDefAST>(id, std::move(record_members));
+  return {std::move(rec), SUCCESS};
+
+  sammine_util::abort("Should not happen in ParseRecordDef");
 }
 auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   // this is for extern
