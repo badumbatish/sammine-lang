@@ -121,9 +121,10 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
     }
   }
 
-  if (!expect(TokenType::TokRightCurly)) {
+  auto right_curly = expect(TokenType::TokRightCurly);
+  if (!right_curly) {
     this->add_error(record_tok->location,
-                    "Failed to parse an Semi colon after the Variable");
+                    "Failed to parse '}' at the end");
     return {nullptr, COMMITTED_NO_MORE_ERROR};
   }
 
