@@ -63,8 +63,8 @@ enum TokenType {
   TokLet,    // let
   TokExtern, // extern
   // TokID
-  TokID, // Representing an identifier
-
+  TokID,  // Representing an identifier
+  TokStr, // Representing a string
   // TokNum
   TokNum,   // Representing a number
   TokTrue,  // Representing a boolean true

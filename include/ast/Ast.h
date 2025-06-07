@@ -272,6 +272,27 @@ public:
     return visitor->synthesize(this);
   }
 };
+class StringExprAST : public ExprAST {
+public:
+  std::string string_content;
+
+  explicit StringExprAST(std::shared_ptr<Token> t) {
+    assert(t);
+    join_location(t);
+    string_content = t->lexeme;
+  }
+  virtual std::string getTreeName() override { return "StringExprAST"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+};
 
 class BoolExprAST : public ExprAST {
 public:

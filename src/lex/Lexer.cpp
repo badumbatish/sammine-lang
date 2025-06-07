@@ -49,12 +49,24 @@ Lexer::Lexer(const std::string &input) : Lexer() {
 }
 
 size_t Lexer::handleID(size_t i, const std::string &input) {
-  if (isalpha(input[i])) { // identifier: [a-zA-Z][a-zA-Z0-9]*
+  if (input[i] == '\"') {
+    std::string str = "";
+    i = advance(i);
+    while (input[i] != '\"') {
+      str += input[i];
+      i = advance(i);
+    }
+    i = advance(i);
+    tokStream->push_back({TokStr, str, location});
+    return i;
+  }
+  if (isalpha(input[i]) or
+      (input[i] == '_')) { // identifier: [a-zA-Z][a-zA-Z0-9]*
     std::string IdentifierStr;
     IdentifierStr = input[i];
 
     i = advance(i);
-    while (isalnum(input[i])) {
+    while (isalnum(input[i]) or (input[i] == '_')) {
       IdentifierStr += input[i];
       i = advance(i);
     }

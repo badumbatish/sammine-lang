@@ -67,6 +67,7 @@ public:
   virtual void preorder_walk(ReturnExprAST *ast) override;
   virtual void preorder_walk(BinaryExprAST *ast) override;
   virtual void preorder_walk(NumberExprAST *ast) override;
+  virtual void preorder_walk(StringExprAST *ast) override;
   virtual void preorder_walk(BoolExprAST *ast) override;
   virtual void preorder_walk(VariableExprAST *ast) override;
   virtual void preorder_walk(BlockAST *ast) override;
@@ -84,6 +85,7 @@ public:
   virtual void postorder_walk(ReturnExprAST *ast) override;
   virtual void postorder_walk(BinaryExprAST *ast) override;
   virtual void postorder_walk(NumberExprAST *ast) override;
+  virtual void postorder_walk(StringExprAST *ast) override;
   virtual void postorder_walk(BoolExprAST *ast) override;
   virtual void postorder_walk(VariableExprAST *ast) override;
   virtual void postorder_walk(BlockAST *ast) override;
@@ -100,6 +102,7 @@ public:
   virtual Type synthesize(ReturnExprAST *ast) override;
   virtual Type synthesize(BinaryExprAST *ast) override;
   virtual Type synthesize(NumberExprAST *ast) override;
+  virtual Type synthesize(StringExprAST *ast) override;
   virtual Type synthesize(BoolExprAST *ast) override;
   virtual Type synthesize(VariableExprAST *ast) override;
   virtual Type synthesize(BlockAST *ast) override;

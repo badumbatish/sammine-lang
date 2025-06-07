@@ -5,6 +5,7 @@
 #pragma once
 #include "ast/AstDecl.h"
 #include "lex/Lexer.h"
+#include "lex/Token.h"
 #include "typecheck/Types.h"
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
@@ -62,6 +63,10 @@ public:
   virtual void visit(NumberExprAST *ast);
   virtual void preorder_walk(NumberExprAST *ast) = 0;
   virtual void postorder_walk(NumberExprAST *ast) = 0;
+
+  virtual void visit(StringExprAST *ast);
+  virtual void preorder_walk(StringExprAST *ast) = 0;
+  virtual void postorder_walk(StringExprAST *ast) = 0;
 
   virtual void visit(BoolExprAST *ast);
   virtual void preorder_walk(BoolExprAST *ast) = 0;
@@ -147,6 +152,7 @@ public:
   virtual Type synthesize(ReturnExprAST *ast) = 0;
   virtual Type synthesize(BinaryExprAST *ast) = 0;
   virtual Type synthesize(NumberExprAST *ast) = 0;
+  virtual Type synthesize(StringExprAST *ast) = 0;
   virtual Type synthesize(BoolExprAST *ast) = 0;
   virtual Type synthesize(VariableExprAST *ast) = 0;
   virtual Type synthesize(BlockAST *ast) = 0;

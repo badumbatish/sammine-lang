@@ -3,7 +3,7 @@ find_package(Catch2 3 REQUIRED)
 
 file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
-set(lib_source Lexer Parser Utilities Ast ScopeGeneratorVisitor BiTypeChecker Types fmt::fmt)
+set(lib_source Lexer Parser util _ast typecheck fmt::fmt)
 
 add_executable(tests)
 target_sources(tests PRIVATE ${test_sources})
