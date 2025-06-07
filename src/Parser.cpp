@@ -119,7 +119,7 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
       if (!expect(TokComma)) {
         this->add_error(
             member->get_location(),
-            fmt::format("Failed to parse a colon after the Identifier {}",
+            fmt::format("Failed to parse a comma after the Identifier {}",
                         member->name));
         return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
                 COMMITTED_NO_MORE_ERROR};
