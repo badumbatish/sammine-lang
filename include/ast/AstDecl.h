@@ -8,6 +8,7 @@ class DefinitionAST;
 class VarDefAST;
 class ExternAST;
 class FuncDefAST;
+class RecordDefAST;
 class PrototypeAST;
 class TypedVarAST;
 class Stmt;

@@ -1,6 +1,7 @@
 
 #include "parser/Parser.h"
 #include "ast/Ast.h"
+#include "fmt/format.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
 #include <cstdlib>
@@ -55,6 +56,7 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
   using ParseFunction = std::function<p<DefinitionAST>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
       {&Parser::ParseFuncDef, false},
+      {&Parser::ParseRecordDef, false},
   };
 
   for (auto [fn, required] : ParseFunctions) {
@@ -79,10 +81,99 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
   sammine_util::abort("Should not happen in ParseDefinition()");
 }
 
+auto Parser::ParseRecordDef() -> p<DefinitionAST> {
+  auto record_tok = expect(TokRecord);
+  if (!record_tok)
+    return {nullptr, NONCOMMITTED};
+
+  auto id = expect(TokID);
+  if (!id) {
+    this->add_error(record_tok->location,
+                    "Failed to parse an identifier after token Record");
+    return {nullptr, COMMITTED_NO_MORE_ERROR};
+  }
+
+  auto left_curly = expect(TokLeftCurly);
+  if (!left_curly) {
+    this->add_error(record_tok->location | id->location,
+                    fmt::format("Failed to parse the left curly braces for "
+                                "record definition after identifier {}",
+                                id->lexeme));
+    return {nullptr, COMMITTED_NO_MORE_ERROR};
+  }
+
+  std::vector<std::unique_ptr<TypedVarAST>> record_members;
+  while (!tokStream->isEnd()) {
+    auto [member, result] = ParseTypedVar();
+    switch (result) {
+    case SUCCESS: {
+      record_members.push_back(std::move(member));
+      // TODO:
+      // Later in the future we have to find a way to compose Record
+      // where the last member not needing a comma(,)
+      //
+      // name_1 is last in this case `Record id { name_1 };`
+      // name_2 is last in this case `Record id { name_1, name_2 };`
+      //
+      // for now we'll stick to `Record id { name_1, name_2, };`
+      if (!expect(TokComma)) {
+        this->add_error(
+            member->get_location(),
+            fmt::format("Failed to parse a comma after the Identifier {}",
+                        member->name));
+        return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+                COMMITTED_NO_MORE_ERROR};
+      }
+
+      [[fallthrough]];
+    }
+
+    case NONCOMMITTED:
+    case COMMITTED_NO_MORE_ERROR:
+
+    case COMMITTED_EMIT_MORE_ERROR: {
+      this->add_error(
+          record_tok->location,
+          fmt::format("Failed to parse record {}", record_tok->lexeme));
+      return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+              COMMITTED_NO_MORE_ERROR};
+    } break;
+    }
+  }
+
+  auto right_curly = expect(TokRightCurly);
+  if (!right_curly) {
+    // pick the error location
+    auto err_loc = record_members.empty()
+                       ? left_curly->location
+                       : record_members.back()->get_location();
+
+    // build the message
+    auto msg = fmt::format("Failed to parse the right curly braces at end of "
+                           "record '{}' definition, "
+                           "after identifier '{}'",
+                           record_tok->lexeme, record_members.back()->name);
+
+    // In the case there's no members in the Record
+    if (record_members.empty()) {
+      msg = fmt::format("Failed to parse the right curly braces at end of "
+                        "record '{}' definition",
+                        record_tok->lexeme);
+    }
+
+    this->add_error(err_loc, msg);
+
+    return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+            COMMITTED_NO_MORE_ERROR};
+  }
+
+  return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+          SUCCESS};
+}
+
 auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   // this is for extern
-  auto extern_fn = expect(TokenType::TokExtern);
-  if (extern_fn) {
+  if (auto extern_fn = expect(TokenType::TokExtern)) {
 
     auto [prototype, result] = ParsePrototype();
     switch (result) {

@@ -49,6 +49,7 @@ void ScopeGeneratorVisitor::preorder_walk(VarDefAST *ast) {
 }
 void ScopeGeneratorVisitor::preorder_walk(ExternAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(FuncDefAST *ast) {}
+void ScopeGeneratorVisitor::preorder_walk(RecordDefAST *ast) {}
 void ScopeGeneratorVisitor::preorder_walk(PrototypeAST *ast) {
   // get previous scope and register the function name
 
@@ -77,6 +78,7 @@ void ScopeGeneratorVisitor::postorder_walk(ProgramAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(VarDefAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(ExternAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(FuncDefAST *ast) {}
+void ScopeGeneratorVisitor::postorder_walk(RecordDefAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(PrototypeAST *ast) {}
 void ScopeGeneratorVisitor::postorder_walk(CallExprAST *ast) {
 

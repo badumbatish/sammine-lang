@@ -47,6 +47,8 @@ public:
   auto ParseFuncDef() -> p<DefinitionAST>;
   [[nodiscard]]
   auto ParseVarDef() -> p<ExprAST>;
+  [[nodiscard]]
+  auto ParseRecordDef() -> p<DefinitionAST>;
 
   // Parse type
   [[nodiscard]]

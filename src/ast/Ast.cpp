@@ -23,6 +23,10 @@ void ASTVisitor::visit(ExternAST *ast) {
   ast->Prototype->accept_vis(this);
   ast->walk_with_postorder(this);
 }
+void ASTVisitor::visit(RecordDefAST *ast) {
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+}
 
 void ASTVisitor::visit(FuncDefAST *ast) {
   ast->walk_with_preorder(this);
@@ -75,7 +79,11 @@ void ASTVisitor::visit(VariableExprAST *ast) {
 }
 
 void ASTVisitor::visit(IfExprAST *ast) {
+
   ast->walk_with_preorder(this);
+  ast->bool_expr->accept_vis(this);
+  ast->thenBlockAST->accept_vis(this);
+  ast->elseBlockAST->accept_vis(this);
   ast->walk_with_postorder(this);
 }
 
@@ -99,26 +107,6 @@ void ASTVisitor::visit(TypedVarAST *ast) {
 
 // -------------------------------------------------------
 ScopedASTVisitor::~ScopedASTVisitor() {}
-void ScopedASTVisitor::visit(ProgramAST *ast) {
-  ast->walk_with_preorder(this);
-  for (auto &def : ast->DefinitionVec) {
-    def->accept_vis(this);
-  }
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(VarDefAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->TypedVar->accept_vis(this);
-  ast->Expression->accept_vis(this);
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(ExternAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->Prototype->accept_vis(this);
-  ast->walk_with_postorder(this);
-}
 
 void ScopedASTVisitor::visit(FuncDefAST *ast) {
   this->enter_new_scope();
@@ -127,65 +115,6 @@ void ScopedASTVisitor::visit(FuncDefAST *ast) {
   ast->Block->accept_vis(this);
   ast->walk_with_postorder(this);
   this->exit_new_scope();
-}
-
-void ScopedASTVisitor::visit(PrototypeAST *ast) {
-  ast->walk_with_preorder(this);
-  for (auto &var : ast->parameterVectors) {
-    var->accept_vis(this);
-  }
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(CallExprAST *ast) {
-  ast->walk_with_preorder(this);
-  for (auto &arg : ast->arguments) {
-    arg->accept_vis(this);
-  }
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(BinaryExprAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->LHS->accept_vis(this);
-  ast->RHS->accept_vis(this);
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(NumberExprAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(VariableExprAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(IfExprAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->bool_expr->accept_vis(this);
-  ast->thenBlockAST->accept_vis(this);
-  ast->elseBlockAST->accept_vis(this);
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(BoolExprAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(BlockAST *ast) {
-  ast->walk_with_preorder(this);
-  for (auto &stmt : ast->Statements) {
-    stmt->accept_vis(this);
-  }
-  ast->walk_with_postorder(this);
-}
-
-void ScopedASTVisitor::visit(TypedVarAST *ast) {
-  ast->walk_with_preorder(this);
-  ast->walk_with_postorder(this);
 }
 
 TypeCheckerVisitor::~TypeCheckerVisitor() {}

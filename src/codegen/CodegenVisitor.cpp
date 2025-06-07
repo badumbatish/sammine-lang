@@ -72,6 +72,7 @@ void CgVisitor::postorder_walk(VarDefAST *ast) {
     resPtr->Builder->CreateStore(ast->Expression->val, alloca);
   }
 }
+void CgVisitor::preorder_walk(RecordDefAST *ast) {}
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
   sammine_util::abort_if_not(resPtr);
@@ -97,6 +98,7 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
   }
   return;
 }
+void CgVisitor::postorder_walk(RecordDefAST *ast) {}
 void CgVisitor::postorder_walk(FuncDefAST *ast) {
   // TODO: A function should return the last expression (only float for now)
   auto not_verified = verifyFunction(*getCurrentFunction(), &llvm::errs());
