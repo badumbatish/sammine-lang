@@ -1,6 +1,7 @@
 
 #include "parser/Parser.h"
 #include "ast/Ast.h"
+#include "fmt/format.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
 #include <cstdlib>
@@ -81,57 +82,75 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
 }
 
 auto Parser::ParseRecordDef() -> p<DefinitionAST> {
-  auto record_tok = expect(TokenType::TokRecord);
+  auto record_tok = expect(TokRecord);
   if (!record_tok)
     return {nullptr, NONCOMMITTED};
 
-  auto id = expect(TokenType::TokID);
+  auto id = expect(TokID);
   if (!id) {
-    this->add_error(record_tok->location,
+    this->add_error(id->location,
                     "Failed to parse an identifier after token Record");
     return {nullptr, COMMITTED_NO_MORE_ERROR};
   }
 
-  auto left_curly = expect(TokenType::TokLeftCurly);
+  auto left_curly = expect(TokLeftCurly);
   if (!left_curly) {
-    this->add_error(record_tok->location,
-                    "Failed to parse an Left parenthesis after token Id");
+    this->add_error(left_curly->location,
+                    fmt::format("Failed to parse the left curly braces for "
+                                "record definition after identifier {}",
+                                id->lexeme));
     return {nullptr, COMMITTED_NO_MORE_ERROR};
   }
 
   std::vector<std::unique_ptr<TypedVarAST>> record_members;
-  while (!tokStream->isEnd() &&
-         tokStream->peek()->tok_type != TokenType::TokRightCurly) {
-    auto [member, report] = ParseTypedVar();
-    if (report == SUCCESS) {
+  while (!tokStream->isEnd()) {
+    auto [member, result] = ParseTypedVar();
+    switch (result) {
+    case SUCCESS: {
       record_members.push_back(std::move(member));
-      if (!expect(TokenType::TokSemiColon)) {
-        this->add_error(record_tok->location,
-                        "Failed to parse an Semi colon after the Variable");
-        return {nullptr, COMMITTED_NO_MORE_ERROR};
+      // TODO:
+      // Later in the future we have to find a way to compose Record
+      // where the last member not needing a comma(,)
+      //
+      // name_1 is last in this case `Record id { name_1 };`
+      // name_2 is last in this case `Record id { name_1, name_2 };`
+      //
+      // for now we'll stick to `Record id { name_1, name_2, };`
+      if (!expect(TokComma)) {
+        this->add_error(
+            member->get_location(),
+            fmt::format("Failed to parse a Semi colon after the Identifier {}",
+                        member->name));
+        return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+                COMMITTED_NO_MORE_ERROR};
       }
     }
 
-    else if (report == NONCOMMITTED) {
-      // probably end of the body
-      break;
-    } else {
-      this->add_error(record_tok->location, "Failed to parse record");
-      return {nullptr, COMMITTED_NO_MORE_ERROR};
+    case NONCOMMITTED:
+    case COMMITTED_NO_MORE_ERROR:
+
+    case COMMITTED_EMIT_MORE_ERROR: {
+      this->add_error(
+          record_tok->location,
+          fmt::format("Failed to parse record {}", record_tok->lexeme));
+      return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+              COMMITTED_NO_MORE_ERROR};
+    } break;
     }
   }
 
-  auto right_curly = expect(TokenType::TokRightCurly);
+  auto right_curly = expect(TokRightCurly);
   if (!right_curly) {
-    this->add_error(record_tok->location,
-                    "Failed to parse '}' at the end");
-    return {nullptr, COMMITTED_NO_MORE_ERROR};
+    this->add_error(right_curly->location,
+                    fmt::format("Failed to parse the right curly braces at the "
+                                "end of record {} definition",
+                                record_tok->lexeme));
+    return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+            COMMITTED_NO_MORE_ERROR};
   }
 
-  auto rec = std::make_unique<RecordDefAST>(id, std::move(record_members));
-  return {std::move(rec), SUCCESS};
-
-  sammine_util::abort("Should not happen in ParseRecordDef");
+  return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
+          SUCCESS};
 }
 auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   // this is for extern
