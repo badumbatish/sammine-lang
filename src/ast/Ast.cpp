@@ -64,6 +64,10 @@ void ASTVisitor::visit(NumberExprAST *ast) {
   ast->walk_with_preorder(this);
   ast->walk_with_postorder(this);
 }
+void ASTVisitor::visit(StringExprAST *ast) {
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+}
 
 void ASTVisitor::visit(VariableExprAST *ast) {
   ast->walk_with_preorder(this);

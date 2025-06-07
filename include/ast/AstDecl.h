@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include <string>
 namespace sammine_lang {
 namespace AST {
@@ -17,6 +16,7 @@ class CallExprAST;
 class ReturnExprAST;
 class BinaryExprAST;
 class NumberExprAST;
+class StringExprAST;
 class BoolExprAST;
 class VariableExprAST;
 class BlockAST;

@@ -4,7 +4,6 @@
 
 #include "codegen/CodegenVisitor.h"
 #include "ast/Ast.h"
-#include "fmt/format.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
 #include "llvm/IR/Constants.h"
@@ -15,9 +14,6 @@
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
 #include <cstdlib>
-#include <random>
-#include <ranges>
-#include <utility>
 namespace sammine_lang::AST {
 using llvm::BasicBlock;
 
@@ -37,6 +33,10 @@ llvm::AllocaInst *CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
 }
 
 llvm::Function *CgVisitor::getCurrentFunction() { return this->current_func; }
+void CgVisitor::enter_new_scope() {
+  allocaValues.push(std::map<std::string, llvm::AllocaInst *>());
+}
+void CgVisitor::exit_new_scope() { allocaValues.pop(); }
 
 void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
 
@@ -244,6 +244,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
   return;
 }
 
+void CgVisitor::preorder_walk(StringExprAST *ast) {}
 void CgVisitor::preorder_walk(NumberExprAST *ast) {
   switch (ast->type.type_kind) {
   case TypeKind::I64_t:
@@ -259,8 +260,8 @@ void CgVisitor::preorder_walk(NumberExprAST *ast) {
   case TypeKind::Function:
   case TypeKind::NonExistent:
   case TypeKind::Poisoned:
+  case TypeKind::String:
     sammine_util::abort(".....");
-    break;
   }
   sammine_util::abort_if_not(ast->val, "cannot generate number");
 }
@@ -319,7 +320,12 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
         "ifcond_bool");
     break;
   case TypeKind::Function:
-    sammine_util::abort("Invalid syntax for now");
+    sammine_util::abort(
+        "Invalid syntax for now, typechecker should caught this function");
+    break;
+  case TypeKind::String:
+    sammine_util::abort(
+        "Cannot turn str to boolean, typecheck should have caught this string");
     break;
   }
 

@@ -1,6 +1,7 @@
 
 #include "parser/Parser.h"
 #include "ast/Ast.h"
+#include "lex/Token.h"
 #include "util/Utilities.h"
 #include <cstdlib>
 #include <functional>
@@ -240,6 +241,7 @@ auto Parser::ParsePrimaryExpr() -> p<ExprAST> {
       {&Parser::ParseNumberExpr, "NumberExpr"},
       {&Parser::ParseBoolExpr, "BoolExpr"},
       {&Parser::ParseVariableExpr, "VariableExpr"},
+      {&Parser::ParseStringExpr, "StringExpr"},
   };
 
   for (auto [fn, fn_name] : ParseFunctions) {
@@ -257,10 +259,8 @@ auto Parser::ParsePrimaryExpr() -> p<ExprAST> {
       break;
     }
 
-    if (fn_name == ParseFunctions.back().second) {
+    if (fn_name == ParseFunctions.back().second)
       return {nullptr, NONCOMMITTED};
-    } else
-      continue;
   }
   sammine_util::abort("Should not happen in ParsePrimaryExpr");
 }
@@ -452,6 +452,12 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
             COMMITTED_NO_MORE_ERROR};
   }
   sammine_util::abort("Should not happen");
+}
+auto Parser::ParseStringExpr() -> p<ExprAST> {
+  if (auto tok_str = expect(TokStr)) {
+    return {std::make_unique<StringExprAST>(tok_str), SUCCESS};
+  }
+  return {nullptr, NONCOMMITTED};
 }
 auto Parser::ParseNumberExpr() -> p<ExprAST> {
 
