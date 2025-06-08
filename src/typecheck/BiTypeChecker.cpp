@@ -80,10 +80,37 @@ void BiTypeCheckerVisitor::postorder_walk(TypedVarAST *ast) {}
 Type BiTypeCheckerVisitor::synthesize(ProgramAST *ast) {
   return Type::NonExistent();
 }
+
 Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
   if (ast->synthesized())
     return ast->type;
-  return ast->type = ast->TypedVar->accept_synthesis(this);
+
+  Type init_type;
+  if (ast->Expression) {
+    init_type = ast->Expression->accept_synthesis(this);
+  } else {
+    this->add_error(
+        ast->get_location(),
+        "Variable declared without initializer; defaulting to Unit");
+    ast->type = Type::Poisoned();
+    return ast->type = ast->TypedVar->accept_synthesis(this);
+  }
+
+  Type declared_type;
+  if (!ast->TypedVar->type_lexeme.empty()) {
+    declared_type = ast->TypedVar->accept_synthesis(this);
+  } else {
+    declared_type = init_type;
+    ast->TypedVar->type = declared_type;
+    ast->TypedVar->type.is_checked = true;
+  }
+
+  id_to_type.registerNameT(ast->TypedVar->name, declared_type);
+
+  ast->type = declared_type;
+  ast->type.is_checked = true;
+
+  return ast->type;
 }
 
 Type BiTypeCheckerVisitor::synthesize(ExternAST *ast) {
