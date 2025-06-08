@@ -88,14 +88,14 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
 
   auto id = expect(TokID);
   if (!id) {
-    this->add_error(record_tok->location,
+    this->add_error(record_tok->get_location(),
                     "Failed to parse an identifier after token Record");
     return {nullptr, COMMITTED_NO_MORE_ERROR};
   }
 
   auto left_curly = expect(TokLeftCurly);
   if (!left_curly) {
-    this->add_error(record_tok->location | id->location,
+    this->add_error(record_tok->get_location() | id->get_location(),
                     fmt::format("Failed to parse the left curly braces for "
                                 "record definition after identifier {}",
                                 id->lexeme));
@@ -133,7 +133,7 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
 
     case COMMITTED_EMIT_MORE_ERROR: {
       this->add_error(
-          record_tok->location,
+          record_tok->get_location(),
           fmt::format("Failed to parse record {}", record_tok->lexeme));
       return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
               COMMITTED_NO_MORE_ERROR};
@@ -145,7 +145,7 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
   if (!right_curly) {
     // pick the error location
     auto err_loc = record_members.empty()
-                       ? left_curly->location
+                       ? left_curly->get_location()
                        : record_members.back()->get_location();
 
     // build the message
@@ -317,7 +317,7 @@ auto Parser::ParseTypedVar() -> p<TypedVarAST> {
   // `let x : ;` should let user know that we don't fuck around and correct
   // them to `let x : f64;` or `let x : T` for some specific T
   if (!type) {
-    this->error("Expected type name after token `:`", colon->location);
+    this->error("Expected type name after token `:`", colon->get_location());
     return std::make_pair(std::make_unique<TypedVarAST>(name, type),
                           COMMITTED_NO_MORE_ERROR);
   }
@@ -398,7 +398,7 @@ auto Parser::ParseBinaryExpr(int precedence, u<ExprAST> LHS) -> p<ExprAST> {
     auto [RHS, right_result] = ParsePrimaryExpr();
     if (right_result != SUCCESS) {
       this->error("Expected right-hand side expression after binary operator",
-                  binOpToken->location);
+                  binOpToken->get_location());
       return {nullptr, COMMITTED_NO_MORE_ERROR};
     }
 
@@ -410,7 +410,7 @@ auto Parser::ParseBinaryExpr(int precedence, u<ExprAST> LHS) -> p<ExprAST> {
           ParseBinaryExpr(TokPrec + 1, std::move(RHS));
       if (right_result != SUCCESS) {
         this->error("Failed to parse nested right-hand binary expression",
-                    binOpToken->location);
+                    binOpToken->get_location());
         return {nullptr, right_result};
       }
     }
@@ -446,7 +446,7 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
   auto semi = expect(TokenType::TokSemiColon);
   if (!semi) {
     this->error("Missing the semicolon for the return statement",
-                return_tok->location);
+                return_tok->get_location());
     return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
             COMMITTED_NO_MORE_ERROR};
   }
@@ -468,7 +468,7 @@ auto Parser::ParseCallExpr() -> p<ExprAST> {
     return {std::make_unique<VariableExprAST>(id), SUCCESS};
   case COMMITTED_EMIT_MORE_ERROR:
     this->error("Failed to parse arguments for call expression rule",
-                id->location);
+                id->get_location());
     [[fallthrough]];
   case COMMITTED_NO_MORE_ERROR:
     return {std::make_unique<CallExprAST>(id, std::move(args)),
@@ -497,7 +497,7 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
   case NONCOMMITTED:
     this->error(
         "Failed to parse the predicate of if expression after the token `if`",
-        if_tok->location);
+        if_tok->get_location());
     return {std::make_unique<IfExprAST>(std::move(cond), nullptr, nullptr),
             COMMITTED_NO_MORE_ERROR};
   }
@@ -535,7 +535,7 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
     [[fallthrough]];
   case NONCOMMITTED:
     this->error("Failed to parse the `else block` after the `else` token",
-                else_tok->location);
+                else_tok->get_location());
     [[fallthrough]];
   case COMMITTED_NO_MORE_ERROR:
     return {std::make_unique<IfExprAST>(std::move(cond), std::move(then_block),
@@ -561,11 +561,13 @@ auto Parser::ParseNumberExpr() -> p<ExprAST> {
 auto Parser::ParseBoolExpr() -> p<ExprAST> {
 
   if (auto true_tok = expect(TokenType::TokTrue)) {
-    return {std::make_unique<BoolExprAST>(true, true_tok->location), SUCCESS};
+    return {std::make_unique<BoolExprAST>(true, true_tok->get_location()),
+            SUCCESS};
   }
 
   if (auto false_tok = expect(TokenType::TokFalse)) {
-    return {std::make_unique<BoolExprAST>(false, false_tok->location), SUCCESS};
+    return {std::make_unique<BoolExprAST>(false, false_tok->get_location()),
+            SUCCESS};
   }
 
   return {nullptr, NONCOMMITTED};
@@ -593,7 +595,7 @@ auto Parser::ParsePrototype() -> p<PrototypeAST> {
         fmt::format("Failed to parse the parameters in a function's prototype "
                     "after identifier `{}`",
                     id->lexeme),
-        id->location);
+        id->get_location());
     [[fallthrough]];
   case COMMITTED_NO_MORE_ERROR:
     return {nullptr, COMMITTED_NO_MORE_ERROR};
@@ -607,7 +609,7 @@ auto Parser::ParsePrototype() -> p<PrototypeAST> {
             SUCCESS};
   else {
     this->error("Failed to parse the return type after the token `->`",
-                arrow->location);
+                arrow->get_location());
     return {std::make_unique<PrototypeAST>(id, returnType, std::move(params)),
             COMMITTED_EMIT_MORE_ERROR};
   }

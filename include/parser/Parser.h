@@ -16,13 +16,13 @@ using namespace AST;
 using namespace sammine_util;
 class Parser : public Reportee {
 
-  void error(const std::string &msg, Location loc = Location(-1, -1)) {
+  void error(const std::string &msg, Location loc = Location::NonPrintable()) {
     if (reporter.has_value()) {
       reporter->get().immediate_error(msg, loc);
     }
     has_error = true;
   }
-  void diag(const std::string &msg, Location loc = Location(-1, -1)) {
+  void diag(const std::string &msg, Location loc = Location::NonPrintable()) {
     if (reporter.has_value()) {
       reporter->get().immediate_diag(msg, loc);
     }

@@ -164,7 +164,7 @@ public:
            tok_type == TokEQUAL;
   }
   bool is_logical() { return tok_type == TokOR || tok_type == TokAND; }
-  operator Location() { return location; }
+  Location get_location() const { return this->location; }
 };
 
 //! A helper class for Lexer to simplify the process of getting a token.
@@ -221,7 +221,7 @@ public:
 
   sammine_util::Location currentLocation() {
     if (!TokStream.empty()) {
-      return TokStream[current_index]->location;
+      return TokStream[current_index]->get_location();
     }
     return {};
   }
