@@ -41,8 +41,10 @@ void abort_if_not(const T &condition,
 //! A class representing a location for sammine-lang, this is helpful in
 //! debugging
 
-//! .
-//! .
+//! The default constructor gives 0,0.
+//! When we don't want the Reporter to print out anything, construct it with
+//! NonPrintableLocation
+//!
 class Location {
 public:
   // True location in original source code string
@@ -50,7 +52,7 @@ public:
 
   // Default constructor
   Location() : source_start(0), source_end(0) {}
-
+  static Location NonPrintable() { return Location(-1, -1); }
   Location(int64_t source_start, int64_t source_end)
       : source_start(source_start), source_end(source_end) {}
 

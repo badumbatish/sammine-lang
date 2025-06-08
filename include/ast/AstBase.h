@@ -178,7 +178,7 @@ class AstBase : public Visitable {
       this->location = loc;
       first_location = false;
     } else
-      this->location |= loc;
+      this->get_location() |= loc;
   }
 
   bool first_location = true;
@@ -195,7 +195,7 @@ public:
     if (!ast)
       pe = true;
     else
-      change_location(ast->location);
+      change_location(ast->get_location());
 
     return this;
   }
@@ -205,10 +205,11 @@ public:
     if (!tok)
       pe = true;
     else
-      change_location(tok->location);
+      change_location(tok->get_location());
 
     return this;
   }
+
   AstBase *join_location(sammine_util::Location location) {
     if (location.source_start <= 0 && location.source_end <= 0)
       return this;
