@@ -311,9 +311,7 @@ void AstPrinterVisitor::postorder_walk(ProgramAST *ast) {
 void AstPrinterVisitor::postorder_walk(VarDefAST *ast) {}
 void AstPrinterVisitor::postorder_walk(ExternAST *ast) {}
 void AstPrinterVisitor::postorder_walk(FuncDefAST *ast) {}
-void AstPrinterVisitor::postorder_walk(RecordDefAST *ast) {
-  this->rep += fmt::format("{}<end record>\n", tabs());
-}
+void AstPrinterVisitor::postorder_walk(RecordDefAST *ast) {}
 
 void AstPrinterVisitor::postorder_walk(PrototypeAST *ast) {}
 void AstPrinterVisitor::postorder_walk(CallExprAST *ast) {}
