@@ -74,10 +74,11 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
       return std::make_pair(std::move(def), COMMITTED_NO_MORE_ERROR);
     }
     case NONCOMMITTED: {
-      return {nullptr, NONCOMMITTED};
+      continue;
     }
     }
   }
+  return {nullptr, NONCOMMITTED};
   sammine_util::abort("Should not happen in ParseDefinition()");
 }
 
@@ -124,21 +125,21 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
         return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
                 COMMITTED_NO_MORE_ERROR};
       }
-
-      [[fallthrough]];
+      continue;
     }
 
     case NONCOMMITTED:
-    case COMMITTED_NO_MORE_ERROR:
-
-    case COMMITTED_EMIT_MORE_ERROR: {
+      break;
+    case COMMITTED_EMIT_MORE_ERROR:
       this->add_error(
           record_tok->get_location(),
           fmt::format("Failed to parse record {}", record_tok->lexeme));
+      [[fallthrough]];
+    case COMMITTED_NO_MORE_ERROR:
       return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
               COMMITTED_NO_MORE_ERROR};
-    } break;
     }
+    break;
   }
 
   auto right_curly = expect(TokRightCurly);
@@ -199,7 +200,7 @@ auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   auto fn = expect(TokenType::TokFunc);
   if (!fn) {
     return std::make_pair(std::make_unique<FuncDefAST>(nullptr, nullptr),
-                          COMMITTED_EMIT_MORE_ERROR);
+                          NONCOMMITTED);
   }
 
   auto [prototype, proto_result] = ParsePrototype();
