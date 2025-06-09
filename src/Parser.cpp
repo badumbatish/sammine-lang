@@ -44,11 +44,14 @@ auto Parser::ParseProgram() -> u<ProgramAST> {
       return programAST;
     }
     case NONCOMMITTED: {
-      return programAST;
+      break;
     }
     }
   }
-
+  if (!tokStream->isEnd()) {
+    this->add_error(Location::NonPrintable(),
+                    "Failed to parse the remaining of file");
+  }
   return programAST;
 }
 
@@ -167,6 +170,10 @@ auto Parser::ParseRecordDef() -> p<DefinitionAST> {
     return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
             COMMITTED_NO_MORE_ERROR};
   }
+  if (!expect(TokSemiColon))
+    this->add_error(right_curly->get_location(),
+                    "Failed to parse semicolon for record "
+                    "definition after right curly braces");
 
   return {std::make_unique<RecordDefAST>(id, std::move(record_members)),
           SUCCESS};
