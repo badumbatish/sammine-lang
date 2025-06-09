@@ -4,6 +4,7 @@
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
 #include <ctime>
+#include <memory>
 namespace sammine_lang::AST {
 // pre order
 void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {
@@ -11,13 +12,17 @@ void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {
   std::string fn_name = "";
   sammine_util::Location loc;
   for (auto &def : ast->DefinitionVec) {
-    if (auto fn_def = static_cast<FuncDefAST *>(def.get())) {
+    if (auto fn_def = dynamic_cast<FuncDefAST *>(def.get())) {
       fn_name = fn_def->Prototype->functionName;
       loc = fn_def->Prototype->get_location();
-    } else if (auto extern_def = static_cast<ExternAST *>(def.get())) {
+    } else if (auto extern_def = dynamic_cast<ExternAST *>(def.get())) {
       fn_name = extern_def->Prototype->functionName;
       loc = extern_def->Prototype->get_location();
-    }
+    } else if (auto record_def = dynamic_cast<RecordDefAST *>(def.get())) {
+      fn_name = record_def->record_name;
+      loc = record_def->get_location();
+    } else
+      sammine_util::abort("Should not be any other def");
 
     if (fn_name != "") {
       if (this->scope_stack.recursiveQueryName(fn_name) == nameNotFound)
