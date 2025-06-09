@@ -1,0 +1,3 @@
+Record test { var: i64, };
+
+fn foo() {}
