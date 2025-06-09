@@ -1,6 +1,7 @@
 #include "ast/Ast.h"
 #include "ast/AstBase.h"
 #include "fmt/base.h"
+#include "fmt/color.h"
 #include "fmt/format.h"
 namespace sammine_lang::AST {
 
@@ -85,7 +86,7 @@ public:
     if (ast)
       ast->accept_vis(this);
     else
-      this->rep += fmt::format("{} {}", tabs(), msg);
+      this->rep += fmt::format("{} !!{}!!", tabs(), msg);
   }
   friend Printable;
 };
@@ -237,8 +238,8 @@ void AstPrinterVisitor::visit(BlockAST *ast) {
 
 void AstPrinterVisitor::generic_preprintln(AstBase *ast) {
   if (ast->pe)
-    this->rep +=
-        fmt::format("{} {} \n", tabs(), ast->getTreeName() + " - ParserError");
+    this->rep += fmt::format("{} {} \n", tabs(),
+                             ast->getTreeName() + " - !!ParserError!!");
   else
     this->rep += fmt::format("{} {} - {}\n", tabs(), ast->getTreeName(),
                              ast->type.to_string());
@@ -246,8 +247,8 @@ void AstPrinterVisitor::generic_preprintln(AstBase *ast) {
 }
 void AstPrinterVisitor::generic_preprint(AstBase *ast) {
   if (ast->pe)
-    this->rep +=
-        fmt::format("{} {} :", tabs(), ast->getTreeName() + " - ParserError");
+    this->rep += fmt::format("{} {} :", tabs(),
+                             ast->getTreeName() + " - !!ParserError!!");
   else
     this->rep += fmt::format("{} {} - {} :", tabs(), ast->getTreeName(),
                              ast->type.to_string());
@@ -318,7 +319,7 @@ void AstPrinterVisitor::postorder_walk(CallExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(ReturnExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(BinaryExprAST *ast) {
   this->rep += fmt::format("{} Operator: \"{}\"", tabs(),
-                           ast->Op ? ast->Op->lexeme : " --- ParserError");
+                           ast->Op ? ast->Op->lexeme : " - !!ParserError!!");
 }
 void AstPrinterVisitor::postorder_walk(NumberExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(StringExprAST *ast) {}
