@@ -55,7 +55,29 @@ void CgVisitor::visit(FuncDefAST *ast) {
   ast->walk_with_postorder(this);
   this->exit_new_scope();
 }
-void CgVisitor::preorder_walk(ProgramAST *ast) {}
+void CgVisitor::preorder_walk(ProgramAST *ast) {
+  // TODO: In the future, we need to move both this function someplace else.
+  //
+  // INFO: To use for both function decl, malloc and printf
+  llvm::PointerType *int8ptr =
+      llvm::PointerType::get(llvm::Type::getInt8Ty(*this->resPtr->Context),
+                             0); // 0 stands for generic address space
+
+  // INFO: malloc, since we're a GC language, duhhhh
+  llvm::FunctionType *MallocType = llvm::FunctionType::get(
+      int8ptr,                                        // return type (i8*)
+      llvm::Type::getInt64Ty(*this->resPtr->Context), // arg: size_t (i64)
+      false);                                         // not variadic
+  resPtr->Module->getOrInsertFunction("malloc", MallocType);
+
+  // INFO: printf (variadic: takes i8* format string, ...)
+  llvm::FunctionType *PrintfType = llvm::FunctionType::get(
+      llvm::Type::getInt32Ty(*this->resPtr->Context), // return type (int)
+      int8ptr,                                        // first arg: i8* (format)
+      true);                                          // variadic
+                                                      //
+  this->resPtr->Module->getOrInsertFunction("printf", PrintfType);
+}
 
 void CgVisitor::preorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
@@ -72,6 +94,7 @@ void CgVisitor::postorder_walk(VarDefAST *ast) {
     resPtr->Builder->CreateStore(ast->Expression->val, alloca);
   }
 }
+void CgVisitor::preorder_walk(ExternAST *ast) {}
 void CgVisitor::preorder_walk(RecordDefAST *ast) {}
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;

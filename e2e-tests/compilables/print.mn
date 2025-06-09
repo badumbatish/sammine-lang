@@ -1,0 +1,4 @@
+fn main() -> unit {
+  # add sth like print here
+  return;
+}
