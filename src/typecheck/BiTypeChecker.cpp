@@ -85,31 +85,22 @@ Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
   if (ast->synthesized())
     return ast->type;
 
-  Type init_type;
-  if (ast->Expression) {
-    init_type = ast->Expression->accept_synthesis(this);
-  } else {
-    this->add_error(
-        ast->get_location(),
-        "Variable declared without initializer; defaulting to Unit");
+  // if you dont have type lexeme for typed var, then just assign type of expr
+  // to typed var, if we dont have expr also, then we add error
+  //
+  // if you do, then just use type lexeme as type of typed var
+
+  if (!ast->TypedVar->type_lexeme.empty())
+    ast->type = ast->TypedVar->accept_synthesis(this);
+  else if (ast->Expression)
+    ast->type = ast->Expression->accept_synthesis(this);
+  else {
+    this->add_error(ast->get_location(),
+                    "Variable declared without initializer");
     ast->type = Type::Poisoned();
-    return ast->type = ast->TypedVar->accept_synthesis(this);
   }
 
-  Type declared_type;
-  if (!ast->TypedVar->type_lexeme.empty()) {
-    declared_type = ast->TypedVar->accept_synthesis(this);
-  } else {
-    declared_type = init_type;
-    ast->TypedVar->type = declared_type;
-    ast->TypedVar->type.is_checked = true;
-  }
-
-  id_to_type.registerNameT(ast->TypedVar->name, declared_type);
-
-  ast->type = declared_type;
-  ast->type.is_checked = true;
-
+  id_to_type.registerNameT(ast->TypedVar->name, ast->type);
   return ast->type;
 }
 
