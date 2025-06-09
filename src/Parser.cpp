@@ -55,8 +55,8 @@ auto Parser::ParseProgram() -> u<ProgramAST> {
 auto Parser::ParseDefinition() -> p<DefinitionAST> {
   using ParseFunction = std::function<p<DefinitionAST>(Parser *)>;
   std::vector<std::pair<ParseFunction, bool>> ParseFunctions = {
-      {&Parser::ParseFuncDef, false},
       {&Parser::ParseRecordDef, false},
+      {&Parser::ParseFuncDef, false},
   };
 
   for (auto [fn, required] : ParseFunctions) {

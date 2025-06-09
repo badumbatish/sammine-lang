@@ -136,10 +136,15 @@ void AstPrinterVisitor::visit(FuncDefAST *ast) {
 
 void AstPrinterVisitor::visit(RecordDefAST *ast) {
   generic_preprintln(ast);
+  this->enter_new_scope();
   ast->walk_with_preorder(this);
+  for (auto &t : ast->record_members)
+    safeguard_visit(t.get(), "nullptr record_members (typed var)");
   ast->walk_with_postorder(this);
+  this->exit_new_scope();
   generic_postprint();
 }
+
 void AstPrinterVisitor::visit(PrototypeAST *ast) {
   generic_preprintln(ast);
   ast->walk_with_preorder(this);
@@ -258,9 +263,11 @@ void AstPrinterVisitor::preorder_walk(ProgramAST *ast) {}
 void AstPrinterVisitor::preorder_walk(VarDefAST *ast) {}
 void AstPrinterVisitor::preorder_walk(ExternAST *ast) {}
 void AstPrinterVisitor::preorder_walk(FuncDefAST *ast) {}
-void AstPrinterVisitor::preorder_walk(RecordDefAST *ast) {}
+void AstPrinterVisitor::preorder_walk(RecordDefAST *ast) {
+  // print the record’s name at the current indent
+  this->rep += fmt::format("{}record_name: \"{}\"\n", tabs(), ast->record_name);
+}
 void AstPrinterVisitor::preorder_walk(PrototypeAST *ast) {
-
   this->rep += fmt::format("{} fn_name: \"{}\"\n", tabs(), ast->functionName);
   this->rep += fmt::format("{} fn_sig: {}\n ", tabs(), ast->type.to_string());
 }
@@ -300,10 +307,14 @@ void AstPrinterVisitor::postorder_walk(ProgramAST *ast) {
 
   fmt::print("{}", this->rep);
 }
+
 void AstPrinterVisitor::postorder_walk(VarDefAST *ast) {}
 void AstPrinterVisitor::postorder_walk(ExternAST *ast) {}
 void AstPrinterVisitor::postorder_walk(FuncDefAST *ast) {}
-void AstPrinterVisitor::postorder_walk(RecordDefAST *ast) {}
+void AstPrinterVisitor::postorder_walk(RecordDefAST *ast) {
+  this->rep += fmt::format("{}<end record>\n", tabs());
+}
+
 void AstPrinterVisitor::postorder_walk(PrototypeAST *ast) {}
 void AstPrinterVisitor::postorder_walk(CallExprAST *ast) {}
 void AstPrinterVisitor::postorder_walk(ReturnExprAST *ast) {}
