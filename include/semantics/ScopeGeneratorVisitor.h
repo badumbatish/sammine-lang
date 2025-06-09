@@ -3,8 +3,6 @@
 #include "ast/AstBase.h"
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
-#include <memory>
-#include <stack>
 namespace sammine_lang::AST {
 
 class ScopeGeneratorVisitor : public ScopedASTVisitor {
@@ -48,6 +46,7 @@ public:
   virtual void preorder_walk(VariableExprAST *ast) override;
   virtual void preorder_walk(BlockAST *ast) override;
   virtual void preorder_walk(IfExprAST *ast) override;
+  virtual void preorder_walk(UnitExprAST *ast) override;
   virtual void preorder_walk(TypedVarAST *ast) override;
 
   // post order
@@ -67,6 +66,7 @@ public:
   virtual void postorder_walk(VariableExprAST *ast) override;
   virtual void postorder_walk(BlockAST *ast) override;
   virtual void postorder_walk(IfExprAST *ast) override;
+  virtual void postorder_walk(UnitExprAST *ast) override;
   virtual void postorder_walk(TypedVarAST *ast) override;
 };
 

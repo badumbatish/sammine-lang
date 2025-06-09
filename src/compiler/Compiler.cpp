@@ -7,6 +7,7 @@
 #include "codegen/CodegenVisitor.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
+#include "semantics/GeneralSemanticsVisitor.h"
 #include "semantics/ScopeGeneratorVisitor.h"
 #include "typecheck/BiTypeChecker.h"
 #include "util/Utilities.h"
@@ -67,16 +68,31 @@ void Compiler::parse() {
   this->error = psr.has_errors();
 }
 
-void Compiler::scopecheck() {
-  if (this->error) {
-    return;
-  }
-  log_diagnostics(fmt::format("Start scope checking stage..."));
-  auto vs = sammine_lang::AST::ScopeGeneratorVisitor();
+void Compiler::semantics() {
+  // INFO: ScopeGeneratorVisitor
+  {
+    if (this->error) {
+      return;
+    }
+    log_diagnostics(fmt::format("Start scope checking stage..."));
+    auto vs = sammine_lang::AST::ScopeGeneratorVisitor();
 
-  programAST->accept_vis(&vs);
-  reporter.report(vs);
-  this->error = vs.has_errors();
+    programAST->accept_vis(&vs);
+    reporter.report(vs);
+    this->error = vs.has_errors();
+  }
+
+  // INFO: GeneralSemanticsVisitor
+  {
+    if (this->error)
+      return;
+    log_diagnostics(fmt::format("Start general semantics stage..."));
+    auto vs = sammine_lang::AST::GeneralSemanticsVisitor();
+
+    programAST->accept_vis(&vs);
+    reporter.report(vs);
+    this->error = vs.has_errors();
+  }
 }
 
 void Compiler::typecheck() {
@@ -169,7 +185,7 @@ void Compiler::start() {
   std::vector<CompilerStage> CompilerStages = {
       {&Compiler::lex},
       {&Compiler::parse},
-      {&Compiler::scopecheck},
+      {&Compiler::semantics},
       {&Compiler::typecheck},
       {&Compiler::dump_ast},
       {&Compiler::codegen},

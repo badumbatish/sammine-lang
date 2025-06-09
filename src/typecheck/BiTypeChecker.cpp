@@ -36,6 +36,7 @@ void BiTypeCheckerVisitor::preorder_walk(VariableExprAST *ast) {
 }
 void BiTypeCheckerVisitor::preorder_walk(BlockAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(IfExprAST *ast) {}
+void BiTypeCheckerVisitor::preorder_walk(UnitExprAST *ast) {}
 void BiTypeCheckerVisitor::preorder_walk(TypedVarAST *ast) {
   ast->accept_synthesis(this);
 }
@@ -75,6 +76,7 @@ void BiTypeCheckerVisitor::postorder_walk(BoolExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(VariableExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BlockAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(IfExprAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(UnitExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(TypedVarAST *ast) {}
 
 Type BiTypeCheckerVisitor::synthesize(ProgramAST *ast) {
@@ -157,7 +159,7 @@ Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
 
 Type BiTypeCheckerVisitor::synthesize(ReturnExprAST *ast) {
   // TODO: make sure it returns the right type and all that
-  return ast->type = Type::Unit();
+  return ast->type = ast->return_expr->accept_synthesis(this);
 }
 Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
   if (ast->synthesized())
@@ -194,6 +196,11 @@ Type BiTypeCheckerVisitor::synthesize(VariableExprAST *ast) {
 }
 Type BiTypeCheckerVisitor::synthesize(BlockAST *ast) {
   return Type::NonExistent();
+}
+Type BiTypeCheckerVisitor::synthesize(UnitExprAST *ast) {
+  if (ast->synthesized())
+    return ast->type;
+  return ast->type = Type::Unit();
 }
 Type BiTypeCheckerVisitor::synthesize(IfExprAST *ast) {
   return Type::NonExistent();

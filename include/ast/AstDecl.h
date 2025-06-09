@@ -14,6 +14,7 @@ class TypedVarAST;
 class Stmt;
 class ExprAST;
 class CallExprAST;
+class UnitExprAST;
 class ReturnExprAST;
 class BinaryExprAST;
 class NumberExprAST;

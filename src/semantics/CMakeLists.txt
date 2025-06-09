@@ -1,5 +1,6 @@
 
 add_project_library(ScopeGeneratorVisitor)
+add_project_library(GeneralSemanticsVisitor)
 
 add_library(semantics)
-target_link_libraries(semantics ScopeGeneratorVisitor)
+target_link_libraries(semantics ScopeGeneratorVisitor GeneralSemanticsVisitor)

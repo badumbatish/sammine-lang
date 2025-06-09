@@ -336,6 +336,7 @@ auto Parser::ParsePrimaryExpr() -> p<ExprAST> {
   using ParseFunction = std::function<p<ExprAST>(Parser *)>;
   std::vector<std::pair<ParseFunction, std::string>> ParseFunctions = {
       {&Parser::ParseCallExpr, "CallExpr"},
+      {&Parser::ParseParenExpr, "parenthesis"},
       {&Parser::ParseIfExpr, "IfExpr"},
       {&Parser::ParseNumberExpr, "NumberExpr"},
       {&Parser::ParseBoolExpr, "BoolExpr"},
@@ -434,19 +435,16 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
   auto return_tok = expect(TokenType::TokReturn);
   if (!return_tok)
     return {std::make_unique<ReturnExprAST>(nullptr, nullptr), NONCOMMITTED};
-  if (expect(TokenType::TokSemiColon)) {
-    return {std::make_unique<ReturnExprAST>(return_tok, nullptr), SUCCESS};
-  }
   auto [expr, result] = ParseExpr();
   switch (result) {
   case SUCCESS:
+    break;
+  case NONCOMMITTED:
     break;
   case COMMITTED_NO_MORE_ERROR:
     return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
             COMMITTED_NO_MORE_ERROR};
   case COMMITTED_EMIT_MORE_ERROR:
-    [[fallthrough]];
-  case NONCOMMITTED:
     this->error("Unable to parse an expression after return statement");
     return {std::make_unique<ReturnExprAST>(return_tok, nullptr),
             COMMITTED_NO_MORE_ERROR};
@@ -458,8 +456,16 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
     return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
             COMMITTED_NO_MORE_ERROR};
   }
-  return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
-          SUCCESS};
+
+  if (result == SUCCESS)
+    return {std::make_unique<ReturnExprAST>(return_tok, std::move(expr)),
+            SUCCESS};
+  else if (result == NONCOMMITTED)
+    return {std::make_unique<ReturnExprAST>(return_tok,
+                                            std::make_unique<UnitExprAST>()),
+            SUCCESS};
+  else
+    sammine_util::abort("Impossible, logic error in the parser of returnexpr");
 }
 
 auto Parser::ParseCallExpr() -> p<ExprAST> {
@@ -703,6 +709,42 @@ auto Parser::ParseBlock() -> p<BlockAST> {
     return {std::move(blockAST), SUCCESS};
 }
 
+auto Parser::ParseParenExpr() -> p<ExprAST> {
+  auto tok_left = expect(TokLeftParen);
+  if (!tok_left) {
+    return {nullptr, NONCOMMITTED};
+  }
+
+  auto [expr, result] = ParseExpr(); // Parse inner expression
+  switch (result) {
+  case SUCCESS:
+    break;
+  case COMMITTED_EMIT_MORE_ERROR:
+    [[fallthrough]];
+  case COMMITTED_NO_MORE_ERROR:
+    this->add_error(
+        tok_left->get_location(),
+        "Encountered error in parsing expression after left parenthesis");
+    return {std::unique_ptr<UnitExprAST>(), COMMITTED_NO_MORE_ERROR};
+  case NONCOMMITTED:
+    break;
+  }
+
+  auto tok_right = expect(TokRightParen);
+  if (!tok_right) {
+    this->error("Expected ')' to match '(' for the expression",
+                tok_left->get_location() | expr->get_location());
+    return {std::move(expr), COMMITTED_NO_MORE_ERROR};
+  }
+
+  if (result == SUCCESS)
+    return {std::move(expr), SUCCESS};
+  else if (result == NONCOMMITTED)
+    return {std::make_unique<UnitExprAST>(tok_left, tok_right), SUCCESS};
+
+  else
+    sammine_util::abort("oops");
+}
 // Parsing of parameters in a function call, we use leftParen and rightParen
 // as appropriate stopping point
 auto Parser::ParseParams()

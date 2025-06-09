@@ -70,6 +70,8 @@ public:
   [[nodiscard]]
   auto ParseArguments() -> std::pair<std::vector<u<ExprAST>>, ParserError>;
   [[nodiscard]]
+  auto ParseParenExpr() -> p<ExprAST>;
+  [[nodiscard]]
   auto ParseIfExpr() -> p<ExprAST>;
   [[nodiscard]]
   auto ParseNumberExpr() -> p<ExprAST>;

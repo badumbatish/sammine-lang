@@ -2,5 +2,4 @@
 fn f() {
     let x = 2;
 
-    return;
 }

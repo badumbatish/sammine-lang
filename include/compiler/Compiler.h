@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "parser/Parser.h"
 #include "codegen/LLVMRes.h"
 #include "lex/Token.h"
+#include "parser/Parser.h"
 #include "util/Utilities.h"
 #include <memory>
 #include <string>
@@ -30,7 +30,7 @@ class Compiler {
 
   void lex();
   void parse();
-  void scopecheck();
+  void semantics();
   void typecheck();
   void dump_ast();
   void codegen();

@@ -150,7 +150,6 @@ class BlockAST : public AstBase, Printable {
 
 public:
   std::vector<std::unique_ptr<ExprAST>> Statements;
-  inline static size_t scope_id_counter = 0;
   virtual std::string getTreeName() override { return "BlockAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
@@ -337,17 +336,25 @@ public:
   }
 };
 class ReturnExprAST : public ExprAST {
+
 public:
+  bool is_implicit;
   std::unique_ptr<ExprAST> return_expr;
   ReturnExprAST(std::shared_ptr<Token> return_tok,
                 std::unique_ptr<ExprAST> return_expr)
-      : return_expr(std::move(return_expr)) {
+      : is_implicit(false), return_expr(std::move(return_expr)) {
     if (return_expr == nullptr) {
       this->join_location(return_tok);
     } else {
       this->join_location(return_tok)->join_location(this->return_expr.get());
     }
   }
+
+  ReturnExprAST(std::unique_ptr<ExprAST> return_expr)
+      : is_implicit(true), return_expr(std::move(return_expr)) {
+    this->join_location(this->return_expr.get());
+  }
+
   virtual std::string getTreeName() override { return "ReturnExprAST"; }
   void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
   virtual void walk_with_preorder(ASTVisitor *visitor) override {
@@ -391,6 +398,32 @@ public:
   }
 };
 
+class UnitExprAST : public ExprAST {
+
+public:
+  bool is_implicit;
+
+  explicit UnitExprAST(std::shared_ptr<Token> left_paren,
+                       std::shared_ptr<Token> right_paren)
+      : is_implicit(false) {
+    assert(left_paren);
+    assert(right_paren);
+    this->join_location(left_paren)->join_location(right_paren);
+  };
+  explicit UnitExprAST() : is_implicit(true) {}
+
+  virtual std::string getTreeName() override { return "UnitExpr"; }
+  void accept_vis(ASTVisitor *visitor) override { visitor->visit(this); }
+  virtual void walk_with_preorder(ASTVisitor *visitor) override {
+    visitor->preorder_walk(this);
+  }
+  virtual void walk_with_postorder(ASTVisitor *visitor) override {
+    visitor->postorder_walk(this);
+  }
+  virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
+    return visitor->synthesize(this);
+  }
+};
 class IfExprAST : public ExprAST {
 public:
   std::unique_ptr<ExprAST> bool_expr;

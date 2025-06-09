@@ -308,6 +308,7 @@ void CgVisitor::preorder_walk(VariableExprAST *ast) {
 }
 void CgVisitor::preorder_walk(BlockAST *ast) {}
 void CgVisitor::postorder_walk(BlockAST *ast) {}
+void CgVisitor::preorder_walk(UnitExprAST *ast) {}
 void CgVisitor::preorder_walk(IfExprAST *ast) {
   ast->bool_expr->accept_vis(this);
   if (!ast->bool_expr->val) {
@@ -349,8 +350,8 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
         "Invalid syntax for now, typechecker should caught this function");
     break;
   case TypeKind::String:
-    sammine_util::abort(
-        "Cannot turn str to boolean, typecheck should have caught this string");
+    sammine_util::abort("Cannot turn str to boolean, typecheck should have "
+                        "caught this string");
     break;
   }
 

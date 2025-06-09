@@ -84,7 +84,7 @@ struct Type {
     case TypeKind::F64_t:
       return "f64";
     case TypeKind::Unit:
-      return "Unit";
+      return "()";
     case TypeKind::Bool:
       return "bool";
     case TypeKind::Function: {
@@ -99,7 +99,7 @@ struct Type {
       res += ") -> ";
       res += fn_type.get_return_type().to_string();
 
-      return "fn: " + res;
+      return res;
     }
     case TypeKind::NonExistent:
       return "??";
