@@ -1,0 +1,48 @@
+name: "MacOS yml"
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tidy-check:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Invoking the action 
+        uses: Shuriken-Group/setup_llvm_tools@v0.0.0
+        with:
+          download_path: "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-arm64-apple-macos11.tar.xz"
+          destination: "/usr/local"
+
+      - name: Install LLVM/Clang, Catch2, and lld
+        run: |
+          brew install llvm catch2 lld
+
+      - name: Configure codebase 
+        run: |
+          mkdir -p build
+          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build codebase
+        run: |
+          cmake --build build -j4 
+
+      - name: Run clang-tidy
+        run: |
+          # commented lines are debug tools, please dont remove
+          # pwd 
+          # ls -R
+          # ln -s ./build/compile_commands.json ./  # linking
+          # You can adjust -j <cores> or other flags as needed
+          run-clang-tidy -j 4 -p build -use-color -warnings-as-errors "\*" "sammine-lang\/(src|include).\*"
+
+
