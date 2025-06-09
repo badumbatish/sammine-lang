@@ -80,10 +80,28 @@ void BiTypeCheckerVisitor::postorder_walk(TypedVarAST *ast) {}
 Type BiTypeCheckerVisitor::synthesize(ProgramAST *ast) {
   return Type::NonExistent();
 }
+
 Type BiTypeCheckerVisitor::synthesize(VarDefAST *ast) {
   if (ast->synthesized())
     return ast->type;
-  return ast->type = ast->TypedVar->accept_synthesis(this);
+
+  // if you dont have type lexeme for typed var, then just assign type of expr
+  // to typed var, if we dont have expr also, then we add error
+  //
+  // if you do, then just use type lexeme as type of typed var
+
+  if (!ast->TypedVar->type_lexeme.empty())
+    ast->type = ast->TypedVar->accept_synthesis(this);
+  else if (ast->Expression)
+    ast->type = ast->Expression->accept_synthesis(this);
+  else {
+    this->add_error(ast->get_location(),
+                    "Variable declared without initializer");
+    ast->type = Type::Poisoned();
+  }
+
+  id_to_type.registerNameT(ast->TypedVar->name, ast->type);
+  return ast->type;
 }
 
 Type BiTypeCheckerVisitor::synthesize(ExternAST *ast) {

@@ -1,2 +1,3 @@
+# RUN: %sammine_exe% --file %s  
 fn f() {}
 fn f() {}
