@@ -28,6 +28,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/p-ranav/argparse.git
     SYSTEM
 )
+set(ARGPARSE_BUILD_TESTS=off CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(argparse)
 
 # set(CMAKE_BUILD_TYPE ${PROJECT_BUILD_TYPE})

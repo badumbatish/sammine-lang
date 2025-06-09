@@ -1,3 +1,4 @@
+project(sammine_lang )
 enable_language(CXX)
 cmake_minimum_required(VERSION 3.22)
 
@@ -45,21 +46,20 @@ if(CCACHE_PROGRAM)
     set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
     set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
 endif()
-project(sammine_lang )
-
-
-# Use lld linker
-add_link_options("-fuse-ld=lld")
 
 # PROJECT_INCLUDE_DIR
 SET(INCLUDE_PROJECT_DIR "${CMAKE_SOURCE_DIR}/include/")
 
 add_subdirectory(src)
 
-enable_testing()
-add_subdirectory(unit-tests)
-add_subdirectory(e2e-tests)
 
+
+option(SAMMINE_TEST "Enable the test in sammine-lang repository(disabled by default)" OFF)
+if (SAMMINE_TEST)
+  enable_testing()
+  add_subdirectory(unit-tests)
+  add_subdirectory(e2e-tests)
+endif()
 
 
 

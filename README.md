@@ -16,9 +16,8 @@ Install llvm & catch2
 brew install llvm catch2
 ```
 Run
-
 ```bash
-cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug [-DSAMMINE_TEST=ON/OFF] [-DCMAKE_LINKER_TYPE=MOLD]
 ```
 
 for configuration. We need [llvm](https://github.com/Shuriken-Group/setup_llvm_tools),[FileCheck](https://pypi.org/project/filecheck/), and [lit](https://pypi.org/project/lit/).
