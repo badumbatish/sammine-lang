@@ -201,27 +201,25 @@ void Compiler::produce_executable() {
   resPtr->pass.run(*resPtr->Module);
   dest.flush();
 
-  if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
-    force_log_diagnostics("Logging post optimization llvm IR");
-    resPtr->Module->print(llvm::errs(), nullptr);
-  }
-  auto try_compile_with = [](const std::string &compiler,
-                             const std::string &input_file) {
-    std::string command =
-        fmt::format("{} {}.o -o {}.exe", compiler, input_file, input_file);
+  auto try_compile_with = [this](const std::string &compiler) {
+    std::string test_command =
+        fmt::format("{} --version", compiler) + " > /dev/null 2>&1";
+    int test_result = std::system(test_command.c_str());
+    if (test_result != 0)
+      return test_result == 0;
+    std::string command = fmt::format("{} {}.o -o {}.exe", compiler,
+                                      this->file_name, this->file_name);
     int result = std::system(command.c_str());
     return result == 0;
   };
   for (auto &def : this->programAST->DefinitionVec) {
     if (auto func_def = static_cast<AST::FuncDefAST *>(def.get())) {
       if (func_def->Prototype->functionName == "main") {
-        if (try_compile_with("clang++", this->file_name)) {
-
-        } else if (try_compile_with("g++", this->file_name)) {
-
-        } else {
-          sammine_util::abort("Neither clang++ nor g++ is available\n");
-        }
+        if (try_compile_with("clang++") || try_compile_with("g++"))
+          std::exit(0);
+        else
+          sammine_util::abort(
+              "Neither clang++ nor g++ is available for final linkage\n");
       }
     }
   }
