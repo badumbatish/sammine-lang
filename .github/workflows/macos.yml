@@ -23,14 +23,14 @@ jobs:
           download_path: "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-arm64-apple-macos11.tar.xz"
           destination: "/usr/local"
 
-      - name: Install LLVM/Clang, Catch2, and mold
+      - name: Install LLVM/Clang, Catch2, and lld
         run: |
-          brew install llvm catch2 mold
+          brew install llvm catch2 lld 
 
       - name: Configure codebase 
         run: |
           mkdir -p build
-          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_LINKER_TYPE=MOLD
+          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_LINKER_TYPE=LLD
 
       - name: Build codebase
         run: |

@@ -25,13 +25,13 @@ jobs:
           download_path: "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
           destination: "/usr/local"
 
-      - name: Install LLVM/Clang, Catch2, & mold 
+      - name: Install LLVM/Clang, Catch2, mold and libtinfo5
         run: |
+          wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
+
           sudo apt update
-          sudo apt install -y clang-tidy catch2
-          sudo apt install -y mold
-          # wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb
-          # sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
+          sudo apt install -y clang-tidy catch2 mold 
+          sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
 
       - name: Set up Python
         uses: actions/setup-python@v4
