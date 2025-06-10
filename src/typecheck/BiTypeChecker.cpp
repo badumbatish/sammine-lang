@@ -2,6 +2,7 @@
 #include "ast/Ast.h"
 #include "fmt/format.h"
 #include "typecheck/Types.h"
+#include "util/LexicalContext.h"
 #include "util/Utilities.h"
 namespace sammine_lang::AST {
 // pre order
@@ -62,8 +63,24 @@ void BiTypeCheckerVisitor::postorder_walk(VarDefAST *ast) {
 void BiTypeCheckerVisitor::postorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(RecordDefAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {
-  ast->accept_synthesis(this);
+  if (ast->checked())
+    return;
+
+  // Type fnSig = ast->Prototype->accept_synthesis(this);
+
+  auto &scope = id_to_type.top();
+  auto &name = ast->Prototype->functionName;
+  if (scope.queryName(name) == nameNotFound) {
+    add_error(ast->get_location(),
+              fmt::format("Function `{}` not defined in this scope", name));
+  }
+  // } else {
+  //   scope.registerNameT(name, fnSig);
+  // }
+  //
+  ast->set_checked();
 }
+
 void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {
   if (ast->checked())
@@ -92,8 +109,6 @@ void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {
   }
 
   ast->set_checked();
-
-  // this->type_map_ordering.compatible_to_from(, );
 }
 void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {
@@ -147,6 +162,7 @@ Type BiTypeCheckerVisitor::synthesize(FuncDefAST *ast) {
 
   return ast->type = ast->Prototype->accept_synthesis(this);
 }
+
 Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
   auto v = std::vector<Type>();
   for (size_t i = 0; i < ast->parameterVectors.size(); i++)
@@ -163,6 +179,7 @@ Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
 
   return ast->type;
 }
+
 Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   if (ast->synthesized())
     return ast->type;

@@ -43,7 +43,8 @@ public:
 
     auto &id_name_top = id_to_type.top();
     if (id_name_top.queryName(str) == nameNotFound) {
-      sammine_util::abort("should not happen");
+      sammine_util::abort(
+          fmt::format("Name '{}' not found, this should not happen", str));
     }
     return id_name_top.get_from_name(str);
   }
