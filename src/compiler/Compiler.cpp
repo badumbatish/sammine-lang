@@ -5,8 +5,11 @@
 #include "compiler/Compiler.h"
 #include "ast/Ast.h"
 #include "codegen/CodegenVisitor.h"
+#include "codegen/LLVMRes.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
+#include "lex/Token.h"
+#include "parser/Parser.h"
 #include "semantics/GeneralSemanticsVisitor.h"
 #include "semantics/ScopeGeneratorVisitor.h"
 #include "typecheck/BiTypeChecker.h"
@@ -17,8 +20,45 @@
 #include <cstdlib>
 #include <memory>
 #include <system_error>
-namespace sammine_lang {
 
+// INFO: Declaration
+namespace sammine_lang {
+class Compiler {
+  std::shared_ptr<TokenStream> tokStream;
+  std::shared_ptr<AST::ProgramAST> programAST;
+  std::map<compiler_option_enum, std::string> compiler_options;
+  std::shared_ptr<LLVMRes> resPtr;
+  std::string file_name, input;
+  sammine_util::Reporter reporter;
+  size_t context_radius = 2;
+  bool error;
+
+  void lex();
+  void parse();
+  void semantics();
+  void typecheck();
+  void dump_ast();
+  void codegen();
+  void produce_executable();
+  void set_error() { error = true; }
+  void log_diagnostics(const std::string &diagnostics);
+  void force_log_diagnostics(const std::string &diagnostics);
+
+public:
+  Compiler(std::map<compiler_option_enum, std::string> &compiler_options);
+  void start();
+};
+
+} // namespace sammine_lang
+  //
+
+// INFO: Defn
+namespace sammine_lang {
+void CompilerRunner::run(
+    std::map<compiler_option_enum, std::string> &compiler_options) {
+  auto compiler = Compiler(compiler_options);
+  compiler.start();
+}
 void Compiler::log_diagnostics(const std::string &diagnostics) {
   if (compiler_options[compiler_option_enum::DIAGNOSTIC] == "true")
     Compiler::force_log_diagnostics(diagnostics);
@@ -120,6 +160,12 @@ void Compiler::codegen() {
   if (this->error) {
     std::exit(1);
   }
+  if (this->compiler_options[compiler_option_enum::CHECK] == "true") {
+    log_diagnostics(fmt::format(
+        "Finished checking. Stopping at codegen stage with compiler's "
+        "--check flag. "));
+    std::exit(0);
+  }
   log_diagnostics(fmt::format("Start code-gen stage..."));
   auto vs = sammine_lang::AST::CgVisitor(resPtr);
   programAST->accept_vis(&vs);
@@ -155,27 +201,25 @@ void Compiler::produce_executable() {
   resPtr->pass.run(*resPtr->Module);
   dest.flush();
 
-  if (compiler_options[compiler_option_enum::LLVM_IR] == "true") {
-    force_log_diagnostics("Logging post optimization llvm IR");
-    resPtr->Module->print(llvm::errs(), nullptr);
-  }
-  auto try_compile_with = [](const std::string &compiler,
-                             const std::string &input_file) {
-    std::string command =
-        fmt::format("{} {}.o -o {}.exe", compiler, input_file, input_file);
+  auto try_compile_with = [this](const std::string &compiler) {
+    std::string test_command =
+        fmt::format("{} --version", compiler) + " > /dev/null 2>&1";
+    int test_result = std::system(test_command.c_str());
+    if (test_result != 0)
+      return test_result == 0;
+    std::string command = fmt::format("{} {}.o -o {}.exe", compiler,
+                                      this->file_name, this->file_name);
     int result = std::system(command.c_str());
     return result == 0;
   };
   for (auto &def : this->programAST->DefinitionVec) {
     if (auto func_def = static_cast<AST::FuncDefAST *>(def.get())) {
       if (func_def->Prototype->functionName == "main") {
-        if (try_compile_with("clang++", this->file_name)) {
-
-        } else if (try_compile_with("g++", this->file_name)) {
-
-        } else {
-          sammine_util::abort("Neither clang++ nor g++ is available\n");
-        }
+        if (try_compile_with("clang++") || try_compile_with("g++"))
+          std::exit(0);
+        else
+          sammine_util::abort(
+              "Neither clang++ nor g++ is available for final linkage\n");
       }
     }
   }

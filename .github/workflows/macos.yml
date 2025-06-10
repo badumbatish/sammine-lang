@@ -25,12 +25,12 @@ jobs:
 
       - name: Install LLVM/Clang, Catch2, and lld
         run: |
-          brew install llvm catch2 lld
+          brew install llvm catch2 lld 
 
       - name: Configure codebase 
         run: |
           mkdir -p build
-          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
+          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_LINKER_TYPE=LLD
 
       - name: Build codebase
         run: |
