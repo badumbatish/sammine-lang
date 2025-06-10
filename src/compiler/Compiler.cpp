@@ -160,6 +160,12 @@ void Compiler::codegen() {
   if (this->error) {
     std::exit(1);
   }
+  if (this->compiler_options[compiler_option_enum::CHECK] == "true") {
+    log_diagnostics(fmt::format(
+        "Finished checking. Stopping at codegen stage with compiler's "
+        "--check flag. "));
+    std::exit(0);
+  }
   log_diagnostics(fmt::format("Start code-gen stage..."));
   auto vs = sammine_lang::AST::CgVisitor(resPtr);
   programAST->accept_vis(&vs);
