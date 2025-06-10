@@ -65,7 +65,36 @@ void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {
   ast->accept_synthesis(this);
 }
 void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
-void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {
+  if (ast->checked())
+    return;
+
+  auto ty = get_type_from_id(ast->functionName);
+  auto func = std::get<FunctionType>(ty->type_data);
+  auto params = func.get_params_types();
+  if (ast->arguments.size() != params.size()) {
+    this->add_error(
+        ast->get_location(),
+        fmt::format("Function '{}' params and arguments have a type mismatch",
+                    ast->functionName));
+  }
+
+  int i = 0;
+  for (const auto &arg : ast->arguments) {
+    if (!this->type_map_ordering.compatible_to_from(params[i], arg->type)) {
+      // this->arg `
+      this->add_error(
+          ast->get_location(),
+          fmt::format("Function '{}' params and arguments have a type mismatch",
+                      ast->functionName));
+    }
+    ++i;
+  }
+
+  ast->set_checked();
+
+  // this->type_map_ordering.compatible_to_from(, );
+}
 void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {
   ast->accept_synthesis(this);
@@ -172,9 +201,13 @@ Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
 
   return ast->type = ast->LHS->type;
 }
+
 Type BiTypeCheckerVisitor::synthesize(StringExprAST *ast) {
-  return Type::NonExistent();
+  if (ast->synthesized())
+    return ast->type;
+  return ast->type = Type::String(ast->string_content);
 }
+
 Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
   if (ast->synthesized())
     return ast->type;

@@ -1,0 +1,8 @@
+fn bar() {
+  return;
+}
+
+fn main() {
+  bar();
+  return;
+}

@@ -558,12 +558,14 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
   }
   sammine_util::abort("Should not happen");
 }
+
 auto Parser::ParseStringExpr() -> p<ExprAST> {
   if (auto tok_str = expect(TokStr)) {
     return {std::make_unique<StringExprAST>(tok_str), SUCCESS};
   }
   return {nullptr, NONCOMMITTED};
 }
+
 auto Parser::ParseNumberExpr() -> p<ExprAST> {
 
   if (auto numberToken = expect(TokenType::TokNum))
