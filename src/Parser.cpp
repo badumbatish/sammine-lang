@@ -687,6 +687,7 @@ auto Parser::ParseBlock() -> p<BlockAST> {
       continue;
     case NONCOMMITTED:
       break;
+
     case COMMITTED_EMIT_MORE_ERROR:
       this->error("Failed to parse a return expression in a block");
       [[fallthrough]];

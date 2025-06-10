@@ -3,44 +3,21 @@
 //
 
 #pragma once
-
-#include "codegen/LLVMRes.h"
-#include "lex/Token.h"
-#include "parser/Parser.h"
-#include "util/Utilities.h"
-#include <memory>
+#include <map>
 #include <string>
 namespace sammine_lang {
-enum class compiler_option_enum {
+enum compiler_option_enum {
   FILE,
   STR,
   LLVM_IR,
   AST_IR,
   DIAGNOSTIC,
+  CHECK,
 };
-class Compiler {
-  std::shared_ptr<TokenStream> tokStream;
-  std::shared_ptr<AST::ProgramAST> programAST;
-  std::map<compiler_option_enum, std::string> compiler_options;
-  std::shared_ptr<LLVMRes> resPtr;
-  std::string file_name, input;
-  sammine_util::Reporter reporter;
-  size_t context_radius = 2;
-  bool error;
 
-  void lex();
-  void parse();
-  void semantics();
-  void typecheck();
-  void dump_ast();
-  void codegen();
-  void produce_executable();
-  void set_error() { error = true; }
-  void log_diagnostics(const std::string &diagnostics);
-  void force_log_diagnostics(const std::string &diagnostics);
-
+class CompilerRunner {
 public:
-  Compiler(std::map<compiler_option_enum, std::string> &compiler_options);
-  void start();
+  static void
+  run(std::map<compiler_option_enum, std::string> &compiler_options);
 };
 } // namespace sammine_lang

@@ -5,8 +5,11 @@
 #include "compiler/Compiler.h"
 #include "ast/Ast.h"
 #include "codegen/CodegenVisitor.h"
+#include "codegen/LLVMRes.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
+#include "lex/Token.h"
+#include "parser/Parser.h"
 #include "semantics/GeneralSemanticsVisitor.h"
 #include "semantics/ScopeGeneratorVisitor.h"
 #include "typecheck/BiTypeChecker.h"
@@ -17,8 +20,45 @@
 #include <cstdlib>
 #include <memory>
 #include <system_error>
-namespace sammine_lang {
 
+// INFO: Declaration
+namespace sammine_lang {
+class Compiler {
+  std::shared_ptr<TokenStream> tokStream;
+  std::shared_ptr<AST::ProgramAST> programAST;
+  std::map<compiler_option_enum, std::string> compiler_options;
+  std::shared_ptr<LLVMRes> resPtr;
+  std::string file_name, input;
+  sammine_util::Reporter reporter;
+  size_t context_radius = 2;
+  bool error;
+
+  void lex();
+  void parse();
+  void semantics();
+  void typecheck();
+  void dump_ast();
+  void codegen();
+  void produce_executable();
+  void set_error() { error = true; }
+  void log_diagnostics(const std::string &diagnostics);
+  void force_log_diagnostics(const std::string &diagnostics);
+
+public:
+  Compiler(std::map<compiler_option_enum, std::string> &compiler_options);
+  void start();
+};
+
+} // namespace sammine_lang
+  //
+
+// INFO: Defn
+namespace sammine_lang {
+void CompilerRunner::run(
+    std::map<compiler_option_enum, std::string> &compiler_options) {
+  auto compiler = Compiler(compiler_options);
+  compiler.start();
+}
 void Compiler::log_diagnostics(const std::string &diagnostics) {
   if (compiler_options[compiler_option_enum::DIAGNOSTIC] == "true")
     Compiler::force_log_diagnostics(diagnostics);

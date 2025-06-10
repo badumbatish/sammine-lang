@@ -7,9 +7,9 @@
 #include "compiler/Compiler.h"
 #include "fmt/color.h"
 #include <argparse/argparse.hpp>
-using sammine_lang::Compiler;
 using sammine_lang::compiler_option_enum;
 
+using namespace sammine_lang;
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("sammine");
 
@@ -21,6 +21,10 @@ int main(int argc, char *argv[]) {
   gi.add_argument("-s", "--str")
       .help("An input string for compiler to scan over.");
 
+  gi.add_argument("--check")
+      .help("Performs compiler check only, no codegen")
+      .default_value(std::string("false"))
+      .implicit_value(std::string("true"));
   auto &g_diag = program.add_group("Diagnostics");
   g_diag
       .add_argument("", "--llvm-ir") // TODO: Somehow make the internal compiler
@@ -51,7 +55,7 @@ int main(int argc, char *argv[]) {
     compiler_options[compiler_option_enum::AST_IR] = program.get("--ast-ir");
     compiler_options[compiler_option_enum::DIAGNOSTIC] =
         program.get("--diagnostics");
-
+    compiler_options[compiler_option_enum::CHECK] = program.get("--check");
   } catch (const std::exception &err) {
     fmt::print(stderr, fg(fmt::terminal_color::bright_red),
                "Error while parsing arguments\n");
@@ -60,7 +64,6 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  Compiler jjasmine(compiler_options);
-  jjasmine.start();
+  CompilerRunner::run(compiler_options);
   return 0;
 }
