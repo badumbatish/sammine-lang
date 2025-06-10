@@ -34,9 +34,9 @@ jobs:
           # sudo apt install ./libtinfo5_6.3-2ubuntu0.1_amd64.deb
 
       - name: Set up Python
-            uses: actions/setup-python@v4
-            with:
-              python-version: '3.11'  # Replace with your Python version 
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # Replace with your Python version 
       - name: Install Lit and FileCheck
         run: |
           python -m pip install --upgrade pip
