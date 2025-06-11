@@ -106,6 +106,7 @@ void Compiler::parse() {
   programAST = std::move(result);
 
   this->error = psr.has_errors();
+  reporter.report(psr);
 }
 
 void Compiler::semantics() {

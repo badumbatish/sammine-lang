@@ -20,21 +20,17 @@ class Parser : public Reportee {
     if (reporter.has_value()) {
       reporter->get().immediate_error(msg, loc);
     }
-    has_error = true;
+    this->error_count++;
   }
   void diag(const std::string &msg, Location loc = Location::NonPrintable()) {
     if (reporter.has_value()) {
       reporter->get().immediate_diag(msg, loc);
     }
   }
-  bool has_error = false;
 
 public:
   template <class T> using p = std::pair<std::unique_ptr<T>, ParserError>;
   template <class T> using u = std::unique_ptr<T>;
-  virtual bool has_errors() const override {
-    return this->has_error || get_error_count() > 0;
-  }
   std::optional<std::reference_wrapper<Reporter>> reporter;
   std::shared_ptr<TokenStream> tokStream;
   [[nodiscard]] auto ParseProgram() -> u<ProgramAST>;

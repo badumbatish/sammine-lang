@@ -325,7 +325,6 @@ void AstPrinterVisitor::preorder_walk(RecordDefAST *ast) {
 }
 void AstPrinterVisitor::preorder_walk(PrototypeAST *ast) {
   add_to_rep(fmt::format("{} fn_name: \"{}\"\n", tabs(), ast->functionName));
-  add_to_rep(fmt::format("{} fn_sig: {}", tabs(), ast->type.to_string()));
 }
 void AstPrinterVisitor::preorder_walk(CallExprAST *ast) {}
 void AstPrinterVisitor::preorder_walk(ReturnExprAST *ast) {

@@ -141,7 +141,7 @@ public:
   [[nodiscard]] int64_t get_warn_count() const { return warn_count; }
   [[nodiscard]] int64_t get_diagnostic_count() const { return diag_count; }
 
-private:
+protected:
   std::vector<Report> reports;
   int64_t error_count = 0;
   int64_t warn_count = 0;

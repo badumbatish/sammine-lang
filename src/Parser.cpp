@@ -33,7 +33,7 @@ auto Parser::ParseProgram() -> u<ProgramAST> {
     switch (result) {
     case SUCCESS:
       programAST->DefinitionVec.push_back(std::move(def));
-      break;
+      continue;
     case COMMITTED_EMIT_MORE_ERROR: {
       this->error("Failed to parse a definition");
       programAST->DefinitionVec.push_back(std::move(def));

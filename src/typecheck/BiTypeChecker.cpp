@@ -4,6 +4,8 @@
 #include "typecheck/Types.h"
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
+#include <__ranges/zip_view.h>
+#include <ranges>
 namespace sammine_lang::AST {
 // pre order
 void BiTypeCheckerVisitor::preorder_walk(ProgramAST *ast) {}
@@ -86,16 +88,14 @@ void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {
                     ast->functionName));
   }
 
-  int i = 0;
-  for (const auto &arg : ast->arguments) {
-    if (!this->type_map_ordering.compatible_to_from(params[i], arg->type)) {
-      // this->arg `
+  for (const auto &[arg, par] :
+       std::ranges::views::zip(ast->arguments, params)) {
+    if (!this->type_map_ordering.compatible_to_from(par, arg->type)) {
       this->add_error(
           ast->get_location(),
           fmt::format("Function '{}' params and arguments have a type mismatch",
                       ast->functionName));
     }
-    ++i;
   }
 
   ast->set_checked();
