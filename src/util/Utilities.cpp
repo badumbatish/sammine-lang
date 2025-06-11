@@ -1,8 +1,8 @@
 #include "util/Utilities.h"
-#include "util/FileRAII.h"
 #include "fmt/base.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
+#include "util/FileRAII.h"
 #include <cassert>
 #include <cctype>
 #include <cpptrace/cpptrace.hpp>
@@ -22,7 +22,7 @@ auto get_string_from_file(const std::string &file_name) -> std::string {
 
   return input;
 }
-auto abort(const std::string &message) -> void {
+[[noreturn]] auto abort(const std::string &message) -> void {
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
              "[Internal Compiler Error] : {}\n", message);
   fmt::print(stderr, fg(fmt::terminal_color::bright_red),
