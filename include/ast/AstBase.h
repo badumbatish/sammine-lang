@@ -10,6 +10,7 @@
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
 #include <stack>
+
 namespace llvm {
 class Value;
 
@@ -22,8 +23,16 @@ class Visitable;
 class AstBase;
 class ASTVisitor;
 
+struct ASTPrinter {
+  static void print(AstBase *t);
+  static void print(ProgramAST *t);
+};
 class ASTVisitor : public sammine_util::Reportee {
+  ProgramAST *top_level_ast;
+
 public:
+  virtual void abort(const std::string &msg) override;
+
   virtual void visit(ProgramAST *ast);
   virtual void preorder_walk(ProgramAST *ast) = 0;
   virtual void postorder_walk(ProgramAST *ast) = 0;

@@ -66,27 +66,17 @@ void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {
   if (ast->checked())
     return;
 
-  // Type fnSig = ast->Prototype->accept_synthesis(this);
-
-  auto &scope = id_to_type.top();
-  auto &name = ast->Prototype->functionName;
-  if (scope.queryName(name) == nameNotFound) {
-    add_error(ast->get_location(),
-              fmt::format("Function `{}` not defined in this scope", name));
-  }
-  // } else {
-  //   scope.registerNameT(name, fnSig);
-  // }
-  //
   ast->set_checked();
 }
 
-void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
+void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {
+  id_to_type.parent_scope()->registerNameT(ast->functionName, ast->type);
+}
 void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {
   if (ast->checked())
     return;
 
-  auto ty = get_type_from_id(ast->functionName);
+  auto ty = get_type_from_id_parent(ast->functionName);
   auto func = std::get<FunctionType>(ty->type_data);
   auto params = func.get_params_types();
   if (ast->arguments.size() != params.size()) {
@@ -175,15 +165,13 @@ Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
         get_type_from_type_lexeme(ast->returnType, ast->get_location()));
   ast->type = Type::Function(std::move(v));
 
-  id_to_type.registerNameT(ast->functionName, ast->type);
-
   return ast->type;
 }
 
 Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   if (ast->synthesized())
     return ast->type;
-  auto ty = get_type_from_id(ast->functionName);
+  auto ty = get_type_from_id_parent(ast->functionName);
   switch (ty->type_kind) {
   case TypeKind::Function:
     return ast->type = std::get<FunctionType>(ty->type_data).get_return_type();

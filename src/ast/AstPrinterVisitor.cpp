@@ -115,6 +115,10 @@ void ASTPrinter::print(AstBase *ast) {
   auto vs = AstPrinterVisitor();
   ast->accept_vis(&vs);
 }
+void ASTPrinter::print(ProgramAST *ast) {
+  auto vs = AstPrinterVisitor();
+  ast->accept_vis(&vs);
+}
 std::string_view AstPrinterVisitor::tabs() const { return this->current_tabs; }
 
 void AstPrinterVisitor::visit(ProgramAST *ast) {

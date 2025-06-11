@@ -19,10 +19,9 @@ inline int64_t unique_ast_id = 0;
 
 template <typename T>
 concept explicitly_bool_like = requires(T t) {
-  { static_cast<bool>(t) } -> std::same_as<bool>;
-};
-[[noreturn]]
-auto abort(const std::string &message = "<NO MESSAGE>") -> void;
+                                 { static_cast<bool>(t) } -> std::same_as<bool>;
+                               };
+[[noreturn]] auto abort(const std::string &message = "<NO MESSAGE>") -> void;
 template <explicitly_bool_like T>
 void abort_on(const T &condition, const std::string &message = "<NO MESSAGE>") {
   if (static_cast<bool>(condition)) {
@@ -115,7 +114,9 @@ public:
   const_iterator end() const { return reports.end(); }
   const_iterator cbegin() const { return reports.cbegin(); }
   const_iterator cend() const { return reports.cend(); }
-
+  virtual void abort(const std::string &msg) {
+    return sammine_util::abort(msg);
+  }
   void add_error(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::error});
     error_count++;
@@ -129,37 +130,16 @@ public:
     diag_count++;
   }
 
-  [[nodiscard]]
-  virtual bool has_errors() const {
-    return error_count > 0;
-  }
-  [[nodiscard]]
-  bool has_warn() const {
-    return warn_count > 0;
-  }
-  [[nodiscard]]
-  bool has_message() const {
-    return !reports.empty();
-  }
+  [[nodiscard]] virtual bool has_errors() const { return error_count > 0; }
+  [[nodiscard]] bool has_warn() const { return warn_count > 0; }
+  [[nodiscard]] bool has_message() const { return !reports.empty(); }
 
-  [[nodiscard]]
-  bool has_diagnostics() const {
-    return diag_count > 0;
-  }
+  [[nodiscard]] bool has_diagnostics() const { return diag_count > 0; }
 
-  [[nodiscard]]
-  int64_t get_error_count() const {
-    return error_count;
-  }
+  [[nodiscard]] int64_t get_error_count() const { return error_count; }
 
-  [[nodiscard]]
-  int64_t get_warn_count() const {
-    return warn_count;
-  }
-  [[nodiscard]]
-  int64_t get_diagnostic_count() const {
-    return diag_count;
-  }
+  [[nodiscard]] int64_t get_warn_count() const { return warn_count; }
+  [[nodiscard]] int64_t get_diagnostic_count() const { return diag_count; }
 
 private:
   std::vector<Report> reports;

@@ -35,79 +35,56 @@ public:
   virtual bool has_errors() const override { return this->has_error; }
   std::optional<std::reference_wrapper<Reporter>> reporter;
   std::shared_ptr<TokenStream> tokStream;
-  [[nodiscard]]
-  auto ParseProgram() -> u<ProgramAST>;
+  [[nodiscard]] auto ParseProgram() -> u<ProgramAST>;
 
   // Parse definition
-  [[nodiscard]]
-  auto ParseDefinition() -> p<DefinitionAST>;
-  [[nodiscard]]
-  auto ParsePrototype() -> p<PrototypeAST>;
-  [[nodiscard]]
-  auto ParseFuncDef() -> p<DefinitionAST>;
-  [[nodiscard]]
-  auto ParseVarDef() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseRecordDef() -> p<DefinitionAST>;
+  [[nodiscard]] auto ParseDefinition() -> p<DefinitionAST>;
+  [[nodiscard]] auto ParsePrototype() -> p<PrototypeAST>;
+  [[nodiscard]] auto ParseFuncDef() -> p<DefinitionAST>;
+  [[nodiscard]] auto ParseVarDef() -> p<ExprAST>;
+  [[nodiscard]] auto ParseRecordDef() -> p<DefinitionAST>;
 
   // Parse type
-  [[nodiscard]]
-  auto ParseTypedVar() -> p<TypedVarAST>;
-  [[nodiscard]]
+  [[nodiscard]] auto ParseTypedVar() -> p<TypedVarAST>;
 
   // Parse pressions
-  [[nodiscard]]
-  auto ParseExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParsePrimaryExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseBinaryExpr(int prededence, u<ExprAST> LHS) -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseBoolExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParseExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParsePrimaryExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParseBinaryExpr(int prededence, u<ExprAST> LHS)
+      -> p<ExprAST>;
+  [[nodiscard]] auto ParseBoolExpr() -> p<ExprAST>;
 
   [[nodiscard]] auto ParseCallExpr() -> p<ExprAST>;
   [[nodiscard]] auto ParseReturnExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseArguments() -> std::pair<std::vector<u<ExprAST>>, ParserError>;
-  [[nodiscard]]
-  auto ParseParenExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseIfExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseNumberExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseStringExpr() -> p<ExprAST>;
-  [[nodiscard]]
-  auto ParseVariableExpr() -> p<ExprAST>;
-  [[nodiscard]]
+  [[nodiscard]] auto ParseArguments()
+      -> std::pair<std::vector<u<ExprAST>>, ParserError>;
+  [[nodiscard]] auto ParseParenExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParseIfExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParseNumberExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParseStringExpr() -> p<ExprAST>;
+  [[nodiscard]] auto ParseVariableExpr() -> p<ExprAST>;
 
   // Parse block
-  [[nodiscard]]
-  auto ParseBlock() -> p<BlockAST>;
-  [[nodiscard]]
+  [[nodiscard]] auto ParseBlock() -> p<BlockAST>;
 
   // Parse parameters
-  [[nodiscard]]
-  auto ParseParams() -> std::pair<std::vector<u<TypedVarAST>>, ParserError>;
+  [[nodiscard]] auto ParseParams()
+      -> std::pair<std::vector<u<TypedVarAST>>, ParserError>;
 
   // Utilities
-  [[nodiscard]]
-  auto expect(TokenType tokType, bool exhausts = false,
-              TokenType until = TokenType::TokEOF,
-              const std::string &message = "") -> std::shared_ptr<Token>;
+  [[nodiscard]] auto expect(TokenType tokType, bool exhausts = false,
+                            TokenType until = TokenType::TokEOF,
+                            const std::string &message = "")
+      -> std::shared_ptr<Token>;
 
-  [[nodiscard]]
-  Parser(
+  [[nodiscard]] Parser(
       std::optional<std::reference_wrapper<Reporter>> reporter = std::nullopt)
       : reporter(reporter) {}
-  [[nodiscard]]
-  Parser(
+  [[nodiscard]] Parser(
       std::shared_ptr<TokenStream> tokStream,
       std::optional<std::reference_wrapper<Reporter>> reporter = std::nullopt)
       : reporter(reporter), tokStream(tokStream) {}
-  [[nodiscard]]
 
-  [[nodiscard]]
-  auto Parse() -> u<ProgramAST>;
+  [[nodiscard]] auto Parse() -> u<ProgramAST>;
 };
 } // namespace sammine_lang
