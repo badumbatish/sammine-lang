@@ -40,9 +40,8 @@ void CgVisitor::exit_new_scope() { allocaValues.pop(); }
 
 void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
 
-  this->abort_if_not(ptr,
-                             "A shared ptr cannot be null at this point in "
-                             "codegen, something is wrong with your parsing.");
+  this->abort_if_not(ptr, "A shared ptr cannot be null at this point in "
+                          "codegen, something is wrong with your parsing.");
 
   this->current_func = ptr->function;
 }
@@ -55,6 +54,12 @@ void CgVisitor::visit(FuncDefAST *ast) {
   ast->walk_with_postorder(this);
   this->exit_new_scope();
 }
+
+void CgVisitor::visit(IfExprAST *ast) {
+  ast->walk_with_preorder(this);
+  ast->walk_with_postorder(this);
+}
+
 void CgVisitor::preorder_walk(ProgramAST *ast) {
   // TODO: In the future, we need to move both this function someplace else.
   //
@@ -196,8 +201,8 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
       this->abort("Left hand side of assignment must be a variable, "
-                          "current LHS cannot "
-                          "be statically cast to VarExprAST");
+                  "current LHS cannot "
+                  "be statically cast to VarExprAST");
       return;
     }
 
@@ -351,7 +356,7 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
     break;
   case TypeKind::String:
     this->abort("Cannot turn str to boolean, typecheck should have "
-                        "caught this string");
+                "caught this string");
     break;
   }
 

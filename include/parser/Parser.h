@@ -1,5 +1,5 @@
 #pragma once
-#include "ast/Ast.h"
+#include "ast/AstDecl.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
 #include <memory>

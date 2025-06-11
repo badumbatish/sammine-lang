@@ -5,7 +5,6 @@
 #pragma once
 #include "lex/Token.h"
 #include "util/Utilities.h"
-#include <cassert>
 
 //! \file Lexer.h
 //! \brief Houses declaration (and some small implementation) of TokenType,
@@ -23,8 +22,7 @@ private:
   sammine_util::Location location;
   std::shared_ptr<TokenStream> tokStream;
 
-  [[nodiscard]]
-  size_t handleNumber(size_t i, const std::string &input);
+  [[nodiscard]] size_t handleNumber(size_t i, const std::string &input);
   size_t handleSpaces(size_t i, const std::string &input);
   size_t handleID(size_t i, const std::string &input);
   size_t handleInvalid(size_t i, const std::string &input);

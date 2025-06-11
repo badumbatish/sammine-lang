@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ast/Ast.h"
 #include "ast/AstBase.h"
 #include "typecheck/Types.h"
 #include "util/LexicalContext.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ast/Ast.h"
 #include "codegen/SammineJIT.h"
 #include "iostream"
 #include "util/Utilities.h"

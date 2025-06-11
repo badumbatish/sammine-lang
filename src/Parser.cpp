@@ -3,8 +3,6 @@
 #include "ast/Ast.h"
 #include "fmt/format.h"
 #include "lex/Token.h"
-#include "util/Utilities.h"
-#include <cstdlib>
 #include <functional>
 #include <memory>
 #include <utility>

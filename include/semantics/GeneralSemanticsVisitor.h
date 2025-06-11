@@ -1,7 +1,7 @@
 
 #pragma once
-#include "ast/Ast.h"
 #include "ast/AstBase.h"
+#include "ast/AstDecl.h"
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
 namespace sammine_lang::AST {

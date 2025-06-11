@@ -5,6 +5,7 @@
 #include "lex/Lexer.h"
 #include "functional"
 #include "lex/Token.h"
+#include <cassert>
 #include <string>
 namespace sammine_lang {
 

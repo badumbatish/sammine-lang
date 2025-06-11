@@ -4,7 +4,8 @@
 
 #pragma once
 #include "TypeConverter.h"
-#include "ast/Ast.h"
+#include "ast/AstBase.h"
+#include "ast/AstDecl.h"
 #include "codegen/LLVMRes.h"
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Value.h>
@@ -34,10 +35,7 @@ public:
   void exit_new_scope() override;
 
   virtual void visit(FuncDefAST *) override;
-  virtual void visit(IfExprAST *ast) override {
-    ast->walk_with_preorder(this);
-    ast->walk_with_postorder(this);
-  }
+  virtual void visit(IfExprAST *ast) override;
   // visit
   // pre order
   // TODO: Implement these

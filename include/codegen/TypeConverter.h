@@ -1,7 +1,7 @@
 #pragma once
-#include "ast/Ast.h"
+#include "lex/Token.h"
+#include "typecheck/Types.h"
 #include "util/Utilities.h"
-
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
