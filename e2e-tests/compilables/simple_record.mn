@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 # RUN: %sammine_exe% --file %s --check
+||||||| parent of 1970ae3 (Add --check for all files)
+=======
+# RUN:  %sammine_exe% --file %s  --check
+>>>>>>> 1970ae3 (Add --check for all files)
 Record test { var: i64, };
 
 fn foo() {

@@ -1,3 +1,4 @@
+# RUN: %sammine_exe% --file %s --check
 fn bar() {
   return;
 }
