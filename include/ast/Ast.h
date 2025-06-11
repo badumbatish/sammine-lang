@@ -142,6 +142,10 @@ public:
     return visitor->synthesize(this);
   }
 };
+class ExprAST : public AstBase, public Printable {
+public:
+  ~ExprAST() = default;
+};
 
 //! \brief An AST to simulate a { } code block
 //!
@@ -165,6 +169,7 @@ public:
 
 class FuncDefAST : public DefinitionAST {
 public:
+  ~FuncDefAST() = default;
   std::unique_ptr<PrototypeAST> Prototype;
   std::unique_ptr<BlockAST> Block;
 
@@ -215,11 +220,6 @@ public:
   virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
     return visitor->synthesize(this);
   }
-};
-
-class ExprAST : public AstBase, public Printable {
-public:
-  inline static int personal_id_counter = 0;
 };
 
 //! \brief A variable definition: "var x = expression;"

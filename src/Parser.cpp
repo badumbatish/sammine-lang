@@ -47,6 +47,7 @@ auto Parser::ParseProgram() -> u<ProgramAST> {
       break;
     }
     }
+    break;
   }
   if (!tokStream->isEnd()) {
     this->add_error(Location::NonPrintable(),
