@@ -1,0 +1,43 @@
+<map id="sammine_lang::AST::AstBase" name="sammine_lang::AST::AstBase">
+<area shape="rect" id="Node000001" title=" " alt="" coords="197,464,340,505"/>
+<area shape="rect" id="Node000003" href="$classsammine__lang_1_1AST_1_1BlockAST.html" title="An AST to simulate a { } code block." alt="" coords="388,71,531,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="270,448,279,381,298,295,313,250,333,204,357,161,386,123,401,110,404,114,390,126,361,164,338,207,318,251,304,297,284,382,275,449"/>
+<area shape="rect" id="Node000004" href="$classsammine__lang_1_1AST_1_1DefinitionAST.html" title=" " alt="" coords="388,136,531,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="287,449,444,176,449,179,291,452"/>
+<area shape="rect" id="Node000008" href="$classsammine__lang_1_1AST_1_1ExprAST.html" title=" " alt="" coords="388,431,531,471"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="355,467,387,461,388,466,356,472"/>
+<area shape="rect" id="Node000019" href="$classsammine__lang_1_1AST_1_1ProgramAST.html" title=" " alt="" coords="388,496,531,537"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="356,496,388,502,387,507,355,502"/>
+<area shape="rect" id="Node000020" href="$classsammine__lang_1_1AST_1_1PrototypeAST.html" title="A prototype to present &quot;func func_name(...) &#45;&gt; type;&quot;." alt="" coords="388,561,531,602"/>
+<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="322,510,389,546,414,558,412,563,387,551,319,515"/>
+<area shape="rect" id="Node000021" href="$classsammine__lang_1_1AST_1_1TypedVarAST.html" title=" " alt="" coords="388,627,531,667"/>
+<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="296,515,337,564,390,612,410,624,407,628,386,616,333,568,292,519"/>
+<area shape="rect" id="Node000002" href="$classsammine__lang_1_1AST_1_1Visitable.html" title=" " alt="" coords="5,464,149,505"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,482,196,482,196,487,164,487"/>
+<area shape="rect" id="Node000005" href="$classsammine__lang_1_1AST_1_1ExternAST.html" title="A Function Definition that has the prototype and definition in terms of a block." alt="" coords="579,5,723,46"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="524,125,530,121,544,105,553,90,562,74,578,57,596,44,599,49,581,61,566,77,558,92,549,108,533,125,527,130"/>
+<area shape="rect" id="Node000006" href="$classsammine__lang_1_1AST_1_1FuncDefAST.html" title=" " alt="" coords="579,71,723,111"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="534,128,589,109,590,114,536,133"/>
+<area shape="rect" id="Node000007" href="$classsammine__lang_1_1AST_1_1RecordDefAST.html" title=" " alt="" coords="579,136,723,177"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="547,154,579,154,579,159,547,159"/>
+<area shape="rect" id="Node000009" href="$classsammine__lang_1_1AST_1_1BinaryExprAST.html" title=" " alt="" coords="579,201,723,242"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="472,416,512,336,542,292,578,253,595,240,598,245,581,257,546,295,517,339,477,418"/>
+<area shape="rect" id="Node000010" href="$classsammine__lang_1_1AST_1_1BoolExprAST.html" title=" " alt="" coords="579,267,723,307"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="483,416,524,367,578,318,598,306,600,310,581,322,528,371,487,420"/>
+<area shape="rect" id="Node000011" href="$classsammine__lang_1_1AST_1_1CallExprAST.html" title=" " alt="" coords="579,332,723,373"/>
+<area shape="poly" id="edge10_Node000008_Node000011" title=" " alt="" coords="509,420,578,383,603,371,606,376,581,388,512,425"/>
+<area shape="rect" id="Node000012" href="$classsammine__lang_1_1AST_1_1IfExprAST.html" title=" " alt="" coords="579,397,723,438"/>
+<area shape="poly" id="edge11_Node000008_Node000012" title=" " alt="" coords="546,433,579,428,580,433,547,438"/>
+<area shape="rect" id="Node000013" href="$classsammine__lang_1_1AST_1_1NumberExprAST.html" title=" " alt="" coords="579,463,723,503"/>
+<area shape="poly" id="edge12_Node000008_Node000013" title=" " alt="" coords="547,463,580,468,579,474,546,468"/>
+<area shape="rect" id="Node000014" href="$classsammine__lang_1_1AST_1_1ReturnExprAST.html" title=" " alt="" coords="579,528,723,569"/>
+<area shape="poly" id="edge13_Node000008_Node000014" title=" " alt="" coords="522,476,533,482,581,513,605,525,602,530,578,517,530,487,519,481"/>
+<area shape="rect" id="Node000015" href="$classsammine__lang_1_1AST_1_1StringExprAST.html" title=" " alt="" coords="579,593,723,634"/>
+<area shape="poly" id="edge14_Node000008_Node000015" title=" " alt="" coords="529,479,533,483,551,508,558,532,565,555,581,578,597,591,594,595,577,582,560,557,553,533,546,510,529,486,525,482"/>
+<area shape="rect" id="Node000016" href="$classsammine__lang_1_1AST_1_1UnitExprAST.html" title=" " alt="" coords="579,659,723,699"/>
+<area shape="poly" id="edge15_Node000008_Node000016" title=" " alt="" coords="531,480,533,483,548,504,555,525,558,565,561,604,568,624,581,644,595,656,592,660,577,647,563,626,556,605,553,565,550,526,543,506,529,486,527,484"/>
+<area shape="rect" id="Node000017" href="$classsammine__lang_1_1AST_1_1VarDefAST.html" title="A variable definition: &quot;var x = expression;&quot;." alt="" coords="579,724,723,765"/>
+<area shape="poly" id="edge16_Node000008_Node000017" title=" " alt="" coords="531,480,534,483,552,513,559,542,560,570,558,598,556,625,557,652,564,680,581,709,595,721,591,725,577,713,559,682,551,653,550,625,553,597,555,570,554,543,547,515,529,486,527,483"/>
+<area shape="rect" id="Node000018" href="$classsammine__lang_1_1AST_1_1VariableExprAST.html" title=" " alt="" coords="579,789,723,830"/>
+<area shape="poly" id="edge17_Node000008_Node000018" title=" " alt="" coords="532,480,534,483,555,522,564,559,563,595,558,631,553,666,552,701,560,737,581,775,594,787,590,791,577,778,555,739,547,701,548,665,553,630,558,595,558,560,550,524,529,486,528,484"/>
+</map>
