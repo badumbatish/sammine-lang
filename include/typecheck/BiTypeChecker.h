@@ -43,10 +43,22 @@ public:
 
     auto &id_name_top = id_to_type.top();
     if (id_name_top.queryName(str) == nameNotFound) {
-      sammine_util::abort("should not happen");
+      this->abort(
+          fmt::format("Name '{}' not found, this should not happen", str));
     }
     return id_name_top.get_from_name(str);
   }
+
+  std::optional<Type> get_type_from_id_parent(const std::string &str) {
+
+    auto &id_name_top = *id_to_type.top().parent_scope;
+    if (id_name_top.queryName(str) == nameNotFound) {
+      this->abort(
+          fmt::format("Name '{}' not found, this should not happen", str));
+    }
+    return id_name_top.get_from_name(str);
+  }
+
   std::optional<Type> get_typename_type(const std::string &str) {
     auto &typename_top = typename_to_type.top();
     if (typename_top.queryName(str) == nameNotFound) {

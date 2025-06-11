@@ -33,7 +33,7 @@ auto Parser::ParseProgram() -> u<ProgramAST> {
     switch (result) {
     case SUCCESS:
       programAST->DefinitionVec.push_back(std::move(def));
-      break;
+      continue;
     case COMMITTED_EMIT_MORE_ERROR: {
       this->error("Failed to parse a definition");
       programAST->DefinitionVec.push_back(std::move(def));
@@ -47,6 +47,7 @@ auto Parser::ParseProgram() -> u<ProgramAST> {
       break;
     }
     }
+    break;
   }
   if (!tokStream->isEnd()) {
     this->add_error(Location::NonPrintable(),
@@ -558,12 +559,14 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
   }
   sammine_util::abort("Should not happen");
 }
+
 auto Parser::ParseStringExpr() -> p<ExprAST> {
   if (auto tok_str = expect(TokStr)) {
     return {std::make_unique<StringExprAST>(tok_str), SUCCESS};
   }
   return {nullptr, NONCOMMITTED};
 }
+
 auto Parser::ParseNumberExpr() -> p<ExprAST> {
 
   if (auto numberToken = expect(TokenType::TokNum))

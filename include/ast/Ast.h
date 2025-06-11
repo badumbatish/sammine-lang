@@ -14,7 +14,7 @@ namespace AST {
 using Identifier = std::string;
 class Printable {};
 
-class ProgramAST : public AstBase, Printable {
+class ProgramAST : public AstBase, public Printable {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
   virtual std::string getTreeName() override { return "ProgramAST"; }
@@ -30,9 +30,9 @@ public:
   }
 };
 
-class DefinitionAST : public AstBase, Printable {};
+class DefinitionAST : public AstBase, public Printable {};
 
-class TypedVarAST : public AstBase, Printable {
+class TypedVarAST : public AstBase, public Printable {
 public:
   std::string name;
   std::string type_lexeme;
@@ -68,7 +68,7 @@ public:
 
 //!
 //!
-class PrototypeAST : public AstBase, Printable {
+class PrototypeAST : public AstBase, public Printable {
 public:
   llvm::Function *function;
   std::string functionName;
@@ -142,11 +142,15 @@ public:
     return visitor->synthesize(this);
   }
 };
+class ExprAST : public AstBase, public Printable {
+public:
+  ~ExprAST() = default;
+};
 
 //! \brief An AST to simulate a { } code block
 //!
 //!
-class BlockAST : public AstBase, Printable {
+class BlockAST : public AstBase, public Printable {
 
 public:
   std::vector<std::unique_ptr<ExprAST>> Statements;
@@ -165,6 +169,7 @@ public:
 
 class FuncDefAST : public DefinitionAST {
 public:
+  ~FuncDefAST() = default;
   std::unique_ptr<PrototypeAST> Prototype;
   std::unique_ptr<BlockAST> Block;
 
@@ -215,11 +220,6 @@ public:
   virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
     return visitor->synthesize(this);
   }
-};
-
-class ExprAST : public AstBase, Printable {
-public:
-  inline static int personal_id_counter = 0;
 };
 
 //! \brief A variable definition: "var x = expression;"
@@ -470,9 +470,6 @@ public:
   virtual Type accept_synthesis(TypeCheckerVisitor *visitor) override {
     return visitor->synthesize(this);
   }
-};
-struct ASTPrinter {
-  static void print(AstBase *t);
 };
 } // namespace AST
 } // namespace sammine_lang

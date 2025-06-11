@@ -2,7 +2,10 @@
 #include "ast/Ast.h"
 #include "fmt/format.h"
 #include "typecheck/Types.h"
+#include "util/LexicalContext.h"
 #include "util/Utilities.h"
+#include <__ranges/zip_view.h>
+#include <ranges>
 namespace sammine_lang::AST {
 // pre order
 void BiTypeCheckerVisitor::preorder_walk(ProgramAST *ast) {}
@@ -62,10 +65,41 @@ void BiTypeCheckerVisitor::postorder_walk(VarDefAST *ast) {
 void BiTypeCheckerVisitor::postorder_walk(ExternAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(RecordDefAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(FuncDefAST *ast) {
-  ast->accept_synthesis(this);
+  if (ast->checked())
+    return;
+
+  ast->set_checked();
 }
-void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {}
-void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {}
+
+void BiTypeCheckerVisitor::postorder_walk(PrototypeAST *ast) {
+  id_to_type.parent_scope()->registerNameT(ast->functionName, ast->type);
+}
+void BiTypeCheckerVisitor::postorder_walk(CallExprAST *ast) {
+  if (ast->checked())
+    return;
+
+  auto ty = get_type_from_id_parent(ast->functionName);
+  auto func = std::get<FunctionType>(ty->type_data);
+  auto params = func.get_params_types();
+  if (ast->arguments.size() != params.size()) {
+    this->add_error(
+        ast->get_location(),
+        fmt::format("Function '{}' params and arguments have a type mismatch",
+                    ast->functionName));
+  }
+
+  for (const auto &[arg, par] :
+       std::ranges::views::zip(ast->arguments, params)) {
+    if (!this->type_map_ordering.compatible_to_from(par, arg->type)) {
+      this->add_error(
+          ast->get_location(),
+          fmt::format("Function '{}' params and arguments have a type mismatch",
+                      ast->functionName));
+    }
+  }
+
+  ast->set_checked();
+}
 void BiTypeCheckerVisitor::postorder_walk(ReturnExprAST *ast) {}
 void BiTypeCheckerVisitor::postorder_walk(BinaryExprAST *ast) {
   ast->accept_synthesis(this);
@@ -118,6 +152,7 @@ Type BiTypeCheckerVisitor::synthesize(FuncDefAST *ast) {
 
   return ast->type = ast->Prototype->accept_synthesis(this);
 }
+
 Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
   auto v = std::vector<Type>();
   for (size_t i = 0; i < ast->parameterVectors.size(); i++)
@@ -130,14 +165,13 @@ Type BiTypeCheckerVisitor::synthesize(PrototypeAST *ast) {
         get_type_from_type_lexeme(ast->returnType, ast->get_location()));
   ast->type = Type::Function(std::move(v));
 
-  id_to_type.registerNameT(ast->functionName, ast->type);
-
   return ast->type;
 }
+
 Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   if (ast->synthesized())
     return ast->type;
-  auto ty = get_type_from_id(ast->functionName);
+  auto ty = get_type_from_id_parent(ast->functionName);
   switch (ty->type_kind) {
   case TypeKind::Function:
     return ast->type = std::get<FunctionType>(ty->type_data).get_return_type();
@@ -172,9 +206,13 @@ Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
 
   return ast->type = ast->LHS->type;
 }
+
 Type BiTypeCheckerVisitor::synthesize(StringExprAST *ast) {
-  return Type::NonExistent();
+  if (ast->synthesized())
+    return ast->type;
+  return ast->type = Type::String(ast->string_content);
 }
+
 Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
   if (ast->synthesized())
     return ast->type;

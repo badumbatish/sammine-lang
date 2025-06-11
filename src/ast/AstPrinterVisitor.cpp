@@ -115,6 +115,10 @@ void ASTPrinter::print(AstBase *ast) {
   auto vs = AstPrinterVisitor();
   ast->accept_vis(&vs);
 }
+void ASTPrinter::print(ProgramAST *ast) {
+  auto vs = AstPrinterVisitor();
+  ast->accept_vis(&vs);
+}
 std::string_view AstPrinterVisitor::tabs() const { return this->current_tabs; }
 
 void AstPrinterVisitor::visit(ProgramAST *ast) {
@@ -321,7 +325,6 @@ void AstPrinterVisitor::preorder_walk(RecordDefAST *ast) {
 }
 void AstPrinterVisitor::preorder_walk(PrototypeAST *ast) {
   add_to_rep(fmt::format("{} fn_name: \"{}\"\n", tabs(), ast->functionName));
-  add_to_rep(fmt::format("{} fn_sig: {}", tabs(), ast->type.to_string()));
 }
 void AstPrinterVisitor::preorder_walk(CallExprAST *ast) {}
 void AstPrinterVisitor::preorder_walk(ReturnExprAST *ast) {

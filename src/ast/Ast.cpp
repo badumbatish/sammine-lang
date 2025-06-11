@@ -4,7 +4,14 @@
 namespace sammine_lang::AST {
 
 ASTVisitor::~ASTVisitor() {}
+
+void ASTVisitor::abort(const std::string &msg) {
+  ASTPrinter::print(top_level_ast);
+  sammine_util::abort(msg);
+}
+
 void ASTVisitor::visit(ProgramAST *ast) {
+  top_level_ast = ast;
   ast->walk_with_preorder(this);
   for (auto &def : ast->DefinitionVec) {
     def->accept_vis(this);
