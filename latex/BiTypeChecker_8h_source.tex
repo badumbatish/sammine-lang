@@ -1,0 +1,147 @@
+\doxysection{Bi\+Type\+Checker.\+h}
+\hypertarget{BiTypeChecker_8h_source}{}\label{BiTypeChecker_8h_source}\index{include/typecheck/BiTypeChecker.h@{include/typecheck/BiTypeChecker.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}ast/Ast.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}ast/AstBase.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}typecheck/Types.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}util/LexicalContext.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }sammine\_lang\ \{}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }AST\ \{}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypingContext}{TypingContext}}\ :\ \textcolor{keyword}{public}\ LexicalContext<Type>\ \{\};}
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }BiTypeCheckerVisitor\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ScopedASTVisitor}{ScopedASTVisitor}},}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ \{}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \textcolor{comment}{//\ We're\ gonna\ provide\ look\ up\ in\ different}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \textcolor{comment}{//\ INFO:\ x,\ y,\ z}}
+\DoxyCodeLine{00022\ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1LexicalStack}{LexicalStack<Type>}}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1BiTypeCheckerVisitor_a886452aee3fe58c100f9a1700075e06f}{id\_to\_type}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \textcolor{comment}{//\ INFO:\ i64,\ f64\ bla\ bla\ bla}}
+\DoxyCodeLine{00025\ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1LexicalStack}{LexicalStack<Type>}}\ typename\_to\_type;}
+\DoxyCodeLine{00026\ \ \ \mbox{\hyperlink{structTypeMapOrdering}{TypeMapOrdering}}\ type\_map\_ordering;}
+\DoxyCodeLine{00027\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ enter\_new\_scope()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1BiTypeCheckerVisitor_a886452aee3fe58c100f9a1700075e06f}{id\_to\_type}}.push\_context();}
+\DoxyCodeLine{00029\ \ \ \ \ typename\_to\_type.push\_context();}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ typename\_to\_type.registerNameT(\textcolor{stringliteral}{"{}i64"{}},\ Type::I64\_t());}
+\DoxyCodeLine{00032\ \ \ \ \ typename\_to\_type.registerNameT(\textcolor{stringliteral}{"{}f64"{}},\ Type::F64\_t());}
+\DoxyCodeLine{00033\ \ \ \ \ typename\_to\_type.registerNameT(\textcolor{stringliteral}{"{}bool"{}},\ Type::Bool());}
+\DoxyCodeLine{00034\ \ \ \ \ typename\_to\_type.registerNameT(\textcolor{stringliteral}{"{}unit"{}},\ Type::Unit());}
+\DoxyCodeLine{00035\ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ exit\_new\_scope()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1BiTypeCheckerVisitor_a886452aee3fe58c100f9a1700075e06f}{id\_to\_type}}.pop();}
+\DoxyCodeLine{00038\ \ \ \ \ typename\_to\_type.pop();}
+\DoxyCodeLine{00039\ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1BiTypeCheckerVisitor}{BiTypeCheckerVisitor}}()\ \{\ this-\/>enter\_new\_scope();\ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ std::optional<Type>\ get\_type\_from\_id(\textcolor{keyword}{const}\ std::string\ \&str)\ \{}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{auto}\ \&id\_name\_top\ =\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1BiTypeCheckerVisitor_a886452aee3fe58c100f9a1700075e06f}{id\_to\_type}}.top();}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{if}\ (id\_name\_top.queryName(str)\ ==\ nameNotFound)\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ this-\/>abort(}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ fmt::format(\textcolor{stringliteral}{"{}Name\ '\{\}'\ not\ found,\ this\ should\ not\ happen"{}},\ str));}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{return}\ id\_name\_top.get\_from\_name(str);}
+\DoxyCodeLine{00050\ \ \ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ std::optional<Type>\ get\_type\_from\_id\_parent(\textcolor{keyword}{const}\ std::string\ \&str)\ \{}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{auto}\ \&id\_name\_top\ =\ *\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BiTypeCheckerVisitor_a886452aee3fe58c100f9a1700075e06f}{id\_to\_type}}.top().parent\_scope;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{if}\ (id\_name\_top.queryName(str)\ ==\ nameNotFound)\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ this-\/>abort(}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ fmt::format(\textcolor{stringliteral}{"{}Name\ '\{\}'\ not\ found,\ this\ should\ not\ happen"{}},\ str));}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{return}\ id\_name\_top.get\_from\_name(str);}
+\DoxyCodeLine{00060\ \ \ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ std::optional<Type>\ get\_typename\_type(\textcolor{keyword}{const}\ std::string\ \&str)\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{auto}\ \&typename\_top\ =\ typename\_to\_type.top();}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordflow}{if}\ (typename\_top.queryName(str)\ ==\ nameNotFound)\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::nullopt;}
+\DoxyCodeLine{00066\ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{return}\ typename\_top.get\_from\_name(str);}
+\DoxyCodeLine{00068\ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{comment}{//\ pre\ order}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(ProgramAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00073\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(VarDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00074\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(ExternAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00075\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(FuncDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00076\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(RecordDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00077\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(PrototypeAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00078\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(CallExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00079\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(ReturnExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00080\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(BinaryExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00081\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(NumberExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00082\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(StringExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00083\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(BoolExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00084\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(UnitExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00085\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(VariableExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00086\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(BlockAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00087\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(IfExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00088\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(TypedVarAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \textcolor{comment}{//\ post\ order}}
+\DoxyCodeLine{00091\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(ProgramAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00092\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(VarDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00093\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(ExternAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00094\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(FuncDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00095\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(RecordDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00096\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(PrototypeAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00097\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(CallExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00098\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(ReturnExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00099\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(BinaryExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00100\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(NumberExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00101\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(StringExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00102\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(BoolExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00103\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(UnitExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00104\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(VariableExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00105\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(BlockAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00106\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(IfExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00107\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(TypedVarAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(ProgramAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00110\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(VarDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00111\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(ExternAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00112\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(FuncDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00113\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(RecordDefAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00114\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(PrototypeAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00115\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(CallExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00116\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(ReturnExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00117\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(BinaryExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00118\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(NumberExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00119\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(UnitExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00120\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(StringExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00121\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(BoolExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00122\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(VariableExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00123\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(BlockAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00124\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(IfExprAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00125\ \ \ \textcolor{keyword}{virtual}\ Type\ synthesize(TypedVarAST\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ Type\ get\_type\_from\_type\_lexeme(\textcolor{keyword}{const}\ std::string\ \&type\_lexeme,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sammine\_util::Location\ location)\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{if}\ (type\_lexeme.empty())\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Type::NonExistent();}
+\DoxyCodeLine{00131\ \ \ \ \ \}}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{auto}\ get\_type\_opt\ =\ this-\/>get\_typename\_type(type\_lexeme);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordflow}{if}\ (!get\_type\_opt.has\_value())\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ this-\/>add\_error(location,}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fmt::format(\textcolor{stringliteral}{"{}Type\ '\{\}'\ not\ found\ in\ the\ current\ scope."{}},}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type\_lexeme));}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Type::Poisoned();}
+\DoxyCodeLine{00139\ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ get\_type\_opt.value();}
+\DoxyCodeLine{00141\ \ \ \}}
+\DoxyCodeLine{00142\ \};}
+\DoxyCodeLine{00143\ \}\ \textcolor{comment}{//\ namespace\ AST}}
+\DoxyCodeLine{00144\ \}\ \textcolor{comment}{//\ namespace\ sammine\_lang}}
+
+\end{DoxyCode}

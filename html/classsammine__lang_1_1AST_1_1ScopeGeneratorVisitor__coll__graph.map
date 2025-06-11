@@ -1,0 +1,25 @@
+<map id="sammine_lang::AST::ScopeGeneratorVisitor" name="sammine_lang::AST::ScopeGeneratorVisitor">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1255,113,1407,154"/>
+<area shape="rect" id="Node000002" href="$classsammine__lang_1_1AST_1_1ScopedASTVisitor.html" title=" " alt="" coords="978,77,1121,118"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1137,106,1254,121,1254,127,1136,111"/>
+<area shape="rect" id="Node000003" href="$classsammine__lang_1_1AST_1_1ASTVisitor.html" title=" " alt="" coords="755,77,898,118"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="914,95,977,95,977,100,914,100"/>
+<area shape="rect" id="Node000004" href="$classsammine__util_1_1Reportee.html" title=" " alt="" coords="448,62,605,88"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="620,79,754,90,754,95,620,85"/>
+<area shape="rect" id="Node000005" href="$classsammine__lang_1_1AST_1_1ProgramAST.html" title=" " alt="" coords="455,112,598,153"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="613,120,754,103,755,109,614,125"/>
+<area shape="rect" id="Node000006" href="$classsammine__lang_1_1AST_1_1AstBase.html" title=" " alt="" coords="256,63,399,103"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="415,102,455,112,454,117,414,107"/>
+<area shape="rect" id="Node000007" href="$classsammine__lang_1_1AST_1_1Visitable.html" title=" " alt="" coords="11,5,154,46"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="170,43,256,64,255,69,169,49"/>
+<area shape="rect" id="Node000008" href="$classsammine__util_1_1Location.html" title=" " alt="" coords="5,70,160,96"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="175,80,255,80,255,86,175,86"/>
+<area shape="rect" id="Node000009" href="$structType.html" title=" " alt="" coords="58,120,107,145"/>
+<area shape="poly" id="edge8_Node000006_Node000009" title=" " alt="" coords="122,122,231,101,255,96,256,101,232,106,123,128"/>
+<area shape="rect" id="Node000010" href="$classsammine__lang_1_1AST_1_1Printable.html" title=" " alt="" coords="256,128,399,169"/>
+<area shape="poly" id="edge9_Node000005_Node000010" title=" " alt="" coords="415,139,454,135,455,141,415,144"/>
+<area shape="rect" id="Node000011" href="$classsammine__lang_1_1AST_1_1LexicalStack.html" title=" " alt="" coords="969,142,1130,198"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1145,155,1254,141,1255,146,1146,160"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="733,149,920,190"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="936,167,969,167,969,172,936,172"/>
+</map>

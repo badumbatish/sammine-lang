@@ -1,0 +1,221 @@
+\doxysection{sammine\+\_\+lang\+::Lexer Class Reference}
+\hypertarget{classsammine__lang_1_1Lexer}{}\label{classsammine__lang_1_1Lexer}\index{sammine\_lang::Lexer@{sammine\_lang::Lexer}}
+
+
+A lexer for sammine-\/lang.  
+
+
+
+
+{\ttfamily \#include $<$Lexer.\+h$>$}
+
+
+
+Inheritance diagram for sammine\+\_\+lang\+::Lexer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=197pt]{classsammine__lang_1_1Lexer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sammine\+\_\+lang\+::Lexer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=332pt]{classsammine__lang_1_1Lexer__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a1fe68e9be1ea1faecb48a32187df40e7}\label{classsammine__lang_1_1Lexer_a1fe68e9be1ea1faecb48a32187df40e7} 
+{\bfseries Lexer} (const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_abd27044cae4e4c967ea35a8ab0fabd27}\label{classsammine__lang_1_1Lexer_abd27044cae4e4c967ea35a8ab0fabd27} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ {\bfseries peek} ()
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_add47c229e17b1b80afa716c3ca1d3d7f}\label{classsammine__lang_1_1Lexer_add47c229e17b1b80afa716c3ca1d3d7f} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ {\bfseries consume} ()
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a6e0dbee443a088963bb6d912c684b55d}\label{classsammine__lang_1_1Lexer_a6e0dbee443a088963bb6d912c684b55d} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1TokenStream}{Token\+Stream}} $>$ {\bfseries get\+Token\+Stream} ()
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a7bac0e200ce47f449c04e36b46672b4a}\label{classsammine__lang_1_1Lexer_a7bac0e200ce47f449c04e36b46672b4a} 
+size\+\_\+t {\bfseries advance} (size\+\_\+t i)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a659f9341c29be23957c98179e9bc1da5}\label{classsammine__lang_1_1Lexer_a659f9341c29be23957c98179e9bc1da5} 
+size\+\_\+t {\bfseries devance} (size\+\_\+t i)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classsammine__util_1_1Reportee}{sammine\+\_\+util\+::\+Reportee}}}
+\begin{DoxyCompactItemize}
+\item 
+iterator {\bfseries begin} ()
+\item 
+iterator {\bfseries end} ()
+\item 
+const\+\_\+iterator {\bfseries begin} () const
+\item 
+const\+\_\+iterator {\bfseries end} () const
+\item 
+const\+\_\+iterator {\bfseries cbegin} () const
+\item 
+const\+\_\+iterator {\bfseries cend} () const
+\item 
+virtual void {\bfseries abort} (const std\+::string \&msg="{}$<$NO MESSAGE$>$"{})
+\item 
+{\footnotesize template$<$explicitly\+\_\+bool\+\_\+like T$>$ }\\void {\bfseries abort\+\_\+on} (const T \&condition, const std\+::string \&message="{}$<$NO MESSAGE$>$"{})
+\item 
+{\footnotesize template$<$explicitly\+\_\+bool\+\_\+like T$>$ }\\void {\bfseries abort\+\_\+if\+\_\+not} (const T \&condition, const std\+::string \&message="{}$<$NO MESSAGE$>$"{})
+\item 
+void {\bfseries add\+\_\+error} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+void {\bfseries add\+\_\+warn} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+void {\bfseries add\+\_\+diagnostics} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+virtual bool {\bfseries has\+\_\+errors} () const
+\item 
+bool {\bfseries has\+\_\+warn} () const
+\item 
+bool {\bfseries has\+\_\+message} () const
+\item 
+bool {\bfseries has\+\_\+diagnostics} () const
+\item 
+int64\+\_\+t {\bfseries get\+\_\+error\+\_\+count} () const
+\item 
+int64\+\_\+t {\bfseries get\+\_\+warn\+\_\+count} () const
+\item 
+int64\+\_\+t {\bfseries get\+\_\+diagnostic\+\_\+count} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a144071f1f0d4a5c49783f6f9b7da0b7d}\label{classsammine__lang_1_1Lexer_a144071f1f0d4a5c49783f6f9b7da0b7d} 
+size\+\_\+t {\bfseries handle\+Number} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a9ae969791d0a129b55aef87c28048af4}\label{classsammine__lang_1_1Lexer_a9ae969791d0a129b55aef87c28048af4} 
+size\+\_\+t {\bfseries handle\+Spaces} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_ad27284daefd7454cf97aae7a80fb7e57}\label{classsammine__lang_1_1Lexer_ad27284daefd7454cf97aae7a80fb7e57} 
+size\+\_\+t {\bfseries handle\+ID} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_af81568504223731f8f69528abaa4b8b9}\label{classsammine__lang_1_1Lexer_af81568504223731f8f69528abaa4b8b9} 
+size\+\_\+t {\bfseries handle\+Invalid} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_ae9e75ff8350d1493f95e0c7a23dc1681}\label{classsammine__lang_1_1Lexer_ae9e75ff8350d1493f95e0c7a23dc1681} 
+size\+\_\+t {\bfseries handle\+Operators} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a8991d9881baa79a6e78787375baccfbf}\label{classsammine__lang_1_1Lexer_a8991d9881baa79a6e78787375baccfbf} 
+size\+\_\+t {\bfseries handle\+Operators\+ADD} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a0acf47dab066a019c5528dd15d0c0095}\label{classsammine__lang_1_1Lexer_a0acf47dab066a019c5528dd15d0c0095} 
+size\+\_\+t {\bfseries handle\+Operators\+SUB} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a43f23a7c017740f0cd063ba0851a94a9}\label{classsammine__lang_1_1Lexer_a43f23a7c017740f0cd063ba0851a94a9} 
+size\+\_\+t {\bfseries handle\+Operators\+MUL} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_ad44f38bb374a8ed0f8793b7e6b85ff4b}\label{classsammine__lang_1_1Lexer_ad44f38bb374a8ed0f8793b7e6b85ff4b} 
+size\+\_\+t {\bfseries handle\+Operators\+DIV} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a6c174bce691c5d0d837ad0bacb264a8e}\label{classsammine__lang_1_1Lexer_a6c174bce691c5d0d837ad0bacb264a8e} 
+size\+\_\+t {\bfseries handle\+Operators\+MOD} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a59fc051113fb656b9b8f3cf08c85ff80}\label{classsammine__lang_1_1Lexer_a59fc051113fb656b9b8f3cf08c85ff80} 
+size\+\_\+t {\bfseries handle\+Operators\+AND} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a39b455b3af035ba231ce3183d3ee648a}\label{classsammine__lang_1_1Lexer_a39b455b3af035ba231ce3183d3ee648a} 
+size\+\_\+t {\bfseries handle\+Operators\+OR} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_ae18e84e04382f630cb639de8f28a4bbe}\label{classsammine__lang_1_1Lexer_ae18e84e04382f630cb639de8f28a4bbe} 
+size\+\_\+t {\bfseries handle\+Operators\+XOR} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a2058054b77633ee42873f6e06549f878}\label{classsammine__lang_1_1Lexer_a2058054b77633ee42873f6e06549f878} 
+size\+\_\+t {\bfseries handle\+Operators\+Comp\+Left} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a8d1193875b2407ea89b35265a808c821}\label{classsammine__lang_1_1Lexer_a8d1193875b2407ea89b35265a808c821} 
+size\+\_\+t {\bfseries handle\+Operators\+Comp\+Right} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a8e4c5ffcdfe02cfa1eaf0664c1fd49f9}\label{classsammine__lang_1_1Lexer_a8e4c5ffcdfe02cfa1eaf0664c1fd49f9} 
+size\+\_\+t {\bfseries handle\+Operators\+Equal} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_afbe069b552e0bb55ef965330017ea0c9}\label{classsammine__lang_1_1Lexer_afbe069b552e0bb55ef965330017ea0c9} 
+size\+\_\+t {\bfseries handle\+Operators\+Not} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a717794761f1342996e4843f56ae9c392}\label{classsammine__lang_1_1Lexer_a717794761f1342996e4843f56ae9c392} 
+size\+\_\+t {\bfseries handle\+Utility} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a750e44970c13f98d20a3737a2ad05201}\label{classsammine__lang_1_1Lexer_a750e44970c13f98d20a3737a2ad05201} 
+size\+\_\+t {\bfseries handle\+Utility\+PAREN} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_aadf395e13e9262f3b5f5feb1a82310ff}\label{classsammine__lang_1_1Lexer_aadf395e13e9262f3b5f5feb1a82310ff} 
+size\+\_\+t {\bfseries handle\+Utility\+CURLY} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a207c633b5d409114a832cd464687f54f}\label{classsammine__lang_1_1Lexer_a207c633b5d409114a832cd464687f54f} 
+size\+\_\+t {\bfseries handle\+Utility\+COMMENT} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a4cd1d86862689307c97109cc176f9da1}\label{classsammine__lang_1_1Lexer_a4cd1d86862689307c97109cc176f9da1} 
+size\+\_\+t {\bfseries handle\+Utility\+COMMA} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a1490c3ecf19a09ecf2ec6d0c09dc25af}\label{classsammine__lang_1_1Lexer_a1490c3ecf19a09ecf2ec6d0c09dc25af} 
+size\+\_\+t {\bfseries handle\+Utility\+Semi\+Colon} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a9de7279069b5380fb4d34125d9235135}\label{classsammine__lang_1_1Lexer_a9de7279069b5380fb4d34125d9235135} 
+size\+\_\+t {\bfseries handle\+Utility\+Double\+Quote} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_ad341888c7035a73d77c8ca2b8216a99d}\label{classsammine__lang_1_1Lexer_ad341888c7035a73d77c8ca2b8216a99d} 
+size\+\_\+t {\bfseries handle\+Utility\+COLON} (size\+\_\+t i, const std\+::string \&input)
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a984361d94c70dd5d639d5e8ccde476c6}\label{classsammine__lang_1_1Lexer_a984361d94c70dd5d639d5e8ccde476c6} 
+void {\bfseries update\+Location} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a969e80f1cbc795237aaaa17912b7a63c}\label{classsammine__lang_1_1Lexer_a969e80f1cbc795237aaaa17912b7a63c} 
+\mbox{\hyperlink{classsammine__util_1_1Location}{sammine\+\_\+util\+::\+Location}} {\bfseries location}
+\item 
+\Hypertarget{classsammine__lang_1_1Lexer_a8c5452126fe9d0501fe3b7ae569ef46a}\label{classsammine__lang_1_1Lexer_a8c5452126fe9d0501fe3b7ae569ef46a} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1TokenStream}{Token\+Stream}} $>$ {\bfseries tok\+Stream}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{classsammine__util_1_1Reportee}{sammine\+\_\+util\+::\+Reportee}}}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_afb3e219123a2417a2ee616e70b4da5fa}\label{classsammine__util_1_1Reportee_afb3e219123a2417a2ee616e70b4da5fa} 
+enum {\bfseries Report\+Kind} \{ {\bfseries error}
+, {\bfseries warn}
+, {\bfseries diag}
+ \}
+\item 
+using {\bfseries Report} = std\+::tuple$<$\mbox{\hyperlink{classsammine__util_1_1Location}{Location}}, std\+::string, Report\+Kind$>$
+\item 
+using {\bfseries iterator} = std\+::vector$<$Report$>$\+::iterator
+\item 
+using {\bfseries const\+\_\+iterator} = std\+::vector$<$Report$>$\+::const\+\_\+iterator
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classsammine__util_1_1Reportee}{sammine\+\_\+util\+::\+Reportee}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ Report $>$ {\bfseries reports}
+\item 
+int64\+\_\+t {\bfseries error\+\_\+count} = 0
+\item 
+int64\+\_\+t {\bfseries warn\+\_\+count} = 0
+\item 
+int64\+\_\+t {\bfseries diag\+\_\+count} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A lexer for sammine-\/lang. 
+
+Not sure what to put in here Not sure what to put in here 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/lex/\mbox{\hyperlink{Lexer_8h}{Lexer.\+h}}\item 
+src/lex/Lexer.\+cpp\end{DoxyCompactItemize}

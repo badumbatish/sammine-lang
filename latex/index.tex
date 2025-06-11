@@ -1,0 +1,108 @@
+\chapter{sammine-\/lang}
+\hypertarget{index}{}\label{index}\index{sammine-\/lang@{sammine-\/lang}}
+\label{index_md_README}%
+\Hypertarget{index_md_README}%
+ \doxysection*{sammine-\/lang}
+
+\begin{quote}
+Jasmine\textquotesingle{}s education front end compiler front end via her \href{https://badumbatish.github.io/blog}{\texttt{ blog}} \end{quote}
+
+
+ How I pictured sammine-\/lang in my head
+
+\doxysubsection*{Dev}
+
+\doxysubsubsection*{Mac\+OS Configurations}
+
+Install llvm \& catch2
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{brew\ install\ llvm\ catch2}
+
+\end{DoxyCode}
+ Run 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ build\ -\/DCMAKE\_EXPORT\_COMPILE\_COMMANDS=ON\ -\/DCMAKE\_BUILD\_TYPE=Debug\ [-\/DSAMMINE\_TEST=ON/OFF]\ [-\/DCMAKE\_LINKER\_TYPE=MOLD]}
+
+\end{DoxyCode}
+
+
+for configuration. We need \href{https://github.com/Shuriken-Group/setup_llvm_tools}{\texttt{ llvm}},\href{https://pypi.org/project/filecheck/}{\texttt{ File\+Check}}, and \href{https://pypi.org/project/lit/}{\texttt{ lit}}.
+
+Run
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/-\/build\ build\ -\/j\ }
+
+\end{DoxyCode}
+
+
+and
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/-\/build\ build\ -\/j\ -\/-\/target\ unit-\/tests\ e2e-\/tests}
+
+\end{DoxyCode}
+ in the project root folder to cycle through the development process.
+
+Run 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rm\ -\/rf\ build}
+
+\end{DoxyCode}
+ to erase the build folder (similar to make clean).
+
+\doxysubsection*{Simple Demo}
+
+Compiler help
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./build/src/sammine\ -\/-\/help}
+\DoxyCodeLine{}
+\DoxyCodeLine{Usage:\ sammine\ [-\/-\/help]\ [-\/-\/version]\ [[-\/-\/file\ VAR]|[-\/-\/str\ VAR]]\ [-\/-\/llvm-\/ir]\ [-\/-\/diagnostics]}
+\DoxyCodeLine{}
+\DoxyCodeLine{Optional\ arguments:}
+\DoxyCodeLine{\ \ -\/h,\ -\/-\/help\ \ \ \ \ \ shows\ help\ message\ and\ exits}
+\DoxyCodeLine{\ \ -\/v,\ -\/-\/version\ \ \ prints\ version\ information\ and\ exits}
+\DoxyCodeLine{\ \ -\/f,\ -\/-\/file\ \ \ \ \ \ An\ input\ file\ for\ compiler\ to\ scan\ over.}
+\DoxyCodeLine{\ \ -\/s,\ -\/-\/str\ \ \ \ \ \ \ An\ input\ string\ for\ compiler\ to\ scan\ over.}
+\DoxyCodeLine{}
+\DoxyCodeLine{diagnostics\ (detailed\ usage):}
+\DoxyCodeLine{\ \ \ -\/-\/llvm-\/ir\ \ \ \ \ \ sammine\ compiler\ spits\ out\ LLVM-\/IR\ to\ stdout}
+\DoxyCodeLine{\ \ \ -\/-\/diagnostics\ \ sammine\ compiler\ spits\ out\ diagnostics\ for\ sammine-\/lang\ developers}
+
+\end{DoxyCode}
+
+
+Failed scoping\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./build/src/sammine\ -\/f\ unit-\/tests/artifacts/invalid\_grammar.txt}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ |At\ unit-\/tests/artifacts/invalid\_grammar.txt:4:4}
+\DoxyCodeLine{\ \ \ 2|fn\ f(x\ :\ f64)\ \{}
+\DoxyCodeLine{\ \ \ 3|\ \ \ \ \#\ Use\ \`{}let`\ keyword}
+\DoxyCodeLine{\ \ \ 4|\ \ \ \ let\ x\ =\ 0;}
+\DoxyCodeLine{\ \ \ \ |\ \ \ \ \string^\string^\string^\string^\string^\string^\string^\string^\string^}
+\DoxyCodeLine{\ \ \ \ |\ \ \ \ [SCOPE1]:\ The\ name\ \`{}x`\ has\ been\ introduced\ before}
+\DoxyCodeLine{\ \ \ 5|\ \ \ \ 3\ +\ 1;}
+\DoxyCodeLine{\ \ \ 6|\ \ \ \ x\ +\ 2;}
+\DoxyCodeLine{-\/-\/-\/-\/|}
+\DoxyCodeLine{\ \ \ \ |At\ unit-\/tests/artifacts/invalid\_grammar.txt:2:5}
+\DoxyCodeLine{\ \ \ 1|\#\ this\ is\ a\ function}
+\DoxyCodeLine{\ \ \ 2|fn\ f(x\ :\ f64)\ \{}
+\DoxyCodeLine{\ \ \ \ |\ \ \ \ \ \string^\string^\string^\string^\string^\string^\string^}
+\DoxyCodeLine{\ \ \ \ |\ \ \ \ \ [SCOPE1]:\ Most\ recently\ defined\ \`{}x`\ is\ here}
+\DoxyCodeLine{\ \ \ 3|\ \ \ \ \#\ Use\ \`{}let`\ keyword}
+\DoxyCodeLine{\ \ \ 4|\ \ \ \ let\ x\ =\ 0;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ Did\ something\ seems\ wrong?\ Report\ it\ via\ [https://github.com/badumbatish/sammine-\/lang/issues]}
+\DoxyCodeLine{\#\ Give\ us\ a\ screenshot\ of\ the\ error\ as\ well\ as\ your\ contextual\ source\ code}
+
+\end{DoxyCode}
+ 

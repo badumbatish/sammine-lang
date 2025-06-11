@@ -1,0 +1,53 @@
+\doxysection{Lexical\+Context\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classLexicalContext}{}\label{classLexicalContext}\index{LexicalContext$<$ T $>$@{LexicalContext$<$ T $>$}}
+
+
+Collaboration diagram for Lexical\+Context\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=261pt]{classLexicalContext__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classLexicalContext_a23edfa5e9869c9d3668cdbbafbab555c}\label{classLexicalContext_a23edfa5e9869c9d3668cdbbafbab555c} 
+{\bfseries Lexical\+Context} (\mbox{\hyperlink{classLexicalContext}{Lexical\+Context}} \texorpdfstring{$\ast$}{*}parent\+\_\+scope)
+\item 
+\Hypertarget{classLexicalContext_a98222bea9c14bba3dab556b137494155}\label{classLexicalContext_a98222bea9c14bba3dab556b137494155} 
+void {\bfseries register\+NameT} (const std\+::string \&name, T l)
+\item 
+\Hypertarget{classLexicalContext_a98e0abafc242728d589035393b0c7a43}\label{classLexicalContext_a98e0abafc242728d589035393b0c7a43} 
+Name\+Query\+Result {\bfseries query\+Name} (const std\+::string \&name) const
+\item 
+\Hypertarget{classLexicalContext_ac51b0ff82d5aa6a4e0e9ec0bccdd5052}\label{classLexicalContext_ac51b0ff82d5aa6a4e0e9ec0bccdd5052} 
+T {\bfseries get\+\_\+from\+\_\+name} (const std\+::string \&name)
+\item 
+\Hypertarget{classLexicalContext_aa1803be13f46284216fab78c4713b374}\label{classLexicalContext_aa1803be13f46284216fab78c4713b374} 
+T {\bfseries recursive\+\_\+get\+\_\+from\+\_\+name} (const std\+::string \&name)
+\item 
+\Hypertarget{classLexicalContext_ae95a0fe39aa99cbe473274910e50a8b8}\label{classLexicalContext_ae95a0fe39aa99cbe473274910e50a8b8} 
+Name\+Query\+Result {\bfseries recursive\+Query\+Name} (const std\+::string \&name) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classLexicalContext_a8429cd60ce74d5a2d414025d5e4afabd}\label{classLexicalContext_a8429cd60ce74d5a2d414025d5e4afabd} 
+\mbox{\hyperlink{classLexicalContext}{Lexical\+Context}} \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+scope}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classLexicalContext_ad6e7cdf3af5efb4ddb71a8dc5f470eff}\label{classLexicalContext_ad6e7cdf3af5efb4ddb71a8dc5f470eff} 
+std\+::set$<$ std\+::string $>$ {\bfseries symbols}
+\item 
+\Hypertarget{classLexicalContext_ac4f8d96b13ea40011e264066a2ca4d4b}\label{classLexicalContext_ac4f8d96b13ea40011e264066a2ca4d4b} 
+std\+::unordered\+\_\+map$<$ std\+::string, T $>$ {\bfseries symbols\+\_\+to\+\_\+t}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/util/Lexical\+Context.\+h\end{DoxyCompactItemize}

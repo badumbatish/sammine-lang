@@ -1,0 +1,472 @@
+\doxysection{Ast.\+h}
+\hypertarget{Ast_8h_source}{}\label{Ast_8h_source}\index{include/ast/Ast.h@{include/ast/Ast.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}ast/AstBase.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}ast/AstDecl.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}util/Utilities.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }sammine\_lang\ \{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }AST\ \{}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{using\ }Identifier\ =\ std::string;}
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{\};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{ProgramAST}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{AstBase}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{}
+\DoxyCodeLine{00018\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ std::vector<std::unique\_ptr<DefinitionAST>>\ DefinitionVec;}
+\DoxyCodeLine{00020\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ProgramAST"{}};\ \}}
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00022\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00023\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00024\ \ \ \}}
+\DoxyCodeLine{00025\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00026\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00027\ \ \ \}}
+\DoxyCodeLine{00028\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00030\ \ \ \}}
+\DoxyCodeLine{00031\ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__lang_1_1AST_1_1DefinitionAST}{DefinitionAST}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{AstBase}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{\};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }TypedVarAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{AstBase}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{}
+\DoxyCodeLine{00036\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00037\ \ \ std::string\ name;}
+\DoxyCodeLine{00038\ \ \ std::string\ type\_lexeme;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \textcolor{keyword}{explicit}\ TypedVarAST(std::shared\_ptr<Token>\ name,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<Token>\ type)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ this-\/>join\_location(name)-\/>join\_location(type);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{if}\ (name)}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ this-\/>name\ =\ name-\/>lexeme;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{if}\ (type)}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ this-\/>type\_lexeme\ =\ type-\/>lexeme;}
+\DoxyCodeLine{00047\ \ \ \}}
+\DoxyCodeLine{00048\ \ \ \textcolor{keyword}{explicit}\ TypedVarAST(std::shared\_ptr<Token>\ name)\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ this-\/>join\_location(name);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (name)}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ this-\/>name\ =\ name-\/>lexeme;}
+\DoxyCodeLine{00052\ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}TypedVarAST"{}};\ \}}
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00055\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00056\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00057\ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00059\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00060\ \ \ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00064\ \ \ \}}
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{class\ }PrototypeAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{AstBase}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{}
+\DoxyCodeLine{00072\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00073\ \ \ llvm::Function\ *function;}
+\DoxyCodeLine{00074\ \ \ std::string\ functionName;}
+\DoxyCodeLine{00075\ \ \ std::string\ returnType;}
+\DoxyCodeLine{00076\ \ \ std::vector<std::unique\_ptr<AST::TypedVarAST>>\ parameterVectors;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \textcolor{keyword}{explicit}\ PrototypeAST(}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ std::shared\_ptr<Token>\ functionName,\ std::shared\_ptr<Token>\ returnType,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ std::vector<std::unique\_ptr<AST::TypedVarAST>>\ parameterVectors)\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ assert(functionName);}
+\DoxyCodeLine{00082\ \ \ \ \ assert(returnType);}
+\DoxyCodeLine{00083\ \ \ \ \ this-\/>functionName\ =\ functionName-\/>lexeme;}
+\DoxyCodeLine{00084\ \ \ \ \ this-\/>returnType\ =\ returnType-\/>lexeme;}
+\DoxyCodeLine{00085\ \ \ \ \ this-\/>join\_location(functionName)-\/>join\_location(returnType);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ this-\/>parameterVectors\ =\ std::move(parameterVectors);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ this-\/>parameterVectors.size();\ i++)}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ assert(this-\/>parameterVectors[i]);}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ this-\/>parameterVectors.size();\ i++)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ this-\/>join\_location(this-\/>parameterVectors[i]-\/>get\_location());}
+\DoxyCodeLine{00093\ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \textcolor{keyword}{explicit}\ PrototypeAST(}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ std::shared\_ptr<Token>\ functionName,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ std::vector<std::unique\_ptr<AST::TypedVarAST>>\ parameterVectors)\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ assert(functionName);}
+\DoxyCodeLine{00099\ \ \ \ \ this-\/>functionName\ =\ functionName-\/>lexeme;}
+\DoxyCodeLine{00100\ \ \ \ \ this-\/>join\_location(functionName);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ this-\/>parameterVectors\ =\ std::move(parameterVectors);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ this-\/>parameterVectors.size();\ i++)}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ assert(this-\/>parameterVectors[i]);}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ this-\/>parameterVectors.size();\ i++)}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ this-\/>join\_location(this-\/>parameterVectors[i]-\/>get\_location());}
+\DoxyCodeLine{00108\ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}PrototypeAST"{}};\ \}}
+\DoxyCodeLine{00110\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00111\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00112\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00113\ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00115\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00116\ \ \ \}}
+\DoxyCodeLine{00117\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00119\ \ \ \}}
+\DoxyCodeLine{00120\ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00124\ \textcolor{keyword}{class\ }ExternAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1DefinitionAST}{DefinitionAST}}\ \{}
+\DoxyCodeLine{00125\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00126\ \ \ std::unique\_ptr<PrototypeAST>\ Prototype;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ ExternAST(std::unique\_ptr<PrototypeAST>\ Prototype)}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ :\ Prototype(std::move(Prototype))\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ this-\/>join\_location(this-\/>Prototype.get());}
+\DoxyCodeLine{00131\ \ \ \}}
+\DoxyCodeLine{00132\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ExternAST"{}};\ \}}
+\DoxyCodeLine{00135\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00136\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00137\ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00139\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00140\ \ \ \}}
+\DoxyCodeLine{00141\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00143\ \ \ \}}
+\DoxyCodeLine{00144\ \};}
+\DoxyCodeLine{00145\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{AstBase}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{}
+\DoxyCodeLine{00146\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00147\ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{\string~ExprAST}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00148\ \};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00153\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{BlockAST}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{AstBase}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Printable}{Printable}}\ \{}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00156\ \ \ std::vector<std::unique\_ptr<ExprAST>>\ Statements;}
+\DoxyCodeLine{00157\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}BlockAST"{}};\ \}}
+\DoxyCodeLine{00158\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00159\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00160\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00161\ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00163\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00164\ \ \ \}}
+\DoxyCodeLine{00165\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00167\ \ \ \}}
+\DoxyCodeLine{00168\ \};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{keyword}{class\ }FuncDefAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1DefinitionAST}{DefinitionAST}}\ \{}
+\DoxyCodeLine{00171\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00172\ \ \ \string~FuncDefAST()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00173\ \ \ std::unique\_ptr<PrototypeAST>\ Prototype;}
+\DoxyCodeLine{00174\ \ \ std::unique\_ptr<BlockAST>\ Block;}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ FuncDefAST(std::unique\_ptr<PrototypeAST>\ Prototype,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<BlockAST>\ Block)}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ :\ Prototype(std::move(Prototype)),\ Block(std::move(Block))\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ this-\/>join\_location(this-\/>Prototype.get())}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>Block.get());}
+\DoxyCodeLine{00181\ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}FuncDefAST"{}};\ \}}
+\DoxyCodeLine{00184\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00185\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00186\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00187\ \ \ \}}
+\DoxyCodeLine{00188\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00189\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00190\ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00193\ \ \ \}}
+\DoxyCodeLine{00194\ \};}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{//\ Record\ id\ \{\ typed\_var\ \}}}
+\DoxyCodeLine{00197\ \textcolor{keyword}{class\ }RecordDefAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1DefinitionAST}{DefinitionAST}}\ \{}
+\DoxyCodeLine{00198\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00199\ \ \ std::string\ record\_name;}
+\DoxyCodeLine{00200\ \ \ std::vector<std::unique\_ptr<TypedVarAST>>\ record\_members;}
+\DoxyCodeLine{00201\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}RecordDefAST"{}};\ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \textcolor{keyword}{explicit}\ RecordDefAST(std::shared\_ptr<Token>\ record\_id,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{decltype}(record\_members)\ record\_members)}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ :\ record\_members(std::move(record\_members))\ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordflow}{if}\ (record\_id)}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ record\_name\ =\ record\_id-\/>lexeme;}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ this-\/>join\_location(record\_id);}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&m\ :\ record\_members)}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ this-\/>join\_location(m.get());}
+\DoxyCodeLine{00212\ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00214\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00215\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00216\ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00218\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00219\ \ \ \}}
+\DoxyCodeLine{00220\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00222\ \ \ \}}
+\DoxyCodeLine{00223\ \};}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00226\ \textcolor{keyword}{class\ }VarDefAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00227\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00228\ \ \ std::unique\_ptr<TypedVarAST>\ TypedVar;}
+\DoxyCodeLine{00229\ \ \ std::unique\_ptr<ExprAST>\ Expression;}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \textcolor{keyword}{explicit}\ VarDefAST(std::shared\_ptr<Token>\ let,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<TypedVarAST>\ TypedVar,}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<ExprAST>\ Expression)}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ :\ TypedVar(std::move(TypedVar)),\ Expression(std::move(Expression))\ \{}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ this-\/>join\_location(let)}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>TypedVar.get())}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>Expression.get());}
+\DoxyCodeLine{00239\ \ \ \};}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}VarDefAST"{}};\ \}}
+\DoxyCodeLine{00242\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00243\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00244\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00245\ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00247\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00248\ \ \ \}}
+\DoxyCodeLine{00249\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00251\ \ \ \}}
+\DoxyCodeLine{00252\ \};}
+\DoxyCodeLine{00253\ \textcolor{keyword}{class\ }NumberExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00254\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00255\ \ \ std::string\ number;}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \textcolor{keyword}{explicit}\ NumberExprAST(std::shared\_ptr<Token>\ t)\ \{}
+\DoxyCodeLine{00258\ \ \ \ \ assert(t);}
+\DoxyCodeLine{00259\ \ \ \ \ join\_location(t);}
+\DoxyCodeLine{00260\ \ \ \ \ number\ =\ t-\/>lexeme;}
+\DoxyCodeLine{00261\ \ \ \}}
+\DoxyCodeLine{00262\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}NumberExprAST"{}};\ \}}
+\DoxyCodeLine{00263\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00264\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00265\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00266\ \ \ \}}
+\DoxyCodeLine{00267\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00268\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00269\ \ \ \}}
+\DoxyCodeLine{00270\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00272\ \ \ \}}
+\DoxyCodeLine{00273\ \};}
+\DoxyCodeLine{00274\ \textcolor{keyword}{class\ }StringExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00275\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00276\ \ \ std::string\ string\_content;}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \ \ \textcolor{keyword}{explicit}\ StringExprAST(std::shared\_ptr<Token>\ t)\ \{}
+\DoxyCodeLine{00279\ \ \ \ \ assert(t);}
+\DoxyCodeLine{00280\ \ \ \ \ join\_location(t);}
+\DoxyCodeLine{00281\ \ \ \ \ string\_content\ =\ t-\/>lexeme;}
+\DoxyCodeLine{00282\ \ \ \}}
+\DoxyCodeLine{00283\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}StringExprAST"{}};\ \}}
+\DoxyCodeLine{00284\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00285\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00286\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00287\ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00289\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00290\ \ \ \}}
+\DoxyCodeLine{00291\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00293\ \ \ \}}
+\DoxyCodeLine{00294\ \};}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \textcolor{keyword}{class\ }BoolExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00297\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00298\ \ \ \textcolor{keywordtype}{bool}\ b;}
+\DoxyCodeLine{00299\ \ \ BoolExprAST(\textcolor{keywordtype}{bool}\ b,\ \mbox{\hyperlink{classsammine__util_1_1Location}{sammine\_util::Location}}\ loc)\ :\ b(b)\ \{}
+\DoxyCodeLine{00300\ \ \ \ \ this-\/>location\ =\ loc;}
+\DoxyCodeLine{00301\ \ \ \}}
+\DoxyCodeLine{00302\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}BoolExprAST"{}};\ \}}
+\DoxyCodeLine{00303\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00304\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00305\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00306\ \ \ \}}
+\DoxyCodeLine{00307\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00308\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00309\ \ \ \}}
+\DoxyCodeLine{00310\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00312\ \ \ \}}
+\DoxyCodeLine{00313\ \};}
+\DoxyCodeLine{00314\ \textcolor{keyword}{class\ }BinaryExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00315\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00316\ \ \ std::shared\_ptr<Token>\ Op;}
+\DoxyCodeLine{00317\ \ \ std::unique\_ptr<ExprAST>\ LHS,\ RHS;}
+\DoxyCodeLine{00318\ \ \ BinaryExprAST(std::shared\_ptr<Token>\ op,\ std::unique\_ptr<ExprAST>\ LHS,}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<ExprAST>\ RHS)}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ :\ Op(op),\ LHS(std::move(LHS)),\ RHS(std::move(RHS))\ \{}
+\DoxyCodeLine{00321\ \ \ \ \ this-\/>join\_location(this-\/>Op)}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>LHS.get())}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>RHS.get());}
+\DoxyCodeLine{00324\ \ \ \}}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}BinaryExprAST"{}};\ \}}
+\DoxyCodeLine{00327\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00328\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00329\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00330\ \ \ \}}
+\DoxyCodeLine{00331\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00332\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00333\ \ \ \}}
+\DoxyCodeLine{00334\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00336\ \ \ \}}
+\DoxyCodeLine{00337\ \};}
+\DoxyCodeLine{00338\ \textcolor{keyword}{class\ }ReturnExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00341\ \ \ \textcolor{keywordtype}{bool}\ is\_implicit;}
+\DoxyCodeLine{00342\ \ \ std::unique\_ptr<ExprAST>\ return\_expr;}
+\DoxyCodeLine{00343\ \ \ ReturnExprAST(std::shared\_ptr<Token>\ return\_tok,}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<ExprAST>\ return\_expr)}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ :\ is\_implicit(\textcolor{keyword}{false}),\ return\_expr(std::move(return\_expr))\ \{}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{if}\ (return\_expr\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ this-\/>join\_location(return\_tok);}
+\DoxyCodeLine{00348\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ this-\/>join\_location(return\_tok)-\/>join\_location(this-\/>return\_expr.get());}
+\DoxyCodeLine{00350\ \ \ \ \ \}}
+\DoxyCodeLine{00351\ \ \ \}}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ ReturnExprAST(std::unique\_ptr<ExprAST>\ return\_expr)}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ :\ is\_implicit(\textcolor{keyword}{true}),\ return\_expr(std::move(return\_expr))\ \{}
+\DoxyCodeLine{00355\ \ \ \ \ this-\/>join\_location(this-\/>return\_expr.get());}
+\DoxyCodeLine{00356\ \ \ \}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ReturnExprAST"{}};\ \}}
+\DoxyCodeLine{00359\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00360\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00361\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00362\ \ \ \}}
+\DoxyCodeLine{00363\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00364\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00365\ \ \ \}}
+\DoxyCodeLine{00366\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00368\ \ \ \}}
+\DoxyCodeLine{00369\ \};}
+\DoxyCodeLine{00370\ \textcolor{keyword}{class\ }CallExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00373\ \ \ std::string\ functionName;}
+\DoxyCodeLine{00374\ \ \ std::vector<std::unique\_ptr<AST::ExprAST>>\ arguments;}
+\DoxyCodeLine{00375\ \ \ \textcolor{keyword}{explicit}\ CallExprAST(}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ std::shared\_ptr<Token>\ functionName,}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ std::vector<std::unique\_ptr<AST::ExprAST>>\ arguments\ =\ \{\})\ \{}
+\DoxyCodeLine{00378\ \ \ \ \ join\_location(functionName);}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordflow}{if}\ (functionName)}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ this-\/>functionName\ =\ functionName-\/>lexeme;}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&arg\ :\ arguments)}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (arg)}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ this-\/>join\_location(arg.get());}
+\DoxyCodeLine{00385\ \ \ \ \ this-\/>arguments\ =\ std::move(arguments);}
+\DoxyCodeLine{00386\ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}CallExprAST"{}};\ \}}
+\DoxyCodeLine{00389\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00390\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00391\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00392\ \ \ \}}
+\DoxyCodeLine{00393\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00394\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00395\ \ \ \}}
+\DoxyCodeLine{00396\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00398\ \ \ \}}
+\DoxyCodeLine{00399\ \};}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \textcolor{keyword}{class\ }UnitExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00404\ \ \ \textcolor{keywordtype}{bool}\ is\_implicit;}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \ \ \textcolor{keyword}{explicit}\ UnitExprAST(std::shared\_ptr<Token>\ left\_paren,}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<Token>\ right\_paren)}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ :\ is\_implicit(\textcolor{keyword}{false})\ \{}
+\DoxyCodeLine{00409\ \ \ \ \ assert(left\_paren);}
+\DoxyCodeLine{00410\ \ \ \ \ assert(right\_paren);}
+\DoxyCodeLine{00411\ \ \ \ \ this-\/>join\_location(left\_paren)-\/>join\_location(right\_paren);}
+\DoxyCodeLine{00412\ \ \ \};}
+\DoxyCodeLine{00413\ \ \ \textcolor{keyword}{explicit}\ UnitExprAST()\ :\ is\_implicit(\textcolor{keyword}{true})\ \{\}}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}UnitExpr"{}};\ \}}
+\DoxyCodeLine{00416\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00417\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00418\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00419\ \ \ \}}
+\DoxyCodeLine{00420\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00421\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00422\ \ \ \}}
+\DoxyCodeLine{00423\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00425\ \ \ \}}
+\DoxyCodeLine{00426\ \};}
+\DoxyCodeLine{00427\ \textcolor{keyword}{class\ }IfExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00428\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00429\ \ \ std::unique\_ptr<ExprAST>\ bool\_expr;}
+\DoxyCodeLine{00430\ \ \ std::unique\_ptr<BlockAST>\ thenBlockAST,\ elseBlockAST;}
+\DoxyCodeLine{00431\ \ \ \textcolor{keyword}{explicit}\ IfExprAST(std::unique\_ptr<ExprAST>\ bool\_expr,}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<BlockAST>\ thenBlockAST,}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<BlockAST>\ elseBlockAST)}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ :\ bool\_expr(std::move(bool\_expr)),\ thenBlockAST(std::move(thenBlockAST)),}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ elseBlockAST(std::move(elseBlockAST))\ \{}
+\DoxyCodeLine{00436\ \ \ \ \ this-\/>join\_location(this-\/>bool\_expr.get())}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>thenBlockAST.get())}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ -\/>join\_location(this-\/>elseBlockAST.get());}
+\DoxyCodeLine{00439\ \ \ \}}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00441\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}IfExpr"{}};\ \}}
+\DoxyCodeLine{00442\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00443\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00444\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00445\ \ \ \}}
+\DoxyCodeLine{00446\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00447\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00448\ \ \ \}}
+\DoxyCodeLine{00449\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00450\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00451\ \ \ \}}
+\DoxyCodeLine{00452\ \};}
+\DoxyCodeLine{00453\ \textcolor{keyword}{class\ }VariableExprAST\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExprAST}{ExprAST}}\ \{}
+\DoxyCodeLine{00454\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00455\ \ \ std::string\ variableName;}
+\DoxyCodeLine{00456\ \ \ VariableExprAST(std::shared\_ptr<Token>\ var)\ \{}
+\DoxyCodeLine{00457\ \ \ \ \ join\_location(var);}
+\DoxyCodeLine{00458\ \ \ \ \ \textcolor{keywordflow}{if}\ (var)}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ variableName\ =\ var-\/>lexeme;}
+\DoxyCodeLine{00460\ \ \ \};}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \ \ \textcolor{keyword}{virtual}\ std::string\ getTreeName()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}VariableExprAST"{}};\ \}}
+\DoxyCodeLine{00463\ \ \ \textcolor{keywordtype}{void}\ accept\_vis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{\ visitor-\/>visit(\textcolor{keyword}{this});\ \}}
+\DoxyCodeLine{00464\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_preorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00465\ \ \ \ \ visitor-\/>preorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00466\ \ \ \}}
+\DoxyCodeLine{00467\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ walk\_with\_postorder(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00468\ \ \ \ \ visitor-\/>postorder\_walk(\textcolor{keyword}{this});}
+\DoxyCodeLine{00469\ \ \ \}}
+\DoxyCodeLine{00470\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structType}{Type}}\ accept\_synthesis(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{TypeCheckerVisitor}}\ *visitor)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{keywordflow}{return}\ visitor-\/>synthesize(\textcolor{keyword}{this});}
+\DoxyCodeLine{00472\ \ \ \}}
+\DoxyCodeLine{00473\ \};}
+\DoxyCodeLine{00474\ \}\ \textcolor{comment}{//\ namespace\ AST}}
+\DoxyCodeLine{00475\ \}\ \textcolor{comment}{//\ namespace\ sammine\_lang}}
+
+\end{DoxyCode}

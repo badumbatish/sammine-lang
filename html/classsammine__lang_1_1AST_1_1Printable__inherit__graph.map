@@ -1,0 +1,41 @@
+<map id="sammine_lang::AST::Printable" name="sammine_lang::AST::Printable">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,464,149,505"/>
+<area shape="rect" id="Node000002" href="$classsammine__lang_1_1AST_1_1BlockAST.html" title="An AST to simulate a { } code block." alt="" coords="197,71,340,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,448,87,381,107,295,122,250,141,204,165,161,195,123,210,110,213,114,199,126,170,164,146,207,127,251,112,297,93,382,84,449"/>
+<area shape="rect" id="Node000003" href="$classsammine__lang_1_1AST_1_1DefinitionAST.html" title=" " alt="" coords="197,136,340,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="95,449,253,176,257,179,100,452"/>
+<area shape="rect" id="Node000007" href="$classsammine__lang_1_1AST_1_1ExprAST.html" title=" " alt="" coords="197,431,340,471"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="164,467,196,461,197,466,165,472"/>
+<area shape="rect" id="Node000018" href="$classsammine__lang_1_1AST_1_1ProgramAST.html" title=" " alt="" coords="197,496,340,537"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="165,496,197,502,196,507,164,502"/>
+<area shape="rect" id="Node000019" href="$classsammine__lang_1_1AST_1_1PrototypeAST.html" title="A prototype to present &quot;func func_name(...) &#45;&gt; type;&quot;." alt="" coords="197,561,340,602"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="130,510,198,546,223,558,221,563,195,551,128,515"/>
+<area shape="rect" id="Node000020" href="$classsammine__lang_1_1AST_1_1TypedVarAST.html" title=" " alt="" coords="197,627,340,667"/>
+<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="104,515,146,564,198,612,218,624,215,628,195,616,142,568,100,519"/>
+<area shape="rect" id="Node000004" href="$classsammine__lang_1_1AST_1_1ExternAST.html" title="A Function Definition that has the prototype and definition in terms of a block." alt="" coords="388,5,531,46"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="332,125,338,121,353,105,362,90,371,74,386,57,405,44,408,49,390,61,375,77,366,92,357,108,342,125,336,130"/>
+<area shape="rect" id="Node000005" href="$classsammine__lang_1_1AST_1_1FuncDefAST.html" title=" " alt="" coords="388,71,531,111"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="343,128,397,109,399,114,345,133"/>
+<area shape="rect" id="Node000006" href="$classsammine__lang_1_1AST_1_1RecordDefAST.html" title=" " alt="" coords="388,136,531,177"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="356,154,388,154,388,159,356,159"/>
+<area shape="rect" id="Node000008" href="$classsammine__lang_1_1AST_1_1BinaryExprAST.html" title=" " alt="" coords="388,201,531,242"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="281,416,321,336,351,292,386,253,404,240,407,245,390,257,355,295,325,339,285,418"/>
+<area shape="rect" id="Node000009" href="$classsammine__lang_1_1AST_1_1BoolExprAST.html" title=" " alt="" coords="388,267,531,307"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="292,416,333,367,386,318,406,306,409,310,390,322,337,371,296,420"/>
+<area shape="rect" id="Node000010" href="$classsammine__lang_1_1AST_1_1CallExprAST.html" title=" " alt="" coords="388,332,531,373"/>
+<area shape="poly" id="edge9_Node000007_Node000010" title=" " alt="" coords="318,420,387,383,412,371,414,376,389,388,321,425"/>
+<area shape="rect" id="Node000011" href="$classsammine__lang_1_1AST_1_1IfExprAST.html" title=" " alt="" coords="388,397,531,438"/>
+<area shape="poly" id="edge10_Node000007_Node000011" title=" " alt="" coords="355,433,387,428,388,433,356,438"/>
+<area shape="rect" id="Node000012" href="$classsammine__lang_1_1AST_1_1NumberExprAST.html" title=" " alt="" coords="388,463,531,503"/>
+<area shape="poly" id="edge11_Node000007_Node000012" title=" " alt="" coords="356,463,388,468,387,474,355,468"/>
+<area shape="rect" id="Node000013" href="$classsammine__lang_1_1AST_1_1ReturnExprAST.html" title=" " alt="" coords="388,528,531,569"/>
+<area shape="poly" id="edge12_Node000007_Node000013" title=" " alt="" coords="330,476,341,482,389,513,413,525,411,530,387,517,339,487,328,481"/>
+<area shape="rect" id="Node000014" href="$classsammine__lang_1_1AST_1_1StringExprAST.html" title=" " alt="" coords="388,593,531,634"/>
+<area shape="poly" id="edge13_Node000007_Node000014" title=" " alt="" coords="338,479,342,483,359,508,367,532,373,555,390,578,406,591,403,595,386,582,369,557,361,533,355,510,338,486,334,482"/>
+<area shape="rect" id="Node000015" href="$classsammine__lang_1_1AST_1_1UnitExprAST.html" title=" " alt="" coords="388,659,531,699"/>
+<area shape="poly" id="edge14_Node000007_Node000015" title=" " alt="" coords="340,480,342,483,356,504,364,525,367,565,369,604,376,624,390,644,404,656,400,660,386,647,372,626,364,605,361,565,359,526,352,506,338,486,336,484"/>
+<area shape="rect" id="Node000016" href="$classsammine__lang_1_1AST_1_1VarDefAST.html" title="A variable definition: &quot;var x = expression;&quot;." alt="" coords="388,724,531,765"/>
+<area shape="poly" id="edge15_Node000007_Node000016" title=" " alt="" coords="340,480,342,483,360,513,368,542,369,570,367,598,364,625,365,652,373,680,390,709,403,721,400,725,386,713,368,682,360,653,359,625,361,597,364,570,363,543,355,515,338,486,336,483"/>
+<area shape="rect" id="Node000017" href="$classsammine__lang_1_1AST_1_1VariableExprAST.html" title=" " alt="" coords="388,789,531,830"/>
+<area shape="poly" id="edge16_Node000007_Node000017" title=" " alt="" coords="340,480,342,483,364,522,372,559,372,595,367,631,362,666,361,701,369,737,390,775,403,787,399,791,386,778,364,739,356,701,356,665,361,630,366,595,367,560,359,524,338,486,336,484"/>
+</map>

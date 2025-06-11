@@ -1,0 +1,141 @@
+\doxysection{LLVMRes.\+h}
+\hypertarget{LLVMRes_8h_source}{}\label{LLVMRes_8h_source}\index{include/codegen/LLVMRes.h@{include/codegen/LLVMRes.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}ast/Ast.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}codegen/SammineJIT.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}iostream"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}util/Utilities.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}llvm/ADT/APFloat.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}llvm/ADT/STLExtras.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}llvm/Analysis/CGSCCPassManager.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}llvm/Analysis/LoopAnalysisManager.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/BasicBlock.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/Constants.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/DerivedTypes.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/Function.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/IRBuilder.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/Instructions.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/LLVMContext.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/LegacyPassManager.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/Module.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/Type.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}llvm/IR/Verifier.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}llvm/MC/TargetRegistry.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}llvm/Passes/PassBuilder.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}llvm/Passes/StandardInstrumentations.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}llvm/Support/CodeGen.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}llvm/Support/FileSystem.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}llvm/Support/TargetSelect.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}llvm/Support/raw\_ostream.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}llvm/Target/TargetMachine.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}llvm/Target/TargetOptions.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}llvm/TargetParser/Host.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}llvm/Transforms/Scalar/GVN.h"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ "{}llvm/Transforms/Scalar/Reassociate.h"{}}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{namespace\ }sammine\_lang\ \{}
+\DoxyCodeLine{00036\ \textcolor{keyword}{class\ }LLVMRes\ \{}
+\DoxyCodeLine{00037\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ \ \ llvm::ExitOnError\ ExitOnErr;}
+\DoxyCodeLine{00039\ \ \ std::unique\_ptr<llvm::LLVMContext>\ Context;}
+\DoxyCodeLine{00040\ \ \ std::unique\_ptr<llvm::IRBuilder<>>\ Builder;}
+\DoxyCodeLine{00041\ \ \ std::unique\_ptr<llvm::Module>\ Module;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ std::unique\_ptr<llvm::FunctionPassManager>\ FnPass;}
+\DoxyCodeLine{00044\ \ \ std::unique\_ptr<llvm::LoopAnalysisManager>\ LpAnalysis;}
+\DoxyCodeLine{00045\ \ \ std::unique\_ptr<llvm::FunctionAnalysisManager>\ FnAnalysis;}
+\DoxyCodeLine{00046\ \ \ std::unique\_ptr<llvm::CGSCCAnalysisManager>\ CgAnalysis;}
+\DoxyCodeLine{00047\ \ \ std::unique\_ptr<llvm::ModuleAnalysisManager>\ ModuleAnalysis;}
+\DoxyCodeLine{00048\ \ \ std::unique\_ptr<llvm::PassInstrumentationCallbacks>\ PassCallbacks;}
+\DoxyCodeLine{00049\ \ \ std::unique\_ptr<llvm::StandardInstrumentations>\ StdIns;}
+\DoxyCodeLine{00050\ \ \ std::unique\_ptr<SammineJIT>\ sammineJIT;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ llvm::PassBuilder\ PB;}
+\DoxyCodeLine{00053\ \ \ std::unique\_ptr<llvm::TargetMachine>\ target\_machine;}
+\DoxyCodeLine{00054\ \ \ llvm::legacy::PassManager\ pass;}
+\DoxyCodeLine{00055\ \ \ std::error\_code\ EC;}
+\DoxyCodeLine{00056\ \ \ LLVMRes()\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ llvm::InitializeAllTargetInfos();}
+\DoxyCodeLine{00058\ \ \ \ \ llvm::InitializeAllTargets();}
+\DoxyCodeLine{00059\ \ \ \ \ llvm::InitializeAllTargetMCs();}
+\DoxyCodeLine{00060\ \ \ \ \ llvm::InitializeNativeTargetAsmParser();}
+\DoxyCodeLine{00061\ \ \ \ \ llvm::InitializeNativeTargetAsmPrinter();}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ sammineJIT\ =\ ExitOnErr(SammineJIT::Create());}
+\DoxyCodeLine{00064\ \ \ \ \ InitializeModuleAndManagers();}
+\DoxyCodeLine{00065\ \ \ \}}
+\DoxyCodeLine{00066\ \ \ \textcolor{keywordtype}{void}\ InitializeModuleAndManagers()\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ InitializeEssentials();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ InitializeManagers();}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ InitializeInstrs();}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//\ Add\ transform\ passes.}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ Do\ simple\ "{}peephole"{}\ optimizations\ and\ bit-\/twiddling\ optzns.}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\ \ FnPass-\/>addPass(llvm::InstCombinePass());}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//\ \ //\ Reassociate\ expressions.}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//\ \ FnPass-\/>addPass(llvm::ReassociatePass());}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//\ \ //\ Eliminate\ Common\ SubExpressions.}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ \ FnPass-\/>addPass(llvm::GVNPass());}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//\ \ //\ Simplify\ the\ control\ flow\ graph\ (deleting\ unreachable\ blocks,\ etc).}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ \ FnPass-\/>addPass(llvm::SimplifyCFGPass());}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ InitializePassBuilder();}}
+\DoxyCodeLine{00084\ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \textcolor{keywordtype}{void}\ InitializeEssentials()\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ Open\ a\ new\ context\ and\ module.}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ Context\ =\ std::make\_unique<llvm::LLVMContext>();}
+\DoxyCodeLine{00089\ \ \ \ \ assert(Context);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ Module\ =\ std::make\_unique<llvm::Module>(\textcolor{stringliteral}{"{}KaleidoscopeJIT"{}},\ *Context);}
+\DoxyCodeLine{00092\ \ \ \ \ assert(Module);}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{auto}\ TargetTriple\ =\ LLVMGetDefaultTargetTriple();}
+\DoxyCodeLine{00094\ \ \ \ \ std::string\ Error;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{auto}\ Target\ =\ llvm::TargetRegistry::lookupTarget(TargetTriple,\ Error);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{auto}\ CPU\ =\ \textcolor{stringliteral}{"{}generic"{}};}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{auto}\ Features\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00099\ \ \ \ \ llvm::TargetOptions\ opt;}
+\DoxyCodeLine{00100\ \ \ \ \ target\_machine\ =}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ std::unique\_ptr<llvm::TargetMachine>(Target-\/>createTargetMachine(}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ TargetTriple,\ CPU,\ Features,\ opt,\ llvm::Reloc::PIC\_));}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{//\ Create\ a\ new\ builder\ for\ the\ module.}}
+\DoxyCodeLine{00105\ \ \ \ \ Builder\ =\ std::make\_unique<llvm::IRBuilder<>>(*Context);}
+\DoxyCodeLine{00106\ \ \ \ \ assert(Builder);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ Module-\/>setDataLayout(target\_machine-\/>createDataLayout());}
+\DoxyCodeLine{00109\ \ \ \}}
+\DoxyCodeLine{00110\ \ \ \textcolor{keywordtype}{void}\ InitializeManagers()\ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//\ Create\ new\ pass\ and\ analysis\ managers.}}
+\DoxyCodeLine{00112\ \ \ \ \ FnPass\ =\ std::make\_unique<llvm::FunctionPassManager>();}
+\DoxyCodeLine{00113\ \ \ \ \ LpAnalysis\ =\ std::make\_unique<llvm::LoopAnalysisManager>();}
+\DoxyCodeLine{00114\ \ \ \ \ FnAnalysis\ =\ std::make\_unique<llvm::FunctionAnalysisManager>();}
+\DoxyCodeLine{00115\ \ \ \ \ CgAnalysis\ =\ std::make\_unique<llvm::CGSCCAnalysisManager>();}
+\DoxyCodeLine{00116\ \ \ \ \ ModuleAnalysis\ =\ std::make\_unique<llvm::ModuleAnalysisManager>();}
+\DoxyCodeLine{00117\ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \textcolor{keywordtype}{void}\ InitializeInstrs()\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ PassCallbacks\ =\ std::make\_unique<llvm::PassInstrumentationCallbacks>();}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ StdIns\ =}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ std::make\_unique<llvm::StandardInstrumentations>(*Context,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*DebugLogging*/}\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00125\ \ \ \ \ StdIns-\/>registerCallbacks(*PassCallbacks,\ ModuleAnalysis.get());}
+\DoxyCodeLine{00126\ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \textcolor{keywordtype}{void}\ InitializePassBuilder()\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{//\ Register\ analysis\ passes\ used\ in\ these\ transform\ passes.}}
+\DoxyCodeLine{00129\ \ \ \ \ PB.registerModuleAnalyses(*ModuleAnalysis);}
+\DoxyCodeLine{00130\ \ \ \ \ PB.registerFunctionAnalyses(*FnAnalysis);}
+\DoxyCodeLine{00131\ \ \ \ \ PB.crossRegisterProxies(*LpAnalysis,\ *FnAnalysis,\ *CgAnalysis,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *ModuleAnalysis);}
+\DoxyCodeLine{00133\ \ \ \}}
+\DoxyCodeLine{00134\ \};}
+\DoxyCodeLine{00135\ \}\ \textcolor{comment}{//\ namespace\ sammine\_lang}}
+
+\end{DoxyCode}

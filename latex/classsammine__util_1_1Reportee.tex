@@ -1,0 +1,110 @@
+\doxysection{sammine\+\_\+util\+::Reportee Class Reference}
+\hypertarget{classsammine__util_1_1Reportee}{}\label{classsammine__util_1_1Reportee}\index{sammine\_util::Reportee@{sammine\_util::Reportee}}
+
+
+Inheritance diagram for sammine\+\_\+util\+::Reportee\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classsammine__util_1_1Reportee__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_afb3e219123a2417a2ee616e70b4da5fa}\label{classsammine__util_1_1Reportee_afb3e219123a2417a2ee616e70b4da5fa} 
+enum {\bfseries Report\+Kind} \{ {\bfseries error}
+, {\bfseries warn}
+, {\bfseries diag}
+ \}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a7ede5914c4e19024caf675d38b1d19d8}\label{classsammine__util_1_1Reportee_a7ede5914c4e19024caf675d38b1d19d8} 
+using {\bfseries Report} = std\+::tuple$<$\mbox{\hyperlink{classsammine__util_1_1Location}{Location}}, std\+::string, Report\+Kind$>$
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a0b5e027ef78ba20b3649c64e8f7bf6a0}\label{classsammine__util_1_1Reportee_a0b5e027ef78ba20b3649c64e8f7bf6a0} 
+using {\bfseries iterator} = std\+::vector$<$Report$>$\+::iterator
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_afac77ca74b06cb4c9c5298bc453ead57}\label{classsammine__util_1_1Reportee_afac77ca74b06cb4c9c5298bc453ead57} 
+using {\bfseries const\+\_\+iterator} = std\+::vector$<$Report$>$\+::const\+\_\+iterator
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_ae37bcf8dbfad1f475a9e786930dbd8d7}\label{classsammine__util_1_1Reportee_ae37bcf8dbfad1f475a9e786930dbd8d7} 
+iterator {\bfseries begin} ()
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a6c25da589a4de38d4e770a96d643df03}\label{classsammine__util_1_1Reportee_a6c25da589a4de38d4e770a96d643df03} 
+iterator {\bfseries end} ()
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a57527919181065ac1be187f3d15ebd6a}\label{classsammine__util_1_1Reportee_a57527919181065ac1be187f3d15ebd6a} 
+const\+\_\+iterator {\bfseries begin} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_abf609cc21fad581555a32ea45515249d}\label{classsammine__util_1_1Reportee_abf609cc21fad581555a32ea45515249d} 
+const\+\_\+iterator {\bfseries end} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_af83ab1d2c5eb7c397b93f87281250209}\label{classsammine__util_1_1Reportee_af83ab1d2c5eb7c397b93f87281250209} 
+const\+\_\+iterator {\bfseries cbegin} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_ab10c47359b66b11c9d02b483b03689ca}\label{classsammine__util_1_1Reportee_ab10c47359b66b11c9d02b483b03689ca} 
+const\+\_\+iterator {\bfseries cend} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a04cf75d483b8784d0b2da27d6bbc28ce}\label{classsammine__util_1_1Reportee_a04cf75d483b8784d0b2da27d6bbc28ce} 
+virtual void {\bfseries abort} (const std\+::string \&msg="{}$<$NO MESSAGE$>$"{})
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a9ec000ab6961021a38f69f882e94730d}\label{classsammine__util_1_1Reportee_a9ec000ab6961021a38f69f882e94730d} 
+{\footnotesize template$<$explicitly\+\_\+bool\+\_\+like T$>$ }\\void {\bfseries abort\+\_\+on} (const T \&condition, const std\+::string \&message="{}$<$NO MESSAGE$>$"{})
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a5a3067c4281328db4df5e3f8426a95cc}\label{classsammine__util_1_1Reportee_a5a3067c4281328db4df5e3f8426a95cc} 
+{\footnotesize template$<$explicitly\+\_\+bool\+\_\+like T$>$ }\\void {\bfseries abort\+\_\+if\+\_\+not} (const T \&condition, const std\+::string \&message="{}$<$NO MESSAGE$>$"{})
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_ae9d8ed80370ac1a3a2e80bad42753fd9}\label{classsammine__util_1_1Reportee_ae9d8ed80370ac1a3a2e80bad42753fd9} 
+void {\bfseries add\+\_\+error} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_aa695d8cafa090b8c911935841881f90d}\label{classsammine__util_1_1Reportee_aa695d8cafa090b8c911935841881f90d} 
+void {\bfseries add\+\_\+warn} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_adc107c55f659e6bf96c2e64e673dfb4c}\label{classsammine__util_1_1Reportee_adc107c55f659e6bf96c2e64e673dfb4c} 
+void {\bfseries add\+\_\+diagnostics} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a69646d5c50e3f4d73a057f1f845f31c4}\label{classsammine__util_1_1Reportee_a69646d5c50e3f4d73a057f1f845f31c4} 
+virtual bool {\bfseries has\+\_\+errors} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_aa94add248a29582da1308cf561270211}\label{classsammine__util_1_1Reportee_aa94add248a29582da1308cf561270211} 
+bool {\bfseries has\+\_\+warn} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a1f793ccf4425cd760c1df408aea41844}\label{classsammine__util_1_1Reportee_a1f793ccf4425cd760c1df408aea41844} 
+bool {\bfseries has\+\_\+message} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a02db6062dc659a19b9791a6a36a53c37}\label{classsammine__util_1_1Reportee_a02db6062dc659a19b9791a6a36a53c37} 
+bool {\bfseries has\+\_\+diagnostics} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a4f9648f5c59197fcdddd3da29fd977ca}\label{classsammine__util_1_1Reportee_a4f9648f5c59197fcdddd3da29fd977ca} 
+int64\+\_\+t {\bfseries get\+\_\+error\+\_\+count} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_abaf41e1913791366b966ebb9c9ee79cc}\label{classsammine__util_1_1Reportee_abaf41e1913791366b966ebb9c9ee79cc} 
+int64\+\_\+t {\bfseries get\+\_\+warn\+\_\+count} () const
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_a068eeaef77380958bfcbc88541838f49}\label{classsammine__util_1_1Reportee_a068eeaef77380958bfcbc88541838f49} 
+int64\+\_\+t {\bfseries get\+\_\+diagnostic\+\_\+count} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_ac6a0023a54ee8ca13853fd03d0bea785}\label{classsammine__util_1_1Reportee_ac6a0023a54ee8ca13853fd03d0bea785} 
+std\+::vector$<$ Report $>$ {\bfseries reports}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_ad6ab5369b4017201d5f8901f0dce6b01}\label{classsammine__util_1_1Reportee_ad6ab5369b4017201d5f8901f0dce6b01} 
+int64\+\_\+t {\bfseries error\+\_\+count} = 0
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_afc5842518e8dce2d9abbf36faa40e782}\label{classsammine__util_1_1Reportee_afc5842518e8dce2d9abbf36faa40e782} 
+int64\+\_\+t {\bfseries warn\+\_\+count} = 0
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_ace3df888c31deaf3805b52d605c56023}\label{classsammine__util_1_1Reportee_ace3df888c31deaf3805b52d605c56023} 
+int64\+\_\+t {\bfseries diag\+\_\+count} = 0
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/util/Utilities.\+h\end{DoxyCompactItemize}

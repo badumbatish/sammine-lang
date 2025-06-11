@@ -1,0 +1,88 @@
+\doxysection{Codegen\+Visitor.\+h}
+\hypertarget{CodegenVisitor_8h_source}{}\label{CodegenVisitor_8h_source}\index{include/codegen/CodegenVisitor.h@{include/codegen/CodegenVisitor.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Jasmine\ Tang\ on\ 3/27/24.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}TypeConverter.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}ast/Ast.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}codegen/LLVMRes.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <llvm/IR/Type.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <llvm/IR/Value.h>}}
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }sammine\_lang::AST\ \{}
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }CgVisitor\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ScopedASTVisitor}{ScopedASTVisitor}}\ \{}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00015\ \ \ std::shared\_ptr<sammine\_lang::LLVMRes>\ resPtr;}
+\DoxyCodeLine{00016\ \ \ std::stack<std::map<std::string,\ llvm::AllocaInst\ *>>\ allocaValues;}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ llvm::Function\ *current\_func;}
+\DoxyCodeLine{00019\ \ \ llvm::Function\ *getCurrentFunction();}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordtype}{void}\ setCurrentFunction(std::shared\_ptr<PrototypeAST>);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeConverter}{TypeConverter}}\ type\_converter;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ CgVisitor(std::shared\_ptr<sammine\_lang::LLVMRes>\ resPtr)}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ :\ resPtr(resPtr),\ type\_converter(resPtr-\/>Context.get())\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ assert(this-\/>resPtr);}
+\DoxyCodeLine{00028\ \ \ \}}
+\DoxyCodeLine{00029\ \ \ llvm::AllocaInst\ *\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a7d41db130b2f54158e87d0fceb3b5a84}{CreateEntryBlockAlloca}}(llvm::Function\ *TheFunction,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&VarName,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ llvm::Type\ *);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{void}\ enter\_new\_scope()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{void}\ exit\_new\_scope()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a17f93f9dfa6be26180d98a446578b7d0}{visit}}(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{FuncDefAST}}\ *)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00037\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a17f93f9dfa6be26180d98a446578b7d0}{visit}}(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{IfExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00038\ \ \ \ \ ast-\/>walk\_with\_preorder(\textcolor{keyword}{this});}
+\DoxyCodeLine{00039\ \ \ \ \ ast-\/>walk\_with\_postorder(\textcolor{keyword}{this});}
+\DoxyCodeLine{00040\ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \textcolor{comment}{//\ visit}}
+\DoxyCodeLine{00042\ \ \ \textcolor{comment}{//\ pre\ order}}
+\DoxyCodeLine{00043\ \ \ \textcolor{comment}{//\ TODO:\ Implement\ these}}
+\DoxyCodeLine{00044\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{ProgramAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00045\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{VarDefAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00046\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{FuncDefAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00047\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{RecordDefAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00048\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{ExternAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00049\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{PrototypeAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00050\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{CallExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00051\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{ReturnExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00052\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{BinaryExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00053\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{NumberExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00054\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{StringExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00055\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{BoolExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00056\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{VariableExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00057\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{BlockAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00058\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{IfExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00059\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{UnitExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00060\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{TypedVarAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \textcolor{comment}{//\ post\ order}}
+\DoxyCodeLine{00063\ \ \ \textcolor{comment}{//\ TODO:\ Implement\ these?}}
+\DoxyCodeLine{00064\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{ProgramAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00065\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{VarDefAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00066\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{ExternAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00067\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{FuncDefAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00068\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{RecordDefAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00069\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{PrototypeAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00070\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{CallExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00071\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{ReturnExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00072\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{BinaryExprAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00073\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{NumberExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00074\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{StringExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00075\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{BoolExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00076\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{VariableExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00077\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{BlockAST}}\ *ast)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00078\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{IfExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00079\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{UnitExprAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00080\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ postorder\_walk(\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{TypedVarAST}}\ *ast)\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ \}\ \textcolor{comment}{//\ namespace\ sammine\_lang::AST}}
+
+\end{DoxyCode}

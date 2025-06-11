@@ -1,0 +1,134 @@
+\doxysection{sammine\+\_\+lang\+::AST\+::Number\+Expr\+AST Class Reference}
+\hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST}{}\label{classsammine__lang_1_1AST_1_1NumberExprAST}\index{sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}}
+
+
+Inheritance diagram for sammine\+\_\+lang\+::AST\+::Number\+Expr\+AST\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=314pt]{classsammine__lang_1_1AST_1_1NumberExprAST__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sammine\+\_\+lang\+::AST\+::Number\+Expr\+AST\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classsammine__lang_1_1AST_1_1NumberExprAST__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_ab4e62188433f7206d1752bfbb8fb02a9}\label{classsammine__lang_1_1AST_1_1NumberExprAST_ab4e62188433f7206d1752bfbb8fb02a9} 
+{\bfseries Number\+Expr\+AST} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ t)
+\item 
+virtual std\+::string \mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST_aa4351fe71943582572708b1517144666}{get\+Tree\+Name}} () override
+\item 
+void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST_a61d6c1f3a305b743bbd8aac012556aaf}{accept\+\_\+vis}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}} \texorpdfstring{$\ast$}{*}visitor) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST_ad2334aac6b8df29e48acf1c1336180ae}{walk\+\_\+with\+\_\+preorder}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}} \texorpdfstring{$\ast$}{*}visitor) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST_acc7568118289f581d32d32dfcbdac117}{walk\+\_\+with\+\_\+postorder}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}} \texorpdfstring{$\ast$}{*}visitor) override
+\item 
+virtual \mbox{\hyperlink{structType}{Type}} \mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST_a03524e37be3c7bbe3743a13bf1d66e60}{accept\+\_\+synthesis}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{Type\+Checker\+Visitor}} \texorpdfstring{$\ast$}{*}visitor) override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{sammine\+\_\+lang\+::\+AST\+::\+Ast\+Base}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{Ast\+Base}} \texorpdfstring{$\ast$}{*} {\bfseries join\+\_\+location} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{Ast\+Base}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+\mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{Ast\+Base}} \texorpdfstring{$\ast$}{*} {\bfseries join\+\_\+location} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ tok)
+\item 
+\mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{Ast\+Base}} \texorpdfstring{$\ast$}{*} {\bfseries join\+\_\+location} (\mbox{\hyperlink{classsammine__util_1_1Location}{sammine\+\_\+util\+::\+Location}} location)
+\item 
+\mbox{\hyperlink{classsammine__util_1_1Location}{sammine\+\_\+util\+::\+Location}} {\bfseries get\+\_\+location} ()
+\item 
+bool {\bfseries synthesized} () const
+\item 
+bool {\bfseries checked} () const
+\item 
+void {\bfseries set\+\_\+checked} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_a70f2dbdb0a206e61157e8c8db90d6f5f}\label{classsammine__lang_1_1AST_1_1NumberExprAST_a70f2dbdb0a206e61157e8c8db90d6f5f} 
+std\+::string {\bfseries number}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes inherited from \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{sammine\+\_\+lang\+::\+AST\+::\+Ast\+Base}}}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bfseries pe} = false
+\item 
+llvm\+::\+Value \texorpdfstring{$\ast$}{*} {\bfseries val}
+\item 
+\mbox{\hyperlink{structType}{Type}} {\bfseries type} = Type\+::\+Non\+Existent()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classsammine__lang_1_1AST_1_1AstBase}{sammine\+\_\+lang\+::\+AST\+::\+Ast\+Base}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classsammine__util_1_1Location}{sammine\+\_\+util\+::\+Location}} {\bfseries location}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_a03524e37be3c7bbe3743a13bf1d66e60}\index{sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}!accept\_synthesis@{accept\_synthesis}}
+\index{accept\_synthesis@{accept\_synthesis}!sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}}
+\doxysubsubsection{\texorpdfstring{accept\_synthesis()}{accept\_synthesis()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1NumberExprAST_a03524e37be3c7bbe3743a13bf1d66e60} 
+virtual \mbox{\hyperlink{structType}{Type}} sammine\+\_\+lang\+::\+AST\+::\+Number\+Expr\+AST\+::accept\+\_\+synthesis (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeCheckerVisitor}{Type\+Checker\+Visitor}} \texorpdfstring{$\ast$}{*}}]{visitor}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Visitable}{sammine\+\_\+lang\+::\+AST\+::\+Visitable}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_a61d6c1f3a305b743bbd8aac012556aaf}\index{sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}!accept\_vis@{accept\_vis}}
+\index{accept\_vis@{accept\_vis}!sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}}
+\doxysubsubsection{\texorpdfstring{accept\_vis()}{accept\_vis()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1NumberExprAST_a61d6c1f3a305b743bbd8aac012556aaf} 
+void sammine\+\_\+lang\+::\+AST\+::\+Number\+Expr\+AST\+::accept\+\_\+vis (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}} \texorpdfstring{$\ast$}{*}}]{visitor}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Visitable}{sammine\+\_\+lang\+::\+AST\+::\+Visitable}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_aa4351fe71943582572708b1517144666}\index{sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}!getTreeName@{getTreeName}}
+\index{getTreeName@{getTreeName}!sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}}
+\doxysubsubsection{\texorpdfstring{getTreeName()}{getTreeName()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1NumberExprAST_aa4351fe71943582572708b1517144666} 
+virtual std\+::string sammine\+\_\+lang\+::\+AST\+::\+Number\+Expr\+AST\+::get\+Tree\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Visitable}{sammine\+\_\+lang\+::\+AST\+::\+Visitable}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_acc7568118289f581d32d32dfcbdac117}\index{sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}!walk\_with\_postorder@{walk\_with\_postorder}}
+\index{walk\_with\_postorder@{walk\_with\_postorder}!sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}}
+\doxysubsubsection{\texorpdfstring{walk\_with\_postorder()}{walk\_with\_postorder()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1NumberExprAST_acc7568118289f581d32d32dfcbdac117} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Number\+Expr\+AST\+::walk\+\_\+with\+\_\+postorder (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}} \texorpdfstring{$\ast$}{*}}]{visitor}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Visitable}{sammine\+\_\+lang\+::\+AST\+::\+Visitable}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1NumberExprAST_ad2334aac6b8df29e48acf1c1336180ae}\index{sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}!walk\_with\_preorder@{walk\_with\_preorder}}
+\index{walk\_with\_preorder@{walk\_with\_preorder}!sammine\_lang::AST::NumberExprAST@{sammine\_lang::AST::NumberExprAST}}
+\doxysubsubsection{\texorpdfstring{walk\_with\_preorder()}{walk\_with\_preorder()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1NumberExprAST_ad2334aac6b8df29e48acf1c1336180ae} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Number\+Expr\+AST\+::walk\+\_\+with\+\_\+preorder (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{ASTVisitor}} \texorpdfstring{$\ast$}{*}}]{visitor}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1Visitable}{sammine\+\_\+lang\+::\+AST\+::\+Visitable}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/ast/Ast.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,64 @@
+\doxysection{sammine\+\_\+lang\+::Token\+Stream Class Reference}
+\hypertarget{classsammine__lang_1_1TokenStream}{}\label{classsammine__lang_1_1TokenStream}\index{sammine\_lang::TokenStream@{sammine\_lang::TokenStream}}
+
+
+A helper class for \doxylink{classsammine__lang_1_1Lexer}{Lexer} to simplify the process of getting a token.  
+
+
+
+
+{\ttfamily \#include $<$Token.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_a986a57eee3f7b4cd4642cb9a536e3af9}\label{classsammine__lang_1_1TokenStream_a986a57eee3f7b4cd4642cb9a536e3af9} 
+void {\bfseries push\+\_\+back} (const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ \&token)
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_a30781c9fb6a31a86324a3fa0a0cd461a}\label{classsammine__lang_1_1TokenStream_a30781c9fb6a31a86324a3fa0a0cd461a} 
+bool {\bfseries has\+Errors} ()
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_afd6ba1edb0ceb8f888b64dc55d18a979}\label{classsammine__lang_1_1TokenStream_afd6ba1edb0ceb8f888b64dc55d18a979} 
+void {\bfseries push\+\_\+back} (const \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} \&token)
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_a12da8907daf3f0063ec7f766361b4625}\label{classsammine__lang_1_1TokenStream_a12da8907daf3f0063ec7f766361b4625} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ \& {\bfseries exhaust\+\_\+until} (Token\+Type tok\+Type)
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_a486ccd7f66ecdcbcec60d268a5b5b485}\label{classsammine__lang_1_1TokenStream_a486ccd7f66ecdcbcec60d268a5b5b485} 
+bool {\bfseries is\+End} ()
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_adfac469ef1490b4f3746d936ed1b49ac}\label{classsammine__lang_1_1TokenStream_adfac469ef1490b4f3746d936ed1b49ac} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ {\bfseries peek} ()
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_a7fb0eb3af3d3956b425242b28b5ced93}\label{classsammine__lang_1_1TokenStream_a7fb0eb3af3d3956b425242b28b5ced93} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ {\bfseries consume} ()
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_aeda4208c684dce56d641197535924c1e}\label{classsammine__lang_1_1TokenStream_aeda4208c684dce56d641197535924c1e} 
+\mbox{\hyperlink{classsammine__util_1_1Location}{sammine\+\_\+util\+::\+Location}} {\bfseries current\+Location} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_ad81b00b040b174752126566213a85cd1}\label{classsammine__lang_1_1TokenStream_ad81b00b040b174752126566213a85cd1} 
+std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ $>$ {\bfseries Err\+Stream}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_aaf977509624ea3b9355f71b7ed6712d2}\label{classsammine__lang_1_1TokenStream_aaf977509624ea3b9355f71b7ed6712d2} 
+std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}} $>$ $>$ {\bfseries Tok\+Stream}
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_aff4b4107eff02bc5fb6548299268cb8f}\label{classsammine__lang_1_1TokenStream_aff4b4107eff02bc5fb6548299268cb8f} 
+size\+\_\+t {\bfseries current\+\_\+index}
+\item 
+\Hypertarget{classsammine__lang_1_1TokenStream_a89ac5fa391da85ed3d090b4d8f47fa38}\label{classsammine__lang_1_1TokenStream_a89ac5fa391da85ed3d090b4d8f47fa38} 
+bool {\bfseries error}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A helper class for \doxylink{classsammine__lang_1_1Lexer}{Lexer} to simplify the process of getting a token. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/lex/Token.\+h\end{DoxyCompactItemize}

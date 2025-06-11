@@ -1,0 +1,630 @@
+\doxysection{sammine\+\_\+lang\+::AST\+::Cg\+Visitor Class Reference}
+\hypertarget{classsammine__lang_1_1AST_1_1CgVisitor}{}\label{classsammine__lang_1_1AST_1_1CgVisitor}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+
+
+Inheritance diagram for sammine\+\_\+lang\+::AST\+::Cg\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=197pt]{classsammine__lang_1_1AST_1_1CgVisitor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sammine\+\_\+lang\+::AST\+::Cg\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classsammine__lang_1_1AST_1_1CgVisitor__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a58269e1be122a22709de746bf1af2485}\label{classsammine__lang_1_1AST_1_1CgVisitor_a58269e1be122a22709de746bf1af2485} 
+{\bfseries Cg\+Visitor} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1LLVMRes}{sammine\+\_\+lang\+::\+LLVMRes}} $>$ res\+Ptr)
+\item 
+llvm\+::\+Alloca\+Inst \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a7d41db130b2f54158e87d0fceb3b5a84}{Create\+Entry\+Block\+Alloca}} (llvm\+::\+Function \texorpdfstring{$\ast$}{*}The\+Function, const std\+::string \&Var\+Name, llvm\+::\+Type \texorpdfstring{$\ast$}{*})
+\item 
+void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_aa162e08125dce9643cbad469896e5f4c}{enter\+\_\+new\+\_\+scope}} () override
+\item 
+void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ae165b0878ae80c6a0a0c2608791e505a}{exit\+\_\+new\+\_\+scope}} () override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a17f93f9dfa6be26180d98a446578b7d0}{visit}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST}} \texorpdfstring{$\ast$}{*}) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a71a4026e2edc0959db83508fe119dc03}{visit}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{If\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a912b3243b526abda1a2b243f273f4873}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{Program\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a65b03319a795e3cb91ba5bfba4d5403f}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{Var\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a8ba5b8bca081124f2b00869b8c1ec895}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a9537d5166f9302bc67f0db60dcf1dcad}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{Record\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a588176f6775252b748e28253b36904f3}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{Extern\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_acaaf46ca57a58cc54a2804e345e28fff}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{Prototype\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ac40180d4a6b439882c5eec4036717d5a}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{Call\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a8ef6e4ce3c8f299112dcd8d366482781}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{Return\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ab5e1a737d21eec9fe8036a028066d511}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{Binary\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a61e85291d32513a313cc54693439d472}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{Number\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a57b715f835837eb5e1daf88b2f31de67}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{String\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a717943862f90646bb7d5fa23caeadd7e}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{Bool\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a78c291d584f8be40732b1f824bc3864b}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{Variable\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ab6b12c62e6da82632f87fca18ec423c6}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{Block\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a4a91ee0d949bee9f7a4810488542ba96}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{If\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ae7918eed9142637159bb1aa3af268b9d}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{Unit\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a576a811dfe80c5c7ab2d50c5ae940666}{preorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{Typed\+Var\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a933da91b1631a0dafecdd5baa76d1d1d}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{Program\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a38f0a7c9f66f9ef8be197378ab054c58}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{Var\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_aee33c5a902c4d8fca09c4c5515cab3f9}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{Extern\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a22e3db49a1bb6dbf819a8a248d31838d}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a8e3a5a5b50aea5877033d6aec280d1b9}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{Record\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a0d01d7c195101db321374622bc202662}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{Prototype\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a20dae636ae86a19451c9d21b1c6dc168}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{Call\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ab6aefe7329b740d09cee4f27a42b3a8d}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{Return\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_afce956832dc49e12cedf5883f30e43b5}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{Binary\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ac5a56036c933ca17ec5028a48a7bbbee}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{Number\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a9a3b906c19559e65d594a865d2fabb59}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{String\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a61e88c885dd36346300d3ae2696da8d0}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{Bool\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a7907c84c2b08eb2e05a095dc9e966ceb}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{Variable\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_ae1f81ef590925c28706d057d559fe176}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{Block\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a62ac6f2f38ad9b12743a31fb13520afc}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{If\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a61d1dbde65b59df89912176c4bfbd23d}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{Unit\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1CgVisitor_a224a7548aded577bb6221713ed6eab42}{postorder\+\_\+walk}} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{Typed\+Var\+AST}} \texorpdfstring{$\ast$}{*}ast) override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor_aff6dacaf9530f75d8b9f4449ec9c5627}{abort}} (const std\+::string \&msg="{}$<$NO MESSAGE$>$"{}) override final
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{Program\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{Var\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{Extern\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{Record\+Def\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{Prototype\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{Call\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{Return\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{Binary\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{Number\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{String\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{Bool\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{Unit\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{Variable\+Expr\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{Block\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\item 
+virtual void {\bfseries visit} (\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{Typed\+Var\+AST}} \texorpdfstring{$\ast$}{*}ast)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classsammine__util_1_1Reportee}{sammine\+\_\+util\+::\+Reportee}}}
+\begin{DoxyCompactItemize}
+\item 
+iterator {\bfseries begin} ()
+\item 
+iterator {\bfseries end} ()
+\item 
+const\+\_\+iterator {\bfseries begin} () const
+\item 
+const\+\_\+iterator {\bfseries end} () const
+\item 
+const\+\_\+iterator {\bfseries cbegin} () const
+\item 
+const\+\_\+iterator {\bfseries cend} () const
+\item 
+{\footnotesize template$<$explicitly\+\_\+bool\+\_\+like T$>$ }\\void {\bfseries abort\+\_\+on} (const T \&condition, const std\+::string \&message="{}$<$NO MESSAGE$>$"{})
+\item 
+{\footnotesize template$<$explicitly\+\_\+bool\+\_\+like T$>$ }\\void {\bfseries abort\+\_\+if\+\_\+not} (const T \&condition, const std\+::string \&message="{}$<$NO MESSAGE$>$"{})
+\item 
+void {\bfseries add\+\_\+error} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+void {\bfseries add\+\_\+warn} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+void {\bfseries add\+\_\+diagnostics} (\mbox{\hyperlink{classsammine__util_1_1Location}{Location}} loc, std\+::string msg)
+\item 
+virtual bool {\bfseries has\+\_\+errors} () const
+\item 
+bool {\bfseries has\+\_\+warn} () const
+\item 
+bool {\bfseries has\+\_\+message} () const
+\item 
+bool {\bfseries has\+\_\+diagnostics} () const
+\item 
+int64\+\_\+t {\bfseries get\+\_\+error\+\_\+count} () const
+\item 
+int64\+\_\+t {\bfseries get\+\_\+warn\+\_\+count} () const
+\item 
+int64\+\_\+t {\bfseries get\+\_\+diagnostic\+\_\+count} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a35196bcf85d49f4a215ddaf416499f19}\label{classsammine__lang_1_1AST_1_1CgVisitor_a35196bcf85d49f4a215ddaf416499f19} 
+llvm\+::\+Function \texorpdfstring{$\ast$}{*} {\bfseries get\+Current\+Function} ()
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a3ed876533bec40f88d95c627d247cde8}\label{classsammine__lang_1_1AST_1_1CgVisitor_a3ed876533bec40f88d95c627d247cde8} 
+void {\bfseries set\+Current\+Function} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{Prototype\+AST}} $>$)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a16d8fb3d8e82a32bb3062a5ae08d7f5d}\label{classsammine__lang_1_1AST_1_1CgVisitor_a16d8fb3d8e82a32bb3062a5ae08d7f5d} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classsammine__lang_1_1LLVMRes}{sammine\+\_\+lang\+::\+LLVMRes}} $>$ {\bfseries res\+Ptr}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a1522b45f908d625660e1859c126c9f91}\label{classsammine__lang_1_1AST_1_1CgVisitor_a1522b45f908d625660e1859c126c9f91} 
+std\+::stack$<$ std\+::map$<$ std\+::string, llvm\+::\+Alloca\+Inst \texorpdfstring{$\ast$}{*} $>$ $>$ {\bfseries alloca\+Values}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a70c8cb7eb126be0ccba1e5c2c654751d}\label{classsammine__lang_1_1AST_1_1CgVisitor_a70c8cb7eb126be0ccba1e5c2c654751d} 
+llvm\+::\+Function \texorpdfstring{$\ast$}{*} {\bfseries current\+\_\+func}
+\item 
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a739517aeabe9dbb280f52c32ed6178a3}\label{classsammine__lang_1_1AST_1_1CgVisitor_a739517aeabe9dbb280f52c32ed6178a3} 
+\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypeConverter}{Type\+Converter}} {\bfseries type\+\_\+converter}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{classsammine__util_1_1Reportee}{sammine\+\_\+util\+::\+Reportee}}}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsammine__util_1_1Reportee_afb3e219123a2417a2ee616e70b4da5fa}\label{classsammine__util_1_1Reportee_afb3e219123a2417a2ee616e70b4da5fa} 
+enum {\bfseries Report\+Kind} \{ {\bfseries error}
+, {\bfseries warn}
+, {\bfseries diag}
+ \}
+\item 
+using {\bfseries Report} = std\+::tuple$<$\mbox{\hyperlink{classsammine__util_1_1Location}{Location}}, std\+::string, Report\+Kind$>$
+\item 
+using {\bfseries iterator} = std\+::vector$<$Report$>$\+::iterator
+\item 
+using {\bfseries const\+\_\+iterator} = std\+::vector$<$Report$>$\+::const\+\_\+iterator
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classsammine__util_1_1Reportee}{sammine\+\_\+util\+::\+Reportee}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ Report $>$ {\bfseries reports}
+\item 
+int64\+\_\+t {\bfseries error\+\_\+count} = 0
+\item 
+int64\+\_\+t {\bfseries warn\+\_\+count} = 0
+\item 
+int64\+\_\+t {\bfseries diag\+\_\+count} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a7d41db130b2f54158e87d0fceb3b5a84}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!CreateEntryBlockAlloca@{CreateEntryBlockAlloca}}
+\index{CreateEntryBlockAlloca@{CreateEntryBlockAlloca}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{CreateEntryBlockAlloca()}{CreateEntryBlockAlloca()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a7d41db130b2f54158e87d0fceb3b5a84} 
+llvm\+::\+Alloca\+Inst \texorpdfstring{$\ast$}{*} sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::\+Create\+Entry\+Block\+Alloca (\begin{DoxyParamCaption}\item[{llvm\+::\+Function \texorpdfstring{$\ast$}{*}}]{Function}{, }\item[{const std\+::string \&}]{Var\+Name}{, }\item[{llvm\+::\+Type \texorpdfstring{$\ast$}{*}}]{type}{}\end{DoxyParamCaption})}
+
+Create\+Entry\+Block\+Alloca -\/ Create an alloca instruction in the entry block of the function. This is used for mutable variables etc.
+
+from the llvm blog\+: mem2reg only looks for alloca instructions in the entry block of the function. Being in the entry block guarantees that the alloca is only executed once, which makes analysis simpler. \Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_aa162e08125dce9643cbad469896e5f4c}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!enter\_new\_scope@{enter\_new\_scope}}
+\index{enter\_new\_scope@{enter\_new\_scope}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{enter\_new\_scope()}{enter\_new\_scope()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_aa162e08125dce9643cbad469896e5f4c} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::enter\+\_\+new\+\_\+scope (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ScopedASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+Scoped\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ae165b0878ae80c6a0a0c2608791e505a}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!exit\_new\_scope@{exit\_new\_scope}}
+\index{exit\_new\_scope@{exit\_new\_scope}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{exit\_new\_scope()}{exit\_new\_scope()}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ae165b0878ae80c6a0a0c2608791e505a} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::exit\+\_\+new\+\_\+scope (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ScopedASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+Scoped\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_afce956832dc49e12cedf5883f30e43b5}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [1/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_afce956832dc49e12cedf5883f30e43b5} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{Binary\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ae1f81ef590925c28706d057d559fe176}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [2/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ae1f81ef590925c28706d057d559fe176} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{Block\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a61e88c885dd36346300d3ae2696da8d0}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [3/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a61e88c885dd36346300d3ae2696da8d0} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{Bool\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a20dae636ae86a19451c9d21b1c6dc168}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [4/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a20dae636ae86a19451c9d21b1c6dc168} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{Call\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_aee33c5a902c4d8fca09c4c5515cab3f9}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [5/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_aee33c5a902c4d8fca09c4c5515cab3f9} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{Extern\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a22e3db49a1bb6dbf819a8a248d31838d}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [6/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a22e3db49a1bb6dbf819a8a248d31838d} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a62ac6f2f38ad9b12743a31fb13520afc}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [7/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a62ac6f2f38ad9b12743a31fb13520afc} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{If\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ac5a56036c933ca17ec5028a48a7bbbee}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [8/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ac5a56036c933ca17ec5028a48a7bbbee} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{Number\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a933da91b1631a0dafecdd5baa76d1d1d}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [9/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a933da91b1631a0dafecdd5baa76d1d1d} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{Program\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a0d01d7c195101db321374622bc202662}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [10/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a0d01d7c195101db321374622bc202662} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{Prototype\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a8e3a5a5b50aea5877033d6aec280d1b9}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [11/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a8e3a5a5b50aea5877033d6aec280d1b9} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{Record\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ab6aefe7329b740d09cee4f27a42b3a8d}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [12/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ab6aefe7329b740d09cee4f27a42b3a8d} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{Return\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a9a3b906c19559e65d594a865d2fabb59}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [13/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a9a3b906c19559e65d594a865d2fabb59} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{String\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a224a7548aded577bb6221713ed6eab42}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [14/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a224a7548aded577bb6221713ed6eab42} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{Typed\+Var\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a61d1dbde65b59df89912176c4bfbd23d}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [15/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a61d1dbde65b59df89912176c4bfbd23d} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{Unit\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a38f0a7c9f66f9ef8be197378ab054c58}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [16/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a38f0a7c9f66f9ef8be197378ab054c58} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{Var\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a7907c84c2b08eb2e05a095dc9e966ceb}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!postorder\_walk@{postorder\_walk}}
+\index{postorder\_walk@{postorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{postorder\_walk()}{postorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [17/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a7907c84c2b08eb2e05a095dc9e966ceb} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::postorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{Variable\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ab5e1a737d21eec9fe8036a028066d511}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [1/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ab5e1a737d21eec9fe8036a028066d511} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BinaryExprAST}{Binary\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ab6b12c62e6da82632f87fca18ec423c6}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [2/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ab6b12c62e6da82632f87fca18ec423c6} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BlockAST}{Block\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a717943862f90646bb7d5fa23caeadd7e}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [3/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a717943862f90646bb7d5fa23caeadd7e} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1BoolExprAST}{Bool\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ac40180d4a6b439882c5eec4036717d5a}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [4/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ac40180d4a6b439882c5eec4036717d5a} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1CallExprAST}{Call\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a588176f6775252b748e28253b36904f3}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [5/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a588176f6775252b748e28253b36904f3} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ExternAST}{Extern\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a8ba5b8bca081124f2b00869b8c1ec895}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [6/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a8ba5b8bca081124f2b00869b8c1ec895} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a4a91ee0d949bee9f7a4810488542ba96}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [7/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a4a91ee0d949bee9f7a4810488542ba96} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{If\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a61e85291d32513a313cc54693439d472}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [8/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a61e85291d32513a313cc54693439d472} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1NumberExprAST}{Number\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a912b3243b526abda1a2b243f273f4873}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [9/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a912b3243b526abda1a2b243f273f4873} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ProgramAST}{Program\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_acaaf46ca57a58cc54a2804e345e28fff}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [10/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_acaaf46ca57a58cc54a2804e345e28fff} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1PrototypeAST}{Prototype\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+INFO\+: Register the function with its arguments, put it in the module this comes before visiting a function 
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a9537d5166f9302bc67f0db60dcf1dcad}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [11/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a9537d5166f9302bc67f0db60dcf1dcad} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1RecordDefAST}{Record\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a8ef6e4ce3c8f299112dcd8d366482781}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [12/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a8ef6e4ce3c8f299112dcd8d366482781} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1ReturnExprAST}{Return\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a57b715f835837eb5e1daf88b2f31de67}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [13/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a57b715f835837eb5e1daf88b2f31de67} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1StringExprAST}{String\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a576a811dfe80c5c7ab2d50c5ae940666}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [14/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a576a811dfe80c5c7ab2d50c5ae940666} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1TypedVarAST}{Typed\+Var\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_ae7918eed9142637159bb1aa3af268b9d}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [15/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_ae7918eed9142637159bb1aa3af268b9d} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1UnitExprAST}{Unit\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a65b03319a795e3cb91ba5bfba4d5403f}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [16/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a65b03319a795e3cb91ba5bfba4d5403f} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VarDefAST}{Var\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a78c291d584f8be40732b1f824bc3864b}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!preorder\_walk@{preorder\_walk}}
+\index{preorder\_walk@{preorder\_walk}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{preorder\_walk()}{preorder\_walk()}\hspace{0.1cm}{\footnotesize\ttfamily [17/17]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a78c291d584f8be40732b1f824bc3864b} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::preorder\+\_\+walk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1VariableExprAST}{Variable\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a17f93f9dfa6be26180d98a446578b7d0}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!visit@{visit}}
+\index{visit@{visit}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{visit()}{visit()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a17f93f9dfa6be26180d98a446578b7d0} 
+void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::visit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Only visiting the \doxylink{classsammine__lang_1_1AST_1_1FuncDefAST}{Func\+Def\+AST} requires the use of scoping for now.
+
+In the future we might have to support \doxylink{classsammine__lang_1_1AST_1_1BlockAST}{Block\+AST} 
+
+Reimplemented from \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ScopedASTVisitor_a81fd27300633a13456ca4286c0232440}{sammine\+\_\+lang\+::\+AST\+::\+Scoped\+ASTVisitor}}.
+
+\Hypertarget{classsammine__lang_1_1AST_1_1CgVisitor_a71a4026e2edc0959db83508fe119dc03}\index{sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}!visit@{visit}}
+\index{visit@{visit}!sammine\_lang::AST::CgVisitor@{sammine\_lang::AST::CgVisitor}}
+\doxysubsubsection{\texorpdfstring{visit()}{visit()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classsammine__lang_1_1AST_1_1CgVisitor_a71a4026e2edc0959db83508fe119dc03} 
+virtual void sammine\+\_\+lang\+::\+AST\+::\+Cg\+Visitor\+::visit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsammine__lang_1_1AST_1_1IfExprAST}{If\+Expr\+AST}} \texorpdfstring{$\ast$}{*}}]{ast}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{classsammine__lang_1_1AST_1_1ASTVisitor}{sammine\+\_\+lang\+::\+AST\+::\+ASTVisitor}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/codegen/Codegen\+Visitor.\+h\item 
+src/codegen/Codegen\+Visitor.\+cpp\end{DoxyCompactItemize}

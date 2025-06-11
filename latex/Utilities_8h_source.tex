@@ -1,0 +1,243 @@
+\doxysection{Utilities.\+h}
+\hypertarget{Utilities_8h_source}{}\label{Utilities_8h_source}\index{include/util/Utilities.h@{include/util/Utilities.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}fmt/base.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}fmt/color.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}fmt/core.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string\_view>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <tuple>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }sammine\_util\ \{}
+\DoxyCodeLine{00017\ \textcolor{keyword}{auto}\ get\_string\_from\_file(\textcolor{keyword}{const}\ std::string\ \&file\_name)\ -\/>\ std::string;}
+\DoxyCodeLine{00018\ \textcolor{keyword}{inline}\ int64\_t\ unique\_ast\_id\ =\ 0;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00021\ \textcolor{keyword}{concept\ }\mbox{\hyperlink{conceptsammine__util_1_1explicitly__bool__like}{explicitly\_bool\_like}}\ =\ \textcolor{keyword}{requires}(T\ t)\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(t)\ \}\ -\/>\ std::same\_as<bool>;}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00024\ [[noreturn]]\ \textcolor{keyword}{auto}\ abort(\textcolor{keyword}{const}\ std::string\ \&message\ =\ \textcolor{stringliteral}{"{}<NO\ MESSAGE>"{}})\ -\/>\ void;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{template}\ <explicitly\_\textcolor{keywordtype}{bool}\_like\ T>}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ abort\_on(\textcolor{keyword}{const}\ T\ \&condition,\ \textcolor{keyword}{const}\ std::string\ \&message\ =\ \textcolor{stringliteral}{"{}<NO\ MESSAGE>"{}})\ \{}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(condition))\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ abort(message);}
+\DoxyCodeLine{00030\ \ \ \}}
+\DoxyCodeLine{00031\ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{template}\ <explicitly\_\textcolor{keywordtype}{bool}\_like\ T>}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ abort\_if\_not(\textcolor{keyword}{const}\ T\ \&condition,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&message\ =\ \textcolor{stringliteral}{"{}<NO\ MESSAGE>"{}})\ \{}
+\DoxyCodeLine{00036\ \ \ \textcolor{keywordflow}{if}\ (!\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(condition))\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ abort(message);}
+\DoxyCodeLine{00038\ \ \ \}}
+\DoxyCodeLine{00039\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{class\ }Location\ \{}
+\DoxyCodeLine{00048\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00049\ \ \ \textcolor{comment}{//\ True\ location\ in\ original\ source\ code\ string}}
+\DoxyCodeLine{00050\ \ \ int64\_t\ source\_start,\ source\_end;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \textcolor{comment}{//\ Default\ constructor}}
+\DoxyCodeLine{00053\ \ \ Location()\ :\ source\_start(0),\ source\_end(0)\ \{\}}
+\DoxyCodeLine{00054\ \ \ \textcolor{keyword}{static}\ Location\ NonPrintable()\ \{\ \textcolor{keywordflow}{return}\ Location(-\/1,\ -\/1);\ \}}
+\DoxyCodeLine{00055\ \ \ Location(int64\_t\ source\_start,\ int64\_t\ source\_end)}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ :\ source\_start(source\_start),\ source\_end(source\_end)\ \{\}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \textcolor{comment}{//\ Advance\ column\ position}}
+\DoxyCodeLine{00059\ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ advance()\ \{\ source\_end++;\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \textcolor{comment}{//\ Move\ column\ position\ backwards}}
+\DoxyCodeLine{00062\ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ devance()\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ source\_end-\/-\/;}
+\DoxyCodeLine{00064\ \ \ \ \ assert(source\_end\ >=\ source\_start);}
+\DoxyCodeLine{00065\ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \textcolor{comment}{//\ Handle\ newline}}
+\DoxyCodeLine{00068\ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ newLine()\ \{\ advance();\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{comment}{//\ Combine\ two\ locations}}
+\DoxyCodeLine{00071\ \ \ Location\ operator|(\textcolor{keyword}{const}\ Location\ \&other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00072\ \ \ \ \ Location\ result;}
+\DoxyCodeLine{00073\ \ \ \ \ result.source\_start\ =\ std::min(source\_start,\ other.source\_start);}
+\DoxyCodeLine{00074\ \ \ \ \ result.source\_end\ =\ std::max(source\_end,\ other.source\_end);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00076\ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \textcolor{keywordtype}{void}\ operator|=(\textcolor{keyword}{const}\ Location\ \&other)\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ source\_start\ =\ std::min(source\_start,\ other.source\_start);}
+\DoxyCodeLine{00080\ \ \ \ \ source\_end\ =\ std::max(source\_end,\ other.source\_end);}
+\DoxyCodeLine{00081\ \ \ \}}
+\DoxyCodeLine{00082\ \ \ \textcolor{keyword}{operator}\ std::pair<int64\_t,\ int64\_t>()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{return}\ std::make\_pair(source\_start,\ source\_end);}
+\DoxyCodeLine{00084\ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \textcolor{comment}{//\ Stream\ output\ operator}}
+\DoxyCodeLine{00087\ \ \ \textcolor{keyword}{friend}\ std::ostream\ \&operator<<(std::ostream\ \&out,\ \textcolor{keyword}{const}\ Location\ \&loc)\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ out\ <<\ loc.source\_start\ <<\ \textcolor{stringliteral}{"{}:"{}}\ <<\ loc.source\_end;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00091\ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \textcolor{comment}{//\ Equality\ operator}}
+\DoxyCodeLine{00094\ \ \ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ Location\ \&other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{return}\ source\_start\ ==\ other.source\_start\ \&\&\ source\_end\ ==\ other.source\_end;}
+\DoxyCodeLine{00096\ \ \ \}}
+\DoxyCodeLine{00097\ \};}
+\DoxyCodeLine{00098\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsammine__util_1_1Reportee}{Reportee}}\ \{}
+\DoxyCodeLine{00099\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00100\ \ \ \textcolor{keyword}{enum}\ ReportKind\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ error,}
+\DoxyCodeLine{00102\ \ \ \ \ warn,}
+\DoxyCodeLine{00103\ \ \ \ \ diag,}
+\DoxyCodeLine{00104\ \ \ \};}
+\DoxyCodeLine{00105\ \ \ \textcolor{keyword}{using\ }Report\ =\ std::tuple<Location,\ std::string,\ ReportKind>;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \textcolor{keyword}{using\ }iterator\ =\ std::vector<Report>::iterator;}
+\DoxyCodeLine{00108\ \ \ \textcolor{keyword}{using\ }const\_iterator\ =\ std::vector<Report>::const\_iterator;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \textcolor{comment}{//\ Iterator\ methods}}
+\DoxyCodeLine{00111\ \ \ iterator\ begin()\ \{\ \textcolor{keywordflow}{return}\ reports.begin();\ \}}
+\DoxyCodeLine{00112\ \ \ iterator\ end()\ \{\ \textcolor{keywordflow}{return}\ reports.end();\ \}}
+\DoxyCodeLine{00113\ \ \ const\_iterator\ begin()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ reports.begin();\ \}}
+\DoxyCodeLine{00114\ \ \ const\_iterator\ end()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ reports.end();\ \}}
+\DoxyCodeLine{00115\ \ \ const\_iterator\ cbegin()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ reports.cbegin();\ \}}
+\DoxyCodeLine{00116\ \ \ const\_iterator\ cend()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ reports.cend();\ \}}
+\DoxyCodeLine{00117\ \ \ [[noreturn]]\ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ abort(\textcolor{keyword}{const}\ std::string\ \&msg\ =\ \textcolor{stringliteral}{"{}<NO\ MESSAGE>"{}})\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ sammine\_util::abort(msg);}
+\DoxyCodeLine{00119\ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \textcolor{keyword}{template}\ <explicitly\_\textcolor{keywordtype}{bool}\_like\ T>}
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordtype}{void}\ abort\_on(\textcolor{keyword}{const}\ T\ \&condition,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&message\ =\ \textcolor{stringliteral}{"{}<NO\ MESSAGE>"{}})\ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(condition))\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ this-\/>abort(message);}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \textcolor{keyword}{template}\ <explicitly\_\textcolor{keywordtype}{bool}\_like\ T>}
+\DoxyCodeLine{00129\ \ \ \textcolor{keywordtype}{void}\ abort\_if\_not(\textcolor{keyword}{const}\ T\ \&condition,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&message\ =\ \textcolor{stringliteral}{"{}<NO\ MESSAGE>"{}})\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(condition))\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ this-\/>abort(message);}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \textcolor{keywordtype}{void}\ add\_error(\mbox{\hyperlink{classsammine__util_1_1Location}{Location}}\ loc,\ std::string\ msg)\ \{}
+\DoxyCodeLine{00136\ \ \ \ \ reports.push\_back(\{loc,\ msg,\ ReportKind::error\});}
+\DoxyCodeLine{00137\ \ \ \ \ error\_count++;}
+\DoxyCodeLine{00138\ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \textcolor{keywordtype}{void}\ add\_warn(\mbox{\hyperlink{classsammine__util_1_1Location}{Location}}\ loc,\ std::string\ msg)\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ reports.push\_back(\{loc,\ msg,\ ReportKind::warn\});}
+\DoxyCodeLine{00141\ \ \ \ \ warn\_count++;}
+\DoxyCodeLine{00142\ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \textcolor{keywordtype}{void}\ add\_diagnostics(\mbox{\hyperlink{classsammine__util_1_1Location}{Location}}\ loc,\ std::string\ msg)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ reports.push\_back(\{loc,\ msg,\ ReportKind::diag\});}
+\DoxyCodeLine{00145\ \ \ \ \ diag\_count++;}
+\DoxyCodeLine{00146\ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ [[nodiscard]]\ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ has\_errors()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ error\_count\ >\ 0;\ \}}
+\DoxyCodeLine{00149\ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ has\_warn()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ warn\_count\ >\ 0;\ \}}
+\DoxyCodeLine{00150\ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ has\_message()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ !reports.empty();\ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ has\_diagnostics()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ diag\_count\ >\ 0;\ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ [[nodiscard]]\ int64\_t\ get\_error\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ error\_count;\ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ [[nodiscard]]\ int64\_t\ get\_warn\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ warn\_count;\ \}}
+\DoxyCodeLine{00157\ \ \ [[nodiscard]]\ int64\_t\ get\_diagnostic\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ diag\_count;\ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00160\ \ \ std::vector<Report>\ reports;}
+\DoxyCodeLine{00161\ \ \ int64\_t\ error\_count\ =\ 0;}
+\DoxyCodeLine{00162\ \ \ int64\_t\ warn\_count\ =\ 0;}
+\DoxyCodeLine{00163\ \ \ int64\_t\ diag\_count\ =\ 0;}
+\DoxyCodeLine{00164\ \};}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{keyword}{class\ }Reporter\ \{}
+\DoxyCodeLine{00167\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00168\ \ \ \textcolor{keyword}{using\ }ReportKind\ =\ Reportee::ReportKind;}
+\DoxyCodeLine{00169\ \ \ \textcolor{keyword}{using\ }IndexPair\ =\ std::pair<int64\_t,\ int64\_t>;}
+\DoxyCodeLine{00170\ \ \ \textcolor{keyword}{using\ }DiagnosticData\ =\ std::vector<std::pair<std::int64\_t,\ std::string\_view>>;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00173\ \ \ \textcolor{keyword}{static}\ DiagnosticData\ get\_diagnostic\_data(std::string\_view\ str);}
+\DoxyCodeLine{00174\ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{static}\ fmt::terminal\_color\ LINE\_COLOR\ =}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ fmt::terminal\_color::bright\_magenta;}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{static}\ fmt::terminal\_color\ MSG\_COLOR\ =}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ fmt::terminal\_color::bright\_blue;}
+\DoxyCodeLine{00179\ \ \ std::string\ file\_name;}
+\DoxyCodeLine{00180\ \ \ std::string\ input;}
+\DoxyCodeLine{00181\ \ \ std::vector<std::pair<std::int64\_t,\ std::string\_view>>\ diagnostic\_data;}
+\DoxyCodeLine{00182\ \ \ int64\_t\ context\_radius;}
+\DoxyCodeLine{00183\ \ \ \textcolor{keyword}{static}\ fmt::terminal\_color\ get\_color\_from(ReportKind\ report\_kind);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \textcolor{keywordtype}{void}\ report\_single\_msg(std::pair<int64\_t,\ int64\_t>\ index\_pair,}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&format\_str,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ReportKind\ report\_kind)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}...\ T>}
+\DoxyCodeLine{00190\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ print\_fmt(fmt::terminal\_color\ ts,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fmt::format\_string<T...>\ format\_str,\ T\ \&\&...args)\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ fmt::print(stderr,\ fg(ts),\ format\_str,\ std::forward<T>(args)...);}
+\DoxyCodeLine{00193\ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}...\ T>}
+\DoxyCodeLine{00195\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ print\_fmt(fmt::color\ ts,\ fmt::format\_string<T...>\ format\_str,}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ T\ \&\&...args)\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ fmt::print(stderr,\ fg(ts),\ format\_str,\ std::forward<T>(args)...);}
+\DoxyCodeLine{00198\ \ \ \}}
+\DoxyCodeLine{00199\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}...\ T>}
+\DoxyCodeLine{00200\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ print\_fmt(\textcolor{keyword}{const}\ ReportKind\ report\_kind,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fmt::format\_string<T...>\ format\_str,\ T\ \&\&...args)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ fmt::print(stderr,\ fg(get\_color\_from(report\_kind)),\ format\_str,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::forward<T>(args)...);}
+\DoxyCodeLine{00204\ \ \ \}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \textcolor{keywordtype}{void}\ indicate\_singular\_line(ReportKind\ report\_kind,\ int64\_t\ col\_start,}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ col\_end)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ report\_singular\_line(ReportKind\ report\_kind,}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&msg,\ int64\_t\ col\_start,}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ col\_end);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \textcolor{keywordtype}{void}\ print\_data\_singular\_line(std::string\_view\ msg,\ int64\_t\ col\_start,}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ col\_end)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00217\ \ \ \textcolor{keywordtype}{void}\ report(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsammine__util_1_1Reportee}{Reportee}}\ \&reports)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00218\ \ \ \textcolor{keywordtype}{void}\ immediate\_error(\textcolor{keyword}{const}\ std::string\ \&str,\ \mbox{\hyperlink{classsammine__util_1_1Location}{Location}}\ l\ =\ \mbox{\hyperlink{classsammine__util_1_1Location}{Location}}(-\/1,\ -\/1))\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordflow}{if}\ (l.source\_start\ <=\ 0\ \&\&\ l.source\_end\ <=\ 0)\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ print\_fmt(LINE\_COLOR,\ \textcolor{stringliteral}{"{}\ \ \ \ |"{}});}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ print\_fmt(fmt::terminal\_color::bright\_blue,\ \textcolor{stringliteral}{"{}In\ \{\}\(\backslash\)n"{}},\ file\_name);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ report\_singular\_line(ReportKind::error,\ str,\ 0,\ 0);}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ report\_single\_msg(l,\ str,\ ReportKind::error);}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \textcolor{keywordtype}{void}\ immediate\_diag(\textcolor{keyword}{const}\ std::string\ \&str,\ \mbox{\hyperlink{classsammine__util_1_1Location}{Location}}\ l\ =\ \mbox{\hyperlink{classsammine__util_1_1Location}{Location}}(-\/1,\ -\/1))\ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordflow}{if}\ (l.source\_start\ <=\ 0\ \&\&\ l.source\_end\ <=\ 0)\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ print\_fmt(LINE\_COLOR,\ \textcolor{stringliteral}{"{}\ \ \ \ |"{}});}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ print\_fmt(fmt::terminal\_color::bright\_blue,\ \textcolor{stringliteral}{"{}In\ \{\}\(\backslash\)n"{}},\ file\_name);}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ report\_singular\_line(ReportKind::diag,\ str,\ 0,\ 0);}
+\DoxyCodeLine{00233\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ report\_single\_msg(l,\ str,\ ReportKind::diag);}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \}}
+\DoxyCodeLine{00237\ \ \ Reporter()\ \{\}}
+\DoxyCodeLine{00238\ \ \ Reporter(std::string\ file\_name,\ std::string\ input,\ int64\_t\ context\_radius)}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ :\ file\_name(file\_name),\ input(input),}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ diagnostic\_data(get\_diagnostic\_data(this-\/>input)),}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ context\_radius(context\_radius)\ \{\}}
+\DoxyCodeLine{00242\ \};}
+\DoxyCodeLine{00243\ \}\ \textcolor{comment}{//\ namespace\ sammine\_util}}
+
+\end{DoxyCode}

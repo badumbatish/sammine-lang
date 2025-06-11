@@ -1,0 +1,45 @@
+\chapter{Parsing.\+md \+: High-\/level documentation describing parsing protocols and error handling}
+\hypertarget{md_docs_2parsing}{}\label{md_docs_2parsing}\index{Parsing.md : High-\/level documentation describing parsing protocols and error handling@{Parsing.md : High-\/level documentation describing parsing protocols and error handling}}
+\label{md_docs_2parsing_autotoc_md3}%
+\Hypertarget{md_docs_2parsing_autotoc_md3}%
+
+
+Hi there \+:) enjoy your stay \hypertarget{md_docs_2parsing_autotoc_md4}{}\doxysection{\texorpdfstring{Parsing protocol}{Parsing protocol}}\label{md_docs_2parsing_autotoc_md4}
+Parsing expression, and binary expression.
+
+Since by our definition, binary expression can have a\hypertarget{md_docs_2parsing_autotoc_md5}{}\doxysection{\texorpdfstring{Error recovery}{Error recovery}}\label{md_docs_2parsing_autotoc_md5}
+In principle, we say that if a Parse\texorpdfstring{$\ast$}{*}() result is nullptr, then we haven\textquotesingle{}t committed to calling that Parse\texorpdfstring{$\ast$}{*}() function yet.
+
+If a Parse\texorpdfstring{$\ast$}{*}() result is non-\/null, then it can either parse successfully, or failed since its commitment to parsing via that Parse\texorpdfstring{$\ast$}{*}(). The error message is sent directly to a vector of error messages in parser.
+
+If a Parse\texorpdfstring{$\ast$}{*}() commits and at a certain time cannot match against a Token\+Type, it will suppose that it has matched successfully against that token but reports an error.
+
+There are two kind of Parse\texorpdfstring{$\ast$}{*} that can be recoverable\hypertarget{md_docs_2parsing_autotoc_md6}{}\doxysubsection{\texorpdfstring{Statement Parsing}{Statement Parsing}}\label{md_docs_2parsing_autotoc_md6}
+Simple statement parsing\+: if we encounter an error in matching a token, we exhaust the token stream until we hit a semicolon. Then we return that statement as if we have parsed that statement. Of course we need to account for error reporting at appropriate places.
+
+If statement parsing\+: if we encounter an error in matching a token, we exhaust the token stream until we hit a right curly bracket. Then we return that statement as if we have parsed that statement. Of course we need to account for error reporting at appropriate places.
+
+This means that for Simple statement, if a Parse\+Expr\texorpdfstring{$\ast$}{*} commits and fails, it can push back to error\+\_\+msg vector and then promptly return a partially completed AST with error = True. If simple statement has loop all over the function vector and cannot have anything non-\/null or it receives partial error, it exhausts until semicolon. Else if it has sth non-\/null. then it expects a semicolon, if it doesn\textquotesingle{}t have it, then it errors and also exhausts until semicolon.\hypertarget{md_docs_2parsing_autotoc_md7}{}\doxysubsection{\texorpdfstring{Definition Parsing}{Definition Parsing}}\label{md_docs_2parsing_autotoc_md7}
+Same as statement parsing, since a variable definition ends in a semicolon and the other two ends in a right curly, you delegate the exhaustion responsbilities to each of them.
+
+If at first we can\textquotesingle{}t even match them against the first token in each rule, we return nullptr for all of them, and then since Parse\+Program fails at this point, we stop computation with exhaust\+\_\+until\+\_\+\+EOF. Since a statement can be a simple statement which ends in a semicolon or an if
+\begin{DoxyItemize}
+\item Definition parsing
+\begin{DoxyItemize}
+\item Class\+Def\+:
+\item Var\+Def
+\item Func\+Def
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+TLDR\+: unless the current parse is at simple\+\_\+stmt or return\+\_\+stmt or if\+\_\+stmt or one of the Parse\+Def, if we errors on a match, immediately exhausts until EOF with an error message.
+
+
+\begin{DoxyItemize}
+\item If we error at simple\+\_\+stmt or return\+\_\+stmt, exhausts until semicolon.
+\item If we error at if\+\_\+stmt, exhausts until right curly.
+\item If we error at Var\+Def, exhausts until semicolon.
+\item If we error at Func\+Def or Class\+Def, exhausts until right curly.
+\end{DoxyItemize}
+
+Error means we have committed at that level of Parse() but failed to match against a token. 

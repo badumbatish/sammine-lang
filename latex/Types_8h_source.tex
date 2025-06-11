@@ -1,0 +1,131 @@
+\doxysection{Types.\+h}
+\hypertarget{Types_8h_source}{}\label{Types_8h_source}\index{include/typecheck/Types.h@{include/typecheck/Types.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}util/Utilities.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <execution>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <optional>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <span>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <variant>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{enum\ class}\ TypeKind\ \{}
+\DoxyCodeLine{00014\ \ \ I64\_t,}
+\DoxyCodeLine{00015\ \ \ F64\_t,}
+\DoxyCodeLine{00016\ \ \ Unit,}
+\DoxyCodeLine{00017\ \ \ Bool,}
+\DoxyCodeLine{00018\ \ \ String,}
+\DoxyCodeLine{00019\ \ \ Function,}
+\DoxyCodeLine{00020\ \ \ NonExistent,}
+\DoxyCodeLine{00021\ \ \ Poisoned}
+\DoxyCodeLine{00022\ \};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structType}{Type}};}
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classFunctionType}{FunctionType}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{using\ }TypePtr\ =\ std::shared\_ptr<Type>;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }FunctionType\ \{}
+\DoxyCodeLine{00029\ \ \ std::vector<Type>\ total\_types;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ FunctionType\ \&t)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{bool}\ operator<(\textcolor{keyword}{const}\ FunctionType\ \&t)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ std::span<const\ Type>\ get\_params\_types()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00037\ \ \ \mbox{\hyperlink{structType}{Type}}\ get\_return\_type()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ FunctionType(\textcolor{keyword}{const}\ std::vector<Type>\ \&total\_types);}
+\DoxyCodeLine{00040\ \};}
+\DoxyCodeLine{00041\ \textcolor{keyword}{using\ }TypeData\ =\ std::variant<FunctionType,\ std::string,\ std::monostate>;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{struct\ }Type\ \{}
+\DoxyCodeLine{00044\ \ \ TypeKind\ type\_kind;}
+\DoxyCodeLine{00045\ \ \ TypeData\ type\_data;}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{bool}\ is\_checked\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00047\ \ \ \textcolor{comment}{//\ Constructors}}
+\DoxyCodeLine{00048\ \ \ Type()\ :\ type\_kind(TypeKind::NonExistent),\ type\_data(std::monostate())\ \{\}}
+\DoxyCodeLine{00049\ \ \ \textcolor{keyword}{static}\ Type\ I64\_t()\ \{\ \textcolor{keywordflow}{return}\ Type\{TypeKind::I64\_t,\ std::monostate()\};\ \}}
+\DoxyCodeLine{00050\ \ \ \textcolor{keyword}{static}\ Type\ F64\_t()\ \{\ \textcolor{keywordflow}{return}\ Type\{TypeKind::F64\_t,\ std::monostate()\};\ \}}
+\DoxyCodeLine{00051\ \ \ \textcolor{keyword}{static}\ Type\ Bool()\ \{\ \textcolor{keywordflow}{return}\ Type\{TypeKind::Bool,\ std::monostate()\};\ \}}
+\DoxyCodeLine{00052\ \ \ \textcolor{keyword}{static}\ Type\ Poisoned()\ \{\ \textcolor{keywordflow}{return}\ Type\{TypeKind::Poisoned,\ std::monostate()\};\ \}}
+\DoxyCodeLine{00053\ \ \ \textcolor{keyword}{static}\ Type\ Unit()\ \{\ \textcolor{keywordflow}{return}\ Type\{TypeKind::Unit,\ std::monostate()\};\ \}}
+\DoxyCodeLine{00054\ \ \ \textcolor{keyword}{static}\ Type\ String(\textcolor{keyword}{const}\ std::string\ \&str)\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{return}\ Type\{TypeKind::String,\ str\};}
+\DoxyCodeLine{00056\ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \textcolor{keyword}{static}\ Type\ NonExistent()\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{return}\ Type\{TypeKind::NonExistent,\ std::monostate()\};}
+\DoxyCodeLine{00059\ \ \ \}}
+\DoxyCodeLine{00060\ \ \ \textcolor{keyword}{static}\ Type\ Function(std::vector<Type>\ params);}
+\DoxyCodeLine{00061\ \ \ \textcolor{keyword}{explicit}\ \textcolor{keyword}{operator}\ bool()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>type\_kind\ !=\ TypeKind::Poisoned;}
+\DoxyCodeLine{00063\ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \textcolor{keywordtype}{bool}\ synthesized()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>type\_kind\ !=\ TypeKind::NonExistent\ \&\&}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ this-\/>type\_kind\ ==\ TypeKind::Poisoned;}
+\DoxyCodeLine{00067\ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \textcolor{keywordtype}{bool}\ checked()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>is\_checked\ ||\ this-\/>type\_kind\ ==\ TypeKind::Poisoned;}
+\DoxyCodeLine{00070\ \ \ \}}
+\DoxyCodeLine{00071\ \ \ Type(TypeKind\ type\_kind,\ TypeData\ type\_data)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ :\ type\_kind(type\_kind),\ type\_data(type\_data)\ \{\}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ Type\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ Type\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ \ \ \textcolor{keywordtype}{bool}\ operator<(\textcolor{keyword}{const}\ Type\ \&t)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00078\ \ \ \textcolor{keywordtype}{bool}\ operator>(\textcolor{keyword}{const}\ Type\ \&t)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ std::string\ to\_string()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{switch}\ (type\_kind)\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::I64\_t:}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}i64"{}};}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::F64\_t:}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}f64"{}};}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::Unit:}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}()"{}};}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::Bool:}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}bool"{}};}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::Function:\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ std::string\ res\ =\ \textcolor{stringliteral}{"{}("{}};}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \textcolor{keyword}{auto}\ fn\_type\ =\ std::get<FunctionType>(type\_data);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \textcolor{keyword}{auto}\ param\ =\ fn\_type.get\_params\_types();}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ param.size();\ i++)\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ res\ +=\ param[i].to\_string();}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ !=\ param.size()\ -\/\ 1)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ res\ +=\ \textcolor{stringliteral}{"{},\ "{}};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ res\ +=\ \textcolor{stringliteral}{"{})\ -\/>\ "{}};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ res\ +=\ fn\_type.get\_return\_type().to\_string();}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::NonExistent:}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}??"{}};}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::Poisoned:}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Poisoned"{}};}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{case}\ TypeKind::String:}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ fmt::format(\textcolor{stringliteral}{"{}\(\backslash\)"{}\{\}\(\backslash\)"{}"{}},\ std::get<std::string>(type\_data));}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \ \ \ \ sammine\_util::abort(\textcolor{stringliteral}{"{}Reaching\ the\ end\ of\ switch\ case\ and\ still\ cant\ "{}}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}convert\ to\ string,\ blame\ Jasmine\ (badumbatish)!!!!!"{}});}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00114\ \ \ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \textcolor{keyword}{operator}\ std::string()\ \{\ \textcolor{keywordflow}{return}\ to\_string();\ \}}
+\DoxyCodeLine{00117\ \};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTypeMapOrdering}{TypeMapOrdering}}\ \{}
+\DoxyCodeLine{00120\ \ \ std::map<Type,\ Type>\ type\_map;}
+\DoxyCodeLine{00121\ \ \ std::vector<Type>\ visit\_ancestor(\textcolor{keyword}{const}\ \mbox{\hyperlink{structType}{Type}}\ \&t);}
+\DoxyCodeLine{00122\ \ \ std::optional<Type>\ lowest\_common\_type(\textcolor{keyword}{const}\ \mbox{\hyperlink{structType}{Type}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structType}{Type}}\ \&b);}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \textcolor{keywordtype}{bool}\ compatible\_to\_from(\textcolor{keyword}{const}\ \mbox{\hyperlink{structType}{Type}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structType}{Type}}\ \&b);}
+\DoxyCodeLine{00125\ \};}
+
+\end{DoxyCode}

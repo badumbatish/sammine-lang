@@ -1,0 +1,56 @@
+\doxysection{Lexical\+Context.\+h}
+\hypertarget{LexicalContext_8h_source}{}\label{LexicalContext_8h_source}\index{include/util/LexicalContext.h@{include/util/LexicalContext.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ A\ simple\ scoping\ class,\ doesn't\ differentiate\ between\ different\ names,\ like}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ variable\ name,\ func\ name\ and\ all\ that}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}util/Utilities.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <ostream>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <set>}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{enum}\ NameQueryResult\ \{}
+\DoxyCodeLine{00010\ \ \ nameFound,}
+\DoxyCodeLine{00011\ \ \ nameNotFound,}
+\DoxyCodeLine{00012\ \};}
+\DoxyCodeLine{00013\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>\ \textcolor{keyword}{class\ }LexicalContext\ \{}
+\DoxyCodeLine{00014\ \ \ std::set<std::string>\ symbols;}
+\DoxyCodeLine{00015\ \ \ std::unordered\_map<std::string,\ T>\ symbols\_to\_t;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ LexicalContext\ *parent\_scope;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \textcolor{keyword}{explicit}\ LexicalContext()\ :\ symbols(),\ symbols\_to\_t(),\ parent\_scope()\ \{\}}
+\DoxyCodeLine{00021\ \ \ LexicalContext(LexicalContext\ *parent\_scope)}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ :\ symbols(),\ symbols\_to\_t(),\ parent\_scope(parent\_scope)\ \{\}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordtype}{void}\ registerNameT(\textcolor{keyword}{const}\ std::string\ \&name,\ T\ l)\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ symbols.insert(name);}
+\DoxyCodeLine{00026\ \ \ \ \ symbols\_to\_t[name]\ =\ l;}
+\DoxyCodeLine{00027\ \ \ \}}
+\DoxyCodeLine{00028\ \ \ NameQueryResult\ queryName(\textcolor{keyword}{const}\ std::string\ \&name)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{return}\ symbols.contains(name)\ ?\ nameFound\ :\ nameNotFound;}
+\DoxyCodeLine{00030\ \ \ \}}
+\DoxyCodeLine{00031\ \ \ T\ get\_from\_name(\textcolor{keyword}{const}\ std::string\ \&name)\ \{\ \textcolor{keywordflow}{return}\ symbols\_to\_t.at(name);\ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ T\ recursive\_get\_from\_name(\textcolor{keyword}{const}\ std::string\ \&name)\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordflow}{if}\ (symbols.find(name)\ !=\ symbols.end())}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ symbols\_to\_t[name];}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (parent\_scope\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ sammine\_util::abort(fmt::format(\textcolor{stringliteral}{"{}name\ \{\}\ not\ found"{}},\ name));}
+\DoxyCodeLine{00038\ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parent\_scope-\/>recursive\_get\_from\_name(name);}
+\DoxyCodeLine{00040\ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ NameQueryResult\ recursiveQueryName(\textcolor{keyword}{const}\ std::string\ \&name)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{if}\ (symbols.find(name)\ !=\ symbols.end())}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ nameFound;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (parent\_scope\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ nameNotFound;}
+\DoxyCodeLine{00047\ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parent\_scope-\/>recursiveQueryName(name);}
+\DoxyCodeLine{00049\ \ \ \}}
+\DoxyCodeLine{00050\ \};\ \textcolor{comment}{//\ namespace\ sammine\_lang::AST}}
+
+\end{DoxyCode}

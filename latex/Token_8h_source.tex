@@ -1,0 +1,228 @@
+\doxysection{Token.\+h}
+\hypertarget{Token_8h_source}{}\label{Token_8h_source}\index{include/lex/Token.h@{include/lex/Token.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}util/Utilities.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{keyword}{namespace\ }sammine\_lang\ \{}
+\DoxyCodeLine{00007\ \textcolor{keyword}{enum}\ TokenType\ \{}
+\DoxyCodeLine{00008\ \ \ \textcolor{comment}{//\ TODO:\ Add\ void\ keyword\ for\ return}}
+\DoxyCodeLine{00009\ \ \ TokADD,\ \textcolor{comment}{//\ +}}
+\DoxyCodeLine{00010\ \ \ TokSUB,\ \textcolor{comment}{//\ -\/}}
+\DoxyCodeLine{00011\ \ \ TokMUL,\ \textcolor{comment}{//\ *}}
+\DoxyCodeLine{00012\ \ \ TokDIV,\ \textcolor{comment}{//\ /}}
+\DoxyCodeLine{00013\ \ \ TokMOD,\ \textcolor{comment}{//\ \%}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ TokAddAssign,\ \textcolor{comment}{//\ +=}}
+\DoxyCodeLine{00016\ \ \ TokAddIncr,\ \ \ \textcolor{comment}{//\ ++}}
+\DoxyCodeLine{00017\ \ \ TokSubAssign,\ \textcolor{comment}{//\ -\/=}}
+\DoxyCodeLine{00018\ \ \ TokSubDecr,\ \ \ \textcolor{comment}{//\ -\/-\/}}
+\DoxyCodeLine{00019\ \ \ TokMulAssign,\ \textcolor{comment}{//\ *=}}
+\DoxyCodeLine{00020\ \ \ TokDivAssign,\ \textcolor{comment}{//\ /=}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ TokAND,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ \&\&}}
+\DoxyCodeLine{00023\ \ \ TokAndLogical,\ \textcolor{comment}{//\ \&}}
+\DoxyCodeLine{00024\ \ \ TokOR,\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ||}}
+\DoxyCodeLine{00025\ \ \ TokORLogical,\ \ \textcolor{comment}{//\ |}}
+\DoxyCodeLine{00026\ \ \ TokXOR,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ \string^}}
+\DoxyCodeLine{00027\ \ \ TokSHL,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ <<}}
+\DoxyCodeLine{00028\ \ \ TokSHR,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ >>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ TokEQUAL,\ \ \ \ \ \textcolor{comment}{//\ ==}}
+\DoxyCodeLine{00031\ \ \ TokLESS,\ \ \ \ \ \ \textcolor{comment}{//\ <}}
+\DoxyCodeLine{00032\ \ \ TokLessEqual,\ \textcolor{comment}{//\ <=}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ TokGREATER,\ \ \ \ \ \ \textcolor{comment}{//\ >}}
+\DoxyCodeLine{00035\ \ \ TokGreaterEqual,\ \textcolor{comment}{//\ >=}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ TokASSIGN,\ \textcolor{comment}{//\ =}}
+\DoxyCodeLine{00038\ \ \ TokNOT,\ \ \ \ \textcolor{comment}{//\ !}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \textcolor{comment}{//\ TokEXP\ AND\ FloorDiv}}
+\DoxyCodeLine{00041\ \ \ TokEXP,\ \ \ \ \ \ \textcolor{comment}{//\ **}}
+\DoxyCodeLine{00042\ \ \ TokFloorDiv,\ \textcolor{comment}{//\ /\_}}
+\DoxyCodeLine{00043\ \ \ TokCeilDiv,\ \ \textcolor{comment}{//\ /\string^}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ TokPAREN}}
+\DoxyCodeLine{00046\ \ \ TokLeftParen,\ \ \textcolor{comment}{//\ (}}
+\DoxyCodeLine{00047\ \ \ TokRightParen,\ \textcolor{comment}{//\ )}}
+\DoxyCodeLine{00048\ \ \ TokLeftCurly,\ \ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00049\ \ \ TokRightCurly,\ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \textcolor{comment}{//\ Comma\ and\ colons\ and\ all\ that}}
+\DoxyCodeLine{00052\ \ \ TokComma,\ \ \ \ \ \ \ \textcolor{comment}{//\ ,}}
+\DoxyCodeLine{00053\ \ \ TokDot,\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ .}}
+\DoxyCodeLine{00054\ \ \ TokSemiColon,\ \ \ \textcolor{comment}{//\ ;}}
+\DoxyCodeLine{00055\ \ \ TokColon,\ \ \ \ \ \ \ \textcolor{comment}{//\ :}}
+\DoxyCodeLine{00056\ \ \ TokDoubleColon,\ \textcolor{comment}{//\ ::}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \textcolor{comment}{//\ TokFunction}}
+\DoxyCodeLine{00059\ \ \ TokReturn,}
+\DoxyCodeLine{00060\ \ \ TokFunc,\ \ \ \textcolor{comment}{//\ fn}}
+\DoxyCodeLine{00061\ \ \ TokRecord,\ \textcolor{comment}{//\ record}}
+\DoxyCodeLine{00062\ \ \ TokArrow,\ \ \textcolor{comment}{//\ -\/>}}
+\DoxyCodeLine{00063\ \ \ TokLet,\ \ \ \ \textcolor{comment}{//\ let}}
+\DoxyCodeLine{00064\ \ \ TokExtern,\ \textcolor{comment}{//\ extern}}
+\DoxyCodeLine{00065\ \ \ \textcolor{comment}{//\ TokID}}
+\DoxyCodeLine{00066\ \ \ TokID,\ \ \textcolor{comment}{//\ Representing\ an\ identifier}}
+\DoxyCodeLine{00067\ \ \ TokStr,\ \textcolor{comment}{//\ Representing\ a\ string}}
+\DoxyCodeLine{00068\ \ \ \textcolor{comment}{//\ TokNum}}
+\DoxyCodeLine{00069\ \ \ TokNum,\ \ \ \textcolor{comment}{//\ Representing\ a\ number}}
+\DoxyCodeLine{00070\ \ \ TokTrue,\ \ \textcolor{comment}{//\ Representing\ a\ boolean\ true}}
+\DoxyCodeLine{00071\ \ \ TokFalse,\ \textcolor{comment}{//\ Representing\ a\ boolean\ false}}
+\DoxyCodeLine{00072\ \ \ \textcolor{comment}{//\ TokIf}}
+\DoxyCodeLine{00073\ \ \ TokIf,\ \ \ \textcolor{comment}{//\ if}}
+\DoxyCodeLine{00074\ \ \ TokElse,\ \textcolor{comment}{//\ else}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \textcolor{comment}{//\ TokCOMMENTS}}
+\DoxyCodeLine{00077\ \ \ TokSingleComment,\ \textcolor{comment}{//}}
+\DoxyCodeLine{00078\ \ \ TokEOF,}
+\DoxyCodeLine{00079\ \ \ TokINVALID,}
+\DoxyCodeLine{00080\ \};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ std::map<TokenType,\ std::string>\ TokenMap\ =\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \{TokADD,\ \textcolor{stringliteral}{"{}+"{}}\},}
+\DoxyCodeLine{00084\ \ \ \ \ \{TokSUB,\ \textcolor{stringliteral}{"{}-\/"{}}\},}
+\DoxyCodeLine{00085\ \ \ \ \ \{TokMUL,\ \textcolor{stringliteral}{"{}*"{}}\},}
+\DoxyCodeLine{00086\ \ \ \ \ \{TokDIV,\ \textcolor{stringliteral}{"{}/"{}}\},}
+\DoxyCodeLine{00087\ \ \ \ \ \{TokMOD,\ \textcolor{stringliteral}{"{}\%"{}}\},}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \{TokAddAssign,\ \textcolor{stringliteral}{"{}+="{}}\},}
+\DoxyCodeLine{00090\ \ \ \ \ \{TokAddIncr,\ \textcolor{stringliteral}{"{}++"{}}\},}
+\DoxyCodeLine{00091\ \ \ \ \ \{TokSubAssign,\ \textcolor{stringliteral}{"{}-\/="{}}\},}
+\DoxyCodeLine{00092\ \ \ \ \ \{TokSubDecr,\ \textcolor{stringliteral}{"{}-\/-\/"{}}\},}
+\DoxyCodeLine{00093\ \ \ \ \ \{TokMulAssign,\ \textcolor{stringliteral}{"{}*="{}}\},}
+\DoxyCodeLine{00094\ \ \ \ \ \{TokDivAssign,\ \textcolor{stringliteral}{"{}/="{}}\},}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \{TokAND,\ \textcolor{stringliteral}{"{}\&\&"{}}\},}
+\DoxyCodeLine{00097\ \ \ \ \ \{TokAndLogical,\ \textcolor{stringliteral}{"{}\&"{}}\},}
+\DoxyCodeLine{00098\ \ \ \ \ \{TokOR,\ \textcolor{stringliteral}{"{}||"{}}\},}
+\DoxyCodeLine{00099\ \ \ \ \ \{TokORLogical,\ \textcolor{stringliteral}{"{}|"{}}\},}
+\DoxyCodeLine{00100\ \ \ \ \ \{TokXOR,\ \textcolor{stringliteral}{"{}\string^"{}}\},}
+\DoxyCodeLine{00101\ \ \ \ \ \{TokSHL,\ \textcolor{stringliteral}{"{}>>"{}}\},}
+\DoxyCodeLine{00102\ \ \ \ \ \{TokSHR,\ \textcolor{stringliteral}{"{}<<"{}}\},}
+\DoxyCodeLine{00103\ \ \ \ \ \{TokEQUAL,\ \textcolor{stringliteral}{"{}=="{}}\},}
+\DoxyCodeLine{00104\ \ \ \ \ \{TokLESS,\ \textcolor{stringliteral}{"{}<"{}}\},}
+\DoxyCodeLine{00105\ \ \ \ \ \{TokLessEqual,\ \textcolor{stringliteral}{"{}<="{}}\},}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \{TokGREATER,\ \textcolor{stringliteral}{"{}>"{}}\},}
+\DoxyCodeLine{00108\ \ \ \ \ \{TokGreaterEqual,\ \textcolor{stringliteral}{"{}>="{}}\},}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \{TokASSIGN,\ \textcolor{stringliteral}{"{}="{}}\},}
+\DoxyCodeLine{00111\ \ \ \ \ \{TokNOT,\ \textcolor{stringliteral}{"{}!"{}}\},}
+\DoxyCodeLine{00112\ \ \ \ \ \{TokEXP,\ \textcolor{stringliteral}{"{}**"{}}\},}
+\DoxyCodeLine{00113\ \ \ \ \ \{TokFloorDiv,\ \textcolor{stringliteral}{"{}/\_"{}}\},}
+\DoxyCodeLine{00114\ \ \ \ \ \{TokCeilDiv,\ \textcolor{stringliteral}{"{}/\string^"{}}\},}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \{TokLeftParen,\ \textcolor{stringliteral}{"{}("{}}\},}
+\DoxyCodeLine{00117\ \ \ \ \ \{TokRightParen,\ \textcolor{stringliteral}{"{})"{}}\},}
+\DoxyCodeLine{00118\ \ \ \ \ \{TokLeftCurly,\ \textcolor{stringliteral}{"{}\{"{}}\},}
+\DoxyCodeLine{00119\ \ \ \ \ \{TokRightCurly,\ \textcolor{stringliteral}{"{}\}"{}}\},}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \{TokComma,\ \textcolor{stringliteral}{"{},"{}}\},}
+\DoxyCodeLine{00122\ \ \ \ \ \{TokDot,\ \textcolor{stringliteral}{"{}."{}}\},}
+\DoxyCodeLine{00123\ \ \ \ \ \{TokSemiColon,\ \textcolor{stringliteral}{"{};"{}}\},}
+\DoxyCodeLine{00124\ \ \ \ \ \{TokColon,\ \textcolor{stringliteral}{"{}:"{}}\},}
+\DoxyCodeLine{00125\ \ \ \ \ \{TokDoubleColon,\ \textcolor{stringliteral}{"{}::"{}}\},}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{//\ TokFunction}}
+\DoxyCodeLine{00128\ \ \ \ \ \{TokReturn,\ \textcolor{stringliteral}{"{}return"{}}\},}
+\DoxyCodeLine{00129\ \ \ \ \ \{TokFunc,\ \textcolor{stringliteral}{"{}fn"{}}\},}
+\DoxyCodeLine{00130\ \ \ \ \ \{TokArrow,\ \textcolor{stringliteral}{"{}-\/>"{}}\},}
+\DoxyCodeLine{00131\ \ \ \ \ \{TokLet,\ \textcolor{stringliteral}{"{}let"{}}\},}
+\DoxyCodeLine{00132\ \ \ \ \ \{TokRecord,\ \textcolor{stringliteral}{"{}Record"{}}\},}
+\DoxyCodeLine{00133\ \ \ \ \ \{TokID,\ \textcolor{stringliteral}{"{}identifier"{}}\},}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \{TokNum,\ \textcolor{stringliteral}{"{}number"{}}\},}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \{TokIf,\ \textcolor{stringliteral}{"{}if"{}}\},}
+\DoxyCodeLine{00138\ \ \ \ \ \{TokElse,\ \textcolor{stringliteral}{"{}else"{}}\},}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{comment}{//\ TokCOMMENTS}}
+\DoxyCodeLine{00141\ \ \ \ \ \{TokSingleComment,\ \textcolor{stringliteral}{"{}\#"{}}\},}
+\DoxyCodeLine{00142\ \ \ \ \ \{TokEOF,\ \textcolor{stringliteral}{"{}EOF"{}}\},}
+\DoxyCodeLine{00143\ \ \ \ \ \{TokINVALID,\ \textcolor{stringliteral}{"{}UNRECOGNIZED"{}}\},}
+\DoxyCodeLine{00144\ \};}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00151\ \textcolor{keyword}{class\ }Token\ \{}
+\DoxyCodeLine{00152\ \ \ \textcolor{keyword}{using\ }Location\ =\ \mbox{\hyperlink{classsammine__util_1_1Location}{sammine\_util::Location}};}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00155\ \ \ TokenType\ tok\_type;}
+\DoxyCodeLine{00156\ \ \ std::string\ lexeme;}
+\DoxyCodeLine{00157\ \ \ Location\ location;}
+\DoxyCodeLine{00158\ \ \ Token()\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00159\ \ \ Token(TokenType\ type,\ std::string\ lexeme,\ Location\ location)}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ :\ tok\_type(type),\ lexeme(std::move(lexeme)),\ location(location)\ \{\}}
+\DoxyCodeLine{00161\ \ \ \textcolor{keywordtype}{bool}\ is\_comparison()\ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{return}\ tok\_type\ ==\ TokLESS\ ||\ tok\_type\ ==\ TokGreaterEqual\ ||}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ tok\_type\ ==\ TokLessEqual\ ||\ tok\_type\ ==\ TokGREATER\ ||}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ tok\_type\ ==\ TokEQUAL;}
+\DoxyCodeLine{00165\ \ \ \}}
+\DoxyCodeLine{00166\ \ \ \textcolor{keywordtype}{bool}\ is\_logical()\ \{\ \textcolor{keywordflow}{return}\ tok\_type\ ==\ TokOR\ ||\ tok\_type\ ==\ TokAND;\ \}}
+\DoxyCodeLine{00167\ \ \ Location\ get\_location()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ this-\/>location;\ \}}
+\DoxyCodeLine{00168\ \};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00174\ \textcolor{keyword}{class\ }TokenStream\ \{}
+\DoxyCodeLine{00175\ \ \ std::vector<std::shared\_ptr<Token>>\ TokStream;}
+\DoxyCodeLine{00176\ \ \ \textcolor{keywordtype}{size\_t}\ current\_index;}
+\DoxyCodeLine{00177\ \ \ \textcolor{keywordtype}{bool}\ error;}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00180\ \ \ std::vector<std::shared\_ptr<Token>>\ ErrStream;}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ TokenStream()\ :\ TokStream(),\ current\_index(0),\ error(\textcolor{keyword}{false})\ \{\}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \textcolor{keywordtype}{void}\ push\_back(\textcolor{keyword}{const}\ std::shared\_ptr<Token>\ \&token)\ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordflow}{if}\ (token-\/>tok\_type\ ==\ TokINVALID)\ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ error\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ ErrStream.push\_back(token);}
+\DoxyCodeLine{00188\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ TokStream.push\_back(token);}
+\DoxyCodeLine{00190\ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \textcolor{keywordtype}{bool}\ hasErrors()\ \{\ \textcolor{keywordflow}{return}\ error;\ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \textcolor{keywordtype}{void}\ push\_back(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsammine__lang_1_1Token}{Token}}\ \&token)\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ this-\/>push\_back(std::make\_shared<Token>(token));}
+\DoxyCodeLine{00197\ \ \ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ std::shared\_ptr<Token>\ \&exhaust\_until(TokenType\ tokType)\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordflow}{if}\ (tokType\ ==\ TokenType::TokEOF)\ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ current\_index\ =\ TokStream.size()\ -\/\ 1;}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ TokStream.back();}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordflow}{while}\ (!isEnd())\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TokStream[current\_index]-\/>tok\_type\ ==\ tokType)}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ TokStream[current\_index++];}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ current\_index++;}
+\DoxyCodeLine{00209\ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordflow}{return}\ TokStream.back();}
+\DoxyCodeLine{00212\ \ \ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \textcolor{keywordtype}{bool}\ isEnd()\ \{\ \textcolor{keywordflow}{return}\ current\_index\ >=\ (TokStream.size()\ -\/\ 1);\ \}}
+\DoxyCodeLine{00215\ \ \ std::shared\_ptr<Token>\ peek()\ \{\ \textcolor{keywordflow}{return}\ TokStream[current\_index];\ \};}
+\DoxyCodeLine{00216\ \ \ std::shared\_ptr<Token>\ consume()\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keyword}{auto}\ token\ =\ peek();}
+\DoxyCodeLine{00218\ \ \ \ \ current\_index\ =\ std::min(TokStream.size()\ -\/\ 1,\ current\_index\ +\ 1);}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordflow}{return}\ token;}
+\DoxyCodeLine{00220\ \ \ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \mbox{\hyperlink{classsammine__util_1_1Location}{sammine\_util::Location}}\ currentLocation()\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordflow}{if}\ (!TokStream.empty())\ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ TokStream[current\_index]-\/>get\_location();}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordflow}{return}\ \{\};}
+\DoxyCodeLine{00227\ \ \ \}}
+\DoxyCodeLine{00228\ \};}
+\DoxyCodeLine{00229\ \}\ \textcolor{comment}{//\ namespace\ sammine\_lang}}
+
+\end{DoxyCode}

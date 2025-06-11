@@ -1,0 +1,43 @@
+\doxysection{File\+RAII.\+h}
+\hypertarget{FileRAII_8h_source}{}\label{FileRAII_8h_source}\index{include/util/FileRAII.h@{include/util/FileRAII.h}}
+\mbox{\hyperlink{FileRAII_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ jjasmine\ on\ 3/8/24.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }FileRAII\ \{}
+\DoxyCodeLine{00015\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00016\ \ \ \textcolor{comment}{//\ Constructor\ opens\ the\ file}}
+\DoxyCodeLine{00017\ \ \ \textcolor{keyword}{explicit}\ FileRAII(\textcolor{keyword}{const}\ std::string\ \&filename)}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ :\ file(filename),\ is\_opened(\textcolor{keyword}{true})\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ is\_opened\ =\ file.is\_open();}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ str\ =\ std::string((std::istreambuf\_iterator<char>(file)),}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (std::istreambuf\_iterator<char>()));}
+\DoxyCodeLine{00023\ \ \ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \textcolor{comment}{//\ Destructor\ closes\ the\ file}}
+\DoxyCodeLine{00026\ \ \ \string~FileRAII()\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_opened)\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ file.close();}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+\DoxyCodeLine{00030\ \ \ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \textcolor{comment}{//\ Function\ to\ check\ if\ the\ file\ is\ open}}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{bool}\ isOpen()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ is\_opened;\ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ std::string\ getInternalStr()\ \{\ \textcolor{keywordflow}{return}\ str;\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00038\ \ \ std::ifstream\ file;}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{bool}\ is\_opened;}
+\DoxyCodeLine{00040\ \ \ std::string\ str;}
+\DoxyCodeLine{00041\ \};}
+
+\end{DoxyCode}
