@@ -108,8 +108,8 @@ struct Type {
     case TypeKind::String:
       return fmt::format("\"{}\"", std::get<std::string>(type_data));
     }
-    sammine_util::abort("Reaching the end of switch case and still cant "
-                        "convert to string, blame Jasmine (badumbatish)!!!!!");
+    this->abort("Reaching the end of switch case and still cant "
+                "convert to string, blame Jasmine (badumbatish)!!!!!");
     return "";
   }
 

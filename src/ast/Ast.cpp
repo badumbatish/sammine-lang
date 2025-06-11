@@ -7,7 +7,7 @@ ASTVisitor::~ASTVisitor() {}
 
 void ASTVisitor::abort(const std::string &msg) {
   ASTPrinter::print(top_level_ast);
-  sammine_util::abort(msg);
+  this->abort(msg);
 }
 
 void ASTVisitor::visit(ProgramAST *ast) {

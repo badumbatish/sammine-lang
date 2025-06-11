@@ -115,7 +115,7 @@ public:
   }
   void pop_context() {
     if (this->empty())
-      sammine_util::abort("ICE: You are popping an empty lexical stack");
+      this->abort("ICE: You are popping an empty lexical stack");
     this->pop();
   }
 

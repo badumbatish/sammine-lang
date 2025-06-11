@@ -21,13 +21,13 @@ llvm::Type *TypeConverter::get_type(Type t) {
                                  llvm::PointerType::getInt8Ty(*context),
                                  llvm::Type::getInt32Ty(*context));
   case TypeKind::Function:
-    sammine_util::abort("Function is not first-class yet");
+    this->abort("Function is not first-class yet");
   case TypeKind::NonExistent:
-    sammine_util::abort("Existed a type that is not synthesized yet");
+    this->abort("Existed a type that is not synthesized yet");
   case TypeKind::Poisoned:
-    sammine_util::abort("Poisoned typed should not be here");
+    this->abort("Poisoned typed should not be here");
   }
-  sammine_util::abort("Guarded by default case");
+  this->abort("Guarded by default case");
 }
 llvm::Type *TypeConverter::get_return_type(Type t) {
 
@@ -35,16 +35,15 @@ llvm::Type *TypeConverter::get_return_type(Type t) {
   case TypeKind::Function:
     return get_type(std::get<FunctionType>(t.type_data).get_return_type());
   default:
-    sammine_util::abort(
-        "Jasmine passed in something that is not a function type");
+    this->abort("Jasmine passed in something that is not a function type");
     break;
   }
-  sammine_util::abort("Guarded by default case");
+  this->abort("Guarded by default case");
 }
 llvm::CmpInst::Predicate TypeConverter::get_cmp_func(Type a, Type b,
                                                      TokenType tok) {
-  sammine_util::abort_if_not(a.type_kind == b.type_kind,
-                             "Two types needs to be the same");
+  this->abort_if_not(a.type_kind == b.type_kind,
+                     "Two types needs to be the same");
   using llvm::CmpInst;
 
   switch (a.type_kind) {
@@ -67,7 +66,7 @@ llvm::CmpInst::Predicate TypeConverter::get_cmp_func(Type a, Type b,
       return CmpInst::ICMP_SGE;
     default:
 
-      sammine_util::abort("Invalid token for integer comparison");
+      this->abort("Invalid token for integer comparison");
     }
     break;
   }
@@ -87,28 +86,28 @@ llvm::CmpInst::Predicate TypeConverter::get_cmp_func(Type a, Type b,
     case TokenType::TokGreaterEqual:
       return CmpInst::FCMP_OGE;
     default:
-      sammine_util::abort("Invalid token for float comparison");
+      this->abort("Invalid token for float comparison");
     }
     break;
   }
   case TypeKind::Unit:
-    sammine_util::abort(
+    this->abort(
         fmt::format("Cannot compare values of this type: {}", a.to_string()));
   case TypeKind::Function:
-    sammine_util::abort(
+    this->abort(
         fmt::format("Cannot compare values of this type: {}", a.to_string()));
   case TypeKind::NonExistent:
-    sammine_util::abort(
+    this->abort(
         fmt::format("Cannot compare values of this type: {}", a.to_string()));
   case TypeKind::Poisoned:
-    sammine_util::abort(
+    this->abort(
         fmt::format("Cannot compare values of this type: {}", a.to_string()));
     break;
   case TypeKind::String:
-    sammine_util::abort(
+    this->abort(
         fmt::format("Cannot compare values of this type: {}", a.to_string()));
     break;
   }
-  sammine_util::abort("End of get_cmp_func reached");
+  this->abort("End of get_cmp_func reached");
 }
 } // namespace sammine_lang::AST

@@ -51,8 +51,8 @@ std::vector<Type> TypeMapOrdering::visit_ancestor(const Type &t) {
       break;
 
     if (visited.find(it->second) != visited.end()) {
-      sammine_util::abort("Cycle detected in type map, ping a dev to turn this "
-                          "into dedicated error");
+      this->abort("Cycle detected in type map, ping a dev to turn this "
+                  "into dedicated error");
     }
     visited.insert(it->second);
     result.push_back(it->second);

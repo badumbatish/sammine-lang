@@ -34,7 +34,7 @@ public:
     if (symbols.find(name) != symbols.end())
       return symbols_to_t[name];
     else if (parent_scope == nullptr) {
-      sammine_util::abort(fmt::format("name {} not found", name));
+      this->abort(fmt::format("name {} not found", name));
     } else
       return parent_scope->recursive_get_from_name(name);
   }

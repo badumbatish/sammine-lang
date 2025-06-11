@@ -219,7 +219,7 @@ void Compiler::produce_executable() {
         if (try_compile_with("clang++") || try_compile_with("g++"))
           std::exit(0);
         else
-          sammine_util::abort(
+          this->abort(
               "Neither clang++ nor g++ is available for final linkage\n");
       }
     }
