@@ -32,7 +32,7 @@ class ASTVisitor : public sammine_util::Reportee {
 
 public:
   [[noreturn]] virtual void
-  abort(const std::string &msg = "<NO MESSAGE>") override;
+  abort(const std::string &msg = "<NO MESSAGE>") override final;
 
   virtual void visit(ProgramAST *ast);
   virtual void preorder_walk(ProgramAST *ast) = 0;

@@ -49,6 +49,8 @@ generated_docs/
 docs
 html/
 latex/
+*.bak
+
 # C-lion
 .idea/
 .DS_Store
