@@ -22,7 +22,7 @@ void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {
       fn_name = record_def->record_name;
       loc = record_def->get_location();
     } else
-      sammine_util::abort("Should not be any other def");
+      this->abort("Should not be any other def");
 
     if (fn_name != "") {
       if (this->scope_stack.recursiveQueryName(fn_name) == nameNotFound)

@@ -40,7 +40,7 @@ void CgVisitor::exit_new_scope() { allocaValues.pop(); }
 
 void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
 
-  sammine_util::abort_if_not(ptr,
+  this->abort_if_not(ptr,
                              "A shared ptr cannot be null at this point in "
                              "codegen, something is wrong with your parsing.");
 
@@ -89,7 +89,7 @@ void CgVisitor::postorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
   auto alloca = this->allocaValues.top()[var_name];
   if (ast->Expression == nullptr) {
-    sammine_util::abort_if_not(ast->Expression, "is this legal?");
+    this->abort_if_not(ast->Expression, "is this legal?");
   } else {
     resPtr->Builder->CreateStore(ast->Expression->val, alloca);
   }
@@ -98,9 +98,9 @@ void CgVisitor::preorder_walk(ExternAST *ast) {}
 void CgVisitor::preorder_walk(RecordDefAST *ast) {}
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
-  sammine_util::abort_if_not(resPtr);
-  sammine_util::abort_if_not(resPtr->Module);
-  sammine_util::abort_if_not(resPtr->Context);
+  this->abort_if_not(resPtr);
+  this->abort_if_not(resPtr->Module);
+  this->abort_if_not(resPtr->Context);
 
   auto *Function = this->getCurrentFunction();
 
@@ -132,7 +132,7 @@ void CgVisitor::postorder_walk(FuncDefAST *ast) {
   // Error reading body, remove function.
   if (not_verified) {
     resPtr->Module->print(llvm::errs(), nullptr);
-    sammine_util::abort("ICE: Abort from creating a function");
+    this->abort("ICE: Abort from creating a function");
     getCurrentFunction()->eraseFromParent();
   }
 }
@@ -164,12 +164,12 @@ void CgVisitor::preorder_walk(CallExprAST *ast) {
 
   llvm::Function *callee = resPtr->Module->getFunction(ast->functionName);
   if (!callee) {
-    sammine_util::abort("Unknown function called");
+    this->abort("Unknown function called");
     return;
   }
 
   if (ast->arguments.size() != callee->arg_size())
-    sammine_util::abort("Incorrect number of arguments passed");
+    this->abort("Incorrect number of arguments passed");
   std::vector<llvm::Value *> ArgsVector;
 
   for (size_t i = 0; i < ast->arguments.size(); i++) {
@@ -195,7 +195,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
   if (ast->Op->tok_type == TokenType::TokASSIGN) {
     VariableExprAST *LHSE = static_cast<VariableExprAST *>(ast->LHS.get());
     if (!LHSE) {
-      sammine_util::abort("Left hand side of assignment must be a variable, "
+      this->abort("Left hand side of assignment must be a variable, "
                           "current LHS cannot "
                           "be statically cast to VarExprAST");
       return;
@@ -204,11 +204,11 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     auto R = ast->RHS->val;
 
     if (!R)
-      sammine_util::abort("Failed to codegen RHS for tok assign");
+      this->abort("Failed to codegen RHS for tok assign");
 
     auto *Var = this->allocaValues.top()[LHSE->variableName];
     if (!Var)
-      sammine_util::abort("Unknown variable in LHS of tok assign");
+      this->abort("Unknown variable in LHS of tok assign");
 
     resPtr->Builder->CreateStore(R, Var);
     ast->val = R;
@@ -224,7 +224,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     else if (ast->LHS->type == Type::F64_t())
       ast->val = resPtr->Builder->CreateFAdd(L, R, "add_expr");
     else
-      sammine_util::abort();
+      this->abort();
   }
   if (ast->Op->tok_type == TokenType::TokSUB) {
     if (ast->LHS->type == Type::I64_t())
@@ -232,7 +232,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     else if (ast->LHS->type == Type::F64_t())
       ast->val = resPtr->Builder->CreateFSub(L, R, "sub_expr");
     else
-      sammine_util::abort();
+      this->abort();
   }
   if (ast->Op->tok_type == TokenType::TokMUL) {
     if (ast->LHS->type == Type::I64_t())
@@ -240,13 +240,13 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
     else if (ast->LHS->type == Type::F64_t())
       ast->val = resPtr->Builder->CreateFMul(L, R, "mul_expr");
     else
-      sammine_util::abort();
+      this->abort();
   }
   if (ast->Op->tok_type == TokenType::TokDIV) {
     if (ast->LHS->type == Type::F64_t())
       ast->val = resPtr->Builder->CreateFDiv(L, R, "div_expr");
     else
-      sammine_util::abort();
+      this->abort();
   }
   if (ast->Op->tok_type == TokOR) {
     ast->val = resPtr->Builder->CreateLogicalOr(ast->LHS->val, ast->RHS->val);
@@ -263,7 +263,7 @@ void CgVisitor::postorder_walk(BinaryExprAST *ast) {
   }
   if (!ast->val) {
     std::cout << ast->Op->lexeme << std::endl;
-    sammine_util::abort();
+    this->abort();
   }
 
   return;
@@ -286,9 +286,9 @@ void CgVisitor::preorder_walk(NumberExprAST *ast) {
   case TypeKind::NonExistent:
   case TypeKind::Poisoned:
   case TypeKind::String:
-    sammine_util::abort(".....");
+    this->abort(".....");
   }
-  sammine_util::abort_if_not(ast->val, "cannot generate number");
+  this->abort_if_not(ast->val, "cannot generate number");
 }
 void CgVisitor::preorder_walk(BoolExprAST *ast) {
   if (ast->b)
@@ -301,7 +301,7 @@ void CgVisitor::preorder_walk(BoolExprAST *ast) {
 void CgVisitor::preorder_walk(VariableExprAST *ast) {
   auto *alloca = this->allocaValues.top()[ast->variableName];
 
-  sammine_util::abort_if_not(alloca, "Unknown variable name");
+  this->abort_if_not(alloca, "Unknown variable name");
 
   ast->val = resPtr->Builder->CreateLoad(alloca->getAllocatedType(), alloca,
                                          ast->variableName);
@@ -312,7 +312,7 @@ void CgVisitor::preorder_walk(UnitExprAST *ast) {}
 void CgVisitor::preorder_walk(IfExprAST *ast) {
   ast->bool_expr->accept_vis(this);
   if (!ast->bool_expr->val) {
-    sammine_util::abort("Failed to codegen condition of if-expr");
+    this->abort("Failed to codegen condition of if-expr");
   }
   switch (ast->bool_expr->type.type_kind) {
   case TypeKind::I64_t:
@@ -330,13 +330,13 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
     break;
   case TypeKind::NonExistent:
     ASTPrinter::print(ast->bool_expr.get());
-    sammine_util::abort("Invalid syntax for now");
+    this->abort("Invalid syntax for now");
     break;
   case TypeKind::Poisoned:
-    sammine_util::abort("Invalid syntax for now");
+    this->abort("Invalid syntax for now");
     break;
   case TypeKind::Unit:
-    sammine_util::abort("Invalid syntax for now");
+    this->abort("Invalid syntax for now");
     break;
   case TypeKind::Bool:
     ast->bool_expr->val = resPtr->Builder->CreateFCmpONE(
@@ -346,11 +346,11 @@ void CgVisitor::preorder_walk(IfExprAST *ast) {
         "ifcond_bool");
     break;
   case TypeKind::Function:
-    sammine_util::abort(
+    this->abort(
         "Invalid syntax for now, typechecker should caught this function");
     break;
   case TypeKind::String:
-    sammine_util::abort("Cannot turn str to boolean, typecheck should have "
+    this->abort("Cannot turn str to boolean, typecheck should have "
                         "caught this string");
     break;
   }

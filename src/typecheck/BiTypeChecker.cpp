@@ -184,7 +184,7 @@ Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   case TypeKind::Bool:
   case TypeKind::NonExistent:
   case TypeKind::Poisoned:
-    sammine_util::abort(fmt::format("should not happen here with function {}",
+    this->abort(fmt::format("should not happen here with function {}",
                                     ast->functionName));
   }
   return Type::NonExistent();
@@ -199,7 +199,7 @@ Type BiTypeCheckerVisitor::synthesize(BinaryExprAST *ast) {
     return ast->type;
   if (!this->type_map_ordering.compatible_to_from(ast->LHS->type,
                                                   ast->RHS->type))
-    sammine_util::abort();
+    this->abort();
   if (ast->Op->is_comparison())
     return ast->type = Type::Bool();
 
@@ -216,7 +216,7 @@ Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
   if (ast->synthesized())
     return ast->type;
 
-  sammine_util::abort_on(ast->number.empty(),
+  this->abort_on(ast->number.empty(),
                          "NumberExprAST should have a number lexeme");
   if (ast->number.find('.') == std::string::npos)
     ast->type = Type::I64_t();

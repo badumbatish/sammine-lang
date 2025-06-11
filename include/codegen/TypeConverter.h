@@ -1,5 +1,6 @@
 #pragma once
 #include "ast/Ast.h"
+#include "util/Utilities.h"
 
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>

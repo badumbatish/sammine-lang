@@ -83,7 +83,7 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
     }
   }
   return {nullptr, NONCOMMITTED};
-  sammine_util::abort("Should not happen in ParseDefinition()");
+  this->abort("Should not happen in ParseDefinition()");
 }
 
 auto Parser::ParseRecordDef() -> p<DefinitionAST> {
@@ -244,7 +244,7 @@ auto Parser::ParseFuncDef() -> p<DefinitionAST> {
         COMMITTED_NO_MORE_ERROR);
   }
 
-  sammine_util::abort("Should not happen");
+  this->abort("Should not happen");
 }
 
 //! Parsing implementation for a variable decl/def
@@ -295,7 +295,7 @@ auto Parser::ParseVarDef() -> p<ExprAST> {
       break;
     }
 
-    sammine_util::abort("Should not happen");
+    this->abort("Should not happen");
   }
   case NONCOMMITTED:
     [[fallthrough]];
@@ -307,7 +307,7 @@ auto Parser::ParseVarDef() -> p<ExprAST> {
         std::make_unique<VarDefAST>(let, std::move(typedVar), nullptr),
         COMMITTED_NO_MORE_ERROR);
   }
-  sammine_util::abort("Should not happen");
+  this->abort("Should not happen");
 }
 
 auto Parser::ParseTypedVar() -> p<TypedVarAST> {
@@ -363,7 +363,7 @@ auto Parser::ParsePrimaryExpr() -> p<ExprAST> {
     if (fn_name == ParseFunctions.back().second)
       return {nullptr, NONCOMMITTED};
   }
-  sammine_util::abort("Should not happen in ParsePrimaryExpr");
+  this->abort("Should not happen in ParsePrimaryExpr");
 }
 auto Parser::ParseExpr() -> p<ExprAST> {
   auto [LHS, left_result] = ParsePrimaryExpr();
@@ -391,7 +391,7 @@ auto Parser::ParseExpr() -> p<ExprAST> {
   case COMMITTED_NO_MORE_ERROR:
     return {std::move(next), COMMITTED_NO_MORE_ERROR};
   }
-  sammine_util::abort("should not happen in ParseExpr, call Jasmine");
+  this->abort("should not happen in ParseExpr, call Jasmine");
 }
 
 auto Parser::ParseBinaryExpr(int precedence, u<ExprAST> LHS) -> p<ExprAST> {
@@ -466,7 +466,7 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
                                             std::make_unique<UnitExprAST>()),
             SUCCESS};
   else
-    sammine_util::abort("Impossible, logic error in the parser of returnexpr");
+    this->abort("Impossible, logic error in the parser of returnexpr");
 }
 
 auto Parser::ParseCallExpr() -> p<ExprAST> {
@@ -489,7 +489,7 @@ auto Parser::ParseCallExpr() -> p<ExprAST> {
     return {std::make_unique<CallExprAST>(id, std::move(args)),
             COMMITTED_NO_MORE_ERROR};
   }
-  sammine_util::abort("Should not happen");
+  this->abort("Should not happen");
 }
 
 auto Parser::ParseIfExpr() -> p<ExprAST> {
@@ -557,7 +557,7 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
                                         std::move(else_block)),
             COMMITTED_NO_MORE_ERROR};
   }
-  sammine_util::abort("Should not happen");
+  this->abort("Should not happen");
 }
 
 auto Parser::ParseStringExpr() -> p<ExprAST> {
@@ -747,7 +747,7 @@ auto Parser::ParseParenExpr() -> p<ExprAST> {
     return {std::make_unique<UnitExprAST>(tok_left, tok_right), SUCCESS};
 
   else
-    sammine_util::abort("oops");
+    this->abort("oops");
 }
 // Parsing of parameters in a function call, we use leftParen and rightParen
 // as appropriate stopping point

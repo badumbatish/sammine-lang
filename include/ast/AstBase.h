@@ -31,7 +31,8 @@ class ASTVisitor : public sammine_util::Reportee {
   ProgramAST *top_level_ast;
 
 public:
-  virtual void abort(const std::string &msg) override;
+  [[noreturn]] virtual void
+  abort(const std::string &msg = "<NO MESSAGE>") override;
 
   virtual void visit(ProgramAST *ast);
   virtual void preorder_walk(ProgramAST *ast) = 0;
@@ -113,11 +114,9 @@ public:
       this->push(LexicalContext<T>(&this->top()));
   }
   void pop_context() {
-    if (this->empty()) {
+    if (this->empty())
       sammine_util::abort("ICE: You are popping an empty lexical stack");
-    } else {
-      this->pop();
-    }
+    this->pop();
   }
 
   void registerNameT(const std::string &name, T l) {

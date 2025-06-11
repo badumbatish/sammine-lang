@@ -22,6 +22,7 @@ concept explicitly_bool_like = requires(T t) {
                                  { static_cast<bool>(t) } -> std::same_as<bool>;
                                };
 [[noreturn]] auto abort(const std::string &message = "<NO MESSAGE>") -> void;
+
 template <explicitly_bool_like T>
 void abort_on(const T &condition, const std::string &message = "<NO MESSAGE>") {
   if (static_cast<bool>(condition)) {
@@ -36,7 +37,6 @@ void abort_if_not(const T &condition,
     abort(message);
   }
 }
-
 //! A class representing a location for sammine-lang, this is helpful in
 //! debugging
 
@@ -114,8 +114,23 @@ public:
   const_iterator end() const { return reports.end(); }
   const_iterator cbegin() const { return reports.cbegin(); }
   const_iterator cend() const { return reports.cend(); }
-  virtual void abort(const std::string &msg) {
-    return sammine_util::abort(msg);
+  [[noreturn]] virtual void abort(const std::string &msg = "<NO MESSAGE>") {
+    sammine_util::abort(msg);
+  }
+  template <explicitly_bool_like T>
+  void abort_on(const T &condition,
+                const std::string &message = "<NO MESSAGE>") {
+    if (static_cast<bool>(condition)) {
+      this->abort(message);
+    }
+  }
+
+  template <explicitly_bool_like T>
+  void abort_if_not(const T &condition,
+                    const std::string &message = "<NO MESSAGE>") {
+    if (!static_cast<bool>(condition)) {
+      this->abort(message);
+    }
   }
   void add_error(Location loc, std::string msg) {
     reports.push_back({loc, msg, ReportKind::error});
