@@ -5,6 +5,9 @@
 #include <memory>
 #include <optional>
 #include <utility>
+//! \file Parser.h
+//! \brief Defines Parser, which consumes tokens and constructs the AST
+
 namespace sammine_lang {
 enum ParserError {
   SUCCESS,

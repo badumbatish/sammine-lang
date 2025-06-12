@@ -5,7 +5,7 @@
 #include <string_view>
 #include <unordered_map>
 //! \file Types.cpp
-//! \file Implementation for FunctionType and Type classes
+//! \brief Implements the core Type system for Sammine
 bool FunctionType::operator<(const FunctionType &t) const {
   if (total_types.size() != t.total_types.size())
     return false;

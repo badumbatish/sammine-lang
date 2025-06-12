@@ -3,6 +3,7 @@
 #include "util/Utilities.h"
 #include <memory>
 //! \file GeneralSemanticsVisitor.cpp
+//! \brief Implementation for GeneralSemanticsVisitor
 namespace sammine_lang::AST {
 void GeneralSemanticsVisitor::preorder_walk(FuncDefAST *ast) {
   need_return.insert(ast->Block.get());

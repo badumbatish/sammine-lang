@@ -8,7 +8,7 @@
 #include "llvm/ExecutionEngine/Orc/ExecutionUtils.h" // Provides the DynamicLibrarySearchGenerator class.
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
 //! \file SammineJIT.cpp
-//! \brief %OGJas%
+//! \brief The Implementation for SammineJIT
 namespace sammine_lang {
 
 SammineJIT::SammineJIT(std::unique_ptr<llvm::orc::ExecutionSession> ES,
