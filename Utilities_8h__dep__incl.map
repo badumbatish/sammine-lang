@@ -1,0 +1,103 @@
+<map id="include/util/Utilities.h" name="include/util/Utilities.h">
+<area shape="rect" id="Node000001" title="Holds classes and functionalities for dealing with Error handling, source locations caching &amp; indexin..." alt="" coords="967,5,1108,31"/>
+<area shape="rect" id="Node000002" href="$Ast_8h.html" title="Defined the AST Node classes (ProgramAST, RecordDefAST, FuncDefAST) and a visitor interface for trave..." alt="" coords="1056,308,1174,333"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1081,36,1134,64,1193,105,1221,131,1246,159,1267,191,1281,226,1283,244,1279,260,1268,274,1253,285,1216,302,1175,313,1173,308,1214,297,1251,281,1264,270,1274,258,1278,244,1276,227,1262,193,1242,163,1217,135,1190,110,1131,69,1079,40"/>
+<area shape="rect" id="Node000003" href="$ScopeGeneratorVisitor_8h.html" title="Declares ScopeGeneratorVisitor, an ASTVisitor that builds and manages lexical scope by registration a..." alt="" coords="1198,389,1423,429"/>
+<area shape="poly" id="edge54_Node000001_Node000003" title=" " alt="" coords="1124,20,1200,32,1239,42,1276,56,1308,75,1334,99,1351,128,1357,164,1357,241,1354,283,1344,324,1322,389,1317,387,1339,323,1348,282,1352,240,1352,164,1346,130,1330,102,1305,79,1273,61,1237,47,1199,37,1123,26"/>
+<area shape="rect" id="Node000004" href="$Compiler_8cpp.html" title="Implementation of Compiler, consist the pipeline for executing all stages (Lex, Parser,..." alt="" coords="633,485,804,510"/>
+<area shape="poly" id="edge69_Node000001_Node000004" title=" " alt="" coords="951,22,760,24,520,32,400,39,289,50,195,64,125,82,80,95,43,108,28,117,17,128,10,143,8,164,8,321,13,359,28,385,53,406,88,427,131,444,190,458,338,478,497,489,633,493,632,498,496,494,337,483,189,464,129,449,85,432,50,411,24,389,8,361,3,322,3,164,5,142,13,125,25,112,41,103,79,90,123,76,194,58,289,44,400,34,520,26,760,18,951,16"/>
+<area shape="rect" id="Node000005" href="$ScopeGeneratorVisitor_8cpp.html" title="Implements ScopeGeneratorVisitor, an ASTVisitor that traverses the AST to populate a lexical symbol t..." alt="" coords="1401,477,1602,518"/>
+<area shape="poly" id="edge71_Node000001_Node000005" title=" " alt="" coords="1124,19,1639,39,1900,55,1993,65,2049,76,2093,90,2131,103,2147,112,2159,125,2167,142,2169,164,2169,322,2167,357,2159,385,2143,409,2116,432,2077,451,2023,466,1958,478,1886,487,1736,497,1602,500,1602,494,1735,491,1885,481,1957,473,2022,461,2075,446,2113,427,2139,405,2155,383,2162,356,2164,322,2164,164,2162,143,2155,128,2144,116,2129,108,2092,95,2047,82,1993,71,1899,61,1639,44,1124,24"/>
+<area shape="rect" id="Node000009" href="$CodegenVisitor_8cpp.html" title="Implementation for CodegenVisitor, it converts the AST Representation into LLVM IR and it also uses a..." alt="" coords="1446,396,1655,422"/>
+<area shape="poly" id="edge68_Node000001_Node000009" title=" " alt="" coords="1123,16,1273,18,1452,27,1540,34,1620,45,1688,59,1738,77,1771,95,1796,117,1809,144,1809,161,1805,179,1783,233,1759,271,1726,305,1682,343,1632,375,1584,398,1582,393,1630,371,1678,339,1722,301,1754,268,1779,230,1800,178,1804,160,1804,146,1792,120,1768,100,1736,81,1687,64,1619,50,1539,39,1452,32,1273,24,1123,22"/>
+<area shape="rect" id="Node000010" href="$GeneralSemanticsVisitor_8cpp.html" title=" " alt="" coords="124,389,338,429"/>
+<area shape="poly" id="edge70_Node000001_Node000010" title=" " alt="" coords="951,24,751,29,506,40,288,57,210,68,166,81,141,98,123,114,113,135,109,164,109,240,112,293,119,314,134,339,160,366,190,386,187,390,157,370,130,342,115,317,107,294,104,241,104,164,108,134,119,111,138,93,164,77,209,63,287,52,506,35,751,24,951,18"/>
+<area shape="rect" id="Node000011" href="$BiTypeChecker_8cpp.html" title="Implementation of BiTypeCheckerVisitor, an ASTVisitor that traverses the AST to synthesize node types..." alt="" coords="463,396,681,422"/>
+<area shape="poly" id="edge72_Node000001_Node000011" title=" " alt="" coords="951,23,861,27,754,37,638,54,525,82,431,105,356,125,323,139,293,159,264,188,236,228,228,247,231,262,242,272,259,280,301,289,333,298,405,338,476,369,539,393,537,398,474,374,403,343,331,302,300,294,258,285,239,276,226,264,223,247,231,225,260,185,290,155,321,134,354,120,430,100,523,76,637,49,753,32,861,22,951,18"/>
+<area shape="rect" id="Node000013" href="$AstBase_8h.html" title="Defines the AST Abstract class for printing out AST Nodes." alt="" coords="787,226,936,252"/>
+<area shape="poly" id="edge14_Node000001_Node000013" title=" " alt="" coords="1028,46,993,110,969,146,942,180,912,207,883,228,880,224,909,203,938,177,965,143,989,107,1023,44"/>
+<area shape="rect" id="Node000015" href="$GeneralSemanticsVisitor_8h.html" title="Defines GeneralSemanticsVisitor, an ASTVisitor that enforces general semantic rules for scoped defini..." alt="" coords="144,300,320,341"/>
+<area shape="poly" id="edge53_Node000001_Node000015" title=" " alt="" coords="951,22,753,23,513,31,399,39,301,49,229,63,205,72,191,81,176,101,167,120,163,139,164,158,175,201,192,251,203,276,217,298,213,301,198,279,187,253,170,202,159,159,158,139,162,119,171,98,188,77,203,67,228,58,301,44,398,33,512,26,753,18,951,16"/>
+<area shape="rect" id="Node000017" href="$LLVMRes_8h.html" title="Defined LLVMRes, which encapsulates the state of LLVM (Context, Modules, IRBuilder,..." alt="" coords="246,226,434,252"/>
+<area shape="poly" id="edge28_Node000001_Node000017" title=" " alt="" coords="951,23,841,31,707,51,637,68,567,91,499,119,436,155,388,193,353,228,349,224,385,189,433,150,497,115,565,86,635,63,706,46,840,25,951,17"/>
+<area shape="rect" id="Node000018" href="$TypeConverter_8h.html" title="Defines the TypeConverter, which holds the characistics of converting our AST types into LLVM IR type..." alt="" coords="1003,153,1216,178"/>
+<area shape="poly" id="edge31_Node000001_Node000018" title=" " alt="" coords="1052,44,1106,151,1101,153,1048,46"/>
+<area shape="rect" id="Node000020" href="$Lexer_8h.html" title="Houses the lexer and the declaration of its method." alt="" coords="1442,153,1571,178"/>
+<area shape="poly" id="edge34_Node000001_Node000020" title=" " alt="" coords="1124,24,1292,44,1370,58,1425,77,1450,93,1471,113,1501,151,1497,154,1468,117,1447,97,1423,81,1369,64,1291,49,1123,29"/>
+<area shape="rect" id="Node000022" href="$test__lexer_8cpp.html" title="The unit&#45;test file for all things related to a lexer." alt="" coords="1392,226,1552,252"/>
+<area shape="poly" id="edge74_Node000001_Node000022" title=" " alt="" coords="1124,24,1266,43,1331,58,1375,77,1398,99,1410,122,1419,148,1433,177,1465,224,1461,227,1428,180,1414,150,1405,125,1394,102,1372,81,1329,63,1265,48,1123,29"/>
+<area shape="rect" id="Node000023" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="1592,79,1725,105"/>
+<area shape="poly" id="edge38_Node000001_Node000023" title=" " alt="" coords="1124,27,1592,80,1592,86,1123,32"/>
+<area shape="rect" id="Node000024" href="$Parser_8h_source.html" title=" " alt="" coords="1974,308,2128,333"/>
+<area shape="poly" id="edge52_Node000001_Node000024" title=" " alt="" coords="1124,16,1350,16,1632,23,1767,30,1884,41,1972,56,2002,66,2020,77,2042,103,2056,134,2064,167,2067,201,2064,264,2056,308,2051,307,2059,263,2062,202,2058,168,2051,136,2037,106,2017,81,1999,71,1970,62,1883,47,1767,36,1632,28,1350,22,1124,21"/>
+<area shape="rect" id="Node000025" href="$Types_8h_source.html" title=" " alt="" coords="654,79,828,105"/>
+<area shape="poly" id="edge55_Node000001_Node000025" title=" " alt="" coords="973,38,792,81,791,76,971,33"/>
+<area shape="rect" id="Node000026" href="$Types_8cpp.html" title=" " alt="" coords="763,153,928,178"/>
+<area shape="poly" id="edge73_Node000001_Node000026" title=" " alt="" coords="1006,42,948,81,860,154,857,150,945,77,1003,38"/>
+<area shape="rect" id="Node000027" href="$LexicalContext_8h.html" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="456,153,638,178"/>
+<area shape="poly" id="edge61_Node000001_Node000027" title=" " alt="" coords="952,29,780,50,700,64,644,81,617,97,593,117,558,154,554,151,589,113,614,93,642,77,699,59,779,44,951,24"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1157,337,1267,386,1265,391,1155,342"/>
+<area shape="poly" id="edge9_Node000002_Node000004" title=" " alt="" coords="1118,350,1110,392,1101,413,1087,431,1067,445,1039,456,966,474,883,486,805,494,804,488,883,481,965,469,1037,451,1064,440,1084,427,1097,410,1105,390,1112,349"/>
+<area shape="poly" id="edge11_Node000002_Node000005" title=" " alt="" coords="1127,346,1151,389,1168,410,1188,427,1238,454,1293,473,1348,485,1401,491,1400,497,1347,490,1292,478,1236,459,1185,432,1164,413,1147,392,1123,349"/>
+<area shape="rect" id="Node000006" href="$Parser_8cpp.html" title="Implementation for Parser class, it takes in the token stream and converts it into Parsing things suc..." alt="" coords="1973,396,2078,422"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="1189,320,1333,324,1525,335,1742,354,1961,386,1989,393,1988,398,1959,391,1741,360,1524,340,1332,329,1189,325"/>
+<area shape="rect" id="Node000007" href="$Ast_8cpp.html" title="Implemention of AST Visitor, used for traversing the AST." alt="" coords="964,396,1073,422"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="1092,346,1034,398,1030,394,1088,342"/>
+<area shape="rect" id="Node000008" href="$AstPrinterVisitor_8cpp.html" title="Implementation for Ast Printer, using a Visitor pattern in order to traverse the AST for better debug..." alt="" coords="756,396,940,422"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="1063,341,886,398,885,393,1062,336"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="1190,334,1490,393,1489,398,1189,339"/>
+<area shape="poly" id="edge10_Node000002_Node000010" title=" " alt="" coords="1040,333,943,343,338,401,338,395,942,338,1040,328"/>
+<area shape="poly" id="edge12_Node000002_Node000011" title=" " alt="" coords="1041,336,649,398,648,393,1040,331"/>
+<area shape="rect" id="Node000012" href="$test__parser_8cpp.html" title="The unit&#45;test file for all things related to a parser." alt="" coords="1780,396,1948,422"/>
+<area shape="poly" id="edge13_Node000002_Node000012" title=" " alt="" coords="1189,328,1780,395,1779,401,1189,333"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1183,432,803,487,802,482,1183,426"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="1369,434,1459,474,1457,479,1367,438"/>
+<area shape="poly" id="edge15_Node000013_Node000002" title=" " alt="" coords="915,254,1076,304,1075,309,914,260"/>
+<area shape="poly" id="edge22_Node000013_Node000003" title=" " alt="" coords="951,249,1084,270,1144,283,1187,298,1238,336,1293,386,1289,390,1234,340,1184,302,1142,288,1083,275,950,254"/>
+<area shape="poly" id="edge26_Node000013_Node000007" title=" " alt="" coords="907,257,938,275,966,298,985,323,1000,350,1018,395,1013,397,995,352,980,326,962,302,935,279,904,261"/>
+<area shape="poly" id="edge27_Node000013_Node000008" title=" " alt="" coords="904,258,927,275,945,299,952,320,945,342,932,361,915,376,879,398,877,393,912,372,928,357,940,339,946,320,940,301,923,279,901,262"/>
+<area shape="rect" id="Node000014" href="$CodegenVisitor_8h.html" title="Defined CgVisitor, which lowers ASTs to LLVM IR." alt="" coords="713,308,930,333"/>
+<area shape="poly" id="edge16_Node000013_Node000014" title=" " alt="" coords="851,267,830,308,825,306,846,265"/>
+<area shape="poly" id="edge19_Node000013_Node000015" title=" " alt="" coords="772,254,321,311,320,305,771,249"/>
+<area shape="rect" id="Node000016" href="$BiTypeChecker_8h.html" title="Defines the BiTypeCheckerVisitor, consist of the flow for Bi&#45;Directional Type checking,..." alt="" coords="417,300,586,341"/>
+<area shape="poly" id="edge23_Node000013_Node000016" title=" " alt="" coords="792,258,587,303,586,298,791,253"/>
+<area shape="poly" id="edge18_Node000014_Node000004" title=" " alt="" coords="791,345,767,365,746,390,735,415,728,441,722,485,716,484,722,440,730,413,742,387,763,361,787,341"/>
+<area shape="poly" id="edge17_Node000014_Node000009" title=" " alt="" coords="946,331,1173,354,1435,386,1481,393,1480,398,1434,391,1173,359,945,336"/>
+<area shape="poly" id="edge20_Node000015_Node000004" title=" " alt="" coords="281,346,367,393,438,427,547,460,647,482,646,487,545,465,436,432,364,397,278,351"/>
+<area shape="poly" id="edge21_Node000015_Node000010" title=" " alt="" coords="234,356,234,388,228,388,229,356"/>
+<area shape="poly" id="edge24_Node000016_Node000004" title=" " alt="" coords="472,354,459,372,449,391,446,410,453,428,464,437,480,446,525,462,633,484,632,489,523,467,478,451,461,442,448,431,441,411,444,390,454,369,468,350"/>
+<area shape="poly" id="edge25_Node000016_Node000011" title=" " alt="" coords="529,351,564,394,560,398,525,354"/>
+<area shape="poly" id="edge30_Node000017_Node000004" title=" " alt="" coords="232,252,179,270,155,284,134,302,109,333,95,365,93,380,96,396,102,412,114,427,139,440,186,452,326,470,489,483,633,490,633,496,489,488,325,476,185,457,137,445,110,431,98,414,91,398,88,381,90,364,104,331,130,298,152,280,177,265,230,247"/>
+<area shape="poly" id="edge29_Node000017_Node000014" title=" " alt="" coords="429,252,748,304,747,310,429,258"/>
+<area shape="poly" id="edge32_Node000018_Node000014" title=" " alt="" coords="988,183,853,204,802,216,776,228,772,237,771,247,778,268,792,288,809,305,805,309,788,292,773,270,765,247,767,235,773,224,800,211,852,199,987,178"/>
+<area shape="rect" id="Node000019" href="$TypeConverter_8cpp.html" title="Implementation for TypeConverter, converting AST Node types into LLVM IR Types." alt="" coords="1062,226,1266,252"/>
+<area shape="poly" id="edge33_Node000018_Node000019" title=" " alt="" coords="1130,189,1157,224,1153,227,1125,192"/>
+<area shape="poly" id="edge35_Node000020_Node000013" title=" " alt="" coords="1427,178,936,232,936,227,1426,173"/>
+<area shape="rect" id="Node000021" href="$Lexer_8cpp.html" title="Implementation for scanning and streaming Tokens." alt="" coords="1576,226,1696,252"/>
+<area shape="poly" id="edge36_Node000020_Node000021" title=" " alt="" coords="1543,184,1615,223,1613,228,1541,189"/>
+<area shape="poly" id="edge37_Node000020_Node000022" title=" " alt="" coords="1497,193,1480,227,1475,225,1492,191"/>
+<area shape="poly" id="edge48_Node000023_Node000004" title=" " alt="" coords="1691,112,1709,130,1724,151,1742,193,1753,232,1757,269,1755,305,1745,339,1727,371,1702,402,1668,432,1649,441,1620,449,1535,464,1423,475,1293,483,1023,494,805,498,805,493,1023,489,1293,478,1422,470,1534,458,1619,444,1647,436,1665,427,1698,398,1723,368,1740,337,1750,304,1752,270,1748,233,1737,195,1719,154,1705,133,1687,116"/>
+<area shape="poly" id="edge46_Node000023_Node000006" title=" " alt="" coords="1738,107,1787,124,1832,150,1859,173,1878,195,1905,239,1927,285,1963,339,2015,394,2011,398,1959,342,1923,288,1900,241,1874,198,1855,177,1829,155,1784,129,1737,112"/>
+<area shape="poly" id="edge47_Node000023_Node000009" title=" " alt="" coords="1679,116,1695,144,1710,178,1717,216,1716,235,1710,253,1682,301,1644,343,1605,375,1572,398,1569,394,1601,371,1640,339,1677,298,1706,251,1710,234,1712,216,1705,180,1691,146,1674,119"/>
+<area shape="poly" id="edge51_Node000023_Node000012" title=" " alt="" coords="1736,108,1773,125,1805,151,1826,182,1842,216,1853,251,1861,287,1867,352,1867,396,1862,396,1862,352,1856,288,1848,253,1837,217,1821,184,1801,154,1770,129,1734,112"/>
+<area shape="poly" id="edge39_Node000023_Node000013" title=" " alt="" coords="1586,111,1228,181,936,229,935,224,1228,176,1585,106"/>
+<area shape="poly" id="edge40_Node000023_Node000018" title=" " alt="" coords="1577,106,1204,155,1203,149,1577,101"/>
+<area shape="poly" id="edge41_Node000023_Node000020" title=" " alt="" coords="1620,114,1534,154,1531,150,1618,109"/>
+<area shape="poly" id="edge49_Node000023_Node000021" title=" " alt="" coords="1657,120,1641,226,1635,225,1652,119"/>
+<area shape="poly" id="edge50_Node000023_Node000022" title=" " alt="" coords="1643,118,1617,150,1584,180,1542,208,1502,228,1500,223,1540,203,1581,176,1613,146,1639,115"/>
+<area shape="poly" id="edge42_Node000023_Node000024" title=" " alt="" coords="1741,95,1830,113,1876,129,1919,150,1964,188,2001,232,2030,274,2047,306,2042,308,2025,277,1997,235,1960,191,1916,155,1874,133,1828,118,1740,101"/>
+<area shape="poly" id="edge44_Node000024_Node000004" title=" " alt="" coords="2074,343,2088,363,2099,386,2102,410,2092,431,2042,441,1922,451,1551,469,805,496,805,491,1551,464,1922,445,2041,436,2089,427,2097,409,2094,388,2084,366,2069,346"/>
+<area shape="poly" id="edge43_Node000024_Node000006" title=" " alt="" coords="2045,349,2031,397,2026,395,2040,347"/>
+<area shape="poly" id="edge45_Node000024_Node000012" title=" " alt="" coords="2012,342,1891,398,1889,393,2010,338"/>
+<area shape="poly" id="edge59_Node000025_Node000011" title=" " alt="" coords="733,120,687,219,621,342,583,397,579,394,616,339,682,216,728,118"/>
+<area shape="poly" id="edge56_Node000025_Node000013" title=" " alt="" coords="741,120,742,149,753,177,766,192,783,205,820,223,818,228,780,210,763,196,748,180,737,150,735,120"/>
+<area shape="poly" id="edge58_Node000025_Node000016" title=" " alt="" coords="639,103,580,110,523,121,475,135,458,144,446,154,442,164,443,180,454,219,493,299,488,301,449,221,438,180,437,164,442,151,455,140,473,130,521,115,579,105,638,97"/>
+<area shape="poly" id="edge57_Node000025_Node000018" title=" " alt="" coords="820,106,1047,149,1046,155,819,111"/>
+<area shape="poly" id="edge60_Node000025_Node000026" title=" " alt="" coords="773,111,829,150,826,154,770,116"/>
+<area shape="poly" id="edge64_Node000027_Node000003" title=" " alt="" coords="653,172,795,190,873,205,949,224,978,236,1006,249,1040,258,1069,262,1122,265,1172,271,1200,281,1231,298,1255,318,1276,342,1304,387,1299,390,1271,345,1251,322,1228,302,1198,286,1171,276,1121,270,1069,268,1039,264,1004,255,976,241,947,229,872,210,794,195,653,177"/>
+<area shape="poly" id="edge66_Node000027_Node000005" title=" " alt="" coords="654,169,817,186,908,202,997,224,1024,236,1050,250,1099,264,1145,273,1233,278,1315,275,1392,270,1464,271,1500,276,1534,285,1568,300,1602,321,1636,350,1669,387,1677,403,1677,417,1670,431,1658,443,1623,463,1581,479,1579,474,1621,459,1655,439,1666,428,1672,416,1672,404,1664,390,1632,354,1599,326,1566,305,1533,290,1499,281,1464,276,1392,275,1315,280,1233,284,1145,278,1097,269,1048,254,1022,241,995,229,907,207,816,191,653,174"/>
+<area shape="poly" id="edge67_Node000027_Node000011" title=" " alt="" coords="562,191,584,240,601,299,604,320,601,341,592,372,581,397,576,395,587,370,596,340,599,320,596,301,579,242,557,193"/>
+<area shape="poly" id="edge62_Node000027_Node000013" title=" " alt="" coords="616,180,808,223,807,228,615,185"/>
+<area shape="poly" id="edge63_Node000027_Node000015" title=" " alt="" coords="528,191,492,224,448,254,385,283,321,303,319,298,383,278,445,250,489,219,524,187"/>
+<area shape="poly" id="edge65_Node000027_Node000016" title=" " alt="" coords="551,194,550,222,544,253,533,279,519,301,514,298,528,276,539,251,544,222,546,194"/>
+</map>

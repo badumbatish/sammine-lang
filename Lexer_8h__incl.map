@@ -1,8 +1,8 @@
 <map id="include/lex/Lexer.h" name="include/lex/Lexer.h">
-<area shape="rect" id="Node000001" title="Houses declaration (and some small implementation) of TokenType, TokenMap, Token, TokenStream,..." alt="" coords="706,5,835,31"/>
-<area shape="rect" id="Node000002" href="$Token_8h_source.html" title=" " alt="" coords="727,79,814,105"/>
+<area shape="rect" id="Node000001" title="Houses the lexer and the declaration of its method." alt="" coords="706,5,835,31"/>
+<area shape="rect" id="Node000002" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="727,79,814,105"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="773,31,773,63,768,63,768,31"/>
-<area shape="rect" id="Node000003" href="$Utilities_8h_source.html" title=" " alt="" coords="622,153,719,178"/>
+<area shape="rect" id="Node000003" href="$Utilities_8h.html" title="Holds classes and functionalities for dealing with Error handling, source locations caching &amp; indexin..." alt="" coords="622,153,719,178"/>
 <area shape="poly" id="edge19_Node000001_Node000003" title=" " alt="" coords="759,33,717,81,684,140,679,138,712,77,755,30"/>
 <area shape="rect" id="Node000018" title=" " alt="" coords="864,153,931,178"/>
 <area shape="poly" id="edge20_Node000001_Node000018" title=" " alt="" coords="784,30,828,77,880,139,876,142,825,81,780,33"/>

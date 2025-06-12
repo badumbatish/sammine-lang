@@ -1,0 +1,39 @@
+<map id="include/util/LexicalContext.h" name="include/util/LexicalContext.h">
+<area shape="rect" id="Node000001" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="742,5,924,31"/>
+<area shape="rect" id="Node000002" href="$Utilities_8h.html" title="Holds classes and functionalities for dealing with Error handling, source locations caching &amp; indexin..." alt="" coords="578,79,675,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="799,34,677,76,675,71,797,29"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="698,79,776,105"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="818,34,767,72,764,68,815,29"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="800,79,867,105"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="836,31,836,63,830,63,830,31"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="891,79,959,105"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="850,29,900,67,896,72,847,34"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="983,79,1022,105"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="863,29,970,74,968,79,861,34"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,153,88,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="578,100,375,119,103,155,102,150,375,114,578,94"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="112,153,194,178"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="578,102,419,122,210,155,209,150,418,117,577,96"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="219,153,298,178"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="578,104,314,155,313,149,577,99"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="323,153,397,178"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="582,108,413,153,411,148,581,103"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="421,153,485,178"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="598,108,498,149,496,144,596,103"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="509,153,573,178"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="614,107,569,145,565,141,610,103"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="597,153,656,178"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="629,105,629,137,624,137,624,105"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="680,153,752,178"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="643,103,691,141,687,145,640,107"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="776,153,829,178"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="657,103,763,145,761,150,655,108"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="854,153,941,178"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="673,103,839,146,838,151,672,108"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="964,153,1014,178"/>
+<area shape="poly" id="edge12_Node000002_Node000013" title=" " alt="" coords="675,100,687,102,818,123,950,149,949,155,817,128,686,107,674,105"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="1038,153,1090,178"/>
+<area shape="poly" id="edge13_Node000002_Node000014" title=" " alt="" coords="675,100,687,102,780,115,854,123,929,132,1024,150,1023,155,928,137,854,128,779,120,686,107,674,105"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="1114,153,1171,178"/>
+<area shape="poly" id="edge14_Node000002_Node000015" title=" " alt="" coords="675,100,687,102,801,116,891,123,983,132,1099,150,1098,155,982,137,891,129,800,121,686,107,674,105"/>
+</map>

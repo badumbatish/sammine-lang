@@ -1,6 +1,6 @@
 <map id="src/sammine.cpp" name="src/sammine.cpp">
 <area shape="rect" id="Node000001" title="The main file to produce an executable that is the sammine compiler." alt="" coords="146,5,266,31"/>
-<area shape="rect" id="Node000002" href="$Compiler_8h_source.html" title=" " alt="" coords="5,79,141,105"/>
+<area shape="rect" id="Node000002" href="$Compiler_8h.html" title="Define the Compiler staging." alt="" coords="5,79,141,105"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,34,110,74,108,69,182,29"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="165,79,248,105"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="209,31,209,63,204,63,204,31"/>

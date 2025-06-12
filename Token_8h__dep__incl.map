@@ -1,0 +1,67 @@
+<map id="include/lex/Token.h" name="include/lex/Token.h">
+<area shape="rect" id="Node000001" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="784,5,916,31"/>
+<area shape="rect" id="Node000002" href="$AstBase_8h.html" title="Defines the AST Abstract class for printing out AST Nodes." alt="" coords="896,153,1044,178"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="871,41,962,150,958,154,867,44"/>
+<area shape="rect" id="Node000005" href="$Compiler_8cpp.html" title="Implementation of Compiler, consist the pipeline for executing all stages (Lex, Parser,..." alt="" coords="1130,411,1301,437"/>
+<area shape="poly" id="edge40_Node000001_Node000005" title=" " alt="" coords="882,37,1010,119,1072,157,1108,176,1174,188,1259,193,1458,189,1561,188,1656,191,1739,202,1773,211,1802,224,1828,242,1845,261,1857,284,1867,314,1874,336,1873,347,1866,358,1838,372,1785,385,1632,404,1455,416,1302,423,1301,417,1455,411,1632,398,1784,380,1836,367,1863,354,1868,345,1869,337,1862,316,1852,286,1841,264,1825,246,1799,229,1771,216,1738,207,1656,196,1561,193,1459,195,1259,198,1173,194,1106,181,1069,161,1007,124,879,42"/>
+<area shape="rect" id="Node000007" href="$Parser_8cpp.html" title="Implementation for Parser class, it takes in the token stream and converts it into Parsing things suc..." alt="" coords="5,322,111,348"/>
+<area shape="poly" id="edge38_Node000001_Node000007" title=" " alt="" coords="769,26,657,32,530,43,413,60,365,70,330,81,283,106,239,137,199,171,162,207,103,276,68,324,64,320,99,272,158,204,195,167,236,132,280,101,328,77,364,65,412,54,530,38,657,27,768,20"/>
+<area shape="rect" id="Node000010" href="$CodegenVisitor_8cpp.html" title="Implementation for CodegenVisitor, it converts the AST Representation into LLVM IR and it also uses a..." alt="" coords="378,322,586,348"/>
+<area shape="poly" id="edge39_Node000001_Node000010" title=" " alt="" coords="769,32,707,46,640,70,608,86,577,105,549,128,526,154,502,198,490,246,485,290,484,322,479,322,479,290,484,245,497,196,521,151,546,124,574,101,605,81,638,65,706,41,768,27"/>
+<area shape="rect" id="Node000013" href="$test__parser_8cpp.html" title="The unit&#45;test file for all things related to a parser." alt="" coords="186,322,354,348"/>
+<area shape="poly" id="edge43_Node000001_Node000013" title=" " alt="" coords="769,29,672,47,621,61,573,81,506,127,421,198,284,324,281,320,418,194,503,122,570,77,619,56,671,41,768,24"/>
+<area shape="rect" id="Node000017" href="$TypeConverter_8h.html" title="Defines the TypeConverter, which holds the characistics of converting our AST types into LLVM IR type..." alt="" coords="671,79,885,105"/>
+<area shape="poly" id="edge27_Node000001_Node000017" title=" " alt="" coords="829,44,792,80,788,77,825,40"/>
+<area shape="rect" id="Node000019" href="$Lexer_8h.html" title="Houses the lexer and the declaration of its method." alt="" coords="1115,79,1244,105"/>
+<area shape="poly" id="edge30_Node000001_Node000019" title=" " alt="" coords="922,32,1124,76,1123,81,920,37"/>
+<area shape="rect" id="Node000020" href="$Lexer_8cpp.html" title="Implementation for scanning and streaming Tokens." alt="" coords="1120,153,1239,178"/>
+<area shape="poly" id="edge41_Node000001_Node000020" title=" " alt="" coords="932,17,1022,20,1118,29,1203,47,1235,61,1257,77,1263,88,1264,100,1251,121,1229,140,1205,154,1202,150,1226,135,1247,118,1259,99,1258,90,1253,81,1233,65,1202,53,1118,35,1021,26,932,22"/>
+<area shape="rect" id="Node000021" href="$test__lexer_8cpp.html" title="The unit&#45;test file for all things related to a lexer." alt="" coords="1264,153,1423,178"/>
+<area shape="poly" id="edge42_Node000001_Node000021" title=" " alt="" coords="932,21,1023,28,1123,39,1214,55,1251,65,1278,77,1299,93,1317,114,1340,151,1336,154,1313,117,1296,97,1275,81,1249,70,1213,60,1122,44,1022,33,931,26"/>
+<area shape="rect" id="Node000022" href="$Parser_8h_source.html" title=" " alt="" coords="169,234,323,260"/>
+<area shape="poly" id="edge34_Node000001_Node000022" title=" " alt="" coords="768,24,664,30,546,40,439,57,397,68,366,81,344,97,324,116,291,160,267,203,253,235,248,232,262,200,286,157,320,113,340,93,363,77,395,63,438,51,546,35,663,24,768,19"/>
+<area shape="rect" id="Node000003" href="$Ast_8h.html" title="Defined the AST Node classes (ProgramAST, RecordDefAST, FuncDefAST) and a visitor interface for trave..." alt="" coords="812,234,930,260"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="945,190,888,235,885,231,942,186"/>
+<area shape="rect" id="Node000004" href="$ScopeGeneratorVisitor_8h.html" title="Declares ScopeGeneratorVisitor, an ASTVisitor that builds and manages lexical scope by registration a..." alt="" coords="1103,315,1328,356"/>
+<area shape="poly" id="edge21_Node000002_Node000004" title=" " alt="" coords="1001,185,1188,312,1185,317,998,189"/>
+<area shape="rect" id="Node000008" href="$Ast_8cpp.html" title="Implemention of AST Visitor, used for traversing the AST." alt="" coords="661,322,770,348"/>
+<area shape="poly" id="edge25_Node000002_Node000008" title=" " alt="" coords="897,185,848,203,802,229,776,251,754,278,724,324,719,321,750,274,772,248,799,224,846,198,895,180"/>
+<area shape="rect" id="Node000009" href="$AstPrinterVisitor_8cpp.html" title="Implementation for Ast Printer, using a Visitor pattern in order to traverse the AST for better debug..." alt="" coords="895,322,1080,348"/>
+<area shape="poly" id="edge26_Node000002_Node000009" title=" " alt="" coords="975,194,989,322,983,322,970,194"/>
+<area shape="rect" id="Node000014" href="$CodegenVisitor_8h.html" title="Defined CgVisitor, which lowers ASTs to LLVM IR." alt="" coords="520,234,737,260"/>
+<area shape="poly" id="edge15_Node000002_Node000014" title=" " alt="" coords="903,185,682,236,681,231,902,180"/>
+<area shape="rect" id="Node000015" href="$GeneralSemanticsVisitor_8h.html" title="Defines GeneralSemanticsVisitor, an ASTVisitor that enforces general semantic rules for scoped defini..." alt="" coords="1613,226,1788,267"/>
+<area shape="poly" id="edge18_Node000002_Node000015" title=" " alt="" coords="1060,175,1064,176,1311,199,1558,224,1613,230,1612,236,1558,229,1310,205,1063,181,1059,181"/>
+<area shape="rect" id="Node000016" href="$BiTypeChecker_8h.html" title="Defines the BiTypeCheckerVisitor, consist of the flow for Bi&#45;Directional Type checking,..." alt="" coords="1376,226,1545,267"/>
+<area shape="poly" id="edge22_Node000002_Node000016" title=" " alt="" coords="1060,179,1376,229,1375,234,1059,184"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="935,261,1138,312,1137,317,934,266"/>
+<area shape="poly" id="edge10_Node000003_Node000005" title=" " alt="" coords="869,275,869,316,874,336,885,354,901,366,924,377,986,394,1059,406,1130,414,1129,419,1058,411,985,399,922,382,898,370,881,357,869,338,864,317,864,275"/>
+<area shape="rect" id="Node000006" href="$ScopeGeneratorVisitor_8cpp.html" title="Implements ScopeGeneratorVisitor, an ASTVisitor that traverses the AST to populate a lexical symbol t..." alt="" coords="805,404,1007,444"/>
+<area shape="poly" id="edge12_Node000003_Node000006" title=" " alt="" coords="857,273,840,313,838,334,842,355,858,380,880,401,876,405,854,384,837,357,832,334,835,311,852,271"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="797,263,750,270,588,286,462,293,336,301,174,318,111,327,111,322,174,312,335,296,462,288,588,280,750,264,796,258"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="837,270,739,324,736,320,835,265"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="901,267,973,320,969,324,898,271"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="802,266,537,325,536,319,801,261"/>
+<area shape="rect" id="Node000011" href="$GeneralSemanticsVisitor_8cpp.html" title=" " alt="" coords="1594,315,1808,356"/>
+<area shape="poly" id="edge11_Node000003_Node000011" title=" " alt="" coords="946,251,1226,274,1582,312,1594,314,1593,319,1582,318,1226,280,946,256"/>
+<area shape="rect" id="Node000012" href="$BiTypeChecker_8cpp.html" title="Implementation of BiTypeCheckerVisitor, an ASTVisitor that traverses the AST to synthesize node types..." alt="" coords="1352,322,1570,348"/>
+<area shape="poly" id="edge13_Node000003_Node000012" title=" " alt="" coords="946,256,1340,312,1385,319,1384,325,1339,318,945,261"/>
+<area shape="poly" id="edge14_Node000003_Node000013" title=" " alt="" coords="797,263,750,270,558,292,366,318,328,325,327,319,366,312,557,287,750,264,796,257"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1218,371,1218,411,1213,411,1213,371"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="1131,363,977,406,976,401,1129,358"/>
+<area shape="poly" id="edge17_Node000014_Node000005" title=" " alt="" coords="628,275,631,317,638,337,650,353,706,363,834,379,1129,411,1129,416,833,384,705,369,647,358,633,339,626,318,623,275"/>
+<area shape="poly" id="edge16_Node000014_Node000010" title=" " alt="" coords="597,270,504,324,501,320,594,265"/>
+<area shape="poly" id="edge19_Node000015_Node000005" title=" " alt="" coords="1777,271,1812,287,1840,308,1849,319,1854,331,1852,344,1844,358,1816,372,1766,384,1620,403,1450,415,1302,422,1301,417,1450,410,1619,397,1765,379,1814,367,1840,354,1847,343,1848,332,1844,322,1836,311,1809,292,1775,275"/>
+<area shape="poly" id="edge20_Node000015_Node000011" title=" " alt="" coords="1703,283,1703,315,1698,315,1698,283"/>
+<area shape="poly" id="edge23_Node000016_Node000005" title=" " alt="" coords="1561,261,1726,289,1791,302,1821,313,1831,335,1829,347,1821,358,1795,371,1747,383,1607,402,1445,414,1302,422,1301,417,1444,409,1607,396,1746,378,1793,366,1818,354,1824,345,1826,336,1818,317,1789,308,1725,294,1560,266"/>
+<area shape="poly" id="edge24_Node000016_Node000012" title=" " alt="" coords="1463,283,1463,322,1458,322,1458,283"/>
+<area shape="poly" id="edge28_Node000017_Node000014" title=" " alt="" coords="778,120,771,151,755,180,736,199,714,214,669,236,666,231,711,210,732,195,751,177,766,149,773,119"/>
+<area shape="rect" id="Node000018" href="$TypeConverter_8cpp.html" title="Implementation for TypeConverter, converting AST Node types into LLVM IR Types." alt="" coords="536,153,740,178"/>
+<area shape="poly" id="edge29_Node000017_Node000018" title=" " alt="" coords="742,114,663,154,661,150,740,110"/>
+<area shape="poly" id="edge31_Node000019_Node000002" title=" " alt="" coords="1130,113,1007,155,1005,150,1129,108"/>
+<area shape="poly" id="edge32_Node000019_Node000020" title=" " alt="" coords="1182,120,1182,152,1177,152,1177,120"/>
+<area shape="poly" id="edge33_Node000019_Node000021" title=" " alt="" coords="1222,109,1316,150,1314,155,1220,114"/>
+<area shape="poly" id="edge36_Node000022_Node000005" title=" " alt="" coords="217,271,195,290,176,312,168,334,170,344,176,354,194,365,226,374,320,388,445,396,586,400,857,400,1019,401,1129,411,1129,416,1019,406,857,405,586,405,445,402,320,394,224,380,192,370,172,358,165,346,163,334,172,309,191,286,214,267"/>
+<area shape="poly" id="edge35_Node000022_Node000007" title=" " alt="" coords="207,269,86,324,83,319,205,264"/>
+<area shape="poly" id="edge37_Node000022_Node000013" title=" " alt="" coords="256,274,269,321,264,323,251,275"/>
+</map>

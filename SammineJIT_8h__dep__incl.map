@@ -1,0 +1,14 @@
+<map id="include/codegen/SammineJIT.h" name="include/codegen/SammineJIT.h">
+<area shape="rect" id="Node000001" title="JIT Compiler based on Kaleidoscope." alt="" coords="256,5,459,31"/>
+<area shape="rect" id="Node000002" href="$LLVMRes_8h.html" title="Defined LLVMRes, which encapsulates the state of LLVM (Context, Modules, IRBuilder,..." alt="" coords="155,79,344,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="328,42,269,81,266,76,325,38"/>
+<area shape="rect" id="Node000006" href="$SammineJIT_8cpp.html" title="OGJas%" alt="" coords="368,79,563,105"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="390,38,449,76,446,81,387,42"/>
+<area shape="rect" id="Node000003" href="$CodegenVisitor_8h.html" title="Defined CgVisitor, which lowers ASTs to LLVM IR." alt="" coords="68,153,285,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="228,117,190,154,187,150,225,114"/>
+<area shape="rect" id="Node000005" href="$Compiler_8cpp.html" title="Implementation of Compiler, consist the pipeline for executing all stages (Lex, Parser,..." alt="" coords="237,226,408,252"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="274,114,300,151,315,191,323,225,318,226,310,193,295,154,269,117"/>
+<area shape="rect" id="Node000004" href="$CodegenVisitor_8cpp.html" title="Implementation for CodegenVisitor, it converts the AST Representation into LLVM IR and it also uses a..." alt="" coords="5,226,214,252"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="157,191,123,228,119,224,153,188"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="216,183,299,223,297,228,214,188"/>
+</map>

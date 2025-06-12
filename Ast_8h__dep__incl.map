@@ -1,0 +1,25 @@
+<map id="include/ast/Ast.h" name="include/ast/Ast.h">
+<area shape="rect" id="Node000001" title="Defined the AST Node classes (ProgramAST, RecordDefAST, FuncDefAST) and a visitor interface for trave..." alt="" coords="594,5,713,31"/>
+<area shape="rect" id="Node000002" href="$ScopeGeneratorVisitor_8h.html" title="Declares ScopeGeneratorVisitor, an ASTVisitor that builds and manages lexical scope by registration a..." alt="" coords="84,79,308,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="579,35,309,81,308,76,578,30"/>
+<area shape="rect" id="Node000003" href="$Compiler_8cpp.html" title="Implementation of Compiler, consist the pipeline for executing all stages (Lex, Parser,..." alt="" coords="5,175,177,201"/>
+<area shape="poly" id="edge8_Node000001_Node000003" title=" " alt="" coords="579,24,442,30,282,41,145,58,98,69,74,81,68,91,65,102,66,128,75,153,86,173,81,176,70,155,61,129,59,102,63,89,71,77,97,64,144,53,282,36,441,25,579,19"/>
+<area shape="rect" id="Node000004" href="$ScopeGeneratorVisitor_8cpp.html" title="Implements ScopeGeneratorVisitor, an ASTVisitor that traverses the AST to populate a lexical symbol t..." alt="" coords="222,168,424,208"/>
+<area shape="poly" id="edge10_Node000001_Node000004" title=" " alt="" coords="580,30,461,50,409,64,374,81,356,100,343,123,329,168,324,166,339,121,352,97,371,77,407,59,460,45,579,25"/>
+<area shape="rect" id="Node000005" href="$Parser_8cpp.html" title="Implementation for Parser class, it takes in the token stream and converts it into Parsing things suc..." alt="" coords="384,86,489,112"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="607,39,471,88,469,83,605,34"/>
+<area shape="rect" id="Node000006" href="$Ast_8cpp.html" title="Implemention of AST Visitor, used for traversing the AST." alt="" coords="514,86,623,112"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="632,43,583,88,580,84,628,40"/>
+<area shape="rect" id="Node000007" href="$AstPrinterVisitor_8cpp.html" title="Implementation for Ast Printer, using a Visitor pattern in order to traverse the AST for better debug..." alt="" coords="647,86,831,112"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="679,40,728,84,724,88,676,43"/>
+<area shape="rect" id="Node000008" href="$CodegenVisitor_8cpp.html" title="Implementation for CodegenVisitor, it converts the AST Representation into LLVM IR and it also uses a..." alt="" coords="855,86,1063,112"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="716,33,913,83,911,88,715,38"/>
+<area shape="rect" id="Node000009" href="$GeneralSemanticsVisitor_8cpp.html" title=" " alt="" coords="1088,79,1302,120"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="729,27,1075,76,1088,78,1087,84,1075,82,728,32"/>
+<area shape="rect" id="Node000010" href="$BiTypeChecker_8cpp.html" title="Implementation of BiTypeCheckerVisitor, an ASTVisitor that traverses the AST to synthesize node types..." alt="" coords="1326,86,1544,112"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="729,22,988,43,1314,76,1363,83,1362,89,1313,82,987,48,728,27"/>
+<area shape="rect" id="Node000011" href="$test__parser_8cpp.html" title="The unit&#45;test file for all things related to a parser." alt="" coords="1568,86,1736,112"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="728,18,1086,34,1320,51,1557,76,1598,83,1597,89,1556,82,1320,56,1086,39,728,24"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="162,132,107,177,104,173,159,128"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="239,126,296,165,293,169,236,131"/>
+</map>
