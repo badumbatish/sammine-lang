@@ -13,6 +13,10 @@
 #include <utility>
 #include <vector>
 
+//! \file Utilities.h
+//! \brief Holds classes and functionalities for dealing with Error handling,
+//! source locations caching & indexing
+
 namespace sammine_util {
 auto get_string_from_file(const std::string &file_name) -> std::string;
 inline int64_t unique_ast_id = 0;

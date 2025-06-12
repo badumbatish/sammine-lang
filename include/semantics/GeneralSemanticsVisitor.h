@@ -4,6 +4,8 @@
 #include "ast/AstDecl.h"
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
+//! \file GeneralSemanticsVisitor.h
+//! \brief %OGJas%
 namespace sammine_lang::AST {
 /// General
 class GeneralSemanticsVisitor : public ScopedASTVisitor {

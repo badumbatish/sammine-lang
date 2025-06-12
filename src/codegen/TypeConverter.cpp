@@ -5,6 +5,10 @@
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
+
+//! \file TypeConverter.cpp
+//! \brief Implementation for TypeConverter, converting AST Node types into LLVM
+//! IR Types
 namespace sammine_lang::AST {
 llvm::Type *TypeConverter::get_type(Type t) {
   switch (t.type_kind) {

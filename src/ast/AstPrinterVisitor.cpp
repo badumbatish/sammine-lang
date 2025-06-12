@@ -3,6 +3,9 @@
 #include "fmt/base.h"
 #include "fmt/format.h"
 #include <string_view>
+//! \file AstPrinterVisitor.cpp
+//! \brief Implementation for Ast Printer, using a Visitor pattern in order to
+//! traverse the AST for better debugging
 namespace sammine_lang::AST {
 
 class AstPrinterVisitor : public ScopedASTVisitor {

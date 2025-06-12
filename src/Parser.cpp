@@ -6,8 +6,14 @@
 #include <functional>
 #include <memory>
 #include <utility>
+//! \file Parser.cpp
+//! \brief Implementation for Parser class, it takes in the token stream and
+//! converts it into Parsing things suchs as programs, top-level (record,
+//! functions, global variables)
+
 namespace sammine_lang {
 using namespace AST;
+//! \brief Holds the precedence of a binary operation
 static std::map<TokenType, int> binopPrecedence = {
     {TokenType::TokASSIGN, 2}, {TokenType::TokLESS, 10},
     {TokenType::TokEQUAL, 10}, {TokenType::TokADD, 20},

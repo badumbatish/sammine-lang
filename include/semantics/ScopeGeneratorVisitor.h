@@ -5,6 +5,8 @@
 #include "util/Utilities.h"
 namespace sammine_lang::AST {
 
+//! \file ScopeGeneratorVisitor.h
+//! \brief %OGJas%
 class ScopeGeneratorVisitor : public ScopedASTVisitor {
 public:
   // A simple scoping class, doesn't differentiate between different names, like

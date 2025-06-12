@@ -7,6 +7,9 @@
 #include "lex/Token.h"
 #include <cassert>
 #include <string>
+
+//! \file Lexer.cpp
+//! \brief Implementation for scanning and streaming Tokens
 namespace sammine_lang {
 
 using LexFunction = std::function<size_t(Lexer *, size_t, const std::string &)>;

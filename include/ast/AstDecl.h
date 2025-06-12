@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+//! \file AstDecl.h
+//! \brief Holds Protoype for all the AST Nodes
 namespace sammine_lang {
 namespace AST {
 using Identifier = std::string;

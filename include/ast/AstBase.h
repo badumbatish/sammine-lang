@@ -11,6 +11,8 @@
 #include "util/Utilities.h"
 #include <stack>
 
+//! \file AstBase.h
+//! \brief Defines the AST Abstract class for printing out AST Nodes
 namespace llvm {
 class Value;
 
@@ -139,6 +141,7 @@ public:
 
   LexicalContext<T> *parent_scope() { return this->top().parent_scope; }
 };
+
 class ScopedASTVisitor : public ASTVisitor {
 public:
   virtual void enter_new_scope() = 0;

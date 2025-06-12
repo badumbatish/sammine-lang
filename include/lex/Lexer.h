@@ -7,16 +7,14 @@
 #include "util/Utilities.h"
 
 //! \file Lexer.h
-//! \brief Houses declaration (and some small implementation) of TokenType,
+//! \brief Sammine Lang include file for handling the compiler lexer
 //! TokenMap, Token, TokenStream, Lexer
 
 #include <memory>
 
 namespace sammine_lang {
-//! A lexer for sammine-lang
 
-//! Not sure what to put in here
-//! Not sure what to put in here
+//! A Lexer class with holds the core functionality Tokens and Token streams
 class Lexer : public sammine_util::Reportee {
 private:
   sammine_util::Location location;

@@ -14,7 +14,8 @@
 #include "llvm/IR/LLVMContext.h"
 namespace sammine_lang {
 
-//! JIT Compiler based on Kaleidoscope
+//! \file SammineJIT.h
+//! \brief JIT Compiler based on Kaleidoscope
 class SammineJIT {
 private:
   std::unique_ptr<llvm::orc::ExecutionSession> ES;

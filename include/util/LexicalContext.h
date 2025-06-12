@@ -1,15 +1,21 @@
 #pragma once
-// A simple scoping class, doesn't differentiate between different names, like
-// variable name, func name and all that
 #include "util/Utilities.h"
 #include <functional>
 #include <memory>
 #include <ostream>
 #include <set>
+
+//! \file LexicalContext.h
+//! \brief A simple scoping class, doesn't differentiate between different
+//! names, like variable name, func name and all that
+
+//! \brief NameQueryResult enum
 enum NameQueryResult {
   nameFound,
   nameNotFound,
 };
+
+//! \brief LexicalContext class
 template <class T> class LexicalContext {
   std::set<std::string> symbols;
   std::unordered_map<std::string, T> symbols_to_t;

@@ -5,6 +5,9 @@
 #include "util/Utilities.h"
 #include <ctime>
 #include <memory>
+//! \file ScopeGeneratorVisitor.cpp
+//! \brief Impemention for ScopeGeneratorVisitor class, consisting of traversal
+//! for
 namespace sammine_lang::AST {
 // pre order
 void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {

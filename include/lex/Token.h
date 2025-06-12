@@ -3,6 +3,10 @@
 #include <map>
 #include <memory>
 #include <string>
+
+//! \file Token.h
+//! \brief Defines the token semantics (Token Type, Token Scream, Token mapping)
+
 namespace sammine_lang {
 enum TokenType {
   // TODO: Add void keyword for return

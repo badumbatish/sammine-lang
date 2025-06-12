@@ -31,6 +31,10 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Scalar/Reassociate.h"
 #include <map>
+//! \file LLVMRes.h
+//! \brief Defined LLVMRes, which encapsulates the state of LLVM (Context,
+//! Modules, IRBuilder, PassManagers, JIT) context base information. This
+//! resource will be shared across multiple instances within the Compiler
 namespace sammine_lang {
 class LLVMRes {
 public:

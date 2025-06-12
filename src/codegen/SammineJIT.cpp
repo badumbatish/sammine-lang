@@ -7,6 +7,8 @@
 #include "llvm/ExecutionEngine/Orc/CompileUtils.h" // Provides the SimpleCompiler class.
 #include "llvm/ExecutionEngine/Orc/ExecutionUtils.h" // Provides the DynamicLibrarySearchGenerator class.
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
+//! \file SammineJIT.cpp
+//! \brief %OGJas%
 namespace sammine_lang {
 
 SammineJIT::SammineJIT(std::unique_ptr<llvm::orc::ExecutionSession> ES,

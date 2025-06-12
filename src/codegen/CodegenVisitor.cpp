@@ -14,6 +14,10 @@
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
 #include <cstdlib>
+//! \file CodegenVisitor.cpp
+//! \brief Implementation for CodegenVisitor, it converts the AST Representation
+//! into LLVM IR and it also uses a visitor pattern in order to traverse through
+//! the parsed AST to emit LLVM IR.
 namespace sammine_lang::AST {
 using llvm::BasicBlock;
 

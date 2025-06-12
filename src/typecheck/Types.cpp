@@ -4,6 +4,8 @@
 #include <span>
 #include <string_view>
 #include <unordered_map>
+//! \file Types.cpp
+//! \file Implementation for FunctionType and Type classes
 bool FunctionType::operator<(const FunctionType &t) const {
   if (total_types.size() != t.total_types.size())
     return false;
