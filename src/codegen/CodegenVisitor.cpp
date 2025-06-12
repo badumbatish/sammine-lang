@@ -4,6 +4,7 @@
 
 #include "codegen/CodegenVisitor.h"
 #include "ast/Ast.h"
+#include "codegen/Garbage.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
 #include "llvm/IR/Constants.h"
