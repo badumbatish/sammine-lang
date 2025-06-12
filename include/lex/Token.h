@@ -3,6 +3,10 @@
 #include <map>
 #include <memory>
 #include <string>
+
+//! \file Token.h
+//! \brief Defines the token structure (TokenType, TokStream, TokenMap)
+
 namespace sammine_lang {
 enum TokenType {
   // TODO: Add void keyword for return

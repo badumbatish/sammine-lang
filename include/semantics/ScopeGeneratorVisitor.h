@@ -5,6 +5,9 @@
 #include "util/Utilities.h"
 namespace sammine_lang::AST {
 
+//! \file ScopeGeneratorVisitor.h
+//! \brief Declares ScopeGeneratorVisitor, an ASTVisitor that builds and manages
+//! lexical scope by registration and reporting if there's been redefinitions
 class ScopeGeneratorVisitor : public ScopedASTVisitor {
 public:
   // A simple scoping class, doesn't differentiate between different names, like

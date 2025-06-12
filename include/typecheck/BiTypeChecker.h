@@ -3,6 +3,11 @@
 #include "ast/AstBase.h"
 #include "typecheck/Types.h"
 #include "util/LexicalContext.h"
+
+//! \file BiTypeChecker.h
+//! \brief Defines the BiTypeCheckerVisitor, consist of the flow for
+//! Bi-Directional Type checking, which allows for synthesizing types,
+//! validating consistency, and register types.
 namespace sammine_lang {
 
 namespace AST {

@@ -5,6 +5,9 @@
 #include "util/Utilities.h"
 #include <ctime>
 #include <memory>
+//! \file ScopeGeneratorVisitor.cpp
+//! \brief Implements ScopeGeneratorVisitor, an ASTVisitor that traverses the
+//! AST to populate a lexical symbol table
 namespace sammine_lang::AST {
 // pre order
 void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {

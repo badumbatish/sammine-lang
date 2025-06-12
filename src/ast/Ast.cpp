@@ -1,10 +1,10 @@
 #include "ast/Ast.h"
 #include "ast/AstBase.h"
-
+//! \file Ast.cpp
+//! \brief Implemention of AST Visitor, used for traversing the AST
 namespace sammine_lang::AST {
 
 ASTVisitor::~ASTVisitor() {}
-
 void ASTVisitor::abort(const std::string &msg) {
   ASTPrinter::print(top_level_ast);
   sammine_util::abort(msg);

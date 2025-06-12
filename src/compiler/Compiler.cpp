@@ -21,6 +21,10 @@
 #include <memory>
 #include <system_error>
 
+//! \file Compiler.cpp
+//! \brief Implementation of Compiler, consist the pipeline for executing all
+//! stages (Lex, Parser, Semantics & CodeGen) of the Compiler
+
 // INFO: Declaration
 namespace sammine_lang {
 class Compiler {

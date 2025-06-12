@@ -5,6 +5,11 @@
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
 #include <ranges>
+
+//! \file BiTypeChecker.cpp
+//! \brief Implementation of BiTypeCheckerVisitor, an ASTVisitor that
+//!        traverses the AST to synthesize node types, perform bidirectional
+//!        consistency checks, and register functions and variables.
 namespace sammine_lang::AST {
 // pre order
 void BiTypeCheckerVisitor::preorder_walk(ProgramAST *ast) {}
@@ -185,7 +190,7 @@ Type BiTypeCheckerVisitor::synthesize(CallExprAST *ast) {
   case TypeKind::NonExistent:
   case TypeKind::Poisoned:
     this->abort(fmt::format("should not happen here with function {}",
-                                    ast->functionName));
+                            ast->functionName));
   }
   return Type::NonExistent();
 }
@@ -217,7 +222,7 @@ Type BiTypeCheckerVisitor::synthesize(NumberExprAST *ast) {
     return ast->type;
 
   this->abort_on(ast->number.empty(),
-                         "NumberExprAST should have a number lexeme");
+                 "NumberExprAST should have a number lexeme");
   if (ast->number.find('.') == std::string::npos)
     ast->type = Type::I64_t();
   else

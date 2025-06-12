@@ -5,6 +5,8 @@
 #pragma once
 #include <map>
 #include <string>
+//! \file Compiler.h
+//! \brief Define the Compiler staging
 namespace sammine_lang {
 enum compiler_option_enum {
   FILE,

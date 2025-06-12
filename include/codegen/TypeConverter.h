@@ -5,6 +5,10 @@
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
+
+//! \file TypeConverter.h
+//! \brief Defines the TypeConverter, which holds the characistics of converting
+//! our AST types into LLVM IR types
 namespace sammine_lang::AST {
 class TypeConverter {
 

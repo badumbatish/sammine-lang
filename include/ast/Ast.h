@@ -7,6 +7,11 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+//! \file Ast.h
+//! \brief Defined the AST Node classes (ProgramAST, RecordDefAST, FuncDefAST)
+//! and a visitor interface for traversing the AST
+
 namespace sammine_lang {
 
 namespace AST {
