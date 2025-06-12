@@ -15,5 +15,6 @@ var searchData=
   ['typedvarast_12',['TypedVarAST',['../classsammine__lang_1_1AST_1_1TypedVarAST.html',1,'sammine_lang::AST']]],
   ['typemapordering_13',['TypeMapOrdering',['../structTypeMapOrdering.html',1,'']]],
   ['types_2ecpp_14',['Types.cpp',['../Types_8cpp.html',1,'']]],
-  ['typingcontext_15',['TypingContext',['../classsammine__lang_1_1AST_1_1TypingContext.html',1,'sammine_lang::AST']]]
+  ['types_2eh_15',['Types.h',['../Types_8h.html',1,'']]],
+  ['typingcontext_16',['TypingContext',['../classsammine__lang_1_1AST_1_1TypingContext.html',1,'sammine_lang::AST']]]
 ];

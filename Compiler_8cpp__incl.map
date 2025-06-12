@@ -26,7 +26,7 @@
 <area shape="poly" id="edge90_Node000001_Node000064" title=" " alt="" coords="1208,19,1767,39,2149,56,2538,76,3108,114,3552,151,4563,254,4917,284,5071,300,5269,327,5292,331,5291,337,5268,333,5070,305,4916,290,4563,259,3551,157,3108,120,2538,82,2148,61,1767,44,1208,25"/>
 <area shape="rect" id="Node000067" title=" " alt="" coords="5467,338,5651,363"/>
 <area shape="poly" id="edge91_Node000001_Node000067" title=" " alt="" coords="1208,18,1891,35,2369,52,2858,76,3156,96,3388,114,3917,165,4687,234,5024,270,5455,327,5482,332,5481,337,5455,333,5023,275,4687,239,3916,170,3387,120,3156,101,2858,82,2369,58,1891,40,1208,24"/>
-<area shape="rect" id="Node000074" href="$Parser_8h_source.html" title=" " alt="" coords="228,256,338,282"/>
+<area shape="rect" id="Node000074" href="$Parser_8h.html" title="Defines Parser, which consumes tokens and constructs the AST." alt="" coords="228,256,338,282"/>
 <area shape="poly" id="edge73_Node000001_Node000074" title=" " alt="" coords="1036,25,904,32,750,43,605,59,547,69,503,82,470,96,438,115,382,159,335,206,303,246,299,242,331,203,378,156,435,110,467,91,501,76,546,64,605,54,749,37,904,26,1036,20"/>
 <area shape="rect" id="Node000075" href="$GeneralSemanticsVisitor_8h.html" title="Defines GeneralSemanticsVisitor, an ASTVisitor that enforces general semantic rules for scoped defini..." alt="" coords="383,168,575,208"/>
 <area shape="poly" id="edge78_Node000001_Node000075" title=" " alt="" coords="1036,22,911,24,768,33,635,51,583,65,546,81,528,96,513,115,492,154,488,152,509,112,524,92,543,77,582,59,634,46,767,28,911,19,1036,16"/>

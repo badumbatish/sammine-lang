@@ -22,7 +22,7 @@
 <area shape="rect" id="Node000006" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="471,226,558,252"/>
 <area shape="poly" id="edge25_Node000002_Node000006" title=" " alt="" coords="602,106,558,180,534,215,530,212,554,177,598,104"/>
 <area shape="poly" id="edge44_Node000002_Node000007" title=" " alt="" coords="612,104,656,285,651,286,607,106"/>
-<area shape="rect" id="Node000022" href="$Types_8h_source.html" title=" " alt="" coords="798,226,927,252"/>
+<area shape="rect" id="Node000022" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="798,226,927,252"/>
 <area shape="poly" id="edge26_Node000002_Node000022" title=" " alt="" coords="637,103,736,150,835,215,832,219,733,155,635,108"/>
 <area shape="rect" id="Node000029" href="$LexicalContext_8h.html" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="207,226,345,252"/>
 <area shape="poly" id="edge38_Node000002_Node000029" title=" " alt="" coords="573,108,450,155,313,221,311,217,448,150,571,103"/>

@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title="Defines the BiTypeCheckerVisitor, consist of the flow for Bi&#45;Directional Type checking,..." alt="" coords="649,5,819,46"/>
 <area shape="rect" id="Node000002" href="$AstBase_8h.html" title="Defines the AST Abstract class for printing out AST Nodes." alt="" coords="682,94,786,120"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="737,46,737,78,731,78,731,46"/>
-<area shape="rect" id="Node000022" href="$Types_8h_source.html" title=" " alt="" coords="384,241,513,267"/>
+<area shape="rect" id="Node000022" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="384,241,513,267"/>
 <area shape="poly" id="edge46_Node000001_Node000022" title=" " alt="" coords="651,49,601,67,548,92,500,126,478,146,460,169,449,197,448,226,443,226,444,196,456,166,474,143,496,122,546,88,599,62,649,44"/>
 <area shape="rect" id="Node000029" href="$LexicalContext_8h.html" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="929,168,1067,193"/>
 <area shape="poly" id="edge47_Node000001_Node000029" title=" " alt="" coords="769,44,965,157,963,162,767,49"/>

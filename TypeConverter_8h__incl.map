@@ -4,7 +4,7 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="961,34,744,81,743,75,960,29"/>
 <area shape="rect" id="Node000003" href="$Utilities_8h.html" title="Holds classes and functionalities for dealing with Error handling, source locations caching &amp; indexin..." alt="" coords="491,153,587,178"/>
 <area shape="poly" id="edge31_Node000001_Node000003" title=" " alt="" coords="911,31,751,51,680,65,630,81,589,110,559,143,555,139,586,106,627,77,678,60,751,46,910,26"/>
-<area shape="rect" id="Node000019" href="$Types_8h_source.html" title=" " alt="" coords="873,79,1002,105"/>
+<area shape="rect" id="Node000019" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="873,79,1002,105"/>
 <area shape="poly" id="edge19_Node000001_Node000019" title=" " alt="" coords="1006,34,964,71,960,67,1002,30"/>
 <area shape="rect" id="Node000026" title=" " alt="" coords="1027,79,1171,105"/>
 <area shape="poly" id="edge32_Node000001_Node000026" title=" " alt="" coords="1033,30,1076,67,1072,71,1030,34"/>

@@ -14,7 +14,7 @@
 <area shape="rect" id="Node000006" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="634,241,722,267"/>
 <area shape="poly" id="edge25_Node000002_Node000006" title=" " alt="" coords="763,123,732,142,704,169,690,197,683,226,678,225,685,195,700,166,729,138,760,118"/>
 <area shape="poly" id="edge44_Node000002_Node000007" title=" " alt="" coords="824,118,858,137,874,150,888,166,904,199,913,235,917,299,912,299,908,236,899,201,884,169,871,154,855,141,821,123"/>
-<area shape="rect" id="Node000022" href="$Types_8h_source.html" title=" " alt="" coords="444,241,573,267"/>
+<area shape="rect" id="Node000022" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="444,241,573,267"/>
 <area shape="poly" id="edge26_Node000002_Node000022" title=" " alt="" coords="766,123,547,236,544,231,764,118"/>
 <area shape="poly" id="edge38_Node000002_Node000029" title=" " alt="" coords="828,118,965,160,964,165,827,123"/>
 <area shape="rect" id="Node000033" title=" " alt="" coords="821,168,874,193"/>

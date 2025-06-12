@@ -1,6 +1,6 @@
 <map id="src/Parser.cpp" name="src/Parser.cpp">
 <area shape="rect" id="Node000001" title="Implementation for Parser class, it takes in the token stream and converts it into Parsing things suc..." alt="" coords="978,5,1084,31"/>
-<area shape="rect" id="Node000002" href="$Parser_8h_source.html" title=" " alt="" coords="1152,226,1262,252"/>
+<area shape="rect" id="Node000002" href="$Parser_8h.html" title="Defines Parser, which consumes tokens and constructs the AST." alt="" coords="1152,226,1262,252"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1063,29,1100,49,1135,77,1160,110,1179,146,1203,211,1198,213,1174,148,1155,113,1132,81,1097,53,1061,34"/>
 <area shape="rect" id="Node000005" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="1026,300,1113,326"/>
 <area shape="poly" id="edge62_Node000001_Node000005" title=" " alt="" coords="1038,31,1052,78,1067,193,1072,284,1066,285,1062,193,1047,80,1033,32"/>
@@ -68,7 +68,7 @@
 <area shape="poly" id="edge52_Node000023_Node000006" title=" " alt="" coords="839,179,749,197,644,225,594,242,550,260,517,280,496,301,490,315,489,329,495,359,489,360,484,330,485,314,491,299,513,276,548,256,592,237,642,220,748,192,838,173"/>
 <area shape="rect" id="Node000024" href="$Lexer_8h.html" title="Houses the lexer and the declaration of its method." alt="" coords="653,226,736,252"/>
 <area shape="poly" id="edge29_Node000023_Node000024" title=" " alt="" coords="858,181,743,223,741,218,857,176"/>
-<area shape="rect" id="Node000025" href="$Types_8h_source.html" title=" " alt="" coords="1290,300,1420,326"/>
+<area shape="rect" id="Node000025" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="1290,300,1420,326"/>
 <area shape="poly" id="edge34_Node000023_Node000025" title=" " alt="" coords="943,173,962,176,1051,183,1123,184,1157,186,1192,192,1231,204,1275,224,1313,253,1341,286,1337,289,1309,257,1272,229,1229,209,1191,197,1156,191,1123,189,1051,189,961,181,943,178"/>
 <area shape="rect" id="Node000031" href="$LexicalContext_8h.html" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="838,226,976,252"/>
 <area shape="poly" id="edge46_Node000023_Node000031" title=" " alt="" coords="896,178,903,210,898,211,891,179"/>

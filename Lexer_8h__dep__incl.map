@@ -31,7 +31,7 @@
 <area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="1053,178,1295,202,1597,239,1639,246,1639,251,1597,244,1295,207,1053,183"/>
 <area shape="rect" id="Node000010" href="$CodegenVisitor_8cpp.html" title="Implementation for CodegenVisitor, it converts the AST Representation into LLVM IR and it also uses a..." alt="" coords="572,249,780,274"/>
 <area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="922,193,719,251,717,246,920,188"/>
-<area shape="rect" id="Node000011" href="$GeneralSemanticsVisitor_8cpp.html" title=" " alt="" coords="41,241,255,282"/>
+<area shape="rect" id="Node000011" href="$GeneralSemanticsVisitor_8cpp.html" title="Implementation for GeneralSemanticsVisitor." alt="" coords="41,241,255,282"/>
 <area shape="poly" id="edge11_Node000003_Node000011" title=" " alt="" coords="904,185,796,196,531,218,415,227,267,244,255,245,255,240,266,239,415,222,531,212,795,191,903,180"/>
 <area shape="rect" id="Node000012" href="$BiTypeChecker_8cpp.html" title="Implementation of BiTypeCheckerVisitor, an ASTVisitor that traverses the AST to synthesize node types..." alt="" coords="279,249,497,274"/>
 <area shape="poly" id="edge13_Node000003_Node000012" title=" " alt="" coords="904,188,471,251,471,246,904,183"/>

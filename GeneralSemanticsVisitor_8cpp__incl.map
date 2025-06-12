@@ -1,5 +1,5 @@
 <map id="src/semantics/GeneralSemanticsVisitor.cpp" name="src/semantics/GeneralSemanticsVisitor.cpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="992,5,1206,46"/>
+<area shape="rect" id="Node000001" title="Implementation for GeneralSemanticsVisitor." alt="" coords="992,5,1206,46"/>
 <area shape="rect" id="Node000002" href="$GeneralSemanticsVisitor_8h.html" title="Defines GeneralSemanticsVisitor, an ASTVisitor that enforces general semantic rules for scoped defini..." alt="" coords="820,94,1012,135"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1059,49,972,90,970,85,1056,44"/>
 <area shape="rect" id="Node000008" href="$Utilities_8h.html" title="Holds classes and functionalities for dealing with Error handling, source locations caching &amp; indexin..." alt="" coords="347,404,443,429"/>
@@ -21,7 +21,7 @@
 <area shape="rect" id="Node000007" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="979,330,1067,356"/>
 <area shape="poly" id="edge26_Node000003_Node000007" title=" " alt="" coords="960,206,996,225,1012,238,1025,255,1034,285,1032,315,1027,314,1029,286,1021,258,1009,242,993,229,958,211"/>
 <area shape="poly" id="edge45_Node000003_Node000008" title=" " alt="" coords="881,211,836,231,790,258,765,284,751,310,735,335,707,358,674,375,644,386,589,396,531,398,459,406,458,401,531,393,589,391,643,381,672,370,704,353,731,331,746,307,761,281,787,254,833,226,879,206"/>
-<area shape="rect" id="Node000023" href="$Types_8h_source.html" title=" " alt="" coords="826,330,956,356"/>
+<area shape="rect" id="Node000023" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="826,330,956,356"/>
 <area shape="poly" id="edge27_Node000003_Node000023" title=" " alt="" coords="917,209,898,315,893,314,912,208"/>
 <area shape="poly" id="edge39_Node000003_Node000030" title=" " alt="" coords="865,210,653,255,652,250,864,205"/>
 <area shape="rect" id="Node000034" title=" " alt="" coords="800,256,854,282"/>

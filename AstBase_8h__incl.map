@@ -8,7 +8,7 @@
 <area shape="poly" id="edge24_Node000001_Node000005" title=" " alt="" coords="516,32,508,66,492,106,463,143,459,140,488,103,503,64,511,31"/>
 <area shape="rect" id="Node000006" href="$Utilities_8h.html" title="Holds classes and functionalities for dealing with Error handling, source locations caching &amp; indexin..." alt="" coords="538,226,634,252"/>
 <area shape="poly" id="edge43_Node000001_Node000006" title=" " alt="" coords="522,30,580,211,575,212,517,32"/>
-<area shape="rect" id="Node000021" href="$Types_8h_source.html" title=" " alt="" coords="611,153,740,178"/>
+<area shape="rect" id="Node000021" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="611,153,740,178"/>
 <area shape="poly" id="edge25_Node000001_Node000021" title=" " alt="" coords="532,29,589,77,655,140,651,143,586,81,529,34"/>
 <area shape="rect" id="Node000028" href="$LexicalContext_8h.html" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="168,153,305,178"/>
 <area shape="poly" id="edge37_Node000001_Node000028" title=" " alt="" coords="487,34,385,81,270,147,267,142,382,77,485,29"/>

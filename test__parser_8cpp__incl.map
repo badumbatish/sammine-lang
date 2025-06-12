@@ -4,7 +4,7 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1369,34,1041,85,1040,80,1368,29"/>
 <area shape="rect" id="Node000007" href="$Token_8h.html" title="Defines the token structure (TokenType, TokStream, TokenMap)" alt="" coords="1127,300,1214,326"/>
 <area shape="poly" id="edge54_Node000001_Node000007" title=" " alt="" coords="1438,33,1194,291,1190,287,1434,29"/>
-<area shape="rect" id="Node000035" href="$Parser_8h_source.html" title=" " alt="" coords="1294,226,1403,252"/>
+<area shape="rect" id="Node000035" href="$Parser_8h.html" title="Defines Parser, which consumes tokens and constructs the AST." alt="" coords="1294,226,1403,252"/>
 <area shape="poly" id="edge55_Node000001_Node000035" title=" " alt="" coords="1444,32,1362,213,1357,211,1439,30"/>
 <area shape="rect" id="Node000036" title=" " alt="" coords="1630,79,1829,105"/>
 <area shape="poly" id="edge62_Node000001_Node000036" title=" " alt="" coords="1495,29,1667,72,1666,77,1494,34"/>
@@ -29,7 +29,7 @@
 <area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="1004,177,1046,214,1043,218,1000,181"/>
 <area shape="poly" id="edge26_Node000003_Node000007" title=" " alt="" coords="1034,176,1080,195,1125,224,1148,254,1164,284,1159,287,1144,257,1121,228,1078,200,1032,181"/>
 <area shape="poly" id="edge45_Node000003_Node000008" title=" " alt="" coords="962,181,544,369,542,365,960,176"/>
-<area shape="rect" id="Node000023" href="$Types_8h_source.html" title=" " alt="" coords="922,300,1052,326"/>
+<area shape="rect" id="Node000023" href="$Types_8h.html" title="Defines the core Type system for Sammine." alt="" coords="922,300,1052,326"/>
 <area shape="poly" id="edge27_Node000003_Node000023" title=" " alt="" coords="991,179,990,285,984,285,985,179"/>
 <area shape="rect" id="Node000030" href="$LexicalContext_8h.html" title="A simple scoping class, doesn&#39;t differentiate between different names, like variable name,..." alt="" coords="332,300,469,326"/>
 <area shape="poly" id="edge39_Node000003_Node000030" title=" " alt="" coords="936,175,796,194,711,209,628,229,527,262,442,296,440,291,525,257,626,224,710,204,795,189,936,170"/>
