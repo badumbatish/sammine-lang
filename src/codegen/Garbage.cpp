@@ -4,6 +4,8 @@
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
 #include <codegen/Garbage.h>
+#include <llvm/IR/GlobalValue.h>
+#include <llvm/IR/GlobalVariable.h>
 
 /// Insert a FrameMap in the beginning of each function
 void ShadowGarbageCollector::createFrameMap(llvm::Function *f) {
@@ -18,9 +20,8 @@ void ShadowGarbageCollector::createFrameMap(llvm::Function *f) {
   //   NumRoots. const void ShadowGarbageCollector:: *Meta[0]; //< Metadata for
   //   each root.
   // };
-
   auto fm = llvm::StructType::create(
-      context, fmt::format("{}{}", f->getName(), "FrameMap"));
+      context, fmt::format("{}_{}", std::string(f->getName()), "FrameMap"));
   llvm::PointerType *int8ptr =
       llvm::PointerType::get(llvm::Type::getInt8Ty(context),
                              0); // 0 stands for generic address space
@@ -32,6 +33,9 @@ void ShadowGarbageCollector::createFrameMap(llvm::Function *f) {
               MetaArrayTy);
 
   // TODO: Insert this into global data.
+  // llvm::GlobalVariable(module, fm, true, llvm::GlobalValue::ExternalLinkage,
+  //                      /* each function's num root and num meta here here
+  //                      */);
 }
 void ShadowGarbageCollector::createStackEntry(llvm::Function *f) {
   /// A link in the dynamic shadow stack.  One of these is embedded in
@@ -55,6 +59,7 @@ void ShadowGarbageCollector::createStackEntry(llvm::Function *f) {
   se->setBody(llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
               MetaArrayTy);
   // TODO: Insert this in the front of a function
+  builder.Insert(se);
 }
 
 void ShadowGarbageCollector::initGlobalRootChain() {
