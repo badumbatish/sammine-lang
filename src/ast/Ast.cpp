@@ -5,7 +5,6 @@
 namespace sammine_lang::AST {
 
 ASTVisitor::~ASTVisitor() {}
-ProgramAST::~ProgramAST() = default;
 void ASTVisitor::abort(const std::string &msg) {
   ASTPrinter::print(top_level_ast);
   sammine_util::abort(msg);
