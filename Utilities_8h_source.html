@@ -113,8 +113,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00021" data-start="{" data-end="}">
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="conceptsammine__util_1_1explicitly__bool__like.html">   21</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsammine__util_1_1explicitly__bool__like.html">explicitly_bool_like</a> = <span class="keyword">requires</span>(T t) {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>                                 { <span class="keyword">static_cast&lt;</span><span class="keywordtype">bool</span><span class="keyword">&gt;</span>(t) } -&gt; std::same_as&lt;bool&gt;;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>                               };</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  { <span class="keyword">static_cast&lt;</span><span class="keywordtype">bool</span><span class="keyword">&gt;</span>(t) } -&gt; std::same_as&lt;bool&gt;;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>};</div>
 </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>[[noreturn]] <span class="keyword">auto</span> abort(<span class="keyword">const</span> std::string &amp;message = <span class="stringliteral">&quot;&lt;NO MESSAGE&gt;&quot;</span>) -&gt; void;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
