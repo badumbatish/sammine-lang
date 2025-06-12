@@ -10,6 +10,8 @@
 #include <unordered_map>
 #include <variant>
 #include <vector>
+//! \file Types.h
+//! \brief Defines the core Type system for Sammine
 enum class TypeKind {
   I64_t,
   F64_t,
