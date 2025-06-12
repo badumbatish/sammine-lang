@@ -5,7 +5,7 @@
 #include <string>
 
 //! \file Token.h
-//! \brief Defines the token semantics (Token Type, Token Scream, Token mapping)
+//! \brief Defines the token structure (TokenType, TokStream, TokenMap)
 
 namespace sammine_lang {
 enum TokenType {

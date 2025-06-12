@@ -10,10 +10,8 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Value.h>
 
-//! \file CodegenVisitor.cpp
-//! \brief Defined CgVisitor, which translate the AST scoping into a system
-//! for LLVM IR
-
+//! \file CodegenVisitor.h
+//! \brief Defined CgVisitor, which lowers ASTs to LLVM IR
 namespace sammine_lang::AST {
 class CgVisitor : public ScopedASTVisitor {
 

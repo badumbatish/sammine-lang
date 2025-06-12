@@ -7,10 +7,9 @@
 #include <ranges>
 
 //! \file BiTypeChecker.cpp
-//! \brief Implemention for BiTypeCheckerVisitor, which traverse the AST
-//!        to synthesize node types, validate type synthesize, consistency
-//!        checks, and function registeration
-
+//! \brief Implementation of BiTypeCheckerVisitor, an ASTVisitor that
+//!        traverses the AST to synthesize node types, perform bidirectional
+//!        consistency checks, and register functions and variables.
 namespace sammine_lang::AST {
 // pre order
 void BiTypeCheckerVisitor::preorder_walk(ProgramAST *ast) {}

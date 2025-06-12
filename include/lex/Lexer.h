@@ -7,9 +7,7 @@
 #include "util/Utilities.h"
 
 //! \file Lexer.h
-//! \brief Sammine Lang include file for handling the compiler lexer
-//! TokenMap, Token, TokenStream, Lexer
-
+//! \brief Houses the lexer and the declaration of its method
 #include <memory>
 
 namespace sammine_lang {

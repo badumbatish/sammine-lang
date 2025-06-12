@@ -6,8 +6,8 @@
 #include <ctime>
 #include <memory>
 //! \file ScopeGeneratorVisitor.cpp
-//! \brief Impemention for ScopeGeneratorVisitor class, consisting of traversal
-//! for
+//! \brief Implements ScopeGeneratorVisitor, an ASTVisitor that traverses the
+//! AST to populate a lexical symbol table
 namespace sammine_lang::AST {
 // pre order
 void ScopeGeneratorVisitor::preorder_walk(ProgramAST *ast) {

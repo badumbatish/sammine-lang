@@ -5,7 +5,9 @@
 #include "util/LexicalContext.h"
 #include "util/Utilities.h"
 //! \file GeneralSemanticsVisitor.h
-//! \brief %OGJas%
+//! \brief Defines GeneralSemanticsVisitor, an ASTVisitor that enforces general
+//! semantic rules for scoped definitions, detecting duplicates,
+//! and ensuring correct return usage in blocks.
 namespace sammine_lang::AST {
 /// General
 class GeneralSemanticsVisitor : public ScopedASTVisitor {
