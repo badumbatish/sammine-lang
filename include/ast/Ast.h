@@ -14,6 +14,8 @@ namespace AST {
 using Identifier = std::string;
 class Printable {};
 
+class DefinitionAST : public AstBase, public Printable {};
+
 class ProgramAST : public AstBase, public Printable {
 public:
   std::vector<std::unique_ptr<DefinitionAST>> DefinitionVec;
@@ -29,8 +31,6 @@ public:
     return visitor->synthesize(this);
   }
 };
-
-class DefinitionAST : public AstBase, public Printable {};
 
 class TypedVarAST : public AstBase, public Printable {
 public:

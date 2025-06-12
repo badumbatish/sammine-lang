@@ -80,8 +80,8 @@ auto Parser::ParseDefinition() -> p<DefinitionAST> {
     }
     }
   }
-  return {nullptr, NONCOMMITTED};
   this->abort("Should not happen in ParseDefinition()");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 auto Parser::ParseRecordDef() -> p<DefinitionAST> {
@@ -243,6 +243,7 @@ auto Parser::ParseFuncDef() -> p<DefinitionAST> {
   }
 
   this->abort("Should not happen");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 //! Parsing implementation for a variable decl/def
@@ -294,6 +295,7 @@ auto Parser::ParseVarDef() -> p<ExprAST> {
     }
 
     this->abort("Should not happen");
+    return {nullptr, COMMITTED_EMIT_MORE_ERROR};
   }
   case NONCOMMITTED:
     [[fallthrough]];
@@ -306,6 +308,7 @@ auto Parser::ParseVarDef() -> p<ExprAST> {
         COMMITTED_NO_MORE_ERROR);
   }
   this->abort("Should not happen");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 auto Parser::ParseTypedVar() -> p<TypedVarAST> {
@@ -362,6 +365,7 @@ auto Parser::ParsePrimaryExpr() -> p<ExprAST> {
       return {nullptr, NONCOMMITTED};
   }
   this->abort("Should not happen in ParsePrimaryExpr");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 auto Parser::ParseExpr() -> p<ExprAST> {
   auto [LHS, left_result] = ParsePrimaryExpr();
@@ -390,6 +394,7 @@ auto Parser::ParseExpr() -> p<ExprAST> {
     return {std::move(next), COMMITTED_NO_MORE_ERROR};
   }
   this->abort("should not happen in ParseExpr, call Jasmine");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 auto Parser::ParseBinaryExpr(int precedence, u<ExprAST> LHS) -> p<ExprAST> {
@@ -465,6 +470,7 @@ auto Parser::ParseReturnExpr() -> p<ExprAST> {
             SUCCESS};
   else
     this->abort("Impossible, logic error in the parser of returnexpr");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 auto Parser::ParseCallExpr() -> p<ExprAST> {
@@ -488,6 +494,7 @@ auto Parser::ParseCallExpr() -> p<ExprAST> {
             COMMITTED_NO_MORE_ERROR};
   }
   this->abort("Should not happen");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 auto Parser::ParseIfExpr() -> p<ExprAST> {
@@ -556,6 +563,7 @@ auto Parser::ParseIfExpr() -> p<ExprAST> {
             COMMITTED_NO_MORE_ERROR};
   }
   this->abort("Should not happen");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 
 auto Parser::ParseStringExpr() -> p<ExprAST> {
@@ -746,6 +754,7 @@ auto Parser::ParseParenExpr() -> p<ExprAST> {
 
   else
     this->abort("oops");
+  return {nullptr, COMMITTED_EMIT_MORE_ERROR};
 }
 // Parsing of parameters in a function call, we use leftParen and rightParen
 // as appropriate stopping point

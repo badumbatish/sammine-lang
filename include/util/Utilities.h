@@ -19,8 +19,8 @@ inline int64_t unique_ast_id = 0;
 
 template <typename T>
 concept explicitly_bool_like = requires(T t) {
-                                 { static_cast<bool>(t) } -> std::same_as<bool>;
-                               };
+  { static_cast<bool>(t) } -> std::same_as<bool>;
+};
 [[noreturn]] auto abort(const std::string &message = "<NO MESSAGE>") -> void;
 
 template <explicitly_bool_like T>
