@@ -6,7 +6,9 @@
 #include "TypeConverter.h"
 #include "ast/AstBase.h"
 #include "ast/AstDecl.h"
+#include "codegen/Garbage.h"
 #include "codegen/LLVMRes.h"
+#include <llvm/IR/Function.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Value.h>
 namespace sammine_lang::AST {
@@ -18,13 +20,20 @@ private:
 
   llvm::Function *current_func;
   llvm::Function *getCurrentFunction();
-  void setCurrentFunction(std::shared_ptr<PrototypeAST>);
+
+  void setCurrentFunction(llvm::Function *);
 
   TypeConverter type_converter;
 
+  // INFO: The collector is named Jasmine because she said on her discord status
+  // once that she's a garbage woman lol
+  ShadowGarbageCollector jasmine;
+
 public:
   CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr)
-      : resPtr(resPtr), type_converter(resPtr->Context.get()) {
+      : resPtr(resPtr), type_converter(*resPtr->Context.get()),
+        jasmine(*resPtr->Module.get(), *resPtr->Context.get(),
+                *resPtr->Builder.get()) {
     assert(this->resPtr);
   }
   llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,

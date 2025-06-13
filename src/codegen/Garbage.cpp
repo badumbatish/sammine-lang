@@ -1,3 +1,4 @@
+#include "ast/Ast.h"
 #include "fmt/format.h"
 #include "llvm/IR/Constant.h"
 #include "llvm/IR/Constants.h"
@@ -7,8 +8,9 @@
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
 
+namespace sammine_lang::AST {
 /// Insert a FrameMap in the beginning of each function
-void ShadowGarbageCollector::createFrameMap(llvm::Function *f) {
+void ShadowGarbageCollector::createFrameMapForCallee(FuncDefAST *f) {
   /// The map for a single function's stack frame.  One of these is
   ///        compiled as constant data into the executable for each function.
   ///
@@ -21,7 +23,8 @@ void ShadowGarbageCollector::createFrameMap(llvm::Function *f) {
   //   each root.
   // };
   auto fm = llvm::StructType::create(
-      context, fmt::format("{}_{}", std::string(f->getName()), "FrameMap"));
+      context, fmt::format("{}_{}", std::string(f->Prototype->functionName),
+                           "FrameMap"));
   llvm::PointerType *int8ptr =
       llvm::PointerType::get(llvm::Type::getInt8Ty(context),
                              0); // 0 stands for generic address space
@@ -35,9 +38,20 @@ void ShadowGarbageCollector::createFrameMap(llvm::Function *f) {
   // TODO: Insert this into global data.
   // llvm::GlobalVariable(module, fm, true, llvm::GlobalValue::ExternalLinkage,
   //                      /* each function's num root and num meta here here
-  //                      */);
+  //                      */ );
 }
-void ShadowGarbageCollector::createStackEntry(llvm::Function *f) {
+void ShadowGarbageCollector::setStackEntryFromCaller(FuncDefAST *f) {
+
+  /// INFO: We'll set the global curr_stack_entry->next to be the caller,
+  /// We'll also set the curr_stack_entry->frame_map to be the callee's frame
+  /// map
+  ///
+  /// INFO: this will require us to keep a map of string to FrameMap in the
+  /// ShadowGarbageCollector class.
+  /// For more details, see createFrameMap
+  ///
+  ///
+
   /// A link in the dynamic shadow stack.  One of these is embedded in
   ///        the stack frame of each function on the call stack.
   // struct StackEntry {
@@ -58,8 +72,8 @@ void ShadowGarbageCollector::createStackEntry(llvm::Function *f) {
   //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
   se->setBody(llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
               MetaArrayTy);
-  // TODO: Insert this in the front of a function
-  builder.Insert(se);
+  // TODO: Insert this into the linked list
+  // builder.Insert(se);
 }
 
 void ShadowGarbageCollector::initGlobalRootChain() {
@@ -93,3 +107,66 @@ void ShadowGarbageCollector::initGCFunc() {
   //       Visitor(&R->Roots[i], NULL);
   //   }
 }
+
+int32_t NumRootCalculator::calculate(BlockAST *ast) {
+  int num_roots = 0;
+  for (auto &e : ast->Statements) {
+    num_roots += calculate(e.get());
+  }
+
+  return num_roots;
+}
+int32_t NumRootCalculator::calculate(ExprAST *ast) {
+  if (auto e = dynamic_cast<IfExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<VariableExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<CallExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<ReturnExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<BoolExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<StringExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<NumberExprAST *>(ast)) {
+    return calculate(e);
+  } else if (auto e = dynamic_cast<VarDefAST *>(ast)) {
+    return calculate(e);
+  } else {
+    sammine_util::abort(
+        fmt::format("You should be overloading on {}", ast->getTreeName()));
+    return 0;
+  }
+}
+int32_t NumRootCalculator::calculate(IfExprAST *ast) {
+  return calculate(ast->bool_expr.get()) + calculate(ast->thenBlockAST.get()) +
+         calculate(ast->elseBlockAST.get());
+}
+int32_t NumRootCalculator::calculate(VariableExprAST *ast) { return 0; }
+
+// TODO: Tell Jasmine to re-check this
+int32_t NumRootCalculator::calculate(CallExprAST *ast) {
+  int32_t num_roots = 0;
+  for (auto &arg : ast->arguments) {
+    num_roots += calculate(arg.get());
+  }
+  return num_roots;
+}
+
+int32_t NumRootCalculator::calculate(ReturnExprAST *ast) {
+  return calculate(ast->return_expr.get());
+}
+int32_t NumRootCalculator::calculate(BinaryExprAST *ast) {
+  auto left = calculate(ast->LHS.get());
+  auto right = calculate(ast->RHS.get());
+  return left + right;
+}
+int32_t NumRootCalculator::calculate(BoolExprAST *ast) { return 0; }
+int32_t NumRootCalculator::calculate(StringExprAST *ast) { return 1; }
+int32_t NumRootCalculator::calculate(NumberExprAST *ast) { return 0; }
+int32_t NumRootCalculator::calculate(VarDefAST *ast) {
+  return calculate(ast->Expression.get());
+}
+
+} // namespace sammine_lang::AST

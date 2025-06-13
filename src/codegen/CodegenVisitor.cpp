@@ -39,12 +39,9 @@ void CgVisitor::enter_new_scope() {
 }
 void CgVisitor::exit_new_scope() { allocaValues.pop(); }
 
-void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
+void CgVisitor::setCurrentFunction(llvm::Function *func) {
 
-  this->abort_if_not(ptr, "A shared ptr cannot be null at this point in "
-                          "codegen, something is wrong with your parsing.");
-
-  this->current_func = ptr->function;
+  this->current_func = func;
 }
 void CgVisitor::visit(FuncDefAST *ast) {
 
@@ -104,9 +101,6 @@ void CgVisitor::preorder_walk(ExternAST *ast) {}
 void CgVisitor::preorder_walk(RecordDefAST *ast) {}
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
-  this->abort_if_not(resPtr);
-  this->abort_if_not(resPtr->Module);
-  this->abort_if_not(resPtr->Context);
 
   auto *Function = this->getCurrentFunction();
 
@@ -125,6 +119,8 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
 
     this->allocaValues.top()[std::string(Arg.getName())] = Alloca;
   }
+
+  jasmine.setStackEntryFromCaller(ast);
   return;
 }
 void CgVisitor::postorder_walk(RecordDefAST *ast) {}
