@@ -4,6 +4,7 @@
 
 #include "codegen/CodegenVisitor.h"
 #include "ast/Ast.h"
+#include "codegen/Garbage.h"
 #include "lex/Token.h"
 #include "util/Utilities.h"
 #include "llvm/IR/Constants.h"
@@ -42,12 +43,9 @@ void CgVisitor::enter_new_scope() {
 }
 void CgVisitor::exit_new_scope() { allocaValues.pop(); }
 
-void CgVisitor::setCurrentFunction(std::shared_ptr<PrototypeAST> ptr) {
+void CgVisitor::setCurrentFunction(llvm::Function *func) {
 
-  this->abort_if_not(ptr, "A shared ptr cannot be null at this point in "
-                          "codegen, something is wrong with your parsing.");
-
-  this->current_func = ptr->function;
+  this->current_func = func;
 }
 void CgVisitor::visit(FuncDefAST *ast) {
 
@@ -107,9 +105,6 @@ void CgVisitor::preorder_walk(ExternAST *ast) {}
 void CgVisitor::preorder_walk(RecordDefAST *ast) {}
 void CgVisitor::preorder_walk(FuncDefAST *ast) {
   auto name = ast->Prototype->functionName;
-  this->abort_if_not(resPtr);
-  this->abort_if_not(resPtr->Module);
-  this->abort_if_not(resPtr->Context);
 
   auto *Function = this->getCurrentFunction();
 
@@ -128,67 +123,11 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
 
     this->allocaValues.top()[std::string(Arg.getName())] = Alloca;
   }
+
+  jasmine.setStackEntryFromCaller(ast);
   return;
 }
 void CgVisitor::postorder_walk(RecordDefAST *ast) {}
-void CgVisitor::postorder_walk(FuncDefAST *ast) {
-  // TODO: A function should return the last expression (only float for now)
-  auto not_verified = verifyFunction(*getCurrentFunction(), &llvm::errs());
-  // if (llvm::Value *RetVal = ast->Block->val) {
-  //   // Finish off the function.
-  // }
-
-  // Error reading body, remove function.
-  if (not_verified) {
-    resPtr->Module->print(llvm::errs(), nullptr);
-    this->abort("ICE: Abort from creating a function");
-    getCurrentFunction()->eraseFromParent();
-  }
-}
-
-/// INFO: Register the function with its arguments, put it in the module
-/// this comes before visiting a function
-void CgVisitor::preorder_walk(PrototypeAST *ast) {
-  std::vector<llvm::Type *> param_types;
-  for (auto &p : ast->parameterVectors) {
-    param_types.push_back(type_converter.get_type(p->type));
-  }
-  llvm::FunctionType *FT = llvm::FunctionType::get(
-      this->type_converter.get_return_type(ast->type), param_types, false);
-  llvm::Function *F =
-      llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
-                             ast->functionName, resPtr->Module.get());
-
-  size_t param_index = 0;
-  auto &vect = ast->parameterVectors;
-  for (auto &arg : F->args()) {
-    auto &typed_var = vect[param_index++];
-    arg.setName(typed_var->name);
-  }
-  ast->function = F;
-  current_func = F;
-  assert(F);
-}
-void CgVisitor::preorder_walk(CallExprAST *ast) {
-
-  llvm::Function *callee = resPtr->Module->getFunction(ast->functionName);
-  if (!callee) {
-    this->abort("Unknown function called");
-    return;
-  }
-
-  if (ast->arguments.size() != callee->arg_size())
-    this->abort("Incorrect number of arguments passed");
-  std::vector<llvm::Value *> ArgsVector;
-
-  for (size_t i = 0; i < ast->arguments.size(); i++) {
-    auto arg_ast = ast->arguments[i].get();
-    arg_ast->accept_vis(this);
-    ArgsVector.push_back(arg_ast->val);
-  }
-
-  ast->val = resPtr->Builder->CreateCall(callee, ArgsVector, "calltmp");
-}
 
 void CgVisitor::postorder_walk(ReturnExprAST *ast) {
   // INFO: If we cannot parse return expr, treat it as unit for now
@@ -315,8 +254,6 @@ void CgVisitor::preorder_walk(VariableExprAST *ast) {
   ast->val = resPtr->Builder->CreateLoad(alloca->getAllocatedType(), alloca,
                                          ast->variableName);
 }
-void CgVisitor::preorder_walk(BlockAST *ast) {}
-void CgVisitor::postorder_walk(BlockAST *ast) {}
 void CgVisitor::preorder_walk(UnitExprAST *ast) {}
 void CgVisitor::preorder_walk(IfExprAST *ast) {
   ast->bool_expr->accept_vis(this);

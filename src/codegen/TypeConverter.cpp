@@ -13,17 +13,16 @@ namespace sammine_lang::AST {
 llvm::Type *TypeConverter::get_type(Type t) {
   switch (t.type_kind) {
   case TypeKind::I64_t:
-    return llvm::Type::getInt64Ty(*context);
+    return llvm::Type::getInt64Ty(context);
   case TypeKind::F64_t:
-    return llvm::Type::getDoubleTy(*context);
+    return llvm::Type::getDoubleTy(context);
   case TypeKind::Unit:
-    return llvm::Type::getVoidTy(*context);
+    return llvm::Type::getVoidTy(context);
   case TypeKind::Bool:
-    return llvm::Type::getInt1Ty(*context);
+    return llvm::Type::getInt1Ty(context);
   case TypeKind::String:
-    return llvm::StructType::get(*context,
-                                 llvm::PointerType::getInt8Ty(*context),
-                                 llvm::Type::getInt32Ty(*context));
+    return llvm::StructType::get(context, llvm::PointerType::getInt8Ty(context),
+                                 llvm::Type::getInt32Ty(context));
   case TypeKind::Function:
     sammine_util::abort("Function is not first-class yet");
   case TypeKind::NonExistent:
