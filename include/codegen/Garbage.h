@@ -29,9 +29,10 @@ class NumRootCalculator {
   int32_t calculate(VarDefAST *ast);
 };
 class ShadowGarbageCollector {
-
+  [[maybe_unused]]
   llvm::Module &module;
   llvm::LLVMContext &context;
+  [[maybe_unused]]
   llvm::IRBuilder<> &builder;
   std::vector<llvm::Constant *> MetaDataEntries;
 

@@ -32,8 +32,8 @@ void ShadowGarbageCollector::createFrameMapForCallee(FuncDefAST *f) {
       llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
   // llvm::Constant *MetaArray =
   //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
-  fm->setBody(llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
-              MetaArrayTy);
+  fm->setBody({llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
+               MetaArrayTy});
 
   // TODO: Insert this into global data.
   // llvm::GlobalVariable(module, fm, true, llvm::GlobalValue::ExternalLinkage,
@@ -70,8 +70,8 @@ void ShadowGarbageCollector::setStackEntryFromCaller(FuncDefAST *f) {
       llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
   // llvm::Constant *MetaArray =
   //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
-  se->setBody(llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
-              MetaArrayTy);
+  se->setBody({llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
+               MetaArrayTy});
   // TODO: Insert this into the linked list
   // builder.Insert(se);
 }
