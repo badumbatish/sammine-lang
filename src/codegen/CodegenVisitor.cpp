@@ -63,6 +63,7 @@ void CgVisitor::visit(IfExprAST *ast) {
 }
 
 void CgVisitor::preorder_walk(ProgramAST *ast) {
+  jasmine.initGlobalRootChain();
   // TODO: In the future, we need to move both this function someplace else.
   //
   // INFO: To use for both function decl, malloc and printf

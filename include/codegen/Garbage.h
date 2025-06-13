@@ -9,7 +9,9 @@
 #include "ast/Ast.h"
 #include "ast/AstDecl.h"
 #include <llvm/IR/GlobalVariable.h>
+#include <memory>
 #include <string>
+#include <string_view>
 
 namespace sammine_lang::AST {
 class NumRootCalculator {
@@ -40,6 +42,7 @@ class ShadowGarbageCollector {
   // struct
   // rename to getFrameMap
   std::map<std::string, llvm::GlobalVariable *> fn_name_to_frame_map;
+  llvm::StructType *createStackEntry(std::string_view);
 
 public:
   ShadowGarbageCollector(llvm::Module &module, llvm::LLVMContext &context,

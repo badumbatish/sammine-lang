@@ -1,12 +1,15 @@
 #include "ast/Ast.h"
 #include "fmt/format.h"
+#include "util/Utilities.h"
 #include "llvm/IR/Constant.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
+#include "llvm/IR/GlobalVariable.h"
 #include <codegen/Garbage.h>
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
+#include <memory>
 
 namespace sammine_lang::AST {
 /// Insert a FrameMap in the beginning of each function
@@ -19,8 +22,8 @@ void ShadowGarbageCollector::createFrameMapForCallee(FuncDefAST *f) {
   // struct FrameMap {
   //   int32_t NumRoots;    //< Number of roots in stack frame.
   //   int32_t NumMeta;     //< Number of metadata entries.  May be <
-  //   NumRoots. const void ShadowGarbageCollector:: *Meta[0]; //< Metadata for
-  //   each root.
+  //   NumRoots. const void ShadowGarbageCollector:: *Meta[0]; //< Metadata
+  //   for each root.
   // };
   auto fm = llvm::StructType::create(
       context, fmt::format("{}_{}", std::string(f->Prototype->functionName),
@@ -36,7 +39,8 @@ void ShadowGarbageCollector::createFrameMapForCallee(FuncDefAST *f) {
                MetaArrayTy});
 
   // TODO: Insert this into global data.
-  // llvm::GlobalVariable(module, fm, true, llvm::GlobalValue::ExternalLinkage,
+  // llvm::GlobalVariable(module, fm, true,
+  // llvm::GlobalValue::ExternalLinkage,
   //                      /* each function's num root and num meta here here
   //                      */ );
 }
@@ -61,27 +65,79 @@ void ShadowGarbageCollector::setStackEntryFromCaller(FuncDefAST *f) {
   //   array).
   // };
 
-  auto se = llvm::StructType::create(context, "stack_entrry");
+  // auto se = llvm::StructType::create(context, "stack_entrry");
+  // llvm::PointerType *int8ptr =
+  //     llvm::PointerType::get(llvm::Type::getInt8Ty(context),
+  //                            0); // 0 stands for generic address space
+
+  // llvm::ArrayType *MetaArrayTy =
+  //     llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
+  // llvm::Constant *MetaArray =
+  //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
+  // se->setBody({llvm::Type::getInt32Ty(context),
+  // llvm::Type::getInt32Ty(context),
+  //              MetaArrayTy});
+  // // TODO: Insert this into the linked list
+  // builder.Insert(se);
+}
+
+llvm::StructType *ShadowGarbageCollector::createStackEntry(std::string_view s) {
+  // struct StackEntry {
+  //   StackEntry *Next;    //< Link to next stack entry (the caller's).
+  //   const FrameMap *Map; //< Pointer to constant FrameMap.
+  //   void ShadowGarbageCollector:: *Roots[0];      //< Stack roots (in-place
+  //   array).
+  // };
+  auto se = llvm::StructType::create(context, s);
   llvm::PointerType *int8ptr =
       llvm::PointerType::get(llvm::Type::getInt8Ty(context),
                              0); // 0 stands for generic address space
 
-  llvm::ArrayType *MetaArrayTy =
-      llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
+  // llvm::ArrayType *MetaArrayTy =
+  //     llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
   // llvm::Constant *MetaArray =
   //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
-  se->setBody({llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
-               MetaArrayTy});
-  // TODO: Insert this into the linked list
-  // builder.Insert(se);
-}
+  se->setBody({int8ptr, int8ptr});
 
+  return se;
+}
 void ShadowGarbageCollector::initGlobalRootChain() {
   /// The head of the singly-linked list of StackEntries.  Functions push
   ///        and pop onto this in their prologue and epilogue.
   ///
   /// Since there is only a global list, this technique is not threadsafe.
   // StackEntry *llvm_gc_root_chain;
+  // INFO: Create a stack entry
+  auto global_root_chain_type = createStackEntry("global_root_chain");
+
+  // INFO: Create a struct constant so we can use it to initialize the global
+  // root chain
+  auto *null_stack_entry =
+      global_root_chain_type->getElementType(0); // StackEntry*
+  auto *null_frame_map = global_root_chain_type->getElementType(1); // FrameMap*
+
+  auto null_entry_ptr = llvm::ConstantPointerNull::get(
+      llvm::cast<llvm::PointerType>(null_stack_entry));
+  auto null_frame_map_ptr = llvm::ConstantPointerNull::get(
+      llvm::cast<llvm::PointerType>(null_frame_map));
+  llvm::Constant *stack_entry_initializer = llvm::ConstantStruct::get(
+      global_root_chain_type, {null_entry_ptr, null_frame_map_ptr}
+      // ignore Roots[0] since it's unsized
+  );
+
+  // INFO: Put it in the module as a global root
+  //
+  // INFO: Don't worry about a raw new here, the module takes ownership of it,
+  //
+  // INFO: We use new here and not unique ptr because we don't own it.
+  //      We don't use local stack variable because if we exit this scope, we
+  //      lose the global variables handled by the module
+  //      We don't use shared ptr because we need the module to be the one
+  //      decomissioning it
+  new llvm::GlobalVariable(module, global_root_chain_type,
+                           /* isConstant*/ false,
+                           llvm::GlobalValue::ExternalLinkage,
+                           stack_entry_initializer, "global_root_chain");
 }
 
 void ShadowGarbageCollector::initGCFunc() {

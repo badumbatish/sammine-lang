@@ -36,9 +36,7 @@ public:
   CgVisitor(std::shared_ptr<sammine_lang::LLVMRes> resPtr)
       : resPtr(resPtr), type_converter(*resPtr->Context.get()),
         jasmine(*resPtr->Module.get(), *resPtr->Context.get(),
-                *resPtr->Builder.get()) {
-    assert(this->resPtr);
-  }
+                *resPtr->Builder.get()) {}
   llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,
                                            const std::string &VarName,
                                            llvm::Type *);
