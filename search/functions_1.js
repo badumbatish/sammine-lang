@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['parsevardef_0',['ParseVarDef',['../classsammine__lang_1_1Parser.html#ae5d006859a236f0c3d25036664f98d79',1,'sammine_lang::Parser']]],
-  ['preorder_5fwalk_1',['preorder_walk',['../classsammine__lang_1_1AST_1_1CgVisitor.html#acaaf46ca57a58cc54a2804e345e28fff',1,'sammine_lang::AST::CgVisitor']]]
+  ['initgcfunc_0',['initGCFunc',['../classsammine__lang_1_1AST_1_1ShadowGarbageCollector.html#a2a8e3bffad80f5f1e0c56ac73c02121a',1,'sammine_lang::AST::ShadowGarbageCollector']]],
+  ['initglobalrootchain_1',['initGlobalRootChain',['../classsammine__lang_1_1AST_1_1ShadowGarbageCollector.html#a858cdd9e6da6e8a3e8c62bb7b1e1cf32',1,'sammine_lang::AST::ShadowGarbageCollector']]]
 ];
