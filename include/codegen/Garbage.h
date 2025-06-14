@@ -15,20 +15,22 @@
 
 namespace sammine_lang::AST {
 class NumRootCalculator {
-  int32_t calculate(BlockAST *ast);
-  int32_t calculate(ExprAST *ast);
-  int32_t calculate(IfExprAST *ast);
-  int32_t calculate(VariableExprAST *ast);
+public:
+  static int32_t calculate(BlockAST *ast);
+  static int32_t calculate(ExprAST *ast);
+  static int32_t calculate(IfExprAST *ast);
+  static int32_t calculate(VariableExprAST *ast);
 
   // TODO: Tell Jasmine to re-check this
-  int32_t calculate(CallExprAST *ast);
+  static int32_t calculate(CallExprAST *ast);
 
-  int32_t calculate(ReturnExprAST *ast);
-  int32_t calculate(BinaryExprAST *ast);
-  int32_t calculate(BoolExprAST *ast);
-  int32_t calculate(StringExprAST *ast);
-  int32_t calculate(NumberExprAST *ast);
-  int32_t calculate(VarDefAST *ast);
+  static int32_t calculate(ReturnExprAST *ast);
+  static int32_t calculate(BinaryExprAST *ast);
+  static int32_t calculate(BoolExprAST *ast);
+  static int32_t calculate(StringExprAST *ast);
+  static int32_t calculate(NumberExprAST *ast);
+  static int32_t calculate(UnitExprAST *ast);
+  static int32_t calculate(VarDefAST *ast);
 };
 class ShadowGarbageCollector {
   [[maybe_unused]]
@@ -42,7 +44,8 @@ class ShadowGarbageCollector {
   // struct
   // rename to getFrameMap
   std::map<std::string, llvm::GlobalVariable *> fn_name_to_frame_map;
-  llvm::StructType *createStackEntry(std::string_view);
+  llvm::StructType *GetStackEntryType();
+  inline static std::string GLOBAL_ROOT_CHAIN = "global_root_chain";
 
 public:
   ShadowGarbageCollector(llvm::Module &module, llvm::LLVMContext &context,
@@ -50,9 +53,10 @@ public:
       : module(module), context(context), builder(builder) {}
 
   virtual std::string llvmStrategy() { return "shadow-stack"; }
-  void createFrameMapForCallee(FuncDefAST *);
+  llvm::GlobalVariable *getFrameMapForCallee(FuncDefAST *);
 
-  void setStackEntryFromCaller(FuncDefAST *);
+  void setStackEntryFromCaller(FuncDefAST *, llvm::Function *);
+  void relieveStackEntryByCallee(FuncDefAST *, llvm::Function *);
 
   void initGlobalRootChain();
 

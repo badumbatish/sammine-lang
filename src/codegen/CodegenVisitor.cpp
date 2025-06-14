@@ -4,16 +4,15 @@
 
 #include "codegen/CodegenVisitor.h"
 #include "ast/Ast.h"
+#include "codegen/CodegenUtils.h"
 #include "codegen/Garbage.h"
 #include "lex/Token.h"
-#include "util/Utilities.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Value.h"
-#include "llvm/Support/raw_ostream.h"
 #include <cstdlib>
 //! \file CodegenVisitor.cpp
 //! \brief Implementation for CodegenVisitor, it converts the AST Representation
@@ -29,13 +28,6 @@ using llvm::BasicBlock;
 /// mem2reg only looks for alloca instructions in the entry block of the
 /// function. Being in the entry block guarantees that the alloca is only
 /// executed once, which makes analysis simpler.
-llvm::AllocaInst *CgVisitor::CreateEntryBlockAlloca(llvm::Function *Function,
-                                                    const std::string &VarName,
-                                                    llvm::Type *type) {
-  llvm::IRBuilder<> TmpB(&Function->getEntryBlock(),
-                         Function->getEntryBlock().begin());
-  return TmpB.CreateAlloca(type, nullptr, VarName);
-}
 
 llvm::Function *CgVisitor::getCurrentFunction() { return this->current_func; }
 void CgVisitor::enter_new_scope() {
@@ -89,7 +81,7 @@ void CgVisitor::preorder_walk(ProgramAST *ast) {
 
 void CgVisitor::preorder_walk(VarDefAST *ast) {
   auto var_name = ast->TypedVar->name;
-  auto alloca = this->CreateEntryBlockAlloca(
+  auto alloca = CodegenUtils::CreateEntryBlockAlloca(
       getCurrentFunction(), var_name, type_converter.get_type(ast->type));
   this->allocaValues.top()[var_name] = alloca;
 }
@@ -114,18 +106,18 @@ void CgVisitor::preorder_walk(FuncDefAST *ast) {
       llvm::BasicBlock::Create(*(resPtr->Context), "entry", Function);
 
   resPtr->Builder->SetInsertPoint(mainblock);
+  jasmine.setStackEntryFromCaller(ast, Function);
 
   //
   // INFO:: Copy all the arguments to the entry block
   for (auto &Arg : Function->args()) {
-    llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(
+    auto *Alloca = CodegenUtils::CreateEntryBlockAlloca(
         Function, std::string(Arg.getName()), Arg.getType());
     resPtr->Builder->CreateStore(&Arg, Alloca);
 
     this->allocaValues.top()[std::string(Arg.getName())] = Alloca;
   }
 
-  jasmine.setStackEntryFromCaller(ast);
   return;
 }
 void CgVisitor::postorder_walk(RecordDefAST *ast) {}

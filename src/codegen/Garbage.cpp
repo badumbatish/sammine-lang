@@ -1,4 +1,5 @@
 #include "ast/Ast.h"
+#include "codegen/CodegenUtils.h"
 #include "fmt/format.h"
 #include "util/Utilities.h"
 #include "llvm/IR/Constant.h"
@@ -7,13 +8,20 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/GlobalVariable.h"
 #include <codegen/Garbage.h>
+#include <llvm/ADT/APInt.h>
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
+#include <llvm/IR/Value.h>
 #include <memory>
 
 namespace sammine_lang::AST {
 /// Insert a FrameMap in the beginning of each function
-void ShadowGarbageCollector::createFrameMapForCallee(FuncDefAST *f) {
+llvm::GlobalVariable *
+ShadowGarbageCollector::getFrameMapForCallee(FuncDefAST *f) {
+  std::string frame_map_name =
+      fmt::format("{}_{}", std::string(f->Prototype->functionName), "FrameMap");
+  if (auto fm = module.getGlobalVariable(frame_map_name))
+    return fm;
   /// The map for a single function's stack frame.  One of these is
   ///        compiled as constant data into the executable for each function.
   ///
@@ -25,26 +33,35 @@ void ShadowGarbageCollector::createFrameMapForCallee(FuncDefAST *f) {
   //   NumRoots. const void ShadowGarbageCollector:: *Meta[0]; //< Metadata
   //   for each root.
   // };
-  auto fm = llvm::StructType::create(
-      context, fmt::format("{}_{}", std::string(f->Prototype->functionName),
-                           "FrameMap"));
-  llvm::PointerType *int8ptr =
-      llvm::PointerType::get(llvm::Type::getInt8Ty(context),
+  auto fm = llvm::StructType::create(context, "frame_map_type");
+  llvm::PointerType *int64ptr =
+      llvm::PointerType::get(llvm::Type::getInt64Ty(context),
                              0); // 0 stands for generic address space
-  llvm::ArrayType *MetaArrayTy =
-      llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
-  // llvm::Constant *MetaArray =
-  //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
-  fm->setBody({llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context),
-               MetaArrayTy});
+  fm->setBody(int64ptr);
 
-  // TODO: Insert this into global data.
-  // llvm::GlobalVariable(module, fm, true,
-  // llvm::GlobalValue::ExternalLinkage,
-  //                      /* each function's num root and num meta here here
-  //                      */ );
+  llvm::Constant *frame_map_init = llvm::ConstantStruct::get(
+      fm, llvm::ConstantInt::get(
+              context,
+              llvm::APInt(64, NumRootCalculator::calculate(f->Block.get()))));
+  return new llvm::GlobalVariable(
+      module, fm, true, llvm::GlobalValue::ExternalLinkage, frame_map_init, "");
 }
-void ShadowGarbageCollector::setStackEntryFromCaller(FuncDefAST *f) {
+void ShadowGarbageCollector::relieveStackEntryByCallee(FuncDefAST *f,
+                                                       llvm::Function *llvm_f) {
+  // allocate a struct to store the current global root chain info
+
+  auto *stackEntryTy = GetStackEntryType(); // StructType*
+
+  auto *global_root_chain = module.getGlobalVariable(GLOBAL_ROOT_CHAIN);
+  auto stacked_global_root_chain =
+      builder.CreateLoad(stackEntryTy, global_root_chain);
+
+  if (stacked_global_root_chain) {
+  }
+}
+
+void ShadowGarbageCollector::setStackEntryFromCaller(FuncDefAST *f,
+                                                     llvm::Function *llvm_f) {
 
   /// INFO: We'll set the global curr_stack_entry->next to be the caller,
   /// We'll also set the curr_stack_entry->frame_map to be the callee's frame
@@ -55,49 +72,59 @@ void ShadowGarbageCollector::setStackEntryFromCaller(FuncDefAST *f) {
   /// For more details, see createFrameMap
   ///
   ///
+  auto *stackEntryTy = GetStackEntryType(); // StructType*
+  auto *callee_stack_entry =
+      CodegenUtils::CreateEntryBlockAlloca(llvm_f, "stack_entry", stackEntryTy);
 
-  /// A link in the dynamic shadow stack.  One of these is embedded in
-  ///        the stack frame of each function on the call stack.
-  // struct StackEntry {
-  //   StackEntry *Next;    //< Link to next stack entry (the caller's).
-  //   const FrameMap *Map; //< Pointer to constant FrameMap.
-  //   void ShadowGarbageCollector:: *Roots[0];      //< Stack roots (in-place
-  //   array).
-  // };
+  // 1. Get global_root_chain
+  llvm::GlobalVariable *globalRootChain =
+      module.getNamedGlobal(GLOBAL_ROOT_CHAIN);
+  assert(globalRootChain && "global_root_chain not defined");
 
-  // auto se = llvm::StructType::create(context, "stack_entrry");
-  // llvm::PointerType *int8ptr =
-  //     llvm::PointerType::get(llvm::Type::getInt8Ty(context),
-  //                            0); // 0 stands for generic address space
+  // 2. store the address of global root chain to the first element of of
+  // callee_stack_entry (shadow stack)
+  // INFO: Only store this if this is not the entry point, a.k.a the main
+  // function
+  if (!CodegenUtils::isFunctionMain(f)) {
+    llvm::Value *nextFieldPtr = builder.CreateStructGEP(
+        stackEntryTy, callee_stack_entry, 0, "next_field_ptr");
+    builder.CreateStore(globalRootChain, nextFieldPtr, "old_head");
+  }
 
-  // llvm::ArrayType *MetaArrayTy =
-  //     llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
-  // llvm::Constant *MetaArray =
-  //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
-  // se->setBody({llvm::Type::getInt32Ty(context),
-  // llvm::Type::getInt32Ty(context),
-  //              MetaArrayTy});
-  // // TODO: Insert this into the linked list
-  // builder.Insert(se);
+  // 3. store the address of global frame map to the second element of
+  // callee_stack_entry
+
+  llvm::Value *frameMapPtr = builder.CreateStructGEP(
+      stackEntryTy, callee_stack_entry, 1, "framemap_field_ptr");
+  auto frame_map = this->getFrameMapForCallee(f);
+  builder.CreateStore(frame_map, frameMapPtr);
+
+  // Make the current stack entry to be the global_root_chain
+  // globalRootChain->setInitialize
+  builder.CreateStore(callee_stack_entry, globalRootChain);
 }
 
-llvm::StructType *ShadowGarbageCollector::createStackEntry(std::string_view s) {
+llvm::StructType *ShadowGarbageCollector::GetStackEntryType() {
   // struct StackEntry {
   //   StackEntry *Next;    //< Link to next stack entry (the caller's).
   //   const FrameMap *Map; //< Pointer to constant FrameMap.
   //   void ShadowGarbageCollector:: *Roots[0];      //< Stack roots (in-place
   //   array).
   // };
-  auto se = llvm::StructType::create(context, s);
-  llvm::PointerType *int8ptr =
-      llvm::PointerType::get(llvm::Type::getInt8Ty(context),
+  //
+  if (auto set = llvm::StructType::getTypeByName(context, "stack_entry_type"))
+    return set;
+
+  auto se = llvm::StructType::create(context, "stack_entry_type");
+  llvm::PointerType *int64ptr =
+      llvm::PointerType::get(llvm::Type::getInt64Ty(context),
                              0); // 0 stands for generic address space
 
   // llvm::ArrayType *MetaArrayTy =
   //     llvm::ArrayType::get(int8ptr, MetaDataEntries.size());
   // llvm::Constant *MetaArray =
   //     llvm::ConstantArray::get(MetaArrayTy, MetaDataEntries);
-  se->setBody({int8ptr, int8ptr});
+  se->setBody({int64ptr, int64ptr});
 
   return se;
 }
@@ -108,13 +135,13 @@ void ShadowGarbageCollector::initGlobalRootChain() {
   /// Since there is only a global list, this technique is not threadsafe.
   // StackEntry *llvm_gc_root_chain;
   // INFO: Create a stack entry
-  auto global_root_chain_type = createStackEntry("global_root_chain");
+  auto global_root_chain_type = GetStackEntryType();
 
   // INFO: Create a struct constant so we can use it to initialize the global
   // root chain
   auto *null_stack_entry =
       global_root_chain_type->getElementType(0); // StackEntry*
-  auto *null_frame_map = global_root_chain_type->getElementType(1); // FrameMap*
+  auto *null_frame_map = global_root_chain_type->getElementType(1); //
 
   auto null_entry_ptr = llvm::ConstantPointerNull::get(
       llvm::cast<llvm::PointerType>(null_stack_entry));
@@ -137,7 +164,7 @@ void ShadowGarbageCollector::initGlobalRootChain() {
   new llvm::GlobalVariable(module, global_root_chain_type,
                            /* isConstant*/ false,
                            llvm::GlobalValue::ExternalLinkage,
-                           stack_entry_initializer, "global_root_chain");
+                           stack_entry_initializer, GLOBAL_ROOT_CHAIN);
 }
 
 void ShadowGarbageCollector::initGCFunc() {
@@ -189,6 +216,8 @@ int32_t NumRootCalculator::calculate(ExprAST *ast) {
     return calculate(e);
   } else if (auto e = dynamic_cast<VarDefAST *>(ast)) {
     return calculate(e);
+  } else if (auto e = dynamic_cast<UnitExprAST *>(ast)) {
+    return calculate(e);
   } else {
     sammine_util::abort(
         fmt::format("You should be overloading on {}", ast->getTreeName()));
@@ -221,6 +250,7 @@ int32_t NumRootCalculator::calculate(BinaryExprAST *ast) {
 int32_t NumRootCalculator::calculate(BoolExprAST *ast) { return 0; }
 int32_t NumRootCalculator::calculate(StringExprAST *ast) { return 1; }
 int32_t NumRootCalculator::calculate(NumberExprAST *ast) { return 0; }
+int32_t NumRootCalculator::calculate(UnitExprAST *ast) { return 0; }
 int32_t NumRootCalculator::calculate(VarDefAST *ast) {
   return calculate(ast->Expression.get());
 }

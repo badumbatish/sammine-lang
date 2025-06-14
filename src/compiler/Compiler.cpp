@@ -21,17 +21,12 @@
 #include <memory>
 #include <system_error>
 
-//! \file Compiler.cpp
-//! \brief Implementation of Compiler, consist the pipeline for executing all
-//! stages (Lex, Parser, Semantics & CodeGen) of the Compiler
-
 // INFO: Declaration
 namespace sammine_lang {
 class Compiler {
   std::shared_ptr<TokenStream> tokStream;
   std::shared_ptr<AST::ProgramAST> programAST;
   std::map<compiler_option_enum, std::string> compiler_options;
-  std::unique_ptr<llvm::GlobalVariable> global_root_chain;
   std::shared_ptr<LLVMRes> resPtr;
   std::string file_name, input;
   sammine_util::Reporter reporter;

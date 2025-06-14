@@ -37,9 +37,6 @@ public:
       : resPtr(resPtr), type_converter(*resPtr->Context.get()),
         jasmine(*resPtr->Module.get(), *resPtr->Context.get(),
                 *resPtr->Builder.get()) {}
-  llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,
-                                           const std::string &VarName,
-                                           llvm::Type *);
 
   void enter_new_scope() override;
   void exit_new_scope() override;
